@@ -1,24 +1,25 @@
-# HSPlanner
+<img width="1600" height="360" alt="wordmark-1600" src="https://github.com/user-attachments/assets/fe4fd4b3-a475-438a-a87e-53fd8080632d" />
+
 
 A desktop build planner for **Hero Siege** — a calculator for the talent tree, gear, stats, and skills, with optional read/write support for the game's save files.
-
-The app ships as a native Tauri binary (Windows / macOS / Linux) with a React + TypeScript frontend. Builds can be saved locally, exported as compressed share URLs, and imported from other players.
 
 ---
 
 ## Features
 
-- **Talent tree** — interactive pan/zoom graph view with auto-pathfinding, path preview on hover, and reset
-- **Skills and sub-skills** — point allocation that respects skill prerequisites and per-level caps
-- **Gear** — slots for weapons, armor, charms, jewelry with sockets (gems/runes) and runeword detection
-- **Affixes** — add affixes with tier and adjustable roll
-- **Stats** — aggregated bonuses from tree, gear, attributes, and runewords
-- **Custom stats** — free-text user-entered stats for things outside the data model
-- **Notes** — sanitized WYSIWYG editor (per build), preserved across share links
-- **Builds menu** — multiple saved builds, each with multiple profiles
-- **Share** — export the entire build to a compressed URL (lz-string)
-- **Save File** — read and edit `.hss` Hero Siege save files (level, hero level, class, hardcore, wormhole, chaos towers)
-- **Update check** — opt-in update check via GitHub Releases
+- [ ] **Talent tree** *(only layout, passives will be added later)* — interactive pan/zoom graph view with auto-pathfinding, path preview on hover, and reset
+- [ ] **Skills and sub-skills** *(currently stormweaver was added)* — point allocation that respects skill prerequisites and per-level caps
+- [ ] **Gear** *(around 70% done)* — slots for weapons, armor, charms, jewelry with sockets (gems/runes) and runeword detection
+- [x] **Affixes** — add affixes with tier and adjustable roll
+- [x] **Stats** — aggregated bonuses from tree, gear, attributes, and runewords
+- [x] **Custom stats** — free-text user-entered stats for things outside the data model
+- [x] **Notes** — sanitized WYSIWYG editor (per build), preserved across share links
+- [x] **Builds menu** — multiple saved builds, each with multiple profiles
+- [x] **Share** — export the entire build to a compressed URL (lz-string)
+- [ ] **Save File** *(broken)* — read and edit `.hss` Hero Siege save files (level, hero level, class, hardcore, wormhole, chaos towers)
+- [x] **Update check** — opt-in update check via GitHub Releases
+
+<img width="1277" height="800" alt="{139CD596-7ABD-4699-B268-81E259A94519}" src="https://github.com/user-attachments/assets/d2f51f6e-0a1d-46a6-a26d-3214916ffb37" />
 
 ---
 
@@ -32,7 +33,8 @@ Download the installer / binary for your platform from Releases. The app is self
 | macOS 10.15+ | None — WebKit is built into the OS |
 | Linux (x86_64) | `webkit2gtk-4.1`, `libssl`, standard GTK runtime libraries |
 
-The **Save File** feature needs access to the Hero Siege save folder (typically `%APPDATA%/Hero Siege/SaveFiles` on Windows). You pick the folder in the UI — the app does not read anything outside it.
+> [!NOTE]
+> The **Save File** feature needs access to the Hero Siege save folder (typically `%APPDATA%/Hero Siege/SaveFiles` on Windows). You pick the folder in the UI — the app does not read anything outside it.
 
 ---
 
@@ -45,15 +47,22 @@ The **Save File** feature needs access to the Hero Siege save folder (typically 
 | **Rust toolchain** | `rustup` with `stable` (≥ 1.77) | Tauri backend |
 | **Tauri prerequisites** | see below per OS | Linker, system libraries |
 
-### Tauri — system prerequisites
+### Build
 
-Follow the [official Tauri guide](https://tauri.app/start/prerequisites/). Summary:
+```bash
+git clone https://github.com/zium1337/HSPlanner.git
+cd HeroPlanner
+npm install
+npm run tauri:dev
+```
+
+### Tauri — system prerequisites
 
 **Windows**
 - Microsoft Visual Studio C++ Build Tools (workload "Desktop development with C++")
 - WebView2 Runtime (only needed on Win10; Win11 has it preinstalled)
 
-**macOS**
+**macOS (only for development purpose because game doesn't support macos)**
 - Xcode Command Line Tools: `xcode-select --install`
 
 **Linux (Debian/Ubuntu)**
@@ -62,102 +71,4 @@ sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev
   libssl-dev libayatana-appindicator3-dev librsvg2-dev
 ```
 
-### First-time setup
-
-```bash
-git clone <repo-url>
-cd HSPlanner
-npm install
-```
-
-`npm install` fetches frontend dependencies. Rust crates are downloaded and compiled on the first `tauri:dev` / `tauri:build` (initial build takes ~5–10 minutes; subsequent builds are much faster thanks to the `src-tauri/target/` cache).
-
----
-
-## NPM scripts
-
-| Script | What it does |
-|---|---|
-| `npm run dev` | Vite dev server (frontend only, no Tauri) — `http://localhost:5173` |
-| `npm run tauri:dev` | Full dev with Tauri (opens the native window + frontend HMR) |
-| `npm run build` | Type-check + production frontend build into `dist/` |
-| `npm run tauri:build` | Bundle binaries / installers into `src-tauri/target/release/bundle/` |
-| `npm run preview` | Preview the built frontend through Vite |
-| `npm run test` | Unit tests (Vitest) — single run |
-| `npm run test:watch` | Tests in watch mode |
-| `npm run lint` | ESLint (TypeScript-aware) |
-
-### Typical developer workflow
-
-```bash
-npm run tauri:dev      # day-to-day development
-npm run lint           # before committing
-npm run test           # before committing
-npm run tauri:build    # release build
-```
-
----
-
-## Project layout
-
-```
-HSPlanner/
-├── src/                      # React + TypeScript frontend
-│   ├── components/           # UI components (Tooltip, BuildsMenu, ...)
-│   ├── views/                # Top-level views (Tree, Skills, Gear, Stats, ...)
-│   ├── store/                # Zustand store (build state)
-│   ├── data/                 # Game data (JSON: classes, skills, items, runes)
-│   ├── utils/                # shareBuild, savedBuilds, stats, sanitizeHtml
-│   ├── types/                # Shared TypeScript types
-│   └── hooks/                # Custom React hooks
-├── src-tauri/                # Rust backend
-│   ├── src/
-│   │   ├── lib.rs            # Tauri builder + invoke handlers
-│   │   └── save_file.rs      # Hero Siege .hss save-file parser
-│   ├── capabilities/         # Tauri permission grants
-│   ├── tauri.conf.json       # Tauri config (CSP, window, bundle)
-│   └── Cargo.toml
-├── public/                   # Static assets (favicon, icons)
-├── index.html                # Vite entry
-├── vite.config.ts            # Vite + Vitest config
-├── tsconfig.app.json         # TS config (strict + noUncheckedIndexedAccess)
-└── eslint.config.js          # ESLint flat config
-```
-
----
-
-## Tech stack
-
-**Frontend**
-- React 19 + TypeScript 6 (strict mode)
-- Vite 8 + Tailwind CSS 4
-- Zustand (state management)
-- Zod (runtime validation for untrusted payloads: share links, localStorage)
-- lz-string (share-code compression)
-
-**Backend (Tauri)**
-- Rust 2021 edition
-- `tauri-plugin-dialog` (file picker)
-- `rust-ini` (parser for .hss save files)
-
-**Tests / lint**
-- Vitest + @testing-library/react + jsdom
-- ESLint 9 (typescript-eslint, react-hooks, react-refresh)
-
----
-
-## Security
-
-The app accepts untrusted data from three sources: **share URLs**, **game save files**, and **localStorage**. Each is validated:
-
-- **CSP** is enabled in `tauri.conf.json` (default-src 'self'; no inline scripts)
-- **Capabilities** are narrowed — the frontend has no FS permissions; all file I/O goes through whitelisted Rust invoke handlers
-- **shareBuild**: zod schema with size limits and numeric clamps
-- **savedBuilds (localStorage)**: defensive parser with hard caps
-- **sanitizeHtml**: tag + attribute whitelist for notes (XSS test suite in `sanitizeHtml.test.ts`)
-
----
-
-## License
-
-Private project, no open-source license. Game data (item names, skill names, class names) is the property of the Hero Siege publisher and is used here for informational purposes only.
+For more information about tauri see [official Tauri guide](https://tauri.app/start/prerequisites/)
