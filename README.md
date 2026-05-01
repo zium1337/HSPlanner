@@ -34,7 +34,7 @@ Download the installer / binary for your platform from Releases. The app is self
 | Linux (x86_64) | `webkit2gtk-4.1`, `libssl`, standard GTK runtime libraries |
 
 > [!NOTE]
-> The **Save File** feature needs access to the Hero Siege save folder (typically `%APPDATA%/Hero Siege/SaveFiles` on Windows). You pick the folder in the UI — the app does not read anything outside it.
+> The **Save File** feature needs access to the Hero Siege save folder. You pick the folder in the UI — the app does not read anything outside it.
 
 ---
 
@@ -51,7 +51,7 @@ Download the installer / binary for your platform from Releases. The app is self
 
 ```bash
 git clone https://github.com/zium1337/HSPlanner.git
-cd HeroPlanner
+cd HSPlanner
 npm install
 npm run tauri:dev
 ```
