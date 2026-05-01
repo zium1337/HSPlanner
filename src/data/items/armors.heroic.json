@@ -1,0 +1,388 @@
+[
+  {
+    "id": "body_armor_heroic_arcanists_wrath",
+    "name": "Arcanist's Wrath",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "defense": [
+        250,
+        300
+      ],
+      "enhanced_defense": [
+        250,
+        325
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "arcane_skills": [
+        3,
+        5
+      ],
+      "all_attributes": 30,
+      "arcane_skill_damage": [
+        30,
+        50
+      ],
+      "ignore_arcane_res": [
+        20,
+        25
+      ],
+      "all_resistances": 35
+    },
+    "uniqueEffects": [
+      "Chance When Casting: Arcane Wrath",
+      "Intelligence Converted To Arcane Skill Dmg"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "body_armor_heroic_executioner_s_cocoon",
+    "name": "Executioner's Cocoon",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "defense": [
+        210,
+        240
+      ],
+      "enhanced_defense": [
+        375,
+        430
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "attack_rating": [
+        1400,
+        1800
+      ],
+      "life_steal": [
+        6,
+        10
+      ],
+      "mana_steal": [
+        6,
+        12
+      ],
+      "to_strength": 50
+    },
+    "uniqueEffects": [
+      "Chance When Striking: Warrior's Path",
+      "Enhanced Dmgd On Level"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "body_armor_heroic_gem_king_s_garb",
+    "name": "Gem King's Garb",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 74,
+    "implicit": {
+      "defense": [
+        280,
+        320
+      ],
+      "enhanced_defense": [
+        350,
+        450
+      ]
+    },
+    "sockets": 6,
+    "maxSockets": 6
+  },
+  {
+    "id": "body_armor_heroic_isarius_ironthorn_breastplate",
+    "name": "Isarius Ironthorn Breastplate",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "defense": [
+        210,
+        240
+      ],
+      "enhanced_defense": [
+        150,
+        225
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "extra_damage_stunned": [
+        15,
+        25
+      ],
+      "to_vitality": [
+        35,
+        50
+      ],
+      "to_armor": 40,
+      "damage_return": [
+        175,
+        350
+      ],
+      "damage_mitigation": [
+        11,
+        16
+      ],
+      "all_resistances": [
+        25,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Chance When Struck: Combat Order",
+      "Grant Spell: Thorn of Vitality"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "body_armor_heroic_muspelheim_guardian_s_scorched_plate",
+    "name": "Muspelheim Guardian's Scorched Plate",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "defense": [
+        210,
+        240
+      ],
+      "enhanced_defense": [
+        150,
+        225
+      ],
+      "all_skills": [
+        1,
+        3
+      ],
+      "fire_skills": [
+        3,
+        5
+      ],
+      "extra_damage_burning": [
+        15,
+        25
+      ],
+      "to_armor": 15,
+      "fire_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_lightning_res": [
+        10,
+        20
+      ],
+      "fire_resistance": [
+        30,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Chance When Struck: Volcano"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "body_armor_heroic_sharpshooters_cloak",
+    "name": "Sharpshooter's Cloak",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "defense": [
+        210,
+        240
+      ],
+      "enhanced_defense": [
+        375,
+        430
+      ],
+      "all_skills": 2,
+      "attack_rating": [
+        1400,
+        1800
+      ],
+      "life_steal": [
+        6,
+        10
+      ],
+      "mana_steal": [
+        6,
+        12
+      ],
+      "to_strength": 50
+    },
+    "uniqueEffects": [
+      "Chance When Striking: Warrior's Path",
+      "Ranged Skills",
+      "Projectile Speed",
+      "Enhanced Dmgd On Level"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "body_armor_heroic_thunder_guardian_s_plate",
+    "name": "Thunder Guardian's Plate",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "defense": [
+        250,
+        300
+      ],
+      "enhanced_defense": [
+        250,
+        325
+      ],
+      "lightning_skills": [
+        6,
+        8
+      ],
+      "all_attributes": 30,
+      "lightning_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_lightning_res": [
+        20,
+        25
+      ],
+      "all_resistances": [
+        35,
+        40
+      ],
+      "lightning_resistance": [
+        50,
+        75
+      ]
+    },
+    "uniqueEffects": [
+      "Chance When Striking: Symphony of Thunder"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "body_armor_heroic_tundra_hunter_s_long_coat",
+    "name": "Tundra Hunter's Long Coat",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "defense": [
+        210,
+        240
+      ],
+      "enhanced_defense": [
+        150,
+        225
+      ],
+      "all_skills": [
+        1,
+        3
+      ],
+      "cold_skills": [
+        3,
+        5
+      ],
+      "to_armor": 15,
+      "all_attributes": 20,
+      "cold_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_cold_res": [
+        10,
+        20
+      ],
+      "cold_resistance": [
+        30,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Chance When Struck: Blizzard"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "body_armor_heroic_venomsteel_carapace",
+    "name": "Venomsteel Carapace",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "defense": [
+        210,
+        240
+      ],
+      "enhanced_defense": [
+        150,
+        225
+      ],
+      "all_skills": [
+        1,
+        3
+      ],
+      "poison_skills": [
+        3,
+        5
+      ],
+      "extra_damage_poisoned": [
+        15,
+        25
+      ],
+      "poison_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_poison_res": [
+        10,
+        20
+      ],
+      "poison_resistance": [
+        30,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Chance When Struck: Poison Nova",
+      "Poison Length Reduced"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  }
+]

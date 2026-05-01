@@ -1,0 +1,122 @@
+[
+  {
+    "id": "amulet_heroic_compass_of_wealth",
+    "name": "Compass of Wealth",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "implicit": {
+      "all_attributes": [
+        15,
+        20
+      ],
+      "gold_find": [
+        30,
+        40
+      ],
+      "magic_find": [
+        20,
+        70
+      ]
+    },
+    "uniqueEffects": [
+      "Magic Findd On Level"
+    ]
+  },
+  {
+    "id": "amulet_heroic_gryphon_s_claw",
+    "name": "Gryphon's Claw",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "crit_chance": [
+        18,
+        25
+      ],
+      "crit_damage": [
+        40,
+        50
+      ],
+      "open_wounds": [
+        15,
+        25
+      ],
+      "all_attributes": [
+        20,
+        30
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Spell: Execute"
+    ]
+  },
+  {
+    "id": "amulet_heroic_pendant_of_eternity",
+    "name": "Pendant of Eternity",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "faster_cast_rate": 30,
+      "skill_haste": [
+        15,
+        25
+      ],
+      "magic_skill_damage": [
+        30,
+        45
+      ]
+    },
+    "uniqueEffects": [
+      "Chance When Casting: The Venerated One"
+    ]
+  },
+  {
+    "id": "amulet_heroic_philosopher_s_stone",
+    "name": "Philosopher's Stone",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        3,
+        5
+      ],
+      "all_attributes": [
+        20,
+        40
+      ],
+      "all_resistances": [
+        20,
+        35
+      ]
+    }
+  },
+  {
+    "id": "amulet_heroic_signet_of_kadosh",
+    "name": "Signet of Kadosh",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "crit_damage": [
+        35,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Spell: Magnum Opus"
+    ]
+  }
+]

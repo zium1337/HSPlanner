@@ -1,0 +1,830 @@
+import { create } from 'zustand'
+import {
+  classes,
+  gameConfig,
+  getClass,
+  getItem,
+  getRuneword,
+  skills as ALL_SKILLS,
+} from '../data'
+import type {
+  AttributeKey,
+  CustomStat,
+  EquippedItem,
+  Inventory,
+  SlotKey,
+  SocketType,
+} from '../types'
+import {
+  addProfile as storeAddProfile,
+  commitProfileSnapshot as storeCommitProfile,
+  deleteBuild as storeDeleteBuild,
+  duplicateProfile as storeDuplicateProfile,
+  getSavedBuild,
+  loadProfileSnapshot,
+  removeProfile as storeRemoveProfile,
+  renameProfile as storeRenameProfile,
+  renameBuild as storeRenameBuild,
+  setActiveProfile as storeSetActiveProfile,
+  setBuildNotes as storeSetBuildNotes,
+} from '../utils/savedBuilds'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
+import type { BuildSnapshot } from '../utils/shareBuild'
+import { findPath, reachableFromAny, START_IDS } from '../utils/treeGraph'
+
+type AttrMap = Record<AttributeKey, number>
+
+export const RAINBOW_MULTIPLIER = 1.5
+
+interface BuildState {
+  classId: string | null
+  level: number
+  allocated: AttrMap
+  inventory: Inventory
+  skillRanks: Record<string, number>
+  allocatedTreeNodes: Set<number>
+  mainSkillId: string | null
+  activeAuraId: string | null
+  procToggles: Record<string, boolean>
+  killsPerSec: number
+  activeBuffs: Record<string, boolean>
+  enemyConditions: Record<string, boolean>
+  subskillRanks: Record<string, number>
+  /** Saved-build the in-memory state currently belongs to (null = unsaved freeform). */
+  activeBuildId: string | null
+  /** Saved-profile within the active build that the in-memory state belongs to. */
+  activeProfileId: string | null
+  /** Bumped after any localStorage SavedBuild mutation. Subscribers can re-read. */
+  savedBuildsVersion: number
+  /** Sanitized HTML notes — shared by all profiles in the active build. */
+  notes: string
+  customStats: CustomStat[]
+}
+
+interface BuildActions {
+  setClass: (id: string) => void
+  setLevel: (lvl: number) => void
+  incAttr: (key: AttributeKey, amount?: number) => void
+  decAttr: (key: AttributeKey, amount?: number) => void
+  resetAttrs: () => void
+  equipItem: (slot: SlotKey, baseId: string) => void
+  unequipItem: (slot: SlotKey) => void
+  setSocketCount: (slot: SlotKey, count: number) => void
+  setSocketed: (slot: SlotKey, idx: number, socketableId: string | null) => void
+  setSocketType: (slot: SlotKey, idx: number, type: SocketType) => void
+  exportBuildSnapshot: () => BuildSnapshot
+  importBuildSnapshot: (snapshot: BuildSnapshot, notes?: string) => void
+  applyRuneword: (slot: SlotKey, runewordId: string) => void
+  addAffix: (slot: SlotKey, affixId: string, tier: number) => void
+  removeAffix: (slot: SlotKey, index: number) => void
+  setAffixRoll: (slot: SlotKey, index: number, roll: number) => void
+  moveItem: (fromSlot: SlotKey, toSlot: SlotKey) => void
+  setSkillRank: (skillId: string, rank: number, maxRank: number) => void
+  incSkillRank: (skillId: string, maxRank: number) => void
+  decSkillRank: (skillId: string) => void
+  resetSkillRanks: () => void
+  toggleTreeNode: (nodeId: number) => void
+  resetTreeNodes: () => void
+  setMainSkill: (skillId: string | null) => void
+  setActiveAura: (skillId: string | null) => void
+  setProcToggle: (skillId: string, enabled: boolean) => void
+  setKillsPerSec: (rate: number) => void
+  setBuffActive: (skillId: string, enabled: boolean) => void
+  setEnemyCondition: (key: string, enabled: boolean) => void
+  setSubskillRank: (
+    skillId: string,
+    subskillId: string,
+    rank: number,
+    maxRank: number,
+  ) => void
+  incSubskillRank: (
+    skillId: string,
+    subskillId: string,
+    maxRank: number,
+  ) => void
+  decSubskillRank: (skillId: string, subskillId: string) => void
+  resetSubskillsFor: (skillId: string) => void
+  /** Replace the current notes (HTML). Always re-sanitized in the store. */
+  setNotes: (html: string) => void
+  /** Persist current notes into the active SavedBuild (no-op if unsaved). */
+  commitBuildNotes: () => boolean
+  addCustomStat: (init?: Partial<CustomStat>) => void
+  updateCustomStat: (index: number, patch: Partial<CustomStat>) => void
+  removeCustomStat: (index: number) => void
+  /** Replace in-memory state with a saved profile from a saved build. Commits the previously active profile first. */
+  loadSavedBuild: (buildId: string, profileId?: string) => boolean
+  /** Switch profile within the currently active build. Auto-commits current state into the previously active profile. */
+  switchActiveProfile: (profileId: string) => boolean
+  /** Persist current in-memory state into the currently active profile. Returns true on success. */
+  commitActiveProfile: () => boolean
+  /** Add a new profile to the currently active build seeded with the current snapshot, then activate it. */
+  addProfileToActiveBuild: (name: string) => string | null
+  /** Duplicate a profile in the active build, then activate the copy. */
+  duplicateActiveProfile: (profileId: string) => string | null
+  /** Rename a profile inside the active build. */
+  renameActiveProfile: (profileId: string, name: string) => boolean
+  /** Remove a profile from the active build (must keep at least one). */
+  removeActiveProfile: (profileId: string) => boolean
+  /** Detach the in-memory state from any saved build (unsaved freeform mode). */
+  detachFromBuild: () => void
+  /** Bind in-memory state to an existing saved build/profile (no snapshot import). */
+  bindToBuild: (buildId: string, profileId: string) => void
+  /** Delete a saved build from disk and detach if it was active. */
+  deleteSavedBuild: (buildId: string) => void
+  /** Rename a saved build on disk. */
+  renameSavedBuild: (buildId: string, name: string) => boolean
+}
+
+export { START_IDS as TREE_START_IDS, START_SET as TREE_START_SET } from '../utils/treeGraph'
+export { findPath as findTreePath } from '../utils/treeGraph'
+
+function emptyAllocation(): AttrMap {
+  return gameConfig.attributes.reduce<AttrMap>((acc, a) => {
+    acc[a.key] = 0
+    return acc
+  }, {})
+}
+
+function bumpSavedBuilds(
+  set: (fn: (s: BuildState) => Partial<BuildState>) => void,
+) {
+  set((s) => ({ savedBuildsVersion: s.savedBuildsVersion + 1 }))
+}
+
+/**
+ * Translate a profile snapshot into the slice of state that profile-load
+ * actions need to write. Notes live on the build (not the profile) so they
+ * are excluded — callers must layer them on separately.
+ */
+function snapshotPatch(snap: BuildSnapshot) {
+  return {
+    classId: snap.classId,
+    level: snap.level,
+    allocated: snap.allocated,
+    inventory: snap.inventory,
+    skillRanks: snap.skillRanks,
+    subskillRanks: snap.subskillRanks,
+    allocatedTreeNodes: snap.allocatedTreeNodes,
+    mainSkillId: snap.mainSkillId,
+    activeAuraId: snap.activeAuraId,
+    activeBuffs: snap.activeBuffs,
+    enemyConditions: snap.enemyConditions,
+    procToggles: snap.procToggles,
+    killsPerSec: snap.killsPerSec,
+    customStats: snap.customStats ?? [],
+  }
+}
+
+const HARD_SOCKET_CAP = 6
+
+export function maxSocketsFor(baseId: string): number {
+  const base = getItem(baseId)
+  if (!base) return 0
+  const cap = base.maxSockets ?? base.sockets ?? 0
+  return Math.min(cap, HARD_SOCKET_CAP)
+}
+
+export const useBuild = create<BuildState & BuildActions>((set, get) => ({
+  classId: classes[0]?.id ?? null,
+  level: 1,
+  allocated: emptyAllocation(),
+  inventory: {},
+  skillRanks: {},
+  allocatedTreeNodes: new Set<number>(),
+  mainSkillId: null,
+  activeAuraId: null,
+  procToggles: {},
+  killsPerSec: 1,
+  activeBuffs: {},
+  enemyConditions: {},
+  subskillRanks: {},
+  activeBuildId: null,
+  activeProfileId: null,
+  savedBuildsVersion: 0,
+  notes: '',
+  customStats: [],
+
+  setClass: (id) =>
+    set((s) => {
+      if (s.classId === id) return s
+      return {
+        classId: id,
+        allocated: emptyAllocation(),
+        skillRanks: {},
+        mainSkillId: null,
+        activeAuraId: null,
+        procToggles: {},
+        activeBuffs: {},
+        subskillRanks: {},
+        // Changing class effectively starts a new build — detach from any saved one.
+        activeBuildId: null,
+        activeProfileId: null,
+        notes: '',
+        customStats: [],
+      }
+    }),
+
+  setNotes: (html) =>
+    set((s) => {
+      const cleaned = sanitizeHtml(html)
+      return s.notes === cleaned ? s : { notes: cleaned }
+    }),
+
+  commitBuildNotes: () => {
+    const s = get()
+    if (!s.activeBuildId) return false
+    const ok = storeSetBuildNotes(s.activeBuildId, s.notes) !== null
+    if (ok) bumpSavedBuilds(set)
+    return ok
+  },
+
+  addCustomStat: (init = {}) =>
+    set((s) => ({
+      customStats: [
+        ...s.customStats,
+        {
+          statKey: init.statKey ?? '',
+          value: init.value ?? '',
+        },
+      ],
+    })),
+
+  updateCustomStat: (index, patch) =>
+    set((s) => {
+      if (index < 0 || index >= s.customStats.length) return s
+      const next = s.customStats.map((cs, i) =>
+        i === index ? { ...cs, ...patch } : cs,
+      )
+      return { customStats: next }
+    }),
+
+  removeCustomStat: (index) =>
+    set((s) => {
+      if (index < 0 || index >= s.customStats.length) return s
+      return { customStats: s.customStats.filter((_, i) => i !== index) }
+    }),
+
+  toggleTreeNode: (nodeId) =>
+    set((s) => {
+      const cur = s.allocatedTreeNodes
+      if (cur.has(nodeId)) {
+        const next = new Set(cur)
+        next.delete(nodeId)
+        const stillReachable = reachableFromAny(START_IDS, next)
+        return { allocatedTreeNodes: stillReachable }
+      }
+      const sources = cur.size > 0 ? cur : new Set<number>(START_IDS)
+      const path = findPath(sources, nodeId)
+      if (!path) return s
+      const next = new Set(cur)
+      for (const id of path) next.add(id)
+      return { allocatedTreeNodes: next }
+    }),
+
+  resetTreeNodes: () => set({ allocatedTreeNodes: new Set<number>() }),
+
+  setMainSkill: (skillId) => set({ mainSkillId: skillId }),
+
+  setActiveAura: (skillId) => set({ activeAuraId: skillId }),
+
+  setProcToggle: (skillId, enabled) =>
+    set((s) => {
+      const next = { ...s.procToggles }
+      if (enabled) next[skillId] = true
+      else delete next[skillId]
+      return { procToggles: next }
+    }),
+
+  setKillsPerSec: (rate) =>
+    set({ killsPerSec: Math.max(0, rate) }),
+
+  setBuffActive: (skillId, enabled) =>
+    set((s) => {
+      const next = { ...s.activeBuffs }
+      if (enabled) next[skillId] = true
+      else delete next[skillId]
+      return { activeBuffs: next }
+    }),
+
+  setEnemyCondition: (key, enabled) =>
+    set((s) => {
+      const next = { ...s.enemyConditions }
+      if (enabled) next[key] = true
+      else delete next[key]
+      return { enemyConditions: next }
+    }),
+
+  setSubskillRank: (skillId, subskillId, rank, maxRank) => {
+    const { subskillRanks, level } = get()
+    const total = subskillPointsFor(level)
+    const key = subskillKey(skillId, subskillId)
+    const cur = subskillRanks[key] ?? 0
+    const otherSpent = Object.entries(subskillRanks).reduce(
+      (s, [k, r]) => (k === key ? s : s + r),
+      0,
+    )
+    const clamped = Math.max(0, Math.min(maxRank, rank, total - otherSpent))
+    if (clamped === cur) return
+    const next = { ...subskillRanks }
+    if (clamped === 0) delete next[key]
+    else next[key] = clamped
+    set({ subskillRanks: next })
+  },
+
+  incSubskillRank: (skillId, subskillId, maxRank) => {
+    const cur =
+      get().subskillRanks[subskillKey(skillId, subskillId)] ?? 0
+    get().setSubskillRank(skillId, subskillId, cur + 1, maxRank)
+  },
+
+  decSubskillRank: (skillId, subskillId) => {
+    const key = subskillKey(skillId, subskillId)
+    const cur = get().subskillRanks[key] ?? 0
+    if (cur <= 0) return
+    set((s) => {
+      const next = { ...s.subskillRanks }
+      if (cur - 1 === 0) delete next[key]
+      else next[key] = cur - 1
+      return { subskillRanks: next }
+    })
+  },
+
+  resetSubskillsFor: (skillId) =>
+    set((s) => {
+      const next: Record<string, number> = {}
+      for (const [k, v] of Object.entries(s.subskillRanks)) {
+        if (!k.startsWith(`${skillId}:`)) next[k] = v
+      }
+      return { subskillRanks: next }
+    }),
+
+  setLevel: (lvl) => {
+    const clamped = Math.max(1, Math.min(gameConfig.maxCharacterLevel, lvl))
+    set({ level: clamped })
+  },
+
+  incAttr: (key, amount = 1) => {
+    const { allocated, level } = get()
+    const total = Object.values(allocated).reduce((s, v) => s + v, 0)
+    const available = attrPointsFor(level) - total
+    const step = Math.min(amount, available)
+    if (step <= 0) return
+    set({ allocated: { ...allocated, [key]: (allocated[key] ?? 0) + step } })
+  },
+
+  decAttr: (key, amount = 1) => {
+    const { allocated } = get()
+    const cur = allocated[key] ?? 0
+    const step = Math.min(amount, cur)
+    if (step <= 0) return
+    set({ allocated: { ...allocated, [key]: cur - step } })
+  },
+
+  resetAttrs: () => set({ allocated: emptyAllocation() }),
+
+  equipItem: (slot, baseId) => {
+    const base = getItem(baseId)
+    if (!base) return
+    const initial = Math.min(base.sockets ?? 0, maxSocketsFor(baseId))
+    const item: EquippedItem = {
+      baseId,
+      affixes: [],
+      socketCount: initial,
+      socketed: Array(initial).fill(null),
+      socketTypes: Array(initial).fill('normal'),
+    }
+    set((s) => ({ inventory: { ...s.inventory, [slot]: item } }))
+  },
+
+  unequipItem: (slot) => {
+    set((s) => {
+      const next = { ...s.inventory }
+      delete next[slot]
+      return { inventory: next }
+    })
+  },
+
+  setSocketCount: (slot, count) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      if (!cur) return s
+      const max = maxSocketsFor(cur.baseId)
+      const clamped = Math.max(0, Math.min(max, count))
+      const socketed = [...cur.socketed]
+      const socketTypes = [...cur.socketTypes]
+      while (socketed.length < clamped) {
+        socketed.push(null)
+        socketTypes.push('normal')
+      }
+      socketed.length = clamped
+      socketTypes.length = clamped
+      return {
+        inventory: {
+          ...s.inventory,
+          [slot]: { ...cur, socketCount: clamped, socketed, socketTypes },
+        },
+      }
+    })
+  },
+
+  setSocketed: (slot, idx, socketableId) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      if (!cur || idx < 0 || idx >= cur.socketCount) return s
+      const socketed = [...cur.socketed]
+      socketed[idx] = socketableId
+      return {
+        inventory: { ...s.inventory, [slot]: { ...cur, socketed } },
+      }
+    })
+  },
+
+  setSocketType: (slot, idx, type) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      if (!cur || idx < 0 || idx >= cur.socketCount) return s
+      const socketTypes = [...cur.socketTypes]
+      socketTypes[idx] = type
+      return {
+        inventory: { ...s.inventory, [slot]: { ...cur, socketTypes } },
+      }
+    })
+  },
+
+  exportBuildSnapshot: () => {
+    const s = get()
+    return {
+      classId: s.classId,
+      level: s.level,
+      allocated: s.allocated,
+      inventory: s.inventory,
+      skillRanks: s.skillRanks,
+      subskillRanks: s.subskillRanks,
+      allocatedTreeNodes: s.allocatedTreeNodes,
+      mainSkillId: s.mainSkillId,
+      activeAuraId: s.activeAuraId,
+      activeBuffs: s.activeBuffs,
+      enemyConditions: s.enemyConditions,
+      procToggles: s.procToggles,
+      killsPerSec: s.killsPerSec,
+      customStats: s.customStats,
+    }
+  },
+
+  importBuildSnapshot: (snapshot, notes = '') => {
+    // Imported snapshots are unsaved freeform until user saves them.
+    set(() => ({
+      ...snapshotPatch(snapshot),
+      notes,
+      activeBuildId: null,
+      activeProfileId: null,
+    }))
+  },
+
+  bindToBuild: (buildId, profileId) =>
+    set((cur) => ({
+      activeBuildId: buildId,
+      activeProfileId: profileId,
+      savedBuildsVersion: cur.savedBuildsVersion + 1,
+    })),
+
+  detachFromBuild: () =>
+    set(() => ({ activeBuildId: null, activeProfileId: null })),
+
+  deleteSavedBuild: (buildId) => {
+    storeDeleteBuild(buildId)
+    set((cur) => {
+      const detach = cur.activeBuildId === buildId
+      return {
+        savedBuildsVersion: cur.savedBuildsVersion + 1,
+        ...(detach
+          ? { activeBuildId: null, activeProfileId: null }
+          : {}),
+      }
+    })
+  },
+
+  renameSavedBuild: (buildId, name) => {
+    const ok = storeRenameBuild(buildId, name) !== null
+    if (ok) bumpSavedBuilds(set)
+    return ok
+  },
+
+  commitActiveProfile: () => {
+    const s = get()
+    if (!s.activeBuildId || !s.activeProfileId) return false
+    const snap = s.exportBuildSnapshot()
+    const result = storeCommitProfile(s.activeBuildId, s.activeProfileId, snap)
+    if (result) bumpSavedBuilds(set)
+    return result !== null
+  },
+
+  loadSavedBuild: (buildId, profileId) => {
+    // Auto-commit currently active profile before switching out
+    const cur = get()
+    if (cur.activeBuildId && cur.activeProfileId) {
+      storeCommitProfile(
+        cur.activeBuildId,
+        cur.activeProfileId,
+        cur.exportBuildSnapshot(),
+      )
+    }
+    const build = getSavedBuild(buildId)
+    if (!build) return false
+    const targetProfileId =
+      profileId && build.profiles.some((p) => p.id === profileId)
+        ? profileId
+        : build.activeProfileId
+    const snap = loadProfileSnapshot(buildId, targetProfileId)
+    if (!snap) return false
+    storeSetActiveProfile(buildId, targetProfileId)
+    set((s) => ({
+      ...snapshotPatch(snap),
+      notes: sanitizeHtml(build.notes ?? ''),
+      activeBuildId: buildId,
+      activeProfileId: targetProfileId,
+      savedBuildsVersion: s.savedBuildsVersion + 1,
+    }))
+    return true
+  },
+
+  switchActiveProfile: (profileId) => {
+    const s = get()
+    if (!s.activeBuildId) return false
+    if (s.activeProfileId === profileId) return true
+    // Auto-commit current state into outgoing profile
+    if (s.activeProfileId) {
+      storeCommitProfile(
+        s.activeBuildId,
+        s.activeProfileId,
+        s.exportBuildSnapshot(),
+      )
+    }
+    const snap = loadProfileSnapshot(s.activeBuildId, profileId)
+    if (!snap) return false
+    storeSetActiveProfile(s.activeBuildId, profileId)
+    set((cur) => ({
+      ...snapshotPatch(snap),
+      activeProfileId: profileId,
+      savedBuildsVersion: cur.savedBuildsVersion + 1,
+    }))
+    return true
+  },
+
+  addProfileToActiveBuild: (name) => {
+    const s = get()
+    if (!s.activeBuildId) return null
+    // Commit current state before forking
+    if (s.activeProfileId) {
+      storeCommitProfile(
+        s.activeBuildId,
+        s.activeProfileId,
+        s.exportBuildSnapshot(),
+      )
+    }
+    const result = storeAddProfile(
+      s.activeBuildId,
+      name,
+      s.exportBuildSnapshot(),
+      { activate: true },
+    )
+    if (!result) return null
+    set((cur) => ({
+      activeProfileId: result.profile.id,
+      savedBuildsVersion: cur.savedBuildsVersion + 1,
+    }))
+    return result.profile.id
+  },
+
+  duplicateActiveProfile: (profileId) => {
+    const s = get()
+    if (!s.activeBuildId) return null
+    // Commit current state so the duplicate reflects what the user sees
+    if (s.activeProfileId) {
+      storeCommitProfile(
+        s.activeBuildId,
+        s.activeProfileId,
+        s.exportBuildSnapshot(),
+      )
+    }
+    const result = storeDuplicateProfile(s.activeBuildId, profileId)
+    if (!result) return null
+    const snap = loadProfileSnapshot(s.activeBuildId, result.profile.id)
+    if (snap) {
+      set((cur) => ({
+        ...snapshotPatch(snap),
+        activeProfileId: result.profile.id,
+        savedBuildsVersion: cur.savedBuildsVersion + 1,
+      }))
+    } else {
+      bumpSavedBuilds(set)
+    }
+    return result.profile.id
+  },
+
+  renameActiveProfile: (profileId, name) => {
+    const s = get()
+    if (!s.activeBuildId) return false
+    const ok = storeRenameProfile(s.activeBuildId, profileId, name) !== null
+    if (ok) bumpSavedBuilds(set)
+    return ok
+  },
+
+  removeActiveProfile: (profileId) => {
+    const s = get()
+    if (!s.activeBuildId) return false
+    const isActive = s.activeProfileId === profileId
+    const updated = storeRemoveProfile(s.activeBuildId, profileId)
+    if (!updated) return false
+    if (isActive) {
+      const snap = loadProfileSnapshot(s.activeBuildId, updated.activeProfileId)
+      if (snap) {
+        set((cur) => ({
+          ...snapshotPatch(snap),
+          activeProfileId: updated.activeProfileId,
+          savedBuildsVersion: cur.savedBuildsVersion + 1,
+        }))
+      } else {
+        bumpSavedBuilds(set)
+      }
+    } else {
+      bumpSavedBuilds(set)
+    }
+    return true
+  },
+
+  applyRuneword: (slot, runewordId) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      if (!cur) return s
+      const base = getItem(cur.baseId)
+      const rw = getRuneword(runewordId)
+      if (!base || !rw) return s
+      if (base.rarity !== 'common') return s
+      if (!rw.allowedBaseTypes.includes(base.baseType)) return s
+      const cap = maxSocketsFor(cur.baseId)
+      if (rw.runes.length > cap) return s
+      const socketed: (string | null)[] = [...rw.runes]
+      const socketTypes = cur.socketTypes.slice(0, rw.runes.length)
+      while (socketTypes.length < rw.runes.length) socketTypes.push('normal')
+      return {
+        inventory: {
+          ...s.inventory,
+          [slot]: {
+            ...cur,
+            socketCount: rw.runes.length,
+            socketed,
+            socketTypes,
+          },
+        },
+      }
+    })
+  },
+
+  addAffix: (slot, affixId, tier) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      if (!cur) return s
+      const next: EquippedItem = {
+        ...cur,
+        affixes: [...cur.affixes, { affixId, tier, roll: 1 }],
+      }
+      return { inventory: { ...s.inventory, [slot]: next } }
+    })
+  },
+
+  removeAffix: (slot, index) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      if (!cur || index < 0 || index >= cur.affixes.length) return s
+      const affixes = cur.affixes.filter((_, i) => i !== index)
+      return { inventory: { ...s.inventory, [slot]: { ...cur, affixes } } }
+    })
+  },
+
+  setAffixRoll: (slot, index, roll) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      if (!cur || index < 0 || index >= cur.affixes.length) return s
+      const clamped = Math.max(0, Math.min(1, roll))
+      const affixes = cur.affixes.map((a, i) =>
+        i === index ? { ...a, roll: clamped } : a,
+      )
+      return { inventory: { ...s.inventory, [slot]: { ...cur, affixes } } }
+    })
+  },
+
+  moveItem: (fromSlot, toSlot) => {
+    set((s) => {
+      if (fromSlot === toSlot) return s
+      const fromItem = s.inventory[fromSlot]
+      const toItem = s.inventory[toSlot]
+      const next = { ...s.inventory }
+      
+      if (fromItem) {
+        next[toSlot] = fromItem
+      } else {
+        delete next[toSlot]
+      }
+
+      if (toItem) {
+        next[fromSlot] = toItem
+      } else {
+        delete next[fromSlot]
+      }
+
+      return { inventory: next }
+    })
+  },
+
+  setSkillRank: (skillId, rank, maxRank) => {
+    const { skillRanks, level } = get()
+    const total = skillPointsFor(level)
+    const currentSkillRank = skillRanks[skillId] ?? 0
+    const otherSpent =
+      Object.entries(skillRanks).reduce(
+        (s, [id, r]) => (id === skillId ? s : s + r),
+        0,
+      )
+    const clamped = Math.max(0, Math.min(maxRank, rank, total - otherSpent))
+    if (clamped === currentSkillRank) return
+
+    const skillDef = ALL_SKILLS.find((s) => s.id === skillId)
+    if (clamped > 0 && skillDef?.requiresSkill) {
+      const reqRank = skillRanks[skillDef.requiresSkill] ?? 0
+      if (reqRank === 0) return
+    }
+
+    const next = { ...skillRanks }
+    if (clamped === 0) delete next[skillId]
+    else next[skillId] = clamped
+
+    if (clamped === 0) {
+      let changed = true
+      while (changed) {
+        changed = false
+        for (const dep of ALL_SKILLS) {
+          if (
+            dep.requiresSkill &&
+            (next[dep.id] ?? 0) > 0 &&
+            !next[dep.requiresSkill]
+          ) {
+            delete next[dep.id]
+            changed = true
+          }
+        }
+      }
+    }
+
+    set({ skillRanks: next })
+  },
+
+  incSkillRank: (skillId, maxRank) => {
+    const { skillRanks } = get()
+    const cur = skillRanks[skillId] ?? 0
+    get().setSkillRank(skillId, cur + 1, maxRank)
+  },
+
+  decSkillRank: (skillId) => {
+    const { skillRanks } = get()
+    const cur = skillRanks[skillId] ?? 0
+    if (cur <= 0) return
+    const next = { ...skillRanks }
+    if (cur - 1 === 0) delete next[skillId]
+    else next[skillId] = cur - 1
+    set({ skillRanks: next })
+  },
+
+  resetSkillRanks: () => set({ skillRanks: {} }),
+}))
+
+export function skillPointsFor(level: number): number {
+  return level * gameConfig.skillPointsPerLevel
+}
+
+export function subskillPointsFor(level: number): number {
+  return Math.floor(level / 5)
+}
+
+export function subskillKey(skillId: string, subskillId: string): string {
+  return `${skillId}:${subskillId}`
+}
+
+export function attrPointsFor(level: number): number {
+  return level * gameConfig.attributePointsPerLevel
+}
+
+export function finalAttributes(
+  classId: string | null,
+  allocated: AttrMap,
+): AttrMap {
+  const cls = classId ? getClass(classId) : undefined
+  const out = emptyAllocation()
+  for (const attr of gameConfig.attributes) {
+    const defaultBase = gameConfig.defaultBaseAttributes?.[attr.key] ?? 0
+    const classBase = cls?.baseAttributes[attr.key] ?? 0
+    const spent = allocated[attr.key] ?? 0
+    out[attr.key] = defaultBase + classBase + spent
+  }
+  return out
+}

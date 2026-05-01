@@ -1,0 +1,234 @@
+[
+  {
+    "id": "ring_heroic_azazel_s_despair",
+    "name": "Azazel's Despair",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "all_skills": [
+        1,
+        3
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "ring_heroic_giant_s_band_of_strength",
+    "name": "Giant's Band of Strength",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        1,
+        3
+      ],
+      "crit_chance": [
+        4,
+        12
+      ],
+      "to_strength": [
+        35,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Ratingd On Level"
+    ]
+  },
+  {
+    "id": "ring_heroic_mana_bender_s_will",
+    "name": "Mana Bender's Will",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "mana_replenish": [
+        8,
+        15
+      ],
+      "to_energy": [
+        70,
+        105
+      ],
+      "mana_replenish_pct": [
+        45,
+        75
+      ],
+      "increased_life": [
+        5,
+        10
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Spell: Mana Bender"
+    ]
+  },
+  {
+    "id": "ring_heroic_quickening_zephyr",
+    "name": "Quickening Zephyr",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "movement_speed": 30,
+      "increased_attack_speed": [
+        35,
+        50
+      ],
+      "all_attributes": [
+        25,
+        35
+      ]
+    },
+    "uniqueEffects": [
+      "All Skills Class"
+    ]
+  },
+  {
+    "id": "ring_heroic_scourge_loop",
+    "name": "Scourge Loop",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "uniqueEffects": [
+      "Ailment Damage",
+      "Ailment Critical Strike Chance",
+      "Ailment Critical Strike Dmg",
+      "Enemy All Resist"
+    ]
+  },
+  {
+    "id": "ring_heroic_soulforged_ring",
+    "name": "Soulforged Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "all_skills": 2,
+      "faster_cast_rate": 15,
+      "increased_attack_speed": 15,
+      "all_attributes": 25,
+      "increased_life": 15,
+      "increased_mana": 15,
+      "all_resistances": 15,
+      "experience_gain": 12
+    },
+    "uniqueEffects": [
+      "Herobound None"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "ring_heroic_stone_of_premonition",
+    "name": "Stone of Premonition",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "mana_replenish_pct": 15,
+      "mana": [
+        550,
+        575
+      ],
+      "increased_mana": 25
+    },
+    "uniqueEffects": [
+      "Ailment Damage"
+    ]
+  },
+  {
+    "id": "ring_heroic_the_absence_of_constraint",
+    "name": "The Absence of Constraint",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 54,
+    "implicit": {
+      "all_skills": 2,
+      "mana_cost_reduction": [
+        5,
+        10
+      ],
+      "magic_skill_damage": [
+        10,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Spell: Unbound Power"
+    ]
+  },
+  {
+    "id": "ring_heroic_the_downfall_of_felps",
+    "name": "The Downfall of Felps",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 75,
+    "implicit": {
+      "all_attributes": [
+        25,
+        35
+      ]
+    },
+    "uniqueEffects": [
+      "Projectile Damage Increase",
+      "Projectile Size Increase",
+      "Projectile Random Direction",
+      "Projectile Return"
+    ]
+  },
+  {
+    "id": "ring_heroic_void_bomba",
+    "name": "Void Bomba",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "explosion_skills": [
+        2,
+        4
+      ],
+      "explosion_damage": [
+        15,
+        25
+      ],
+      "area_of_effect": [
+        15,
+        25
+      ]
+    },
+    "uniqueEffects": [
+      "Aoe Skills",
+      "Grant Spell: Void Pull",
+      "Explosion Damage",
+      "Explosion Area Of Effect"
+    ]
+  }
+]

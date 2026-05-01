@@ -1,0 +1,1455 @@
+[
+  {
+    "id": "gun_heroic_ak_47",
+    "name": "AK-47",
+    "baseType": "Gun",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "attacks_per_second": 1.75,
+      "enhanced_damage": [
+        780,
+        820
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
+      "increased_attack_speed": [
+        20,
+        70
+      ],
+      "crit_chance": [
+        11,
+        17
+      ],
+      "deadly_blow": 20,
+      "mana_steal": 15,
+      "crit_damage": [
+        30,
+        50
+      ],
+      "to_dexterity": 50
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Attacking: Rapid Fire",
+      "Attack Range"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "bow_heroic_arachno_phobia",
+    "name": "Arachno Phobia",
+    "baseType": "Bow",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 0.65,
+      "enhanced_damage": [
+        720,
+        770
+      ],
+      "poison_skills": [
+        4,
+        6
+      ],
+      "increased_attack_speed": -35,
+      "deadly_blow": [
+        25,
+        50
+      ],
+      "attack_rating": [
+        600,
+        750
+      ],
+      "mana_steal": 11,
+      "defense_ignored": 75,
+      "extra_damage_poisoned": [
+        40,
+        55
+      ],
+      "additive_poison_damage": 7500,
+      "flat_poison_skill_damage": [
+        22,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance After Each Kill: Spiderlings",
+      "Chance When Casting: Cursed Ground",
+      "Grant Spell: Caustic Spearhead"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "sword_heroic_arch_angel_s_phase_blade",
+    "name": "Arch Angel's Phase Blade",
+    "baseType": "Sword",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 1.65,
+      "enhanced_damage": [
+        220,
+        280
+      ],
+      "faster_cast_rate": [
+        25,
+        40
+      ],
+      "flat_arcane_skill_damage": [
+        22,
+        50
+      ],
+      "arcane_skill_damage": [
+        30,
+        40
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "All Skills Class",
+      "Grant Spell: Holy Hammer"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "bow_heroic_arrow_of_zamjo",
+    "name": "Arrow of Zamjo",
+    "baseType": "Bow",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 1.75,
+      "enhanced_damage": [
+        650,
+        850
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
+      "movement_speed": 30,
+      "increased_stasis_damage": [
+        30,
+        45
+      ],
+      "mana_steal": 15,
+      "to_strength": [
+        40,
+        50
+      ],
+      "to_dexterity": 65,
+      "lightning_skill_damage": [
+        50,
+        70
+      ],
+      "ignore_lightning_res": [
+        25,
+        40
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Ricochet"
+    ],
+    "sockets": 4,
+    "maxSockets": 4
+  },
+  {
+    "id": "bow_heroic_astral_projector",
+    "name": "Astral Projector",
+    "baseType": "Bow",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "attacks_per_second": 1.9,
+      "enhanced_damage": [
+        430,
+        560
+      ],
+      "arcane_skills": [
+        3,
+        6
+      ],
+      "attack_rating": 1150,
+      "mana_replenish": [
+        4,
+        8
+      ],
+      "to_dexterity": 35,
+      "to_intelligence": [
+        30,
+        60
+      ],
+      "additive_arcane_damage": [
+        800,
+        1500
+      ],
+      "arcane_skill_damage": [
+        18,
+        45
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Homing Missile",
+      "Explosion Area Of Effect"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "cane_heroic_blood_of_abaddon",
+    "name": "Blood of Abaddon",
+    "baseType": "Cane",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "attacks_per_second": 1.15,
+      "all_skills": [
+        3,
+        5
+      ],
+      "mana_replenish": [
+        6,
+        10
+      ],
+      "to_energy": [
+        30,
+        40
+      ],
+      "to_vitality": [
+        15,
+        20
+      ],
+      "arcane_skill_damage": [
+        25,
+        45
+      ],
+      "mana_replenish_pct": 50
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Blood Surge",
+      "Ailment Damage"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "sword_heroic_bonetti_s_rapier",
+    "name": "Bonetti's Rapier",
+    "baseType": "Sword",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 93,
+    "implicit": {
+      "attacks_per_second": 1.85,
+      "enhanced_damage": [
+        475,
+        550
+      ],
+      "increased_attack_speed": [
+        30,
+        60
+      ],
+      "crit_chance": 25,
+      "crushing_blow_chance": 25,
+      "attack_rating": [
+        375,
+        410
+      ],
+      "life_steal": [
+        3,
+        6
+      ],
+      "crit_damage": 45,
+      "open_wounds": 20,
+      "to_strength": [
+        20,
+        30
+      ],
+      "faster_hit_recovery": 25
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Parry"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "book_heroic_book_of_cold_death",
+    "name": "Book of Cold Death",
+    "baseType": "Book",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "attacks_per_second": 1.75,
+      "all_skills": [
+        2,
+        3
+      ],
+      "cold_skills": 4,
+      "faster_cast_rate": 30,
+      "mana_replenish": [
+        6,
+        10
+      ],
+      "cold_skill_damage": [
+        55,
+        70
+      ],
+      "ignore_cold_res": [
+        25,
+        40
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Power of the Ancients"
+    ],
+    "sockets": 4,
+    "maxSockets": 4
+  },
+  {
+    "id": "polearm_heroic_brimskull_trident",
+    "name": "Brimskull Trident",
+    "baseType": "Polearm",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 96,
+    "implicit": {
+      "attacks_per_second": 1.65,
+      "enhanced_damage": [
+        620,
+        680
+      ],
+      "increased_attack_speed": [
+        10,
+        50
+      ],
+      "additive_physical_damage": [
+        22,
+        50
+      ],
+      "to_strength": 35
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Bone Spear",
+      "Attacks Hit Multiple Enemies None"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "chainsaw_heroic_candy_shredder",
+    "name": "Candy Shredder",
+    "baseType": "Chainsaw",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 1.7,
+      "enhanced_damage": [
+        675,
+        725
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "increased_attack_speed": [
+        65,
+        100
+      ],
+      "deadly_blow": 33,
+      "additive_physical_damage": [
+        28,
+        56
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Random Skill",
+      "Movement Phasing None",
+      "Double Jump"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "wand_heroic_clafaxier_s_legacy",
+    "name": "Clafaxier's Legacy",
+    "baseType": "Wand",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "implicit": {
+      "attacks_per_second": 1.5,
+      "increased_poisoned_damage": [
+        20,
+        30
+      ],
+      "mana_replenish": 6,
+      "extra_damage_poisoned": [
+        10,
+        15
+      ],
+      "poison_skill_damage": [
+        40,
+        50
+      ],
+      "ignore_poison_res": [
+        15,
+        25
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Casting: Cursed Ground",
+      "Grant Spell: Master Poisoner"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "polearm_heroic_dark_knight_s_lance",
+    "name": "Dark Knight's Lance",
+    "baseType": "Polearm",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 96,
+    "implicit": {
+      "attacks_per_second": 1.5,
+      "enhanced_damage": [
+        420,
+        450
+      ],
+      "increased_attack_speed": [
+        40,
+        80
+      ],
+      "deadly_blow": 15,
+      "crushing_blow_chance": 20,
+      "attack_rating_pct": 5,
+      "additive_physical_damage": [
+        22,
+        50
+      ],
+      "defense_ignored": 35,
+      "to_strength": 35
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Lance Thrust"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "bow_heroic_deathquill",
+    "name": "Deathquill",
+    "baseType": "Bow",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 95,
+    "implicit": {
+      "attacks_per_second": 1.5,
+      "enhanced_damage": [
+        520,
+        720
+      ],
+      "increased_attack_speed": 50,
+      "flat_poison_skill_damage": [
+        44,
+        64
+      ],
+      "poison_skill_damage": [
+        45,
+        65
+      ],
+      "ignore_poison_res": [
+        15,
+        25
+      ],
+      "poison_resistance": 60
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Plague of Rats",
+      "Max Poison Resist",
+      "Poison Length Reduced"
+    ]
+  },
+  {
+    "id": "chainsaw_heroic_diablo",
+    "name": "Diablo",
+    "baseType": "Chainsaw",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 0.75,
+      "enhanced_damage": [
+        320,
+        365
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "faster_cast_rate": [
+        70,
+        120
+      ],
+      "all_attributes": 20,
+      "flat_fire_skill_damage": [
+        22,
+        50
+      ],
+      "fire_skill_damage": [
+        16,
+        66
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Casting: Tire Fire",
+      "Grant Spell: Moonshine Molotov",
+      "Attacks Hit Multiple Enemies None"
+    ]
+  },
+  {
+    "id": "gun_heroic_dracula_s_demise",
+    "name": "Dracula's Demise",
+    "baseType": "Gun",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 95,
+    "implicit": {
+      "attacks_per_second": 1,
+      "enhanced_damage": [
+        950,
+        1150
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
+      "increased_attack_speed": -40,
+      "crit_chance": 25,
+      "deadly_blow": 50,
+      "additive_physical_damage": [
+        44,
+        72
+      ],
+      "life_steal": [
+        10,
+        15
+      ],
+      "crit_damage": [
+        40,
+        65
+      ],
+      "defense_ignored": 50
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Attack Range",
+      "Vitality Converted To Attack Dmg",
+      "Attack Dmgd On Level",
+      "Piercing Attack None"
+    ],
+    "sockets": 4,
+    "maxSockets": 4
+  },
+  {
+    "id": "gun_heroic_dreadnought",
+    "name": "Dreadnought",
+    "baseType": "Gun",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "attacks_per_second": 1,
+      "enhanced_damage": [
+        775,
+        825
+      ],
+      "all_skills": 3,
+      "increased_attack_speed": -75,
+      "additive_physical_damage": [
+        40,
+        60
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "chainsaw_heroic_eden_s_harvester",
+    "name": "Eden´s Harvester",
+    "baseType": "Chainsaw",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 1.7,
+      "enhanced_damage": [
+        775,
+        825
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "movement_speed": 30,
+      "increased_attack_speed": [
+        30,
+        50
+      ],
+      "crushing_blow_chance": 25,
+      "attack_rating_pct": 30,
+      "crit_damage": [
+        40,
+        50
+      ],
+      "open_wounds": 25,
+      "to_strength": [
+        40,
+        60
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Revved Up"
+    ],
+    "sockets": 4,
+    "maxSockets": 4
+  },
+  {
+    "id": "dagger_heroic_fenrirs_bloodfang",
+    "name": "Fenrir's Bloodfang",
+    "baseType": "Dagger",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "enhanced_damage": [
+        530,
+        625
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "arcane_skills": [
+        2,
+        4
+      ],
+      "increased_attack_speed": [
+        75,
+        120
+      ],
+      "flat_arcane_skill_damage": [
+        32,
+        60
+      ],
+      "ignore_arcane_res": [
+        15,
+        25
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Casting: Sands of Time",
+      "Grant Spell: Explosive Kunai",
+      "Skill Movement Diminish"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "axe_heroic_gem_king_s_cleaver",
+    "name": "Gem King's Cleaver",
+    "baseType": "Axe",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 96,
+    "implicit": {
+      "attacks_per_second": 1.1,
+      "enhanced_damage": 700
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Attacks Hit Multiple Enemies None"
+    ],
+    "sockets": 6,
+    "maxSockets": 6
+  },
+  {
+    "id": "claw_heroic_glacier_talons",
+    "name": "Glacier Talons",
+    "baseType": "Claw",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "S",
+    "requiresLevel": 98,
+    "implicit": {
+      "enhanced_damage": [
+        380,
+        420
+      ],
+      "attacks_per_second": 1.5,
+      "all_skills": [
+        2,
+        3
+      ],
+      "cold_skills": 4,
+      "faster_cast_rate": 50,
+      "mana_replenish": 8,
+      "cold_skill_damage": [
+        45,
+        70
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance After Each Kill: Blizzard",
+      "Skill Movement Diminish",
+      "Extra Dmg To Deep Frozen",
+      "Energyd On Level",
+      "Intelligenced On Level"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "sword_heroic_glowstick_estoc",
+    "name": "Glowstick Estoc",
+    "baseType": "Sword",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 95,
+    "implicit": {
+      "attacks_per_second": 1.75,
+      "enhanced_damage": [
+        725,
+        850
+      ],
+      "all_skills": [
+        3,
+        4
+      ],
+      "increased_attack_speed": [
+        35,
+        20
+      ],
+      "attack_rating": 1750,
+      "to_strength": [
+        40,
+        60
+      ],
+      "to_dexterity": 45,
+      "attack_damage": [
+        42,
+        32
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Vacuuming Strike",
+      "Chance When Attacking: Weapon Throw",
+      "Grant Spell: Returning Projectiles",
+      "Attacks Hit Multiple Enemies None"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "spellblade_heroic_hypothermia",
+    "name": "Hypothermia",
+    "baseType": "Spellblade",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "attacks_per_second": 1.9,
+      "enhanced_damage": [
+        520,
+        600
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "cold_skills": [
+        3,
+        6
+      ],
+      "faster_cast_rate": 30,
+      "increased_frost_bite_damage": [
+        25,
+        35
+      ],
+      "mana_replenish": [
+        8,
+        12
+      ],
+      "flat_cold_skill_damage": [
+        22,
+        48
+      ],
+      "cold_skill_damage": [
+        45,
+        60
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Torrent",
+      "Chance When Casting: Frozen Hide",
+      "Cannot Be Frozen None"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "mace_heroic_luci_s_day",
+    "name": "Luci's Day",
+    "baseType": "Mace",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 1,
+      "enhanced_damage": [
+        825,
+        900
+      ],
+      "all_skills": [
+        2,
+        5
+      ],
+      "crit_damage": [
+        40,
+        60
+      ],
+      "defense_ignored": 75,
+      "open_wounds": 50,
+      "extra_damage_bleeding": [
+        20,
+        30
+      ],
+      "to_strength": [
+        40,
+        55
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Throw!",
+      "Attacks Hit Multiple Enemies None"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "gun_heroic_masters_magnum",
+    "name": "Master's Magnum",
+    "baseType": "Gun",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "enhanced_damage": [
+        750,
+        920
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "crit_chance": [
+        15,
+        25
+      ],
+      "crit_damage": [
+        80,
+        120
+      ],
+      "defense_ignored": 30,
+      "to_strength": [
+        25,
+        45
+      ],
+      "to_dexterity": [
+        25,
+        45
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Attacking: Shredder Trap",
+      "Deadly Blow Effect"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "bow_heroic_monsoon",
+    "name": "Monsoon",
+    "baseType": "Bow",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 82,
+    "implicit": {
+      "attacks_per_second": 1.8,
+      "enhanced_damage": [
+        550,
+        750
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "mana_steal": [
+        8,
+        15
+      ],
+      "to_strength": [
+        45,
+        60
+      ],
+      "to_dexterity": [
+        40,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Ricochet",
+      "Attack Range",
+      "Attack Ratingd On Level",
+      "Piercing Attack None"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "wand_heroic_oculus_of_ages",
+    "name": "Oculus of Ages",
+    "baseType": "Wand",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 75,
+    "implicit": {
+      "attacks_per_second": 1.5,
+      "all_skills": [
+        4,
+        5
+      ],
+      "faster_cast_rate": 50,
+      "mana_replenish": [
+        7,
+        15
+      ],
+      "to_energy": [
+        35,
+        50
+      ],
+      "to_intelligence": [
+        35,
+        50
+      ],
+      "magic_skill_damage": [
+        20,
+        45
+      ],
+      "mana_per_kill": [
+        15,
+        30
+      ],
+      "all_resistances": [
+        10,
+        20
+      ],
+      "magic_find": [
+        25,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Struck: Teleport",
+      "Ailment Damage"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "cane_heroic_pagan_god_s_blasphemy",
+    "name": "Pagan God's Blasphemy",
+    "baseType": "Cane",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "attacks_per_second": 1,
+      "all_skills": [
+        3,
+        4
+      ],
+      "faster_cast_rate": 50,
+      "mana_replenish": [
+        4,
+        8
+      ],
+      "magic_skill_damage": [
+        35,
+        55
+      ],
+      "light_radius": 8
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Struck: Despair",
+      "Chance When Casting: Judgement",
+      "Ailment Damage"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "bow_heroic_recurving_corrosion",
+    "name": "Recurving Corrosion",
+    "baseType": "Bow",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "implicit": {
+      "attacks_per_second": 1.5,
+      "enhanced_damage": [
+        850,
+        925
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "poison_skills": [
+        2,
+        3
+      ],
+      "attack_rating": [
+        750,
+        1250
+      ],
+      "extra_damage_poisoned": [
+        10,
+        20
+      ],
+      "to_strength": 40,
+      "to_dexterity": 65,
+      "additive_poison_damage": [
+        3500,
+        5
+      ],
+      "poison_skill_damage": [
+        30,
+        50
+      ],
+      "poison_absorption": 8,
+      "poison_resistance": 50
+    },
+    "uniqueEffects": [
+      "Attack Dmg"
+    ]
+  },
+  {
+    "id": "dagger_heroic_riftmaster_s_dirge",
+    "name": "Riftmaster's Dirge",
+    "baseType": "Dagger",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "attacks_per_second": 1.8,
+      "enhanced_damage": [
+        270,
+        300
+      ],
+      "all_skills": 2,
+      "movement_speed": 45,
+      "increased_attack_speed": [
+        85,
+        125
+      ],
+      "deadly_blow": 25,
+      "flat_arcane_skill_damage": [
+        32,
+        60
+      ],
+      "ignore_arcane_res": [
+        15,
+        30
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Attacking: Age Proliferation"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "mace_heroic_s_hk_puimuri",
+    "name": "Sähköpuimuri",
+    "baseType": "Mace",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "attacks_per_second": 1.85,
+      "enhanced_damage": [
+        630,
+        780
+      ],
+      "lightning_skills": [
+        3,
+        5
+      ],
+      "increased_attack_speed": [
+        75,
+        100
+      ],
+      "defense_ignored": 40,
+      "flat_lightning_skill_damage": [
+        22,
+        50
+      ],
+      "lightning_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_lightning_res": 25
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Storm Caller"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "mace_heroic_shishkebab",
+    "name": "Shishkebab",
+    "baseType": "Mace",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 1.15,
+      "enhanced_damage": [
+        700,
+        900
+      ],
+      "all_skills": [
+        3,
+        4
+      ],
+      "fire_skills": [
+        3,
+        6
+      ],
+      "movement_speed": 30,
+      "life_steal": [
+        8,
+        15
+      ],
+      "extra_damage_burning": [
+        25,
+        40
+      ],
+      "to_strength": [
+        35,
+        60
+      ],
+      "additive_fire_damage": [
+        5,
+        8500
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Fresh Cut",
+      "Chance When Attacking: Butchers Hook",
+      "Attack Ratingd On Level",
+      "Attacks Hit Multiple Enemies None"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "staff_heroic_spell_eater",
+    "name": "Spell Eater",
+    "baseType": "Staff",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "implicit": {
+      "attacks_per_second": 1.75,
+      "all_skills": 4,
+      "arcane_skills": [
+        4,
+        8
+      ],
+      "faster_cast_rate": [
+        20,
+        40
+      ],
+      "increased_shadow_burning_damage": [
+        20,
+        30
+      ],
+      "mana_replenish": [
+        10,
+        15
+      ],
+      "flat_arcane_skill_damage": [
+        22,
+        50
+      ],
+      "arcane_skill_damage": [
+        25,
+        45
+      ],
+      "ignore_arcane_res": [
+        20,
+        35
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Mana Devour"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "cane_heroic_the_eye_of_tarethiel",
+    "name": "The Eye of Tarethiel",
+    "baseType": "Cane",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "attacks_per_second": 1.25,
+      "all_skills": [
+        5,
+        10
+      ],
+      "skill_haste": [
+        20,
+        45
+      ],
+      "to_energy": [
+        30,
+        45
+      ],
+      "arcane_skill_damage": [
+        15,
+        30
+      ],
+      "mana_replenish_pct": [
+        25,
+        35
+      ],
+      "life_per_kill": [
+        8,
+        15
+      ],
+      "all_resistances": [
+        15,
+        30
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Casting: Eye of Tarethiel",
+      "Grant Spell: Age Proliferation",
+      "Grant Spell: Temporal Heroes"
+    ]
+  },
+  {
+    "id": "mace_heroic_the_light_of_dawn",
+    "name": "The Light of Dawn",
+    "baseType": "Mace",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "attacks_per_second": 1,
+      "enhanced_damage": [
+        725,
+        875
+      ],
+      "increased_attack_speed": 50,
+      "deadly_blow": 50,
+      "crit_damage": [
+        85,
+        125
+      ],
+      "defense_ignored": [
+        35,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Attacking: Apocalyptic Thunder",
+      "Vitality Converted To Attack Dmg",
+      "Less Dmg With Cd Skills",
+      "Vitalityd On Level",
+      "Attacks Hit Multiple Enemies None"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "axe_heroic_winter_s_bite",
+    "name": "Winter's Bite",
+    "baseType": "Axe",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 97,
+    "implicit": {
+      "attacks_per_second": 1.75,
+      "enhanced_damage": [
+        575,
+        625
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "cold_skills": [
+        1,
+        2
+      ],
+      "increased_attack_speed": [
+        20,
+        60
+      ],
+      "attack_rating": 15,
+      "mana_steal": [
+        7,
+        12
+      ],
+      "to_dexterity": [
+        30,
+        50
+      ],
+      "cold_absorption": [
+        3,
+        5
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Breath of Ice",
+      "Extra Dmg To Deep Frozen",
+      "Attacks Hit Multiple Enemies None",
+      "Cannot Be Frozen None"
+    ]
+  },
+  {
+    "id": "axe_heroic_wraith_forged_cleaver",
+    "name": "Wraith Forged Cleaver",
+    "baseType": "Axe",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 96,
+    "implicit": {
+      "attacks_per_second": 1.1,
+      "enhanced_damage": [
+        580,
+        640
+      ],
+      "all_skills": [
+        5,
+        10
+      ],
+      "life_steal": [
+        12,
+        18
+      ],
+      "crit_chance": 100,
+      "defense_ignored": 50,
+      "open_wounds": 33,
+      "mana_per_kill": [
+        22,
+        35
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Slice of Shadows",
+      "Attacks Hit Multiple Enemies None",
+      "Grant Aura Holder Only: Dark Oath"
+    ]
+  }
+]

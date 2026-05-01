@@ -1,0 +1,58 @@
+[
+  {
+    "id": "armors_common_leather_coat",
+    "name": "Leather Coat",
+    "baseType": "Body Armor",
+    "slot": "armor",
+    "rarity": "common",
+    "grade": "D",
+    "defenseMin": 10,
+    "defenseMax": 18
+  },
+  {
+    "id": "armors_common_breast_plate",
+    "name": "Breast Plate",
+    "baseType": "Body Armor",
+    "slot": "armor",
+    "rarity": "common",
+    "grade": "A",
+    "defenseMin": 130,
+    "defenseMax": 160
+  },
+  {
+    "id": "armors_common_chaos_armor",
+    "name": "Chaos Armor",
+    "baseType": "Body Armor",
+    "slot": "armor",
+    "rarity": "common",
+    "grade": "S",
+    "defenseMin": 210,
+    "defenseMax": 240
+  },
+  {
+    "id": "armors_heroic_gabriels_broken_wings",
+    "name": "Gabriel's Broken Wings",
+    "baseType": "Body Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "defenseMin": 780,
+    "defenseMax": 820,
+    "sockets": 2,
+    "maxSockets": 6,
+    "source": "Uber Gabriel",
+    "skillBonuses": {
+      "Wings of Hatred": 1,
+      "Fallen God's Bloodlust": [1, 10]
+    },
+    "uniqueEffects": [
+      "10% Attack Speed converted to Faster Cast Rate per level"
+    ],
+    "implicit": {
+      "enhanced_damage": [500, 550],
+      "all_skills": [2, 6],
+      "increased_attack_speed": [40, 50],
+      "attack_rating": [800, 1000],
+      "all_attributes": 80
+    }
+  }
+]

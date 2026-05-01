@@ -1,0 +1,80 @@
+[
+  {
+    "id": "body_armor_angelic_st_jupe_s_plate_of_command",
+    "name": "St. Jupe's Plate of Command",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        310,
+        340
+      ],
+      "enhanced_defense": [
+        580,
+        630
+      ],
+      "summon_skills": [
+        4,
+        8
+      ],
+      "all_skills": 5,
+      "all_attributes": 50,
+      "magic_skill_damage": [
+        35,
+        50
+      ],
+      "all_resistances": 30
+    },
+    "uniqueEffects": [
+      "Grant Spell: Commander´s Valor",
+      "Summon Attack Speed",
+      "Enemy All Resist"
+    ],
+    "sockets": 6,
+    "maxSockets": 6
+  },
+  {
+    "id": "body_armor_angelic_tayrel_s_chestplate",
+    "name": "Tayrel's Chestplate",
+    "baseType": "Armor",
+    "slot": "armor",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        410,
+        540
+      ],
+      "enhanced_defense": [
+        750,
+        925
+      ],
+      "all_skills": [
+        7,
+        15
+      ],
+      "movement_speed": [
+        40,
+        50
+      ],
+      "all_attributes": 40,
+      "all_resistances": [
+        50,
+        75
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Spell: Fallen Justice",
+      "Lifed On Level",
+      "Vitalityd On Level",
+      "Max All Resist",
+      "Cannot Be Frozen None"
+    ],
+    "sockets": 6,
+    "maxSockets": 6
+  }
+]

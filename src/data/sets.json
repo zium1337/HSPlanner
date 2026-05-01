@@ -1,0 +1,2499 @@
+[
+  {
+    "id": "anubi_s_eternal_life",
+    "name": "Anubi's Eternal Life",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Anubis Oculus",
+        "itemId": "anubis_oculus"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Anubis Torso",
+        "itemId": "anubis_torso"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Anubis' Mighty Hands",
+        "itemId": "anubis_mighty_hands"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "life_replenish_pct": 30,
+          "fire_resistance": 85,
+          "all_resistances": 35,
+          "life": 1250
+        },
+        "descriptions": [
+          "Replenish Life 30%",
+          "+75% to Fire Resistance",
+          "+10% to Maximum Fire Resist",
+          "+35% to All Resistances",
+          "+1250 to Life"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "abomination_s_defiled_organs",
+    "name": "Abomination's Defiled Organs",
+    "items": [
+      {
+        "slot": "Charm",
+        "name": "Abomination's Heart",
+        "itemId": "abomination_s_heart"
+      },
+      {
+        "slot": "Charm",
+        "name": "Abomination's Eye",
+        "itemId": "abomination_s_eye"
+      },
+      {
+        "slot": "Charm",
+        "name": "Abomination's Brain",
+        "itemId": "abomination_s_brain"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "skill_haste": 25
+        },
+        "descriptions": [
+          "Summon Damage Increased by 15%",
+          "+20% Reduced damage taken by Summons",
+          "Skill Haste Increased by 25%",
+          "+1 to Summon Amount",
+          "+1 to Summon Abomination",
+          "Summon an Abomination to fight on your side."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "arc_s_blessed_faith",
+    "name": "Arc's Blessed Faith",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Arc's Sigil",
+        "itemId": "arc_s_sigil"
+      },
+      {
+        "slot": "Boots",
+        "name": "Arc's Walkers",
+        "itemId": "arc_s_walkers"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "experience_gain": 15,
+          "skill_haste": 40
+        },
+        "descriptions": [
+          "+15% Increased Experience Gain",
+          "Skill Haste Increased by 40%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gurag_s_fury",
+    "name": "Gurag's Fury",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Gurag's Pebble",
+        "itemId": "gurag_s_pebble"
+      },
+      {
+        "slot": "Charm",
+        "name": "Gurag's Heart Charm",
+        "itemId": "gurag_s_heart_charm"
+      },
+      {
+        "slot": "Mace",
+        "name": "Gurag's Stone Crusher",
+        "itemId": "gurag_s_stone_crusher"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "life": 575,
+          "all_skills": 4,
+          "physical_damage_reduction": 30
+        },
+        "descriptions": [
+          "+575 to Life",
+          "+4 to All Skills",
+          "Physical Damage Taken Reduced by 30%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "aztec_s_mystery",
+    "name": "Aztec's Mystery",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Aztec Necklace",
+        "itemId": "aztec_necklace"
+      },
+      {
+        "slot": "Charm",
+        "name": "Aztec Devil",
+        "itemId": "aztec_devil"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Aztec Crown",
+        "itemId": "aztec_crown"
+      },
+      {
+        "slot": "Shield",
+        "name": "Aztec Ward",
+        "itemId": "aztec_ward"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "additive_poison_damage": 650,
+          "skill_haste": 25,
+          "increased_attack_speed": 50,
+          "all_skills": 3,
+          "poison_resistance": 25
+        },
+        "descriptions": [
+          "+650 to Additive Poison Damage",
+          "Skill Haste Increased by 25%",
+          "+50% Increased Attack Speed",
+          "+3 to All Skills (Class) (Amazon)",
+          "-25% to Enemy Poison Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "demolition_expert",
+    "name": "Demolition Expert",
+    "items": [
+      {
+        "slot": "Charm",
+        "name": "The Detonator",
+        "itemId": "the_detonator"
+      },
+      {
+        "slot": "Charm",
+        "name": "Barrel of Explosives",
+        "itemId": "barrel_of_explosives"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "area_of_effect": 20,
+          "explosion_damage": 15,
+          "skill_haste": 15
+        },
+        "descriptions": [
+          "Explosion area of effect increased by 20%",
+          "Explosion Damage increased by 15%",
+          "Skill Haste Increased by 15%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gladiator_s_glory",
+    "name": "Gladiator's Glory",
+    "items": [
+      {
+        "slot": "Boots",
+        "name": "Gladiator's Battle Sandals",
+        "itemId": "gladiator_s_battle_sandals"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Gladiator's Skullet",
+        "itemId": "gladiator_s_skullet"
+      },
+      {
+        "slot": "Mace",
+        "name": "Gladiator's Wrecking Ball",
+        "itemId": "gladiator_s_wrecking_ball"
+      },
+      {
+        "slot": "Shield",
+        "name": "Gladiator's Wall",
+        "itemId": "gladiator_s_wall"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "movement_speed": 25,
+          "additive_physical_damage": 65,
+          "increased_attack_speed": 30,
+          "to_dexterity": 35,
+          "all_skills": 4
+        },
+        "descriptions": [
+          "+25% Increased Movement Speed",
+          "+65 to Flat Physical Damage",
+          "+30% Increased Attack Speed",
+          "+35 to Dexterity",
+          "+4 to All Skills (Class) (Marauder)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "juggernaut_s_rampart",
+    "name": "Juggernaut's Rampart",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Juggernaut's Emblem",
+        "itemId": "juggernaut_s_emblem"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Juggernaut's Glorious Plate",
+        "itemId": "juggernaut_s_glorious_plate"
+      },
+      {
+        "slot": "Boots",
+        "name": "Juggernaut's Victory Marchers",
+        "itemId": "juggernaut_s_victory_marchers"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Juggernaut's Siege Helm",
+        "itemId": "juggernaut_s_siege_helm"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "area_of_effect": 40,
+          "mana": 250,
+          "faster_cast_rate": 30,
+          "all_resistances": 50,
+          "all_skills": 4,
+          "life_steal": 15,
+          "crit_damage": 80
+        },
+        "descriptions": [
+          "Explosion area of effect increased by 40%",
+          "+250 to Mana",
+          "+30% Faster Cast Rate",
+          "+50% to All Resistances",
+          "+4 to All Skills (Class) (Marauder)",
+          "Battle Worn",
+          "(",
+          "Boots",
+          ")",
+          "Battle Worn Boots",
+          "(",
+          "Gloves",
+          ")",
+          "Battle Worn Gauntlets",
+          "(",
+          "Helmet",
+          ")",
+          "Battle Worn Visor",
+          "+15% Life stolen per Hit",
+          "+20% Increased Critical Strike Chance",
+          "+80% Increased Critical Strike Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "blood_letter_s_armament",
+    "name": "Blood-letter's Armament",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Blood-letter's Plate Body",
+        "itemId": "blood_letter_s_plate_body"
+      },
+      {
+        "slot": "Boots",
+        "name": "Blood-letter's Plated Boots",
+        "itemId": "blood_letter_s_plated_boots"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Blood-letter's Plated Gauntlet",
+        "itemId": "blood_letter_s_plated_gauntlet"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Blood-letter's Crown",
+        "itemId": "blood_letter_s_crown"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "ranged_range": 15,
+          "to_vitality": 20,
+          "life_replenish_pct": 25,
+          "all_skills": 4,
+          "attack_damage": 50
+        },
+        "descriptions": [
+          "Attack Range Increased by 15%",
+          "+20 to Vitality",
+          "Replenish Life 25%",
+          "+4 to All Skills (Class) (Plague Doctor)",
+          "Attack Damage increased by 50%",
+          "Grenadier's Explosive",
+          "(",
+          "Body Armor",
+          ")",
+          "Tactical Flak Jacket",
+          "(",
+          "Charm",
+          ")",
+          "Bob's Grenade",
+          "+1 to Smart Fuse",
+          "Grenade now explodes instantly instead of after a delay."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bone_conjurer_s_regalia",
+    "name": "Bone Conjurer's Regalia",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Bone Conjurer's Mask",
+        "itemId": "bone_conjurer_s_mask"
+      },
+      {
+        "slot": "Boots",
+        "name": "Bone Conjurer's Marchers",
+        "itemId": "bone_conjurer_s_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Bone Conjurer's Trophy",
+        "itemId": "bone_conjurer_s_trophy"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Bone Conjurer's Grips",
+        "itemId": "bone_conjurer_s_grips"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "mana_replenish_pct": 25,
+          "arcane_skill_damage": 20,
+          "all_skills": 3,
+          "arcane_resistance": 20
+        },
+        "descriptions": [
+          "Replenish Mana 25%",
+          "Arcane Skill Damage increased by 20%",
+          "+3 to All Skills (Class) (Demon Spawn)",
+          "+8 to Demonic Presence (Demon Spawn)",
+          "Increases your arcane skill damage.",
+          "-20% to Enemy Arcane Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "god_of_the_elements",
+    "name": "God of the Elements",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Spirit Pendant",
+        "itemId": "spirit_pendant"
+      },
+      {
+        "slot": "Boots",
+        "name": "Boots of Wild",
+        "itemId": "boots_of_wild"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Gloves of Wilderness",
+        "itemId": "gloves_of_wilderness"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Wendigo Skull",
+        "itemId": "wendigo_skull"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "life": 235,
+          "arcane_resistance": 75,
+          "movement_speed": 40,
+          "all_skills": 9,
+          "life_steal": 15,
+          "increased_attack_speed": 30,
+          "attack_damage": 50,
+          "to_dexterity": 250
+        },
+        "descriptions": [
+          "+235 to Life",
+          "+75% to Arcane Resistance",
+          "+40% Increased Movement Speed",
+          "+5 to All Skills (Class) (Shaman)",
+          "+5 to Chaos Totem (Shaman)",
+          "Summon a totem that rapidly shoots chaos bolts dealing arcane damage.",
+          "Blood Bond",
+          "(",
+          "Belt",
+          ")",
+          "Butcher's Belt",
+          "(",
+          "Body Armor",
+          ")",
+          "Butcher's Apron",
+          "(",
+          "Helmet",
+          ")",
+          "Butcher's Hood",
+          "(",
+          "Sword",
+          ")",
+          "Daisy",
+          "+15% Life stolen per Hit",
+          "+30% Increased Attack Speed",
+          "Attack Damage increased by 50%",
+          "+4 to All Skills (Class) (Butcher)",
+          "+250 to Dexterity"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "guardian_s_of_the_sands",
+    "name": "Guardian's of the Sands",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Sand Manipulator's Kalasiris",
+        "itemId": "sand_manipulator_s_kalasiris"
+      },
+      {
+        "slot": "Charm",
+        "name": "Canopic Jar of Blood",
+        "itemId": "canopic_jar_of_blood"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Sand Manipulator's Authority",
+        "itemId": "sand_manipulator_s_authority"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Sand Manipulator's Mask",
+        "itemId": "sand_manipulator_s_mask"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "mana_per_kill": 28,
+          "faster_cast_rate": 30,
+          "arcane_skill_damage": 30,
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+28 Mana After each Kill",
+          "+30% Faster Cast Rate",
+          "Arcane Skill Damage increased by 30%",
+          "+3 to All Skills (Class) (Illusionist)",
+          "+6 to Sand Guardians (Illusionist)",
+          "Sand Guardians not found"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "champion_s_valor",
+    "name": "Champion's Valor",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Champion's Medal of Valor",
+        "itemId": "champion_s_medal_of_valor"
+      },
+      {
+        "slot": "Charm",
+        "name": "Champion's Signet",
+        "itemId": "champion_s_signet"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Champion's Fighting Gloves",
+        "itemId": "champion_s_fighting_gloves"
+      },
+      {
+        "slot": "Polearm",
+        "name": "Champion's Flag Lance",
+        "itemId": "champion_s_flag_lance"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "defense": 30,
+          "life_steal": 7,
+          "increased_attack_speed": 40,
+          "all_skills": 4,
+          "attack_damage": 30
+        },
+        "descriptions": [
+          "+30% of target Defense ignored",
+          "+7% Life stolen per Hit",
+          "+40% Increased Attack Speed",
+          "+4 to All Skills (Class) (Shield Lancer)",
+          "Attack Damage increased by 30%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "flames_of_the_apocalypse",
+    "name": "Flames of the Apocalypse",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Chestplate of Fire",
+        "itemId": "chestplate_of_fire"
+      },
+      {
+        "slot": "Boots",
+        "name": "Flaming Marchers",
+        "itemId": "flaming_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Flaming Coin",
+        "itemId": "flaming_coin"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Hands of Flame",
+        "itemId": "hands_of_flame"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "increased_shadow_burning_damage": 30,
+          "mana_replenish_pct": 150,
+          "faster_cast_rate": 40,
+          "all_skills": 5,
+          "fire_resistance": 25
+        },
+        "descriptions": [
+          "Burning Damage increased by 30%",
+          "Replenish Mana 150%",
+          "+40% Faster Cast Rate",
+          "+5 to All Skills (Class) (Pyromancer)",
+          "-25% to Enemy Fire Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "temporal_mastery",
+    "name": "Temporal Mastery",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Chronomancer's Curio of Time",
+        "itemId": "chronomancer_s_curio_of_time"
+      },
+      {
+        "slot": "Boots",
+        "name": "Chronomancer's Omnipotence",
+        "itemId": "chronomancer_s_omnipotence"
+      },
+      {
+        "slot": "Charm",
+        "name": "Sundial of Ancient Worlds",
+        "itemId": "sundial_of_ancient_worlds"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Chronomancer's Observance",
+        "itemId": "chronomancer_s_observance"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "life": 175,
+          "all_resistances": 30,
+          "arcane_resistance": 20,
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+175 to Life",
+          "+30% to All Resistances",
+          "-20% to Enemy Arcane Resistance",
+          "+5 to All Skills (Class) (Illusionist)",
+          "+5 to Temporal Heroes (Illusionist)",
+          "Summon a fractal Viking, Pyromancer and Marksman to fight on your side."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "damien_s_legacy",
+    "name": "Damien's Legacy",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Damien's Soulstone",
+        "itemId": "damien_s_soulstone"
+      },
+      {
+        "slot": "Book",
+        "name": "Damien's Head",
+        "itemId": "damien_s_head"
+      },
+      {
+        "slot": "Charm",
+        "name": "Damien's Cage",
+        "itemId": "damien_s_cage"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "mana_replenish_pct": 30,
+          "all_skills": 4,
+          "faster_cast_rate": 50
+        },
+        "descriptions": [
+          "Replenish Mana 30%",
+          "+4 to All Skills",
+          "+50% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dante_s_nightmare",
+    "name": "Dante's Nightmare",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Dante's Jacket",
+        "itemId": "dante_s_jacket"
+      },
+      {
+        "slot": "Boots",
+        "name": "Dante's Boots",
+        "itemId": "dante_s_boots"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Dante's Mitts",
+        "itemId": "dante_s_mitts"
+      },
+      {
+        "slot": "Sword",
+        "name": "Dante's Demon Blade",
+        "itemId": "dante_s_demon_blade"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "life_steal": 15,
+          "all_attributes": 40,
+          "movement_speed": 40,
+          "all_skills": 7,
+          "attack_rating": 40
+        },
+        "descriptions": [
+          "+15% Life stolen per Hit",
+          "+40 to All Attributes",
+          "+40% Increased Movement Speed",
+          "+7 to All Skills (Class) (Demon Slayer)",
+          "+40% Increased Attack Rating"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "death_lord_s_legacy",
+    "name": "Death Lord's Legacy",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Death Lord's Bone Armor",
+        "itemId": "death_lord_s_bone_armor"
+      },
+      {
+        "slot": "Boots",
+        "name": "Death Lord's Marchers",
+        "itemId": "death_lord_s_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Death Lord's Zombie Head",
+        "itemId": "death_lord_s_zombie_head"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Death Lord's Crown",
+        "itemId": "death_lord_s_crown"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "additive_arcane_damage": 450,
+          "arcane_skill_damage": 30,
+          "all_resistances": 50,
+          "all_skills": 5,
+          "arcane_resistance": 25
+        },
+        "descriptions": [
+          "+450 to Additive Arcane Damage",
+          "Arcane Skill Damage increased by 30%",
+          "+50% to All Resistances",
+          "+5 to All Skills (Class) (Necromancer)",
+          "-25% to Enemy Arcane Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "death_s_toll",
+    "name": "Death's Toll",
+    "items": [
+      {
+        "slot": "Gloves",
+        "name": "Death's Grasp",
+        "itemId": "death_s_grasp"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Reaper's Hood",
+        "itemId": "reaper_s_hood"
+      },
+      {
+        "slot": "Polearm",
+        "name": "Death's Scythe",
+        "itemId": "death_s_scythe"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "attack_damage": 25,
+          "all_skills": 2,
+          "increased_attack_speed": 60
+        },
+        "descriptions": [
+          "Attack Damage increased by 25%",
+          "+2 to All Skills",
+          "+60% Increased Attack Speed"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "satan_s_curse",
+    "name": "Satan's Curse",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Satan's Precious",
+        "itemId": "satan_s_precious"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Satan's Cuirass",
+        "itemId": "satan_s_cuirass"
+      },
+      {
+        "slot": "Boots",
+        "name": "Satan's Molten Steps",
+        "itemId": "satan_s_molten_steps"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "damage_return": 75,
+          "defense": 750,
+          "physical_damage_reduction": 30
+        },
+        "descriptions": [
+          "+75% of Damage Returned to the Attacker",
+          "Defense: 750",
+          "Physical Damage Taken Reduced by 30%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "satan_s_redemption",
+    "name": "Satan's Redemption",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Devil's Gem",
+        "itemId": "devil_s_gem"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Demon's Ribcage",
+        "itemId": "demon_s_ribcage"
+      },
+      {
+        "slot": "Charm",
+        "name": "Heart of Agony",
+        "itemId": "heart_of_agony"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Devil's Grasp",
+        "itemId": "devil_s_grasp"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "arcane_resistance": 75,
+          "mana": 350,
+          "faster_cast_rate": 50,
+          "all_skills": 5,
+          "mana_per_kill": 35
+        },
+        "descriptions": [
+          "+75% to Arcane Resistance",
+          "+350 to Mana",
+          "+50% Faster Cast Rate",
+          "+5 to All Skills (Class) (Demonspawn)",
+          "+35 Mana After each Kill"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "uabel_s_majesty",
+    "name": "Uabel's Majesty",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Uabel's Chest",
+        "itemId": "uabel_s_chest"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Uabel's Gloves",
+        "itemId": "uabel_s_gloves"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Uabel's Helmet",
+        "itemId": "uabel_s_helmet"
+      },
+      {
+        "slot": "Wand",
+        "name": "Uabel's Wand",
+        "itemId": "uabel_s_wand"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "defense": 350,
+          "mana_replenish_pct": 20,
+          "all_attributes": 15,
+          "all_skills": 3,
+          "all_resistances": 40
+        },
+        "descriptions": [
+          "Defense: 350",
+          "Replenish Mana 20%",
+          "+15 to All Attributes",
+          "+3 to All Skills",
+          "+40% to All Resistances",
+          "Witching",
+          "(",
+          "Charm",
+          ")",
+          "Mysterious Monkey Paw",
+          "(",
+          "Charm",
+          ")",
+          "Dibbik Box",
+          "+2 to Follower Relic Amount"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gabriel_s_devotion",
+    "name": "Gabriel's Devotion",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Insignia of the Hunter",
+        "itemId": "insignia_of_the_hunter"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Gabriel's Leather Trench Coat",
+        "itemId": "gabriel_s_leather_trench_coat"
+      },
+      {
+        "slot": "Gun",
+        "name": "Demon",
+        "itemId": "demon"
+      },
+      {
+        "slot": "Gun",
+        "name": "Angel",
+        "itemId": "angel"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Gabriel's Brimmed Fedora",
+        "itemId": "gabriel_s_brimmed_fedora"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 5,
+        "stats": {
+          "projectile_speed": 2,
+          "increased_attack_speed": 40,
+          "all_skills": 6,
+          "crit_damage": 75
+        },
+        "descriptions": [
+          "+20% Increased Critical Strike Chance",
+          "+2 to Projectile Speed",
+          "+40% Increased Attack Speed",
+          "+6 to All Skills (Class) (Demon Slayer)",
+          "+75% Increased Critical Strike Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "doctor_s_medkit",
+    "name": "Doctor's Medkit",
+    "items": [
+      {
+        "slot": "Charm",
+        "name": "Doctor's Mask in a Jar",
+        "itemId": "doctor_s_mask_in_a_jar"
+      },
+      {
+        "slot": "Flask",
+        "name": "Doctor's Potion",
+        "itemId": "doctor_s_potion"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Doctor's Grasp",
+        "itemId": "doctor_s_grasp"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Doctor's Visage",
+        "itemId": "doctor_s_visage"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "mana_replenish_pct": 50,
+          "poison_skill_damage": 25,
+          "faster_cast_rate": 100,
+          "all_skills": 9,
+          "poison_resistance": 15,
+          "mana": 225,
+          "arcane_skill_damage": 35,
+          "life_steal": 8,
+          "cold_skill_damage": 20,
+          "attack_damage": 35,
+          "increased_attack_speed": 40
+        },
+        "descriptions": [
+          "Replenish Mana 20%",
+          "Poison Skill Damage increased by 25%",
+          "+50% Faster Cast Rate",
+          "+5 to All Skills (Class) (Plague Doctor)",
+          "-15% to Enemy Poison Resistance",
+          "Earth Shaper's Pride",
+          "(",
+          "Belt",
+          ")",
+          "Earth Shaper's Belt",
+          "(",
+          "Body Armor",
+          ")",
+          "Earth Shaper's Body",
+          "(",
+          "Boots",
+          ")",
+          "Earth Shaper's Boots",
+          "(",
+          "Claw",
+          ")",
+          "Earth Shaper's Talons",
+          "+225 to Mana",
+          "Replenish Mana 30%",
+          "Arcane Skill Damage increased by 35%",
+          "+10 to Tornado (Shaman)",
+          "Summon a tornado traveling towards target direction dealing arcane damage to monsters on its path.",
+          "+50% Faster Cast Rate",
+          "Einar's Rage",
+          "(",
+          "Body Armor",
+          ")",
+          "Einar's Plated Armor",
+          "(",
+          "Boots",
+          ")",
+          "Einar's Icy Stride",
+          "(",
+          "Gloves",
+          ")",
+          "Einar's Padded Gauntlets",
+          "(",
+          "Helmet",
+          ")",
+          "Einar's Horned Helmet",
+          "+8% Life stolen per Hit",
+          "Cold Skill Damage increased by 20%",
+          "Attack Damage: 35",
+          "+4 to All Skills (Class) (Jötunn)",
+          "+40% Increased Attack Speed"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "engineer_s_combat_gear",
+    "name": "Engineer's Combat Gear",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Engineer's Master Pendant",
+        "itemId": "engineer_s_master_pendant"
+      },
+      {
+        "slot": "Belt",
+        "name": "Engineer's Toolbelt",
+        "itemId": "engineer_s_toolbelt"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Engineer's Plated Vest",
+        "itemId": "engineer_s_plated_vest"
+      },
+      {
+        "slot": "Charm",
+        "name": "Engineer's Mini Drone",
+        "itemId": "engineer_s_mini_drone"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "skill_haste": 20,
+          "mana_replenish_pct": 30,
+          "all_resistances": 45,
+          "physical_damage_reduction": 15,
+          "all_skills": 5
+        },
+        "descriptions": [
+          "Skill Haste Increased by 20%",
+          "Replenish Mana 30%",
+          "+45% to All Resistances",
+          "Physical Damage Taken Reduced by 15%",
+          "+5 to All Skills (Class) (Marksman)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "flames_of_divinity",
+    "name": "Flames of Divinity",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Flame Diviner's Cord",
+        "itemId": "flame_diviner_s_cord"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Flame Diviner's Sanctum",
+        "itemId": "flame_diviner_s_sanctum"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Flame Diviner's Refuge",
+        "itemId": "flame_diviner_s_refuge"
+      },
+      {
+        "slot": "Shield",
+        "name": "Flame Diviner's Ward",
+        "itemId": "flame_diviner_s_ward"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "life": 750,
+          "to_intelligence": 40,
+          "to_energy": 40,
+          "all_skills": 5,
+          "fire_skill_damage": 40
+        },
+        "descriptions": [
+          "+750 to Life",
+          "+40 to Intelligence",
+          "+40 to Energy",
+          "+5 to All Skills (Class) (Pyromancer)",
+          "Fire Skill Damage increased by 40%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nobunaga_s_empire",
+    "name": "Nobunaga's Empire",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Nobunaga's Warrior Spirit",
+        "itemId": "nobunaga_s_warrior_spirit"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Nobunaga's Battle Cuirass",
+        "itemId": "nobunaga_s_battle_cuirass"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Nobunaga's Battle Helmet",
+        "itemId": "nobunaga_s_battle_helmet"
+      },
+      {
+        "slot": "Mace",
+        "name": "Nobunaga's Battle Slicer",
+        "itemId": "nobunaga_s_battle_slicer"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "arcane_skill_damage": 25,
+          "faster_cast_rate": 30,
+          "all_attributes": 30,
+          "all_skills": 4,
+          "area_of_effect": 75
+        },
+        "descriptions": [
+          "Arcane Skill Damage increased by 25%",
+          "+30% Faster Cast Rate",
+          "+30 to All Attributes",
+          "+4 to All Skills (Class) (Samurai)",
+          "Explosion area of effect increased by 75%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "plunderer_s_ensemble",
+    "name": "Plunderer's Ensemble",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Plunderer's Spy Glass",
+        "itemId": "plunderer_s_spy_glass"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Plunderer's Jacket",
+        "itemId": "plunderer_s_jacket"
+      },
+      {
+        "slot": "Boots",
+        "name": "Plunderer's Deck Marchers",
+        "itemId": "plunderer_s_deck_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Plunderer's Gunpowder Bag",
+        "itemId": "plunderer_s_gunpowder_bag"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "to_intelligence": 45,
+          "cold_resistance": 35,
+          "magic_find": 125,
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+45 to Intelligence",
+          "-35% to Enemy Cold Resistance",
+          "+125% Increased Magic Find",
+          "+6 to Anchor Swing (Pirate)",
+          "Unleash a massive anchor swinging around you dealing cold damage.",
+          "+5 to All Skills (Class) (Pirate)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "the_holy_one",
+    "name": "The Holy One",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Sacred Pendant",
+        "itemId": "sacred_pendant"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Sacred Robe",
+        "itemId": "sacred_robe"
+      },
+      {
+        "slot": "Boots",
+        "name": "Sacred Marchers",
+        "itemId": "sacred_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Sacred Owl",
+        "itemId": "sacred_owl"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "mana_replenish_pct": 30,
+          "mana": 400,
+          "faster_cast_rate": 40,
+          "all_skills": 5,
+          "arcane_skill_damage": 35
+        },
+        "descriptions": [
+          "Replenish Mana 30%",
+          "+400 to Mana",
+          "+40% Faster Cast Rate",
+          "+5 to All Skills (Class) (White Mage)",
+          "Arcane Skill Damage increased by 35%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "stickman_steve_s_destruction",
+    "name": "Stickman Steve's Destruction",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Steve's Necklace",
+        "itemId": "steve_s_necklace"
+      },
+      {
+        "slot": "Bow",
+        "name": "Steve's Punchbow",
+        "itemId": "steve_s_punchbow"
+      },
+      {
+        "slot": "Charm",
+        "name": "Hello its me, Steve!",
+        "itemId": "hello_its_me_steve"
+      },
+      {
+        "slot": "Gun",
+        "name": "Steve's Bang",
+        "itemId": "steve_s_bang"
+      },
+      {
+        "slot": "Sword",
+        "name": "Steve's Mighty Sword",
+        "itemId": "steve_s_mighty_sword"
+      },
+      {
+        "slot": "Wand",
+        "name": "Steve's Wand of Fortune",
+        "itemId": "steve_s_wand_of_fortune"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 6,
+        "stats": {
+          "all_resistances": 25,
+          "all_skills": 4,
+          "all_attributes": 30
+        },
+        "descriptions": [
+          "+25% to All Resistances",
+          "+4 to All Skills",
+          "+30 to All Attributes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tal_s_reaping",
+    "name": "Tal's Reaping",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Tal's Pendant",
+        "itemId": "tal_s_pendant"
+      },
+      {
+        "slot": "Charm",
+        "name": "Tal's Deathskull",
+        "itemId": "tal_s_deathskull"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "magic_find": 75,
+          "experience_gain": 5
+        },
+        "descriptions": [
+          "+75% Increased Magic Find",
+          "+5% Increased Experience Gain"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "traveler",
+    "name": "Traveler",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Traveler's Compass",
+        "itemId": "traveler_s_compass"
+      },
+      {
+        "slot": "Belt",
+        "name": "Traveler's Double Belt",
+        "itemId": "traveler_s_double_belt"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Traveler's Leather Jacket",
+        "itemId": "traveler_s_leather_jacket"
+      },
+      {
+        "slot": "Charm",
+        "name": "Traveler's Map Journal",
+        "itemId": "traveler_s_map_journal"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "magic_skill_damage": 30,
+          "life": 8,
+          "movement_speed": 8,
+          "all_skills": 4,
+          "all_attributes": 7
+        },
+        "descriptions": [
+          "+30 to Magic Skill Damage",
+          "Life Increased by 8%",
+          "+8% Increased Total Movement Speed",
+          "+4 to All Skills",
+          "+7 to All Attributes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "venom_s_frame",
+    "name": "Venom's Frame",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Venom's Necklace",
+        "itemId": "venom_s_necklace"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Venom's Ribcage",
+        "itemId": "venom_s_ribcage"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Venom's Talons",
+        "itemId": "venom_s_talons"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Venom's Skull",
+        "itemId": "venom_s_skull"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "poison_skill_damage": 20,
+          "poison_resistance": 65,
+          "physical_damage_reduction": 15,
+          "all_skills": 5
+        },
+        "descriptions": [
+          "Poison Skill Damage increased by 20%",
+          "-25% to Enemy Poison Resistance",
+          "+40% to Poison Resistance",
+          "Physical Damage Taken Reduced by 15%",
+          "+5 to All Skills (Class) (Necromancer)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ymir_s_wisdom",
+    "name": "Ymir's Wisdom",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Ymir's Frozen Tear",
+        "itemId": "ymir_s_frozen_tear"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Ymir's Frozen Vestment",
+        "itemId": "ymir_s_frozen_vestment"
+      },
+      {
+        "slot": "Boots",
+        "name": "Ymir's Freezing Boots",
+        "itemId": "ymir_s_freezing_boots"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Ymir's Frozen Shroud",
+        "itemId": "ymir_s_frozen_shroud"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "mana_per_kill": 25,
+          "cold_resistance": 100,
+          "all_skills": 4
+        },
+        "descriptions": [
+          "+25 Mana After each Kill",
+          "+75% to Cold Resistance",
+          "+6 to Orb of Frost (Jotunn)",
+          "Cast a frozen orb traveling in target direction releasing icicles, freezing and dealing cold damage to monsters on its path.",
+          "+4 to All Skills (Class) (Jotunn)",
+          "-25% to Enemy Cold Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "viking_s_demise",
+    "name": "Viking's Demise",
+    "items": [
+      {
+        "slot": "Axe",
+        "name": "Viking's Sacred Axe",
+        "itemId": "viking_s_sacred_axe"
+      },
+      {
+        "slot": "Boots",
+        "name": "Viking's Sacred Boots",
+        "itemId": "viking_s_sacred_boots"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Viking's Sacred Helmet",
+        "itemId": "viking_s_sacred_helmet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "to_strength": 50,
+          "attack_rating": 1250,
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+50 to Strength",
+          "+1250 to Attack Rating",
+          "+5 to All Skills (Class) (Viking)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "justiciar_s_thunder_raiment",
+    "name": "Justiciar's Thunder Raiment",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Justiciar's Thunder Sash",
+        "itemId": "justiciar_s_thunder_sash"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Justiciar's Thunder Armor",
+        "itemId": "justiciar_s_thunder_armor"
+      },
+      {
+        "slot": "Boots",
+        "name": "Justiciar's Thunder Boots",
+        "itemId": "justiciar_s_thunder_boots"
+      },
+      {
+        "slot": "Shield",
+        "name": "Justiciar's Thunder Wall",
+        "itemId": "justiciar_s_thunder_wall"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "additive_lightning_damage": 450,
+          "increased_attack_speed": 40,
+          "lightning_resistance": 105,
+          "all_skills": 11,
+          "mana": 5,
+          "skill_haste": 30,
+          "cold_skill_damage": 50,
+          "cold_resistance": 40,
+          "mana_replenish_pct": 30,
+          "lightning_skill_damage": 30
+        },
+        "descriptions": [
+          "+450 to Additive Lightning Damage",
+          "+40% Increased Attack Speed",
+          "+75% to Lightning Resistance",
+          "+3 to All Skills (Class) (Paladin)",
+          "+5 to Lightning Fury (Paladin)",
+          "Strike monsters with increased attack damage causing lightning to chain between them dealing lightning damage.",
+          "The Lunar Eclipse",
+          "(",
+          "Belt",
+          ")",
+          "Lunar Prophet's Girdle",
+          "(",
+          "Boots",
+          ")",
+          "Lunar Prophet's Walkers",
+          "(",
+          "Helmet",
+          ")",
+          "Lunar Prophet's Tiara",
+          "(",
+          "Ring",
+          ")",
+          "Lunar Prophet's Band",
+          "Mana Increased by 5%",
+          "Skill Haste Increased by 30%",
+          "Cold Skill Damage increased by 50%",
+          "+4 to All Skills (Class) (Exo)",
+          "-40% to Enemy Cold Resistance",
+          "Thunder Caller's Wrath",
+          "(",
+          "Belt",
+          ")",
+          "Thunder Caller's Sash",
+          "(",
+          "Body Armor",
+          ")",
+          "Thunder Caller's Robe",
+          "(",
+          "Boots",
+          ")",
+          "Thunder Caller's Treads",
+          "(",
+          "Helmet",
+          ")",
+          "Thunder Caller's Veil",
+          "Replenish Mana 30%",
+          "Lightning Skill Damage increased by 30%",
+          "+6 to High Voltage Aura (Stormweaver)",
+          "Increases your and party members lightning skill damage.",
+          "+4 to All Skills (Class) (Stormweaver)",
+          "-30% to Enemy Lightning Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vagabond_s_rags",
+    "name": "Vagabond's Rags",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Vagabond's Strap",
+        "itemId": "vagabond_s_strap"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Vagabond's Wraps",
+        "itemId": "vagabond_s_wraps"
+      },
+      {
+        "slot": "Boots",
+        "name": "Vagabond's Marchers",
+        "itemId": "vagabond_s_marchers"
+      },
+      {
+        "slot": "Shield",
+        "name": "Vagabond's Ward",
+        "itemId": "vagabond_s_ward"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "movement_speed": 30,
+          "additive_physical_damage": 65,
+          "to_strength": 30,
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+30% Increased Movement Speed",
+          "+65 to Flat Physical Damage",
+          "+30 to Strength",
+          "+3 to All Skills (Class) (Nomad)",
+          "+5 to Flying Scimitar (Nomad)",
+          "Throw a huge piercing scimitar dealing increased damage to monsters in its path which returns back to you after a short delay."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "genji_s_battle_gear",
+    "name": "Genji's Battle Gear",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Genji's Battle Armor",
+        "itemId": "genji_s_battle_armor"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Genji's Battle Helmet",
+        "itemId": "genji_s_battle_helmet"
+      },
+      {
+        "slot": "Sword",
+        "name": "Genji's Sword of Fate",
+        "itemId": "genji_s_sword_of_fate"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "attack_damage": 100,
+          "crit_damage": 60
+        },
+        "descriptions": [
+          "+20% Increased Critical Strike Chance",
+          "Attack Damage increased by 100%",
+          "+60% Increased Critical Strike Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "wall_of_god",
+    "name": "Wall of God",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Lancer's Chestplate",
+        "itemId": "lancer_s_chestplate"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Lancers Gauntlets",
+        "itemId": "lancers_gauntlets"
+      },
+      {
+        "slot": "Polearm",
+        "name": "Lancer's Glory",
+        "itemId": "lancer_s_glory"
+      },
+      {
+        "slot": "Shield",
+        "name": "Sacred Aegis",
+        "itemId": "sacred_aegis"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "damage_return": 100,
+          "defense": 500,
+          "life": 450,
+          "all_skills": 4,
+          "physical_damage_reduction": 30
+        },
+        "descriptions": [
+          "+100% of Damage Returned to the Attacker",
+          "Defense: 500",
+          "+450 to Life",
+          "+4 to All Skills (Class) (Shield Lancer)",
+          "Physical Damage Taken Reduced by 30%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "master_s_legacy",
+    "name": "Master's Legacy",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Lost Master's Platemail",
+        "itemId": "lost_master_s_platemail"
+      },
+      {
+        "slot": "Boots",
+        "name": "Lost Master's Marchers",
+        "itemId": "lost_master_s_marchers"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Lost Master's Gauntlets",
+        "itemId": "lost_master_s_gauntlets"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Lost Master's Vision",
+        "itemId": "lost_master_s_vision"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "to_strength": 25,
+          "additive_physical_damage": 65,
+          "increased_attack_speed": 50,
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+25 to Strength",
+          "+65 to Flat Physical Damage",
+          "+50% Increased Attack Speed",
+          "+5 to All Skills (Class) (Samurai)",
+          "+50% Increased Critical Strike Chance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "marksman_s_hunting_gear",
+    "name": "Marksman's Hunting Gear",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Marksman's Hunting Shroud",
+        "itemId": "marksman_s_hunting_shroud"
+      },
+      {
+        "slot": "Bow",
+        "name": "Marksman's Hunting Bow",
+        "itemId": "marksman_s_hunting_bow"
+      },
+      {
+        "slot": "Charm",
+        "name": "Marksman's Quiver",
+        "itemId": "marksman_s_quiver"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Marksman's Hunting Gloves",
+        "itemId": "marksman_s_hunting_gloves"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "increased_attack_speed": 30,
+          "defense": 30,
+          "attack_rating": 825,
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+30% Increased Attack Speed",
+          "+30% of target Defense ignored",
+          "+825 to Attack Rating",
+          "+3 to All Skills (Class) (Marksman)",
+          "+5 to Volatile Shot (Marksman)",
+          "Fire a colossal arrow exploding on hit dealing area of effect damage."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mevius_eye_of_chaos",
+    "name": "Mevius' Eye of Chaos",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Mevius' Mighty Plate",
+        "itemId": "mevius_mighty_plate"
+      },
+      {
+        "slot": "Boots",
+        "name": "Mevius' Mighty Marchers",
+        "itemId": "mevius_mighty_marchers"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Mevius' Mighty Gauntlets",
+        "itemId": "mevius_mighty_gauntlets"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Mevius' Mighty Helmet",
+        "itemId": "mevius_mighty_helmet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "mana": 500,
+          "mana_per_kill": 35,
+          "mana_replenish_pct": 40,
+          "all_resistances": 125,
+          "all_skills": 15
+        },
+        "descriptions": [
+          "All Damage Taken Reduced by 3%",
+          "+500 to Mana",
+          "+35 Mana After each Kill",
+          "Replenish Mana 40%",
+          "-125% to All Resistances",
+          "+15 to All Skills"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "elder_of_mos_arathim",
+    "name": "Elder of Mos'Arathim",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Nomad's Battlerobe",
+        "itemId": "nomad_s_battlerobe"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Nomad's Sand Mitts",
+        "itemId": "nomad_s_sand_mitts"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Nomad's Sand Bandana",
+        "itemId": "nomad_s_sand_bandana"
+      },
+      {
+        "slot": "Sword",
+        "name": "Nomad's Sandslicer",
+        "itemId": "nomad_s_sandslicer"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "attack_rating": 450,
+          "crit_damage": 75,
+          "to_strength": 30,
+          "all_skills": 6,
+          "defense": 475,
+          "mana_replenish_pct": 30,
+          "magic_skill_damage": 25,
+          "faster_cast_rate": 40
+        },
+        "descriptions": [
+          "+20% Increased Critical Strike Chance",
+          "+450 to Attack Rating",
+          "+75% Increased Critical Strike Damage",
+          "+30 to Strength",
+          "+4 to All Skills (Class) (Nomad)",
+          "Odin's Demise",
+          "(",
+          "Body Armor",
+          ")",
+          "Odin's Battlearmor",
+          "(",
+          "Helmet",
+          ")",
+          "Odin's Eternal Visage",
+          "(",
+          "Staff",
+          ")",
+          "Thorn of Helheim",
+          "Defense: 475",
+          "+2 to All Skills",
+          "Replenish Mana 30%",
+          "Magic Skill Damage increased by 25%",
+          "+40% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "black_beard_s_remains",
+    "name": "Black Beard's Remains",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Pirate Captain's Shirt",
+        "itemId": "pirate_captain_s_shirt"
+      },
+      {
+        "slot": "Boots",
+        "name": "Pirate Captain's Boots",
+        "itemId": "pirate_captain_s_boots"
+      },
+      {
+        "slot": "Charm",
+        "name": "Pirate Captain's Flag",
+        "itemId": "pirate_captain_s_flag"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Pirate Captain's Hat",
+        "itemId": "pirate_captain_s_hat"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "to_strength": 45,
+          "increased_attack_speed": 50,
+          "fire_resistance": 25,
+          "all_skills": 10,
+          "fire_skill_damage": 50,
+          "all_attributes": 10,
+          "movement_speed": 20,
+          "lightning_resistance": 75,
+          "faster_cast_rate": 45
+        },
+        "descriptions": [
+          "+45 to Strength",
+          "+50% Increased Attack Speed",
+          "-25% to Enemy Fire Resistance",
+          "+5 to All Skills (Class) (Pirate)",
+          "Fire Skill Damage increased by 50%",
+          "Sheep King's Kingdom",
+          "(",
+          "Body Armor",
+          ")",
+          "Sheep King's Hide",
+          "(",
+          "Charm",
+          ")",
+          "Sheep King's Wool",
+          "(",
+          "Helmet",
+          ")",
+          "Sheep King's Crown",
+          "+10 to All Attributes",
+          "+20% Increased Movement Speed",
+          "+75% to Lightning Resistance",
+          "+5 to All Skills",
+          "+45% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "shield_bearer_s_sanctuary",
+    "name": "Shield Bearer's Sanctuary",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Shield Bearer's Plated Armor",
+        "itemId": "shield_bearer_s_plated_armor"
+      },
+      {
+        "slot": "Boots",
+        "name": "Shield Bearer's Greaves",
+        "itemId": "shield_bearer_s_greaves"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Shield Bearer's Crown",
+        "itemId": "shield_bearer_s_crown"
+      },
+      {
+        "slot": "Shield",
+        "name": "Shield Bearer's Wall",
+        "itemId": "shield_bearer_s_wall"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "defense": 40,
+          "increased_attack_speed": 50,
+          "all_resistances": 50,
+          "to_vitality": 40,
+          "all_skills": 4
+        },
+        "descriptions": [
+          "+40% Defense vs Missiles",
+          "+50% Increased Attack Speed",
+          "+50% to All Resistances",
+          "+40 to Vitality",
+          "+4 to All Skills (Class) (Viking)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "guardian_of_the_sun_temple",
+    "name": "Guardian of the Sun Temple",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Solar Prophet's Robes",
+        "itemId": "solar_prophet_s_robes"
+      },
+      {
+        "slot": "Book",
+        "name": "Solar Prophet's Tablet",
+        "itemId": "solar_prophet_s_tablet"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Solar Prophet's Crown",
+        "itemId": "solar_prophet_s_crown"
+      },
+      {
+        "slot": "Ring",
+        "name": "Solar Prophet's Signet",
+        "itemId": "solar_prophet_s_signet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "mana_per_kill": 15,
+          "mana_replenish_pct": 30,
+          "fire_skill_damage": 50,
+          "all_skills": 4,
+          "faster_cast_rate": 40
+        },
+        "descriptions": [
+          "+15% Mana After each Kill",
+          "Replenish Mana 30%",
+          "Fire Skill Damage increased by 50%",
+          "+4 to All Skills (Class) (Exo)",
+          "+40% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "thor_s_thunder_hammer",
+    "name": "Thor's Thunder Hammer",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Thor's Chest Armor",
+        "itemId": "thor_s_chest_armor"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Thor's Battle Gloves",
+        "itemId": "thor_s_battle_gloves"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Thor's Battle Cap",
+        "itemId": "thor_s_battle_cap"
+      },
+      {
+        "slot": "Sword",
+        "name": "Thor's Battle Sword",
+        "itemId": "thor_s_battle_sword"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "movement_speed": 20,
+          "mana_replenish_pct": 25,
+          "faster_cast_rate": 30,
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+20% Increased Movement Speed",
+          "Replenish Mana 25%",
+          "+30% Faster Cast Rate",
+          "+3 to All Skills (Class) (Paladin)",
+          "+5 to Holy Hammer (Paladin)",
+          "Summon a holy hammer that spirals outwards dealing arcane damage on hit."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "valkyrie_s_battle_gear",
+    "name": "Valkyrie's Battle Gear",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Valkyrie's Battle Raiment",
+        "itemId": "valkyrie_s_battle_raiment"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Valkyrie's Winged Helm",
+        "itemId": "valkyrie_s_winged_helm"
+      },
+      {
+        "slot": "Shield",
+        "name": "Valkyrie's Battle Shield",
+        "itemId": "valkyrie_s_battle_shield"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "movement_speed": 30,
+          "increased_attack_speed": 40,
+          "additive_lightning_damage": 1235,
+          "all_skills": 4,
+          "lightning_skill_damage": 35
+        },
+        "descriptions": [
+          "(",
+          "Throwing Weapon",
+          ")",
+          "Valkyrie's Thunder Javelin",
+          "+30% Increased Movement Speed",
+          "+40% Increased Attack Speed",
+          "+1235 to Additive Lightning Damage",
+          "+4 to All Skills (Class) (Amazon)",
+          "Lightning Skill Damage increased by 35%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "zealot_s_prophecy",
+    "name": "Zealot's prophecy",
+    "items": [
+      {
+        "slot": "Book",
+        "name": "Zealot's Book of Prophecy",
+        "itemId": "zealot_s_book_of_prophecy"
+      },
+      {
+        "slot": "Charm",
+        "name": "Zealot's Beads of Destruction",
+        "itemId": "zealot_s_beads_of_destruction"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Zealot's Deathbringers",
+        "itemId": "zealot_s_deathbringers"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Zealot's Guise of Doom",
+        "itemId": "zealot_s_guise_of_doom"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "movement_speed": 25,
+          "arcane_skill_damage": 20,
+          "mana_replenish_pct": 25,
+          "all_skills": 4,
+          "faster_cast_rate": 50
+        },
+        "descriptions": [
+          "+25% Increased Movement Speed",
+          "Arcane Skill Damage increased by 20%",
+          "Replenish Mana 25%",
+          "+4 to All Skills (Class) (White Mage)",
+          "+50% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lumberjack_s_forestry_gear",
+    "name": "Lumberjack's Forestry Gear",
+    "items": [
+      {
+        "slot": "Boots",
+        "name": "Lumberjack's Forestry Boots",
+        "itemId": "lumberjack_s_forestry_boots"
+      },
+      {
+        "slot": "Chainsaw",
+        "name": "Lumberjack's Chainsaw",
+        "itemId": "lumberjack_s_chainsaw"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Lumberjack's Safety Gloves",
+        "itemId": "lumberjack_s_safety_gloves"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Lumberjack's Safety Helm",
+        "itemId": "lumberjack_s_safety_helm"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 4,
+        "stats": {
+          "additive_physical_damage": 40,
+          "to_vitality": 35,
+          "movement_speed": 30,
+          "all_skills": 5,
+          "physical_damage_reduction": 20
+        },
+        "descriptions": [
+          "+40 to Flat Physical Damage",
+          "+35 to Vitality",
+          "+30% Increased Movement Speed",
+          "+5 to All Skills (Class) (Redneck)",
+          "Physical Damage Taken Reduced by 20%"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "redneck_s_work_gear",
+    "name": "Redneck's Work Gear",
+    "items": [
+      {
+        "slot": "Boots",
+        "name": "Redneck's Working Boots",
+        "itemId": "redneck_s_working_boots"
+      },
+      {
+        "slot": "Charm",
+        "name": "Redneck's Keychain",
+        "itemId": "redneck_s_keychain"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Redneck's Cap",
+        "itemId": "redneck_s_cap"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 3,
+        "stats": {
+          "all_resistances": 40,
+          "faster_cast_rate": 30,
+          "fire_skill_damage": 40,
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+40% to All Resistances",
+          "+30% Faster Cast Rate",
+          "Fire Skill Damage increased by 40%",
+          "+5 to Tire Fire (Redneck)",
+          "Throw a truck tire that deals fire damage on hit.",
+          "+3 to All Skills (Class) (Redneck)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "thunder_god_s_wrath",
+    "name": "Thunder God's Wrath",
+    "items": [
+      {
+        "slot": "Boots",
+        "name": "Zeus' Battle Boots",
+        "itemId": "zeus_battle_boots"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Zeus' Circlet",
+        "itemId": "zeus_circlet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "lightning_resistance": 20,
+          "lightning_skill_damage": 25,
+          "additive_lightning_damage": 1150,
+          "attack_damage": 25,
+          "increased_attack_speed": 70,
+          "to_intelligence": 10,
+          "poison_skill_damage": 30,
+          "all_skills": 8,
+          "life": 75,
+          "physical_damage_reduction": 10,
+          "cold_skill_damage": 100
+        },
+        "descriptions": [
+          "-20% to Enemy Lightning Resistance",
+          "Lightning Skill Damage increased by 25%",
+          "+1150 to Additive Lightning Damage",
+          "Masamura",
+          "(",
+          "Sword",
+          ")",
+          "Muramasa",
+          "(",
+          "Sword",
+          ")",
+          "Masamune",
+          "Attack Damage increased by 25%",
+          "+40% Increased Attack Speed",
+          "Mystic of the Forest",
+          "(",
+          "Amulet",
+          ")",
+          "Prophet's Foliage",
+          "(",
+          "Belt",
+          ")",
+          "Prophet's Branch",
+          "(",
+          "Body Armor",
+          ")",
+          "Prophet's Shroud",
+          "(",
+          "Ring",
+          ")",
+          "Prophet's Pinecone",
+          "+10% Increased Intelligence",
+          "Poison Skill Damage increased by 30%",
+          "Summon Damage Increased by 45%",
+          "+4 to All Skills (Class) (Prophet)",
+          "Summon Life Increased by 75%",
+          "Skinwalker's Bloodlust",
+          "(",
+          "Amulet",
+          ")",
+          "Skinwalker's Claw",
+          "(",
+          "Body Armor",
+          ")",
+          "Skinwalker's Mantle",
+          "(",
+          "Gloves",
+          ")",
+          "Skinwalker's Paw",
+          "(",
+          "Ring",
+          ")",
+          "Skinwalker's Sigil",
+          "Physical Damage Taken Reduced by 10%",
+          "+30% Increased Attack Speed",
+          "+4 to All Skills (Class) (Prophet)",
+          "Cold Skill Damage increased by 100%",
+          "+1 to Piercing Bone (Prophet)",
+          "Chance when striking to unleash piercing bone spikes in an arc dealing physical damage.",
+          "(self.__next_f=self.__next_f",
+          "[]).push([0])",
+          "self.__next_f.push([1,\"1:\\\"$Sreact.fragment\\\"\\n2:I[821811,[\\\"/_next/static/chunks/0tp58u96~9pfa.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0el2pnd3fd-hy.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0kmsay-~ufvm..js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0z6hfu1chr5hl.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0znnfvgej.imm.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0r-2dp3fw.f51.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/17niad~bftjsi.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0_mrl~xpieytj.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"LayoutContent\\\"]\\n3:I[339756,[\\\"/_next/static/chunks/0x.73w57rn4ou.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0cpxp1tzdd18d.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"default\\\"]\\n4:I[837457,[\\\"/_next/static/chunks/0x.73w57rn4ou.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0cpxp1tzdd18d.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"default\\\"]\\n5:I[347257,[\\\"/_next/static/chunks/0x.73w57rn4ou.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0cpxp1tzdd18d.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"ClientPageRoot\\\"]\\n\"])",
+          "self.__next_f.push([1,\"6:I[32959,[\\\"/_next/static/chunks/0tp58u96~9pfa.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0el2pnd3fd-hy.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0kmsay-~ufvm..js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0z6hfu1chr5hl.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0znnfvgej.imm.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0r-2dp3fw.f51.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/17niad~bftjsi.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0_mrl~xpieytj.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0pi8air760-_5.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0kb9c7jxa2j6l.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/01cv-at7y4~x9.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0c3rodbfl1unm.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0e8.6skk6stn7.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0qeynnwr4q1fl.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/14h_gqt9rkeot.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/145h8fw7cjr47.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0r~z2px73s~11.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0jreld.qnlr4a.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0jtyux_27_m2z.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/083utzbwq8jdl.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"default\\\"]\\n\"])",
+          "self.__next_f.push([1,\"10:I[168027,[\\\"/_next/static/chunks/0tp58u96~9pfa.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0el2pnd3fd-hy.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0kmsay-~ufvm..js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0z6hfu1chr5hl.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0znnfvgej.imm.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0r-2dp3fw.f51.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/17niad~bftjsi.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0_mrl~xpieytj.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"default\\\",1]\\n:HL[\\\"/_next/static/chunks/189meh_s4wi5w.css?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"style\\\"]\\n\"])",
+          "self.__next_f.push([1,\"0:{\\\"P\\\":null,\\\"c\\\":[\\\"\\\",\\\"items\\\",\\\"sets\\\"],\\\"q\\\":\\\"\\\",\\\"i\\\":false,\\\"f\\\":[[[\\\"\\\",{\\\"children\\\":[\\\"items\\\",{\\\"children\\\":[\\\"sets\\\",{\\\"children\\\":[\\\"__PAGE__\\\",{}]}]}]},\\\"$undefined\\\",\\\"$undefined\\\",16],[[\\\"$\\\",\\\"$1\\\",\\\"c\\\",{\\\"children\\\":[[[\\\"$\\\",\\\"link\\\",\\\"0\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"/_next/static/chunks/189meh_s4wi5w.css?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"$undefined\\\",\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-0\\\",{\\\"src\\\":\\\"/_next/static/chunks/0tp58u96~9pfa.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-1\\\",{\\\"src\\\":\\\"/_next/static/chunks/0el2pnd3fd-hy.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-2\\\",{\\\"src\\\":\\\"/_next/static/chunks/0kmsay-~ufvm..js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-3\\\",{\\\"src\\\":\\\"/_next/static/chunks/0z6hfu1chr5hl.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-4\\\",{\\\"src\\\":\\\"/_next/static/chunks/0znnfvgej.imm.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-5\\\",{\\\"src\\\":\\\"/_next/static/chunks/0r-2dp3fw.f51.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-6\\\",{\\\"src\\\":\\\"/_next/static/chunks/17niad~bftjsi.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-7\\\",{\\\"src\\\":\\\"/_next/static/chunks/0_mrl~xpieytj.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}]],[\\\"$\\\",\\\"html\\\",null,{\\\"lang\\\":\\\"en\\\",\\\"className\\\":\\\"[color-scheme:dark]\\\",\\\"children\\\":[[\\\"$\\\",\\\"meta\\\",null,{\\\"name\\\":\\\"google-site-verification\\\",\\\"content\\\":\\\"SvkrK9g7H6d-Q1IrTCXYh5Hdlw1WazdvwwnTFwPlLO0\\\"}],[\\\"$\\\",\\\"body\\\",null,{\\\"className\\\":\\\"bg-gray-1100 bg-[url('/grid.svg')]\\\",\\\"children\\\":[\\\"$\\\",\\\"$L2\\\",null,{\\\"children\\\":[\\\"$\\\",\\\"$L3\\\",null,{\\\"parallelRouterKey\\\":\\\"children\\\",\\\"error\\\":\\\"$undefined\\\",\\\"errorStyles\\\":\\\"$undefined\\\",\\\"errorScripts\\\":\\\"$undefined\\\",\\\"template\\\":[\\\"$\\\",\\\"$L4\\\",null,{}],\\\"templateStyles\\\":\\\"$undefined\\\",\\\"templateScripts\\\":\\\"$undefined\\\",\\\"notFound\\\":[[\\\"$\\\",\\\"div\\\",null,{\\\"className\\\":\\\"relative rounded-lg border border-dashed p-4 lg:p-9 border-vercel-pink animate-[rerender_1s_ease-in-out_1] text-vercel-pink\\\",\\\"children\\\":[[\\\"$\\\",\\\"div\\\",null,{\\\"className\\\":\\\"absolute -top-2.5 flex gap-x-1 text-[9px] uppercase leading-4 tracking-widest left-4 lg:left-9\\\",\\\"children\\\":[[\\\"$\\\",\\\"div\\\",\\\"not-found.tsx\\\",{\\\"className\\\":\\\"rounded-full px-1.5 shadow-[0_0_1px_3px_black] bg-vercel-pink text-white animate-[highlight_1s_ease-in-out_1]\\\",\\\"children\\\":\\\"not-found.tsx\\\"}]]}],[\\\"$\\\",\\\"div\\\",null,{\\\"className\\\":\\\"space-y-4 text-vercel-pink\\\",\\\"children\\\":[[\\\"$\\\",\\\"h2\\\",null,{\\\"className\\\":\\\"text-lg font-bold\\\",\\\"children\\\":\\\"Not Found\\\"}],[\\\"$\\\",\\\"p\\\",null,{\\\"className\\\":\\\"text-sm\\\",\\\"children\\\":\\\"Could not find requested resource\\\"}]]}]]}],[]],\\\"forbidden\\\":\\\"$undefined\\\",\\\"unauthorized\\\":\\\"$undefined\\\"}]}]}]]}]]}],{\\\"children\\\":[[\\\"$\\\",\\\"$1\\\",\\\"c\\\",{\\\"children\\\":[null,[\\\"$\\\",\\\"$L3\\\",null,{\\\"parallelRouterKey\\\":\\\"children\\\",\\\"error\\\":\\\"$undefined\\\",\\\"errorStyles\\\":\\\"$undefined\\\",\\\"errorScripts\\\":\\\"$undefined\\\",\\\"template\\\":[\\\"$\\\",\\\"$L4\\\",null,{}],\\\"templateStyles\\\":\\\"$undefined\\\",\\\"templateScripts\\\":\\\"$undefined\\\",\\\"notFound\\\":\\\"$undefined\\\",\\\"forbidden\\\":\\\"$undefined\\\",\\\"unauthorized\\\":\\\"$undefined\\\"}]]}],{\\\"children\\\":[[\\\"$\\\",\\\"$1\\\",\\\"c\\\",{\\\"children\\\":[null,[\\\"$\\\",\\\"$L3\\\",null,{\\\"parallelRouterKey\\\":\\\"children\\\",\\\"error\\\":\\\"$undefined\\\",\\\"errorStyles\\\":\\\"$undefined\\\",\\\"errorScripts\\\":\\\"$undefined\\\",\\\"template\\\":[\\\"$\\\",\\\"$L4\\\",null,{}],\\\"templateStyles\\\":\\\"$undefined\\\",\\\"templateScripts\\\":\\\"$undefined\\\",\\\"notFound\\\":\\\"$undefined\\\",\\\"forbidden\\\":\\\"$undefined\\\",\\\"unauthorized\\\":\\\"$undefined\\\"}]]}],{\\\"children\\\":[[\\\"$\\\",\\\"$1\\\",\\\"c\\\",{\\\"children\\\":[[\\\"$\\\",\\\"$L5\\\",null,{\\\"Component\\\":\\\"$6\\\",\\\"serverProvidedParams\\\":{\\\"searchParams\\\":{},\\\"params\\\":{},\\\"promises\\\":[\\\"$@7\\\",\\\"$@8\\\"]}}],[[\\\"$\\\",\\\"script\\\",\\\"script-0\\\",{\\\"src\\\":\\\"/_next/static/chunks/0pi8air760-_5.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-1\\\",{\\\"src\\\":\\\"/_next/static/chunks/0kb9c7jxa2j6l.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-2\\\",{\\\"src\\\":\\\"/_next/static/chunks/01cv-at7y4~x9.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-3\\\",{\\\"src\\\":\\\"/_next/static/chunks/0c3rodbfl1unm.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-4\\\",{\\\"src\\\":\\\"/_next/static/chunks/0e8.6skk6stn7.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-5\\\",{\\\"src\\\":\\\"/_next/static/chunks/0qeynnwr4q1fl.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-6\\\",{\\\"src\\\":\\\"/_next/static/chunks/14h_gqt9rkeot.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"script\\\",\\\"script-7\\\",{\\\"src\\\":\\\"/_next/static/chunks/145h8fw7cjr47.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}],\\\"$L9\\\",\\\"$La\\\",\\\"$Lb\\\",\\\"$Lc\\\"],\\\"$Ld\\\"]}],{},null,false,null]},null,false,\\\"$@e\\\"]},null,false,\\\"$@e\\\"]},null,false,null],\\\"$Lf\\\",false]],\\\"m\\\":\\\"$undefined\\\",\\\"G\\\":[\\\"$10\\\",[\\\"$L11\\\"]],\\\"S\\\":true,\\\"h\\\":null,\\\"s\\\":\\\"$undefined\\\",\\\"l\\\":\\\"$undefined\\\",\\\"p\\\":\\\"$undefined\\\",\\\"d\\\":\\\"$undefined\\\"}\\n\"])",
+          "self.__next_f.push([1,\"12:I[897367,[\\\"/_next/static/chunks/0x.73w57rn4ou.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0cpxp1tzdd18d.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"OutletBoundary\\\"]\\n13:\\\"$Sreact.suspense\\\"\\n16:I[897367,[\\\"/_next/static/chunks/0x.73w57rn4ou.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0cpxp1tzdd18d.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"ViewportBoundary\\\"]\\n18:I[897367,[\\\"/_next/static/chunks/0x.73w57rn4ou.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0cpxp1tzdd18d.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"MetadataBoundary\\\"]\\n9:[\\\"$\\\",\\\"script\\\",\\\"script-8\\\",{\\\"src\\\":\\\"/_next/static/chunks/0r~z2px73s~11.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}]\\na:[\\\"$\\\",\\\"script\\\",\\\"script-9\\\",{\\\"src\\\":\\\"/_next/static/chunks/0jreld.qnlr4a.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}]\\nb:[\\\"$\\\",\\\"script\\\",\\\"script-10\\\",{\\\"src\\\":\\\"/_next/static/chunks/0jtyux_27_m2z.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}]\\nc:[\\\"$\\\",\\\"script\\\",\\\"script-11\\\",{\\\"src\\\":\\\"/_next/static/chunks/083utzbwq8jdl.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"async\\\":true,\\\"nonce\\\":\\\"$undefined\\\"}]\\nd:[\\\"$\\\",\\\"$L12\\\",null,{\\\"children\\\":[\\\"$\\\",\\\"$13\\\",null,{\\\"name\\\":\\\"Next.MetadataOutlet\\\",\\\"children\\\":\\\"$@14\\\"}]}]\\n15:[]\\ne:\\\"$W15\\\"\\nf:[\\\"$\\\",\\\"$1\\\",\\\"h\\\",{\\\"children\\\":[null,[\\\"$\\\",\\\"$L16\\\",null,{\\\"children\\\":\\\"$L17\\\"}],[\\\"$\\\",\\\"div\\\",null,{\\\"hidden\\\":true,\\\"children\\\":[\\\"$\\\",\\\"$L18\\\",null,{\\\"children\\\":[\\\"$\\\",\\\"$13\\\",null,{\\\"name\\\":\\\"Next.Metadata\\\",\\\"children\\\":\\\"$L19\\\"}]}]}],null]}]\\n11:[\\\"$\\\",\\\"link\\\",\\\"0\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"/_next/static/chunks/189meh_s4wi5w.css?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"$undefined\\\",\\\"nonce\\\":\\\"$undefined\\\"}]\\n7:{}\\n8:\\\"$0:f:0:1:1:children:1:children:1:children:0:props:children:0:props:serverProvidedParams:params\\\"\\n\"])",
+          "self.__next_f.push([1,\"17:[[\\\"$\\\",\\\"meta\\\",\\\"0\\\",{\\\"charSet\\\":\\\"utf-8\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"1\\\",{\\\"name\\\":\\\"viewport\\\",\\\"content\\\":\\\"width=device-width, initial-scale=1\\\"}]]\\n\"])",
+          "self.__next_f.push([1,\"1a:I[27201,[\\\"/_next/static/chunks/0x.73w57rn4ou.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"/_next/static/chunks/0cpxp1tzdd18d.js?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"],\\\"IconMark\\\"]\\n14:null\\n\"])",
+          "self.__next_f.push([1,\"19:[[\\\"$\\\",\\\"title\\\",\\\"0\\\",{\\\"children\\\":\\\"Hero Siege Helper\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"1\\\",{\\\"name\\\":\\\"description\\\",\\\"content\\\":\\\"Small Helper App for Hero Siege. Calculate prices, check stats, and more!\\\"}],[\\\"$\\\",\\\"link\\\",\\\"2\\\",{\\\"rel\\\":\\\"manifest\\\",\\\"href\\\":\\\"/manifest.webmanifest\\\",\\\"crossOrigin\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"3\\\",{\\\"name\\\":\\\"keywords\\\",\\\"content\\\":\\\"Hero Siege,Hero Siege Helper,Hero Siege App\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"4\\\",{\\\"property\\\":\\\"og:title\\\",\\\"content\\\":\\\"Helper App for Hero Siege\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"5\\\",{\\\"property\\\":\\\"og:description\\\",\\\"content\\\":\\\"Small Helper App for Hero Siege. Calculate prices, check stats, and more!\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"6\\\",{\\\"property\\\":\\\"og:image\\\",\\\"content\\\":\\\"https://hero-siege-helper.vercel.app/opengraph-image.jpg?opengraph-image.06ikwe1nu5941.jpg?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"7\\\",{\\\"property\\\":\\\"og:image:type\\\",\\\"content\\\":\\\"image/jpeg\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"8\\\",{\\\"property\\\":\\\"og:image:width\\\",\\\"content\\\":\\\"1200\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"9\\\",{\\\"property\\\":\\\"og:image:height\\\",\\\"content\\\":\\\"630\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"10\\\",{\\\"property\\\":\\\"og:image:alt\\\",\\\"content\\\":\\\"Hero Siege Helper\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"11\\\",{\\\"name\\\":\\\"twitter:card\\\",\\\"content\\\":\\\"summary_large_image\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"12\\\",{\\\"name\\\":\\\"twitter:title\\\",\\\"content\\\":\\\"Helper App for Hero Siege\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"13\\\",{\\\"name\\\":\\\"twitter:description\\\",\\\"content\\\":\\\"Small Helper App for Hero Siege. Calculate prices, check stats, and more!\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"14\\\",{\\\"name\\\":\\\"twitter:image\\\",\\\"content\\\":\\\"https://hero-siege-helper.vercel.app/opengraph-image.jpg?opengraph-image.06ikwe1nu5941.jpg?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"15\\\",{\\\"name\\\":\\\"twitter:image:alt\\\",\\\"content\\\":\\\"Hero Siege Helper\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"16\\\",{\\\"name\\\":\\\"twitter:image:type\\\",\\\"content\\\":\\\"image/jpeg\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"17\\\",{\\\"name\\\":\\\"twitter:image:width\\\",\\\"content\\\":\\\"1200\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"18\\\",{\\\"name\\\":\\\"twitter:image:height\\\",\\\"content\\\":\\\"630\\\"}],[\\\"$\\\",\\\"link\\\",\\\"19\\\",{\\\"rel\\\":\\\"icon\\\",\\\"href\\\":\\\"/favicon.ico?favicon.0474._kk~~bej.ico?dpl=dpl_7dnbb3BjArmj5FUwB3GDSzcK5aR5\\\",\\\"sizes\\\":\\\"48x48\\\",\\\"type\\\":\\\"image/x-icon\\\"}],[\\\"$\\\",\\\"$L1a\\\",\\\"20\\\",{}]]\\n\"])"
+        ]
+      }
+    ]
+  }
+]

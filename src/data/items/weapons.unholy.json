@@ -1,0 +1,164 @@
+[
+  {
+    "id": "gun_unholy_glock_22",
+    "name": "Glock 22",
+    "baseType": "Gun",
+    "slot": "weapon",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 1.75,
+      "enhanced_damage": [
+        800,
+        850
+      ],
+      "all_skills": [
+        3,
+        4
+      ],
+      "movement_speed": [
+        25,
+        40
+      ],
+      "increased_attack_speed": [
+        75,
+        100
+      ],
+      "deadly_blow": 30,
+      "attack_rating_pct": 25,
+      "crit_damage": [
+        50,
+        65
+      ],
+      "extra_damage_stunned": [
+        20,
+        30
+      ],
+      "magic_skill_damage": [
+        50,
+        65
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Laser Sight",
+      "Skill Movement Diminish"
+    ],
+    "sockets": 4,
+    "maxSockets": 4
+  },
+  {
+    "id": "staff_unholy_necrobutcher_s_curse",
+    "name": "Necrobutcher's Curse",
+    "baseType": "Staff",
+    "slot": "weapon",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 88,
+    "implicit": {
+      "attacks_per_second": 1.25,
+      "summon_skills": [
+        3,
+        4
+      ],
+      "all_skills": [
+        2,
+        4
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Raise Skeleton",
+      "Grant Spell: Raise Skeleton Mage",
+      "Grant Spell: Summon Mastery",
+      "Summon Amount",
+      "Summon Attack Speed",
+      "Summon Dmg",
+      "Summon Life"
+    ]
+  },
+  {
+    "id": "sword_unholy_stofflix_cooking_cleaver",
+    "name": "Stofflix Cooking Cleaver",
+    "baseType": "Sword",
+    "slot": "weapon",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 1.65,
+      "enhanced_damage": [
+        575,
+        625
+      ],
+      "all_skills": 2,
+      "fire_skills": 8,
+      "faster_cast_rate": [
+        40,
+        55
+      ],
+      "increased_attack_speed": [
+        50,
+        75
+      ],
+      "extra_damage_burning": [
+        35,
+        50
+      ],
+      "all_attributes": [
+        20,
+        30
+      ],
+      "flat_fire_skill_damage": [
+        22,
+        50
+      ],
+      "fire_skill_damage": 35
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Casting: Supernova"
+    ],
+    "sockets": 4,
+    "maxSockets": 4
+  },
+  {
+    "id": "mace_unholy_stormslayer",
+    "name": "Stormslayer",
+    "baseType": "Mace",
+    "slot": "weapon",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "attacks_per_second": 1.75,
+      "enhanced_damage": [
+        930,
+        1180
+      ],
+      "all_skills": [
+        4,
+        5
+      ],
+      "deadly_blow": 30,
+      "extra_damage_bleeding": [
+        33,
+        40
+      ],
+      "flat_fire_skill_damage": [
+        40,
+        70
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Chance When Striking: Pyro Technician",
+      "Grant Spell: Random Bard Skill",
+      "Attacks Hit Multiple Enemies None",
+      "Double Jump"
+    ],
+    "sockets": 6,
+    "maxSockets": 6
+  }
+]

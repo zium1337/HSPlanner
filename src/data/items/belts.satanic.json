@@ -1,0 +1,1363 @@
+[
+  {
+    "id": "belt_satanic_ashen_belt",
+    "name": "Ashen Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 64,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_defense": [
+        50,
+        75
+      ],
+      "fire_skill_damage": [
+        15,
+        30
+      ],
+      "fire_resistance": [
+        35,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Lifed On Level",
+      "Max Fire Resist"
+    ]
+  },
+  {
+    "id": "belt_satanic_assassin_s_belt",
+    "name": "Assassin's Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 34,
+    "implicit": {
+      "defense": [
+        20,
+        32
+      ],
+      "enhanced_defense": [
+        30,
+        45
+      ],
+      "physical_skills": [
+        1,
+        3
+      ],
+      "attack_rating_pct": [
+        8,
+        15
+      ],
+      "life_steal": [
+        6,
+        10
+      ],
+      "to_dexterity": 15,
+      "damage_mitigation": 5
+    }
+  },
+  {
+    "id": "belt_satanic_belt_of_war",
+    "name": "Belt of War",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 12,
+    "implicit": {
+      "defense": [
+        3,
+        5
+      ],
+      "enhanced_damage": [
+        25,
+        35
+      ],
+      "enhanced_defense": [
+        30,
+        50
+      ],
+      "attack_rating": 50,
+      "life_steal": [
+        10,
+        15
+      ],
+      "all_attributes": 3
+    }
+  },
+  {
+    "id": "belt_satanic_bronze_legion_girdle",
+    "name": "Bronze Legion Girdle",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 10,
+    "implicit": {
+      "defense": [
+        3,
+        5
+      ],
+      "enhanced_defense": [
+        30,
+        50
+      ],
+      "to_energy": 10,
+      "mana_replenish_pct": [
+        30,
+        35
+      ],
+      "mana": [
+        75,
+        125
+      ],
+      "light_radius": 1,
+      "all_resistances": 5
+    }
+  },
+  {
+    "id": "belt_satanic_brute_s_cord",
+    "name": "Brute's Cord",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 28,
+    "implicit": {
+      "defense": [
+        8,
+        16
+      ],
+      "enhanced_defense": [
+        50,
+        70
+      ],
+      "crit_chance": 10,
+      "additive_physical_damage": [
+        5,
+        12
+      ],
+      "crit_damage": [
+        5,
+        10
+      ],
+      "defense_ignored": 20,
+      "to_strength": 20
+    }
+  },
+  {
+    "id": "belt_satanic_butcher_s_belt",
+    "name": "Butcher's Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 85,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        75,
+        125
+      ],
+      "physical_skills": [
+        1,
+        3
+      ],
+      "to_dexterity": [
+        15,
+        25
+      ],
+      "life_replenish_pct": [
+        15,
+        35
+      ],
+      "damage_reduced": [
+        20,
+        40
+      ],
+      "all_resistances": [
+        20,
+        30
+      ]
+    },
+    "setId": "blood_bond"
+  },
+  {
+    "id": "belt_satanic_cingulum_of_shifting_destiny",
+    "name": "Cingulum of Shifting Destiny",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 55,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_defense": [
+        150,
+        175
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "all_attributes": [
+        15,
+        30
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_combat_duty_belt",
+    "name": "Combat Duty Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 68,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_defense": [
+        50,
+        75
+      ],
+      "physical_skills": [
+        1,
+        3
+      ],
+      "crushing_blow_chance": 15,
+      "attack_rating_pct": [
+        15,
+        20
+      ],
+      "additive_physical_damage": [
+        12,
+        26
+      ],
+      "to_strength": [
+        20,
+        40
+      ],
+      "to_armor": 15
+    }
+  },
+  {
+    "id": "belt_satanic_commander_s_sash",
+    "name": "Commander's Sash",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 92,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        50,
+        85
+      ],
+      "all_skills": 1,
+      "increased_attack_speed": 10,
+      "life_steal": [
+        3,
+        5
+      ],
+      "mana_steal": [
+        3,
+        5
+      ],
+      "slow_target": 10,
+      "to_strength": [
+        10,
+        15
+      ],
+      "to_dexterity": [
+        20,
+        25
+      ],
+      "mana_per_kill": 3,
+      "light_radius": -3,
+      "physical_damage_reduction": [
+        5,
+        10
+      ],
+      "all_resistances": [
+        15,
+        20
+      ]
+    },
+    "uniqueEffects": [
+      "Piercing Attack None"
+    ]
+  },
+  {
+    "id": "belt_satanic_crystal_belt",
+    "name": "Crystal Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 41,
+    "implicit": {
+      "defense": [
+        20,
+        32
+      ],
+      "enhanced_defense": [
+        30,
+        45
+      ],
+      "all_skills": 1,
+      "all_attributes": [
+        8,
+        15
+      ],
+      "faster_hit_recovery": 15,
+      "all_resistances": [
+        15,
+        20
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_earth_shaper_s_belt",
+    "name": "Earth Shaper's Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 85,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        45,
+        75
+      ],
+      "to_armor": [
+        18,
+        25
+      ],
+      "mana_replenish_pct": [
+        8,
+        15
+      ],
+      "life": [
+        35,
+        50
+      ],
+      "mana": [
+        25,
+        40
+      ],
+      "all_resistances": 5
+    },
+    "setId": "earth_shaper_s_pride"
+  },
+  {
+    "id": "belt_satanic_engineer_s_toolbelt",
+    "name": "Engineer's Toolbelt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 82,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        45,
+        75
+      ],
+      "movement_speed": 10,
+      "faster_cast_rate": 20,
+      "arcane_skill_damage": [
+        12,
+        20
+      ]
+    },
+    "uniqueEffects": [
+      "Explosion Area Of Effect"
+    ],
+    "setId": "engineer_s_combat_gear"
+  },
+  {
+    "id": "belt_satanic_flame_diviner_s_cord",
+    "name": "Flame Diviner's Cord",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 90,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        45,
+        75
+      ],
+      "fire_skill_damage": [
+        3,
+        8
+      ],
+      "fire_resistance": [
+        20,
+        40
+      ],
+      "magic_find": [
+        10,
+        25
+      ]
+    },
+    "uniqueEffects": [
+      "Chance When Struck: Hydra"
+    ],
+    "setId": "flames_of_divinity"
+  },
+  {
+    "id": "belt_satanic_foxweave_belt",
+    "name": "Foxweave Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 42,
+    "implicit": {
+      "defense": [
+        20,
+        32
+      ],
+      "enhanced_defense": [
+        30,
+        45
+      ],
+      "cold_skill_damage": [
+        10,
+        20
+      ],
+      "increased_mana": [
+        5,
+        10
+      ],
+      "cold_resistance": 75
+    },
+    "uniqueEffects": [
+      "Cannot Be Frozen None"
+    ]
+  },
+  {
+    "id": "belt_satanic_gaze_of_the_void",
+    "name": "Gaze of the Void",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 46,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_defense": [
+        50,
+        75
+      ],
+      "arcane_skills": [
+        1,
+        2
+      ],
+      "arcane_skill_damage": [
+        15,
+        25
+      ],
+      "ignore_arcane_res": [
+        5,
+        15
+      ],
+      "physical_damage_reduction": 5,
+      "arcane_resistance": [
+        30,
+        40
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_girdle_of_resilience",
+    "name": "Girdle of Resilience",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 8,
+    "implicit": {
+      "defense": [
+        3,
+        5
+      ],
+      "enhanced_defense": [
+        15,
+        30
+      ],
+      "movement_speed": [
+        10,
+        20
+      ],
+      "to_intelligence": [
+        8,
+        15
+      ],
+      "life": 30,
+      "faster_hit_recovery": [
+        25,
+        40
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_guardian_s_waistband",
+    "name": "Guardian's Waistband",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 16,
+    "implicit": {
+      "defense": [
+        3,
+        5
+      ],
+      "enhanced_defense": [
+        30,
+        35
+      ],
+      "to_vitality": 10,
+      "all_resistances": [
+        5,
+        15
+      ],
+      "ignore_poison_res": [
+        15,
+        20
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_hatshepsut_s_girdle",
+    "name": "Hatshepsut's Girdle",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 64,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_defense": [
+        45,
+        65
+      ],
+      "increased_attack_speed": 10,
+      "light_radius": 3,
+      "gold_find": [
+        15,
+        30
+      ],
+      "magic_find": [
+        15,
+        30
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_heavy_duty",
+    "name": "Heavy Duty",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 26,
+    "implicit": {
+      "defense": [
+        8,
+        16
+      ],
+      "enhanced_defense": [
+        50,
+        70
+      ],
+      "movement_speed": 15,
+      "to_strength": 10,
+      "to_vitality": [
+        10,
+        15
+      ],
+      "life_replenish_pct": 20,
+      "life": [
+        225,
+        350
+      ],
+      "faster_hit_recovery": [
+        25,
+        50
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_ice_queen_s_cestus",
+    "name": "Ice Queen's Cestus",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 96,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        60,
+        70
+      ],
+      "to_energy": 20,
+      "cold_skill_damage": [
+        10,
+        25
+      ],
+      "damage_recouped_as_mana": [
+        8,
+        15
+      ],
+      "cold_resistance": [
+        40,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Cannot Be Frozen None"
+    ]
+  },
+  {
+    "id": "belt_satanic_justiciar_s_thunder_sash",
+    "name": "Justiciar's Thunder Sash",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 90,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        45,
+        75
+      ],
+      "faster_cast_rate": [
+        10,
+        15
+      ],
+      "increased_mana": [
+        2,
+        5
+      ],
+      "arcane_resistance": [
+        20,
+        40
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Spell: Lightning Fury",
+      "Grant Spell: Eye of the Storm"
+    ],
+    "setId": "justiciar_s_thunder_raiment"
+  },
+  {
+    "id": "belt_satanic_knight_s_girdle",
+    "name": "Knight's Girdle",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 94,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        65,
+        85
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "to_vitality": [
+        30,
+        40
+      ],
+      "damage_return": [
+        40,
+        60
+      ],
+      "physical_damage_reduction": [
+        2,
+        4
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_lich_sash",
+    "name": "Lich Sash",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 36,
+    "implicit": {
+      "defense": [
+        20,
+        32
+      ],
+      "enhanced_defense": [
+        30,
+        45
+      ],
+      "all_skills": 1,
+      "magic_skill_damage": [
+        10,
+        15
+      ],
+      "increased_mana": 5,
+      "arcane_resistance": [
+        45,
+        60
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_lunar_prophet_s_girdle",
+    "name": "Lunar Prophet's Girdle",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 72,
+    "implicit": {
+      "defense": [
+        46,
+        58
+      ],
+      "enhanced_defense": [
+        60,
+        70
+      ],
+      "cold_skill_damage": 15,
+      "ignore_cold_res": [
+        12,
+        20
+      ],
+      "cold_absorption": 8,
+      "cold_resistance": [
+        40,
+        60
+      ]
+    },
+    "setId": "the_lunar_eclipse"
+  },
+  {
+    "id": "belt_satanic_monkeyskin_belt",
+    "name": "Monkeyskin Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 58,
+    "implicit": {
+      "defense": [
+        75,
+        90
+      ],
+      "enhanced_defense": [
+        125,
+        150
+      ],
+      "to_vitality": [
+        30,
+        40
+      ],
+      "life_replenish_pct": [
+        25,
+        35
+      ],
+      "faster_hit_recovery": [
+        50,
+        75
+      ],
+      "cold_resistance": 75,
+      "fire_resistance": 75
+    }
+  },
+  {
+    "id": "belt_satanic_pitfighter_s_razor_belt",
+    "name": "Pitfighter's Razor Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 23,
+    "implicit": {
+      "defense": [
+        8,
+        16
+      ],
+      "enhanced_defense": [
+        50,
+        70
+      ],
+      "deadly_blow": 25,
+      "attack_rating_pct": 5,
+      "attack_rating": [
+        40,
+        60
+      ],
+      "to_strength": 15,
+      "to_dexterity": 15
+    }
+  },
+  {
+    "id": "belt_satanic_prophets_branch",
+    "name": "Prophet's Branch",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        75,
+        150
+      ],
+      "flat_poison_skill_damage": [
+        32,
+        40
+      ],
+      "poison_skill_damage": [
+        17,
+        25
+      ],
+      "all_resistances": 20
+    },
+    "setId": "mystic_of_the_forest"
+  },
+  {
+    "id": "belt_satanic_rugal_s_sash_of_undertaking",
+    "name": "Rugal's Sash of Undertaking",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "defense": [
+        65,
+        80
+      ],
+      "enhanced_defense": [
+        110,
+        130
+      ],
+      "all_attributes": 20,
+      "ignore_arcane_res": [
+        8,
+        18
+      ],
+      "physical_damage_reduction": [
+        8,
+        15
+      ],
+      "all_resistances": 30
+    },
+    "uniqueEffects": [
+      "Chance When Struck: Meat Shield"
+    ]
+  },
+  {
+    "id": "belt_satanic_runemaster_s_waistwrap",
+    "name": "Runemaster's Waistwrap",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 30,
+    "implicit": {
+      "defense": [
+        8,
+        16
+      ],
+      "to_energy": [
+        5,
+        10
+      ],
+      "to_intelligence": 10,
+      "magic_skill_damage": [
+        10,
+        20
+      ],
+      "magic_damage_reduction": 5
+    }
+  },
+  {
+    "id": "belt_satanic_sandmagis_sash",
+    "name": "Sandmagi's Sash",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 55,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_defense": [
+        150,
+        175
+      ],
+      "all_skills": [
+        1,
+        2
+      ]
+    },
+    "uniqueEffects": [
+      "Guardian Additional Attack",
+      "Guardian Damage",
+      "Guardian Attack Speed",
+      "Guardian Duration"
+    ]
+  },
+  {
+    "id": "belt_satanic_sash_of_the_magi",
+    "name": "Sash of the Magi",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 97,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        60,
+        70
+      ],
+      "faster_cast_rate": [
+        20,
+        30
+      ],
+      "magic_skill_damage": [
+        15,
+        25
+      ],
+      "life": [
+        40,
+        65
+      ],
+      "increased_mana": 4
+    },
+    "uniqueEffects": [
+      "Grant Aura: Manapool Aura"
+    ]
+  },
+  {
+    "id": "belt_satanic_solar_magister_s_sash",
+    "name": "Solar Magister's Sash",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 38,
+    "implicit": {
+      "defense": [
+        20,
+        32
+      ],
+      "to_armor": [
+        10,
+        15
+      ],
+      "all_attributes": 8,
+      "fire_skill_damage": [
+        12,
+        20
+      ],
+      "fire_resistance": [
+        25,
+        40
+      ]
+    },
+    "uniqueEffects": [
+      "Chance When Striking: Supernova"
+    ]
+  },
+  {
+    "id": "belt_satanic_storm_s_dawn",
+    "name": "Storm's Dawn",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 20,
+    "implicit": {
+      "defense": [
+        8,
+        16
+      ],
+      "lightning_skill_damage": [
+        15,
+        20
+      ],
+      "ignore_lightning_res": 5,
+      "mana": [
+        50,
+        75
+      ],
+      "lightning_resistance": -40
+    }
+  },
+  {
+    "id": "belt_satanic_sun_wukong_s_belt",
+    "name": "Sun Wukong's Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 48,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_defense": [
+        50,
+        75
+      ],
+      "all_skills": 1,
+      "to_vitality": [
+        15,
+        30
+      ],
+      "life_replenish_pct": 50,
+      "all_resistances": [
+        10,
+        15
+      ]
+    },
+    "uniqueEffects": [
+      "Lifed On Level"
+    ]
+  },
+  {
+    "id": "belt_satanic_tether_of_anguish",
+    "name": "Tether of Anguish",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 72,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_defense": [
+        60,
+        70
+      ],
+      "extra_damage_poisoned": [
+        12,
+        20
+      ],
+      "poison_skill_damage": [
+        12,
+        20
+      ],
+      "ignore_poison_res": [
+        10,
+        15
+      ],
+      "poison_resistance": [
+        40,
+        60
+      ]
+    },
+    "uniqueEffects": [
+      "Poison Length Reduced"
+    ]
+  },
+  {
+    "id": "belt_satanic_thunder_caller_s_sash",
+    "name": "Thunder Caller's Sash",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 82,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        40,
+        60
+      ],
+      "to_intelligence": [
+        15,
+        25
+      ],
+      "damage_recouped_as_mana": [
+        5,
+        15
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Spell: Symphony of Thunder",
+      "Defense Vs Missiles"
+    ],
+    "setId": "thunder_caller_s_wrath"
+  },
+  {
+    "id": "belt_satanic_traveler_s_double_belt",
+    "name": "Traveler's Double Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        75,
+        150
+      ],
+      "all_attributes": [
+        15,
+        30
+      ],
+      "damage_mitigation": 10,
+      "all_resistances": 20
+    },
+    "setId": "traveler"
+  },
+  {
+    "id": "belt_satanic_tribal_belt",
+    "name": "Tribal Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 50,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_damage": [
+        20,
+        35
+      ],
+      "enhanced_defense": [
+        50,
+        75
+      ],
+      "increased_attack_speed": 20,
+      "deadly_blow": 15,
+      "attack_rating": [
+        75,
+        100
+      ],
+      "all_resistances": 10
+    }
+  },
+  {
+    "id": "belt_satanic_tundra_warrior_s_girdle",
+    "name": "Tundra Warrior's Girdle",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 38,
+    "implicit": {
+      "defense": [
+        20,
+        32
+      ],
+      "enhanced_damage": [
+        20,
+        30
+      ],
+      "enhanced_defense": [
+        30,
+        45
+      ],
+      "physical_skills": [
+        1,
+        2
+      ],
+      "attack_rating": [
+        150,
+        200
+      ],
+      "to_strength": [
+        10,
+        30
+      ],
+      "to_dexterity": [
+        10,
+        30
+      ]
+    }
+  },
+  {
+    "id": "belt_satanic_usb_s_cord",
+    "name": "USB's Cord",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 11,
+    "implicit": {
+      "defense": [
+        3,
+        5
+      ],
+      "enhanced_defense": 128,
+      "faster_cast_rate": 16,
+      "lightning_skill_damage": 8,
+      "mana": 64
+    }
+  },
+  {
+    "id": "belt_satanic_vagabond_s_strap",
+    "name": "Vagabond's Strap",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 87,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        45,
+        75
+      ],
+      "crit_chance": [
+        5,
+        10
+      ],
+      "crit_damage": [
+        20,
+        35
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmgd On Level"
+    ],
+    "setId": "vagabond_s_rags"
+  },
+  {
+    "id": "belt_satanic_vipermagi_s_belt",
+    "name": "Vipermagi's Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 40,
+    "implicit": {
+      "defense": [
+        20,
+        32
+      ],
+      "enhanced_defense": [
+        30,
+        45
+      ],
+      "faster_cast_rate": [
+        10,
+        20
+      ],
+      "to_energy": 10,
+      "mana_replenish_pct": 15,
+      "all_resistances": 15
+    }
+  },
+  {
+    "id": "belt_satanic_warbosses_trophy_belt",
+    "name": "Warbosses' Trophy Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 52,
+    "implicit": {
+      "defense": [
+        36,
+        48
+      ],
+      "enhanced_defense": [
+        50,
+        75
+      ],
+      "crit_chance": 10,
+      "crit_damage": [
+        15,
+        25
+      ],
+      "to_strength": 30,
+      "to_vitality": 8
+    },
+    "uniqueEffects": [
+      "Enhanced Dmgd On Level"
+    ]
+  }
+]

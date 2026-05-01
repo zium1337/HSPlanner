@@ -1,0 +1,230 @@
+[
+  {
+    "id": "potion_satanic_blood_of_spartan",
+    "name": "Blood of Spartan",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Spartan Defense"
+    ]
+  },
+  {
+    "id": "potion_satanic_bottle_of_radogate",
+    "name": "Bottle of Radogate",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Fleet Footwork"
+    ]
+  },
+  {
+    "id": "potion_satanic_bottle_of_sake",
+    "name": "Bottle of Sake",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Drunken Kung Fu"
+    ]
+  },
+  {
+    "id": "potion_satanic_caffeinated_coffee_container",
+    "name": "Caffeinated Coffee Container",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: The Fragrance of Dark Coffee"
+    ]
+  },
+  {
+    "id": "potion_satanic_dark_vial_of_corrosion",
+    "name": "Dark Vial of Corrosion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Corrosion of Darkness"
+    ]
+  },
+  {
+    "id": "potion_satanic_elixir_of_death",
+    "name": "Elixir of Death",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Berserkers Rage"
+    ]
+  },
+  {
+    "id": "potion_satanic_elixir_of_unworldly_cognition",
+    "name": "Elixir of Unworldly Cognition",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Untamed Knowledge"
+    ]
+  },
+  {
+    "id": "potion_satanic_empty_bottle_of_vodka",
+    "name": "Empty Bottle of Vodka",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Drunken Infused Wisdom"
+    ]
+  },
+  {
+    "id": "potion_satanic_ghostly_potion",
+    "name": "Ghostly Potion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Parallel Dimension"
+    ]
+  },
+  {
+    "id": "potion_satanic_maggot_eye_elixir",
+    "name": "Maggot Eye Elixir",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Absolute Power"
+    ]
+  },
+  {
+    "id": "potion_satanic_power_of_void",
+    "name": "Power of Void",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Chaos Unleashed"
+    ]
+  },
+  {
+    "id": "potion_satanic_praetorian_blood",
+    "name": "Praetorian Blood",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Vampirism"
+    ]
+  },
+  {
+    "id": "potion_satanic_prismatic_potion",
+    "name": "Prismatic Potion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Prismatic Skin"
+    ]
+  },
+  {
+    "id": "potion_satanic_protein_shake",
+    "name": "Protein Shake",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Flexing"
+    ]
+  },
+  {
+    "id": "potion_satanic_radbull",
+    "name": "Radbull",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Hyper Activity"
+    ]
+  },
+  {
+    "id": "potion_satanic_sarcasters_coffee_mug",
+    "name": "Sarcasters Coffee Mug",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Caffeinated"
+    ]
+  },
+  {
+    "id": "potion_satanic_surstr_mming",
+    "name": "Surströmming",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Taste of Heaven"
+    ]
+  },
+  {
+    "id": "potion_satanic_witches_potion",
+    "name": "Witches Potion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Conjured Replenishment"
+    ]
+  },
+  {
+    "id": "potion_satanic_wizard_potion",
+    "name": "Wizard Potion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Grant Spell: Rapidcaster"
+    ]
+  }
+]

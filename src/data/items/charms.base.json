@@ -1,0 +1,23 @@
+[
+  {
+    "id": "charms_normal_small_charm",
+    "name": "Small Charm",
+    "baseType": "Charm",
+    "slot": "relic_1",
+    "rarity": "common"
+  },
+  {
+    "id": "charms_normal_large_charm",
+    "name": "Large Charm",
+    "baseType": "Charm",
+    "slot": "relic_1",
+    "rarity": "common"
+  },
+  {
+    "id": "charms_normal_grand_charm",
+    "name": "Grand Charm",
+    "baseType": "Charm",
+    "slot": "relic_1",
+    "rarity": "common"
+  }
+]

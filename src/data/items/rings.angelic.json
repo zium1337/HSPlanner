@@ -1,0 +1,60 @@
+[
+  {
+    "id": "ring_angelic_fury_of_tarethiel",
+    "name": "Fury of Tarethiel",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "enhanced_damage": [
+        45,
+        65
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "physical_skills": [
+        3,
+        5
+      ],
+      "crushing_blow_chance": [
+        15,
+        25
+      ],
+      "attack_rating": [
+        750,
+        1
+      ]
+    }
+  },
+  {
+    "id": "ring_angelic_st_aaron_s_eternal_rage",
+    "name": "St. Aaron's Eternal Rage",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        3,
+        4
+      ],
+      "magic_skill_damage": [
+        40,
+        50
+      ],
+      "mana_replenish_pct": 30,
+      "magic_find": [
+        40,
+        65
+      ]
+    },
+    "uniqueEffects": [
+      "Enemy All Resist"
+    ]
+  }
+]

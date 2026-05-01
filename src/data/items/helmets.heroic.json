@@ -1,0 +1,183 @@
+[
+  {
+    "id": "helmet_heroic_harlequinn_s_veil",
+    "name": "Harlequinn's Veil",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "defense": [
+        180,
+        225
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "all_attributes": [
+        18,
+        25
+      ],
+      "faster_hit_recovery": [
+        40,
+        75
+      ],
+      "physical_damage_reduction": [
+        8,
+        13
+      ],
+      "magic_damage_reduction": [
+        8,
+        13
+      ],
+      "all_resistances": [
+        15,
+        30
+      ],
+      "magic_find": [
+        28,
+        60
+      ]
+    },
+    "uniqueEffects": [
+      "Manad On Level"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "helmet_heroic_lava_king_s_lost_mask",
+    "name": "Lava King's Lost Mask",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 96,
+    "implicit": {
+      "defense": [
+        60,
+        80
+      ],
+      "enhanced_defense": [
+        100,
+        135
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "fire_skills": [
+        2,
+        4
+      ],
+      "increased_burning_damage": [
+        25,
+        35
+      ],
+      "flat_fire_skill_damage": [
+        22,
+        50
+      ],
+      "fire_skill_damage": [
+        20,
+        35
+      ],
+      "ignore_lightning_res": [
+        10,
+        20
+      ],
+      "fire_absorption": 10,
+      "magic_find": [
+        15,
+        25
+      ]
+    },
+    "uniqueEffects": [
+      "Lifed On Level"
+    ]
+  },
+  {
+    "id": "helmet_heroic_nikita_s_kj_33_helmet",
+    "name": "Nikita's KJ-33 Helmet",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "defense": [
+        70,
+        90
+      ],
+      "enhanced_defense": [
+        150,
+        165
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "physical_skills": 3,
+      "increased_bleeding_damage": [
+        20,
+        30
+      ],
+      "deadly_blow": 40,
+      "life_steal": [
+        6,
+        10
+      ],
+      "defense_ignored": [
+        30,
+        40
+      ],
+      "attack_damage": [
+        25,
+        50
+      ]
+    }
+  },
+  {
+    "id": "helmet_heroic_sight_of_the_gods",
+    "name": "Sight Of The Gods",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "defense": [
+        60,
+        80
+      ],
+      "enhanced_defense": [
+        80,
+        140
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "to_energy": [
+        15,
+        20
+      ],
+      "to_vitality": 15,
+      "magic_skill_damage": [
+        20,
+        45
+      ],
+      "magic_damage_reduction": [
+        7,
+        15
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Spell: Teleport",
+      "Ailment Damage",
+      "Half Freeze Duration None"
+    ]
+  }
+]

@@ -1,0 +1,1338 @@
+{
+  "version": "latest",
+  "maxCharacterLevel": 100,
+  "etherMaxLevel": 60,
+  "attributePointsPerLevel": 4,
+  "talentPointsPerLevel": 1,
+  "skillPointsPerLevel": 1,
+  "defaultBaseStats": {
+    "attacks_per_second": 1.5,
+    "crit_chance": 5,
+    "crit_damage": 24.75,
+    "experience_gain": 4,
+    "life_replenish": 2,
+    "mana_replenish": 3
+  },
+  "defaultBaseAttributes": {
+    "strength": 2,
+    "dexterity": 2,
+    "intelligence": 1,
+    "energy": 8,
+    "armor": 4,
+    "vitality": 10
+  },
+  "defaultStatsPerAttribute": {
+    "strength": { "enhanced_damage": 1 },
+    "dexterity": { "attack_rating": 8, "crit_damage": 0.125 },
+    "intelligence": {},
+    "energy": { "mana": 4 },
+    "vitality": { "life": 5 },
+    "armor": { "defense": 5 }
+  },
+  "attributeDividedStats": {
+    "energy": { "mana_replenish": 6 },
+    "vitality": { "life_replenish": 8 }
+  },
+  "attributes": [
+    { "key": "strength", "name": "Strength" },
+    { "key": "dexterity", "name": "Dexterity" },
+    { "key": "intelligence", "name": "Intelligence" },
+    { "key": "energy", "name": "Energy" },
+    { "key": "vitality", "name": "Vitality" },
+    { "key": "armor", "name": "Armor" }
+  ],
+  "stats": [
+    {
+      "key": "all_skills",
+      "name": "to All Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "physical_skills",
+      "name": "to Physical Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "arcane_skills",
+      "name": "to Arcane Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "cold_skills",
+      "name": "to Cold Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "fire_skills",
+      "name": "to Fire Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "poison_skills",
+      "name": "to Poison Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "lightning_skills",
+      "name": "to Lightning Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "explosion_skills",
+      "name": "to Explosion Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "summon_skills",
+      "name": "to Summon Skills",
+      "category": "base",
+      "format": "flat"
+    },
+
+    {
+      "key": "movement_speed",
+      "name": "Movement Speed",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "projectile_speed",
+      "name": "Projectile Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "area_of_effect",
+      "name": "Area of Effect",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "chain_lightning_targets",
+      "name": "Chain Lightning Targets",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "lightning_break",
+      "name": "Lightning Break",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "jumping_power",
+      "name": "Jumping Power",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "light_radius",
+      "name": "Light Radius",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "experience_gain",
+      "name": "Increased Experience Gain",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "magic_find",
+      "name": "Magic Find",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "gold_find",
+      "name": "Extra Gold from Kills",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "merchant_prices",
+      "name": "Merchant Prices",
+      "category": "base",
+      "format": "percent"
+    },
+
+    { "key": "life", "name": "Life", "category": "base", "format": "flat" },
+    { "key": "mana", "name": "Mana", "category": "base", "format": "flat" },
+    {
+      "key": "increased_life",
+      "name": "Increased Life",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "increased_mana",
+      "name": "Increased Mana",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "all_resistances",
+      "name": "All Resistances",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "life_replenish",
+      "name": "Life Replenish",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "life_replenish_pct",
+      "name": "Life Replenished based on Maximum Life",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "mana_replenish",
+      "name": "Mana Replenish",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "mana_replenish_pct",
+      "name": "Mana Replenished based on Maximum Mana",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "mana_cost_reduction",
+      "name": "Mana Cost Reduced",
+      "category": "base",
+      "format": "percent"
+    },
+
+    {
+      "key": "all_attributes",
+      "name": "to All Attributes",
+      "category": "base",
+      "format": "flat",
+      "modifiesAttribute": "all"
+    },
+    {
+      "key": "to_strength",
+      "name": "to Strength",
+      "category": "base",
+      "format": "flat",
+      "modifiesAttribute": "strength"
+    },
+    {
+      "key": "to_dexterity",
+      "name": "to Dexterity",
+      "category": "base",
+      "format": "flat",
+      "modifiesAttribute": "dexterity"
+    },
+    {
+      "key": "to_intelligence",
+      "name": "to Intelligence",
+      "category": "base",
+      "format": "flat",
+      "modifiesAttribute": "intelligence"
+    },
+    {
+      "key": "to_energy",
+      "name": "to Energy",
+      "category": "base",
+      "format": "flat",
+      "modifiesAttribute": "energy"
+    },
+    {
+      "key": "to_vitality",
+      "name": "to Vitality",
+      "category": "base",
+      "format": "flat",
+      "modifiesAttribute": "vitality"
+    },
+    {
+      "key": "to_armor",
+      "name": "to Armor",
+      "category": "base",
+      "format": "flat",
+      "modifiesAttribute": "armor"
+    },
+
+    {
+      "key": "attacks_per_second",
+      "name": "Attacks per Second",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "increased_attack_speed",
+      "name": "Attack Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "faster_cast_rate",
+      "name": "Faster Cast Rate",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "skill_haste",
+      "name": "Skill Haste",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "attack_damage",
+      "name": "Attack Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "enhanced_damage",
+      "name": "Enhanced Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "attack_rating",
+      "name": "Attack Rating",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "attack_rating_pct",
+      "name": "Attack Rating %",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "additive_physical_damage",
+      "name": "Additive Physical Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "additive_arcane_damage",
+      "name": "Additive Arcane Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "additive_cold_damage",
+      "name": "Additive Cold Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "additive_fire_damage",
+      "name": "Additive Fire Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "additive_poison_damage",
+      "name": "Additive Poison Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "additive_lightning_damage",
+      "name": "Additive Lightning Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "crit_chance",
+      "name": "Chance for Critical Strike",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "crit_damage",
+      "name": "Critical Strike Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "life_steal",
+      "name": "Life Stolen per Hit",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "life_per_kill",
+      "name": "Life After each Kill",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "life_steal_rate",
+      "name": "Increased Life Steal Rate",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "mana_steal",
+      "name": "Mana Stolen per Hit",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "mana_per_kill",
+      "name": "Mana After each Kill",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "mana_steal_rate",
+      "name": "Increased Mana Steal Rate",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "deadly_blow",
+      "name": "Deadly Blow",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "deadly_blow_aoe_chance",
+      "name": "Chance to Deal Deadly Blow Damage as Area of Effect Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "deadly_blow_aoe_damage",
+      "name": "Increased Deadly Blow Area of Effect Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "crushing_blow_chance",
+      "name": "Crushing Blow",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "open_wounds",
+      "name": "Open Wounds",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "defense_ignored",
+      "name": "Ignore Target Defense",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "slow_target",
+      "name": "Slow Target",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "explosion_damage",
+      "name": "Explosion Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ignore_poison_res",
+      "name": "Ignore Poison Resistance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ignore_lightning_res",
+      "name": "Ignore Lightning Resistance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_bleeding_damage",
+      "name": "Increased Bleeding Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "bleed_aoe_chance",
+      "name": "Chance for Bleed to Deal its Damage as Area of Effect Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_poisoned_damage",
+      "name": "Increased Poisoned Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_burning_damage",
+      "name": "Increased Burning Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_stasis_damage",
+      "name": "Increased Stasis Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_shadow_burning_damage",
+      "name": "Increased Shadow Burning Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_frost_bite_damage",
+      "name": "Increased Frost Bite Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ailment_crit_chance",
+      "name": "Ailment Critical Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ailment_crit_damage",
+      "name": "Ailment Critical Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_ailment_frequency",
+      "name": "Increased Ailment Frequency",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_bleeding_frequency",
+      "name": "Increased Bleeding Frequency",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "max_bleed_stacks",
+      "name": "Maximum Bleed Stacks",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "max_poisoned_stacks",
+      "name": "Maximum Poisoned Stacks",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "max_burning_stacks",
+      "name": "Maximum Burning Stacks",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "max_stasis_stacks",
+      "name": "Maximum Stasis Stacks",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "extra_damage_stunned",
+      "name": "Extra Damage to Stunned",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_damage_bleeding",
+      "name": "Extra Damage to Bleeding",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_damage_frozen",
+      "name": "Extra Damage to Frozen",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_damage_poisoned",
+      "name": "Extra Damage to Poisoned",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_damage_burning",
+      "name": "Extra Damage to Burning",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_damage_stasis",
+      "name": "Extra Damage to Stasis",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_damage_shadow_burning",
+      "name": "Extra Damage to Shadow Burning",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_damage_frost_bitten",
+      "name": "Extra Damage to Frost Bitten",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "chance_inflict_bleeding",
+      "name": "Chance to Inflict Bleeding on Hit",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "chance_inflict_poisoned",
+      "name": "Chance to Inflict Poisoned on Hit",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "chance_inflict_burning",
+      "name": "Chance to Inflict Burning on Hit",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "chance_inflict_stasis",
+      "name": "Chance to Inflict Stasis on Hit",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "explosion_aoe",
+      "name": "Explosion AoE",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "max_rage_stacks",
+      "name": "Maximum Rage Stacks",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "damage_per_rage_stack",
+      "name": "Increased Damage per Stack of Rage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "multicast_chance",
+      "name": "Chance to Multicast",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_duration_seconds",
+      "name": "Seconds of Increased Spell Duration",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "spell_duration_pct",
+      "name": "Increased Spell Duration",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_damage",
+      "name": "Increased Spell Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_crit_chance",
+      "name": "Spell Critical Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_crit_damage",
+      "name": "Spell Critical Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "orbital_skill_damage",
+      "name": "Orbital Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "magic_skill_damage",
+      "name": "Magic Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "arcane_skill_damage",
+      "name": "Arcane Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "cold_skill_damage",
+      "name": "Cold Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "fire_skill_damage",
+      "name": "Fire Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "poison_skill_damage",
+      "name": "Poison Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "lightning_skill_damage",
+      "name": "Lightning Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "flat_arcane_skill_damage",
+      "name": "Flat Arcane Skill Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "flat_cold_skill_damage",
+      "name": "Flat Cold Skill Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "flat_fire_skill_damage",
+      "name": "Flat Fire Skill Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "flat_poison_skill_damage",
+      "name": "Flat Poison Skill Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "flat_lightning_skill_damage",
+      "name": "Flat Lightning Skill Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "flat_skill_damage",
+      "name": "Flat Skill Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "flat_elemental_skill_damage",
+      "name": "Flat Elemental Skill Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "physical_to_poison",
+      "name": "Portion of Physical Damage Converted to Poison Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "physical_to_cold",
+      "name": "Portion of Physical Damage Converted to Cold Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "physical_to_fire",
+      "name": "Portion of Physical Damage Converted to Fire Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "physical_to_lightning",
+      "name": "Portion of Physical Damage Converted to Lightning Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "physical_to_arcane",
+      "name": "Portion of Physical Damage Converted to Arcane Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ignore_arcane_res",
+      "name": "Ignore Arcane Resistance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ignore_cold_res",
+      "name": "Ignore Cold Resistance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "attack_speed_below_40_life",
+      "name": "Increased Attack Speed when below 40% Maximum Life",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_unarmed",
+      "name": "Increased Damage while Unarmed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "str_to_unarmed_damage",
+      "name": "Points in Strength added as Weapon Damage while Unarmed",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "projectile_damage_close",
+      "name": "Increased Projectile Damage to Monsters Close to You",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "melee_splash_damage",
+      "name": "Increased Melee Splash Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "projectile_fork_chance",
+      "name": "Chance for Projectiles to Fork on Hit",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "additional_forking_projectiles",
+      "name": "Additional Forking Projectiles",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "extra_ranged_projectiles",
+      "name": "Extra Ranged Projectiles",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "life_steal_instant",
+      "name": "Life Stolen is Instant",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_suppressed_life_stealing",
+      "name": "Damage Suppressed while Life Stealing",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "armor_break_on_strike",
+      "name": "Armor Break Inflicted when Striking",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "elemental_break_on_strike",
+      "name": "Elemental Break Inflicted when Striking",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "elemental_break_on_spell",
+      "name": "Elemental Break Inflicted on Spell Hit",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "str_to_charge_damage",
+      "name": "Points in Strength added as Damage to Charge Skills",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "melee_range",
+      "name": "Melee Attack Range Increased by",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ranged_range",
+      "name": "Ranged Attack Range Increased by",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_attack_chance",
+      "name": "Chance when Attacking to Perform it an Additional Time",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "cc_diminish_decrease",
+      "name": "Decreased Monster Crowd Control Diminish",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "cc_immunity_ignore",
+      "name": "Monster Crowd Control Immunity Ignored",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_to_cc_immune",
+      "name": "Damage to Crowd Control Immune Monsters",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ailment_immunity_ignore",
+      "name": "Monster Ailment Immunity Ignored",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "skill_restrictions_removed",
+      "name": "Skill Restrictions Removed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "rest_in_peace_chance",
+      "name": "Chance for Slain Monsters to Rest in Peace",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_lightning_dmg_stasis",
+      "name": "Extra Lightning Damage to Monsters with Stasis",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_lightning_dmg_slow",
+      "name": "Extra Lightning Damage to Slowed Monsters",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "projectile_count",
+      "name": "Projectiles",
+      "category": "offense",
+      "format": "flat",
+      "skillScoped": true
+    },
+    {
+      "key": "projectile_size",
+      "name": "Size",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "of_total_damage",
+      "name": "Of Total Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "additional_projectile_chance",
+      "name": "Additional Projectile Chance",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "stasis_on_hit_chance",
+      "name": "Stasis on Hit",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "stasis_damage",
+      "name": "Stasis Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "lightning_break",
+      "name": "Lightning Break",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "slow_on_hit_chance",
+      "name": "Slow on Hit",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "reduced_movement_diminish",
+      "name": "Reduced Movement Diminish",
+      "category": "base",
+      "format": "percent",
+      "skillScoped": true
+    },
+
+    {
+      "key": "physical_damage_reduction",
+      "name": "Physical Damage Reduction",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "magic_damage_reduction",
+      "name": "Magic Damage Reduction",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_reduced",
+      "name": "Damage Reduced",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "faster_hit_recovery",
+      "name": "Faster Hit Recovery",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "dodge_spell_hits",
+      "name": "Chance to Dodge Spell Hits",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "mana_cost_paid_in_life",
+      "name": "Portion of Mana Cost Paid in Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "block_chance",
+      "name": "Chance to Block Attacks",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "defense",
+      "name": "Defense",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "max_colossus_stacks",
+      "name": "Maximum Colossus Stacks",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "damage_return",
+      "name": "Damage Return",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "suppress_spell_hits",
+      "name": "Chance to Suppress Incoming Spell Hits",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_recouped_as_mana",
+      "name": "Damage Taken Recouped as Mana",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "overflow_mana_recouped_as_life",
+      "name": "Overflowing Damage Taken as Mana Recouped as Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_recouped_as_life",
+      "name": "Damage Taken Recouped as Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "poison_length_reduced",
+      "name": "Poison Length Reduced",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "life_replenish_flask",
+      "name": "Increased Life Replenish while a Flask Effect is Active",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_mitigated_flask",
+      "name": "Portion of Incoming Damage Mitigated while a Flask Effect is Active",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "arcane_absorption",
+      "name": "Arcane Absorption",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "cold_absorption",
+      "name": "Cold Absorption",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "fire_absorption",
+      "name": "Fire Absorption",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "poison_absorption",
+      "name": "Poison Absorption",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "lightning_absorption",
+      "name": "Lightning Absorption",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "arcane_resistance",
+      "name": "Arcane Resistance",
+      "category": "defense",
+      "format": "percent",
+      "cap": 75
+    },
+    {
+      "key": "cold_resistance",
+      "name": "Cold Resistance",
+      "category": "defense",
+      "format": "percent",
+      "cap": 75
+    },
+    {
+      "key": "fire_resistance",
+      "name": "Fire Resistance",
+      "category": "defense",
+      "format": "percent",
+      "cap": 75
+    },
+    {
+      "key": "poison_resistance",
+      "name": "Poison Resistance",
+      "category": "defense",
+      "format": "percent",
+      "cap": 75
+    },
+    {
+      "key": "lightning_resistance",
+      "name": "Lightning Resistance",
+      "category": "defense",
+      "format": "percent",
+      "cap": 75
+    },
+    {
+      "key": "cc_immune_no_dodge",
+      "name": "Immune to Stun and Freeze but Unable to Dodge Hits",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_mana_to_life",
+      "name": "Portion of Maximum Mana Added as Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_life_to_mana",
+      "name": "Portion of Maximum Life Added as Mana",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_mitigation",
+      "name": "Portion of Damage Taken Mitigated",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_drained_from_mana",
+      "name": "Portion of Damage Taken is Drained from Mana",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_combat_mitigation_stacks",
+      "name": "Maximum Stacks of Combat Mitigation",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "overflow_res_to_life",
+      "name": "Overflowing Resistances Added as Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_lightning_resistance",
+      "name": "to Maximum Lightning Resist",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_fire_resistance",
+      "name": "to Maximum Fire Resist",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_cold_resistance",
+      "name": "to Maximum Cold Resist",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_poison_resistance",
+      "name": "to Maximum Poison Resist",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_arcane_resistance",
+      "name": "to Maximum Arcane Resist",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_all_resistances",
+      "name": "to Maximum All Resists",
+      "category": "defense",
+      "format": "percent"
+    },
+
+    {
+      "key": "enhanced_defense",
+      "name": "Enhanced Defense",
+      "category": "defense",
+      "format": "percent",
+      "itemOnly": true
+    }
+  ],
+  "slots": [
+    { "key": "helmet", "name": "Helmet", "group": "armor" },
+    { "key": "amulet", "name": "Amulet", "group": "jewelry" },
+    { "key": "weapon", "name": "Weapon", "group": "weapon" },
+    { "key": "armor", "name": "Armor", "group": "armor" },
+    { "key": "offhand", "name": "Offhand", "group": "weapon" },
+    { "key": "ring_1", "name": "Ring 1", "group": "jewelry" },
+    { "key": "ring_2", "name": "Ring 2", "group": "jewelry" },
+    { "key": "belt", "name": "Belt", "group": "armor" },
+    { "key": "gloves", "name": "Gloves", "group": "armor" },
+    { "key": "boots", "name": "Boots", "group": "armor" },
+    { "key": "potion_1", "name": "Potion 1", "group": "special" },
+    { "key": "potion_2", "name": "Potion 2", "group": "special" },
+    { "key": "potion_3", "name": "Potion 3", "group": "special" },
+    { "key": "potion_4", "name": "Potion 4", "group": "special" },
+    { "key": "charm_1", "name": "Charm 1", "group": "charm" },
+    { "key": "charm_2", "name": "Charm 2", "group": "charm" },
+    { "key": "charm_3", "name": "Charm 3", "group": "charm" },
+    { "key": "charm_4", "name": "Charm 4", "group": "charm" },
+    { "key": "charm_5", "name": "Charm 5", "group": "charm" },
+    { "key": "charm_6", "name": "Charm 6", "group": "charm" },
+    { "key": "charm_7", "name": "Charm 7", "group": "charm" },
+    { "key": "charm_8", "name": "Charm 8", "group": "charm" },
+    { "key": "charm_9", "name": "Charm 9", "group": "charm" },
+    { "key": "charm_10", "name": "Charm 10", "group": "charm" },
+    { "key": "charm_11", "name": "Charm 11", "group": "charm" },
+    { "key": "charm_12", "name": "Charm 12", "group": "charm" },
+    { "key": "charm_13", "name": "Charm 13", "group": "charm" },
+    { "key": "charm_14", "name": "Charm 14", "group": "charm" },
+    { "key": "charm_15", "name": "Charm 15", "group": "charm" },
+    { "key": "charm_16", "name": "Charm 16", "group": "charm" },
+    { "key": "charm_17", "name": "Charm 17", "group": "charm" },
+    { "key": "charm_18", "name": "Charm 18", "group": "charm" },
+    { "key": "charm_19", "name": "Charm 19", "group": "charm" },
+    { "key": "charm_20", "name": "Charm 20", "group": "charm" },
+    { "key": "charm_21", "name": "Charm 21", "group": "charm" },
+    { "key": "charm_22", "name": "Charm 22", "group": "charm" },
+    { "key": "charm_23", "name": "Charm 23", "group": "charm" },
+    { "key": "charm_24", "name": "Charm 24", "group": "charm" },
+    { "key": "charm_25", "name": "Charm 25", "group": "charm" },
+    { "key": "charm_26", "name": "Charm 26", "group": "charm" },
+    { "key": "charm_27", "name": "Charm 27", "group": "charm" },
+    { "key": "charm_28", "name": "Charm 28", "group": "charm" },
+    { "key": "charm_29", "name": "Charm 29", "group": "charm" },
+    { "key": "charm_30", "name": "Charm 30", "group": "charm" },
+    { "key": "relic_1", "name": "Relic 1", "group": "special" },
+    { "key": "relic_2", "name": "Relic 2", "group": "special" },
+    { "key": "relic_3", "name": "Relic 3", "group": "special" },
+    { "key": "relic_4", "name": "Relic 4", "group": "special" },
+    { "key": "relic_5", "name": "Relic 5", "group": "special" }
+  ],
+  "targetStates": [
+    {
+      "key": "stasis",
+      "name": "Stasis",
+      "description": "Target is paralyzed by lightning, unable to act."
+    },
+    {
+      "key": "slow",
+      "name": "Slow",
+      "description": "Target's movement and attack speed are reduced."
+    },
+    {
+      "key": "lightning_break",
+      "name": "Lightning Break",
+      "description": "Target's lightning resistance is reduced."
+    }
+  ]
+}

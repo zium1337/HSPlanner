@@ -1,0 +1,2497 @@
+[
+  {
+    "id": "rw_malice",
+    "name": "Malice",
+    "runes": [
+      "rune_uth",
+      "rune_ol",
+      "rune_eth"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Dagger",
+      "Sword",
+      "Mace",
+      "Axe"
+    ],
+    "stats": {
+      "enhanced_damage": 220,
+      "attack_rating": 50,
+      "life_steal": 8,
+      "defense_ignored": 30,
+      "open_wounds": 100,
+      "damage_recouped_as_mana": 5
+    },
+    "requiresLevel": 15,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_shadow",
+    "name": "Shadow",
+    "runes": [
+      "rune_tul",
+      "rune_eth"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_defense": 75,
+      "movement_speed": 25,
+      "faster_cast_rate": 25,
+      "attack_rating": 250,
+      "mana_replenish": 2,
+      "defense_ignored": 10,
+      "to_dexterity": 10,
+      "poison_skill_damage": 5,
+      "mana_replenish_pct": 15,
+      "faster_hit_recovery": 50
+    },
+    "requiresLevel": 17,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_divine_contemplation",
+    "name": "Divine Contemplation",
+    "runes": [
+      "rune_rex",
+      "rune_ert",
+      "rune_tul"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 100,
+      "enhanced_defense": 50,
+      "lightning_skill_damage": 5,
+      "poison_skill_damage": 5,
+      "fire_skill_damage": 5,
+      "damage_recouped_as_mana": 10,
+      "arcane_resistance": 48,
+      "cold_resistance": 48,
+      "fire_resistance": 48,
+      "poison_resistance": 48,
+      "lightning_resistance": 48
+    },
+    "requiresLevel": 21,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_lightforge",
+    "name": "Lightforge",
+    "runes": [
+      "rune_naf",
+      "rune_sal",
+      "rune_uth"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_defense": 75,
+      "to_energy": 10,
+      "to_vitality": 10,
+      "mana": 35,
+      "light_radius": 5,
+      "damage_recouped_as_mana": 20,
+      "physical_damage_reduction": 7,
+      "magic_damage_reduction": 5
+    },
+    "requiresLevel": 27,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_preacher",
+    "name": "Preacher",
+    "runes": [
+      "rune_rex",
+      "rune_tor",
+      "rune_tul",
+      "rune_sal"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Polearm",
+      "Cane",
+      "Staff",
+      "Gun",
+      "Bow"
+    ],
+    "stats": {
+      "enhanced_damage": 880,
+      "faster_cast_rate": 20,
+      "attack_rating": 350,
+      "to_intelligence": 15,
+      "all_attributes": 25,
+      "poison_skill_damage": 5,
+      "fire_skill_damage": 5,
+      "mana_per_kill": 20,
+      "physical_damage_reduction": 7,
+      "magic_find": 50
+    },
+    "requiresLevel": 27,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_scholar",
+    "name": "Scholar",
+    "runes": [
+      "rune_ert",
+      "rune_sal"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "all_skills": 1,
+      "to_energy": 17,
+      "lightning_skill_damage": 5,
+      "mana_per_kill": 3,
+      "light_radius": 2,
+      "physical_damage_reduction": 1
+    },
+    "requiresLevel": 27,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_flesh_ripper",
+    "name": "Flesh Ripper",
+    "runes": [
+      "rune_ymn",
+      "rune_nut"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_defense": 125,
+      "increased_attack_speed": 10,
+      "crit_chance": 15,
+      "life_steal": 7,
+      "all_attributes": 5,
+      "life": 35,
+      "all_resistances": 20
+    },
+    "requiresLevel": 29,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_inner_fire",
+    "name": "Inner Fire",
+    "runes": [
+      "rune_tor",
+      "rune_old",
+      "rune_rex",
+      "rune_nut"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace"
+    ],
+    "stats": {
+      "enhanced_damage": 560,
+      "increased_attack_speed": 10,
+      "attack_rating": 100,
+      "to_strength": 10,
+      "fire_skill_damage": 5,
+      "life": 30,
+      "mana_per_kill": 2
+    },
+    "requiresLevel": 29,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_skysong",
+    "name": "Skysong",
+    "runes": [
+      "rune_uth",
+      "rune_sal",
+      "rune_nut",
+      "rune_rex"
+    ],
+    "allowedBaseTypes": [
+      "Shield",
+      "Sword",
+      "Claw",
+      "Bow",
+      "Gun",
+      "Staff",
+      "Book",
+      "Spellblade"
+    ],
+    "stats": {
+      "enhanced_damage": 500,
+      "all_skills": 3,
+      "faster_cast_rate": 35,
+      "increased_attack_speed": 4,
+      "to_vitality": 25,
+      "fire_skill_damage": 5,
+      "magic_skill_damage": 35,
+      "mana": 110,
+      "faster_hit_recovery": 55,
+      "damage_recouped_as_mana": 5,
+      "physical_damage_reduction": 4
+    },
+    "requiresLevel": 29,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_quickstep",
+    "name": "Quickstep",
+    "runes": [
+      "rune_ymn",
+      "rune_del"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_defense": 75,
+      "movement_speed": 70,
+      "increased_attack_speed": 40,
+      "life_steal": 7,
+      "arcane_skill_damage": 5
+    },
+    "requiresLevel": 31,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_mystify",
+    "name": "Mystify",
+    "runes": [
+      "rune_hel",
+      "rune_ymn",
+      "rune_naf"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "defense": 240,
+      "all_skills": 2,
+      "skill_haste": 4,
+      "life_steal": 7,
+      "life_replenish_pct": 10,
+      "damage_return": 36
+    },
+    "requiresLevel": 33,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_thinking_cap",
+    "name": "Thinking Cap",
+    "runes": [
+      "rune_nut",
+      "rune_io",
+      "rune_thal"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_defense": 96,
+      "increased_attack_speed": 4,
+      "to_vitality": 10,
+      "all_attributes": 10,
+      "cold_skill_damage": 10,
+      "faster_hit_recovery": 20,
+      "cold_resistance": 60
+    },
+    "requiresLevel": 35,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_torment",
+    "name": "Torment",
+    "runes": [
+      "rune_del",
+      "rune_io"
+    ],
+    "allowedBaseTypes": [
+      "Wand",
+      "Dagger",
+      "Book",
+      "Spellblade"
+    ],
+    "stats": {
+      "all_skills": 2,
+      "arcane_skills": 3,
+      "faster_cast_rate": 20,
+      "to_vitality": 10,
+      "arcane_skill_damage": 5,
+      "mana_replenish_pct": 26,
+      "mana": 15
+    },
+    "requiresLevel": 35,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_angul_auxana",
+    "name": "Angul Auxana",
+    "runes": [
+      "rune_del",
+      "rune_lum",
+      "rune_hel"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_defense": 125,
+      "all_skills": 1,
+      "arcane_skill_damage": 15,
+      "arcane_skills": 3,
+      "skill_haste": 4,
+      "ignore_arcane_res": 10,
+      "to_energy": 10,
+      "faster_cast_rate": 15,
+      "mana_replenish": 2,
+      "mana_replenish_pct": 15
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_astropos",
+    "name": "Astropos",
+    "runes": [
+      "rune_ert",
+      "rune_lum",
+      "rune_hel"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "all_skills": 1,
+      "skill_haste": 4,
+      "defense": 210,
+      "ignore_lightning_res": 10,
+      "to_energy": 10,
+      "enhanced_defense": 125,
+      "faster_cast_rate": 15,
+      "lightning_skill_damage": 15,
+      "lightning_skills": 3,
+      "mana_replenish": 2,
+      "mana_replenish_pct": 15
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_brilliance",
+    "name": "Brilliance",
+    "runes": [
+      "rune_lum",
+      "rune_tor"
+    ],
+    "allowedBaseTypes": [
+      "Wand",
+      "Dagger",
+      "Book"
+    ],
+    "stats": {
+      "all_skills": 1,
+      "faster_cast_rate": 30,
+      "to_energy": 25,
+      "all_attributes": 10,
+      "mana": 225,
+      "mana_per_kill": 2,
+      "increased_mana": 10
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_freljord",
+    "name": "Freljord",
+    "runes": [
+      "rune_thal",
+      "rune_lum",
+      "rune_hel"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "defense": 216,
+      "enhanced_defense": 125,
+      "all_skills": 1,
+      "cold_skills": 3,
+      "faster_cast_rate": 15,
+      "skill_haste": 4,
+      "mana_replenish": 2,
+      "to_energy": 10,
+      "cold_skill_damage": 15,
+      "ignore_cold_res": 10,
+      "mana_replenish_pct": 15
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_martyr",
+    "name": "Martyr",
+    "runes": [
+      "rune_thal",
+      "rune_sal",
+      "rune_ymn",
+      "rune_lum"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 480,
+      "increased_attack_speed": 35,
+      "life_steal": 7,
+      "to_energy": 10,
+      "all_attributes": 25,
+      "cold_skill_damage": 5,
+      "mana_per_kill": 6,
+      "physical_damage_reduction": 7
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_moltening",
+    "name": "Moltening",
+    "runes": [
+      "rune_rex",
+      "rune_lum",
+      "rune_hel"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_defense": 370,
+      "all_skills": 1,
+      "fire_skills": 3,
+      "faster_cast_rate": 15,
+      "skill_haste": 4,
+      "mana_replenish": 2,
+      "to_energy": 10,
+      "fire_skill_damage": 18,
+      "ignore_lightning_res": 5,
+      "mana_replenish_pct": 15
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_revelation",
+    "name": "Revelation",
+    "runes": [
+      "rune_lum",
+      "rune_io",
+      "rune_sal",
+      "rune_eth"
+    ],
+    "allowedBaseTypes": [
+      "Staff",
+      "Cane",
+      "Spellblade",
+      "Book"
+    ],
+    "stats": {
+      "enhanced_defense": 150,
+      "all_skills": 4,
+      "faster_cast_rate": 25,
+      "mana_cost_reduction": 9,
+      "defense_ignored": 5,
+      "to_energy": 10,
+      "to_vitality": 10,
+      "increased_mana": 25,
+      "physical_damage_reduction": 4
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_toxicarcus",
+    "name": "Toxicarcus",
+    "runes": [
+      "rune_tul",
+      "rune_lum",
+      "rune_hel"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_defense": 125,
+      "all_skills": 1,
+      "poison_skills": 3,
+      "faster_cast_rate": 15,
+      "skill_haste": 4,
+      "mana_replenish": 2,
+      "to_energy": 10,
+      "poison_skill_damage": 20,
+      "ignore_poison_res": 10,
+      "mana_replenish_pct": 15
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_trapped_vessel",
+    "name": "Trapped Vessel",
+    "runes": [
+      "rune_lum",
+      "rune_lum",
+      "rune_tul"
+    ],
+    "allowedBaseTypes": [
+      "Flask",
+      "Wand"
+    ],
+    "stats": {
+      "all_skills": 1,
+      "to_energy": 20,
+      "poison_skill_damage": 29,
+      "mana_replenish_pct": 25
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_sleight",
+    "name": "Sleight",
+    "runes": [
+      "rune_tor",
+      "rune_uth",
+      "rune_sal",
+      "rune_co"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "stats": {
+      "enhanced_damage": 675,
+      "additive_physical_damage": 38,
+      "to_dexterity": 10,
+      "additive_lightning_damage": 420,
+      "additive_fire_damage": 420,
+      "additive_cold_damage": 420,
+      "mana_replenish_pct": 50,
+      "mana_per_kill": 2,
+      "light_radius": 10,
+      "damage_recouped_as_mana": 15,
+      "physical_damage_reduction": 7
+    },
+    "requiresLevel": 39,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_blitzkrieg",
+    "name": "Blitzkrieg",
+    "runes": [
+      "rune_nut",
+      "rune_fel",
+      "rune_co"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_defense": 325,
+      "movement_speed": 20,
+      "increased_attack_speed": 40,
+      "crit_chance": 8,
+      "deadly_blow": 15,
+      "to_strength": 10,
+      "to_dexterity": 10,
+      "enhanced_damage": 50
+    },
+    "requiresLevel": 41,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_fog",
+    "name": "Fog",
+    "runes": [
+      "rune_hel",
+      "rune_fel"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_defense": 100,
+      "skill_haste": 4,
+      "to_strength": 10,
+      "to_armor": 25,
+      "faster_hit_recovery": 50,
+      "magic_damage_reduction": 10,
+      "all_resistances": 40
+    },
+    "requiresLevel": 41,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_brutality",
+    "name": "Brutality",
+    "runes": [
+      "rune_nut",
+      "rune_nut",
+      "rune_lem",
+      "rune_ymn"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Axe",
+      "Mace"
+    ],
+    "stats": {
+      "enhanced_damage": 350,
+      "physical_skills": 2,
+      "increased_attack_speed": 20,
+      "deadly_blow": 20,
+      "life_steal": 7,
+      "to_strength": 10,
+      "magic_skill_damage": 15,
+      "life": 225
+    },
+    "requiresLevel": 43,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_conquest",
+    "name": "Conquest",
+    "runes": [
+      "rune_sal",
+      "rune_ymn",
+      "rune_co",
+      "rune_um"
+    ],
+    "allowedBaseTypes": [
+      "Mace",
+      "Polearm"
+    ],
+    "stats": {
+      "enhanced_damage": 660,
+      "attack_rating_pct": 20,
+      "to_dexterity": 61,
+      "to_intelligence": 25,
+      "all_attributes": 15,
+      "additive_arcane_damage": 223,
+      "additive_fire_damage": 200,
+      "damage_recouped_as_mana": 34,
+      "physical_damage_reduction": 7,
+      "all_resistances": 20,
+      "gold_find": 25
+    },
+    "requiresLevel": 47,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_desert_s_wrath",
+    "name": "Desert's Wrath",
+    "runes": [
+      "rune_nut",
+      "rune_pul",
+      "rune_old",
+      "rune_um"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_damage": 25,
+      "enhanced_defense": 225,
+      "all_skills": 2,
+      "increased_attack_speed": 29,
+      "mana_cost_reduction": 3,
+      "all_resistances": 8
+    },
+    "requiresLevel": 47,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_gladstone_goose_s_jacket",
+    "name": "Gladstone Goose's Jacket",
+    "runes": [
+      "rune_fel",
+      "rune_um",
+      "rune_pul",
+      "rune_sal"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "defense": 240,
+      "enhanced_defense": 260,
+      "mana_cost_reduction": 3,
+      "to_strength": 30,
+      "faster_hit_recovery": 10,
+      "light_radius": -3,
+      "damage_recouped_as_mana": 5,
+      "physical_damage_reduction": 3,
+      "all_resistances": 52,
+      "magic_find": 50,
+      "experience_gain": 5
+    },
+    "requiresLevel": 47,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_mayhem",
+    "name": "Mayhem",
+    "runes": [
+      "rune_nut",
+      "rune_um",
+      "rune_thal"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_damage": 20,
+      "enhanced_defense": 200,
+      "increased_attack_speed": 4,
+      "crushing_blow_chance": 15,
+      "open_wounds": 33,
+      "additive_cold_damage": 140,
+      "cold_skill_damage": 5,
+      "faster_hit_recovery": 40,
+      "all_resistances": 20,
+      "cold_resistance": 45,
+      "fire_resistance": 15,
+      "poison_resistance": 15,
+      "lightning_resistance": 15
+    },
+    "requiresLevel": 47,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_shroud_of_elements",
+    "name": "Shroud of Elements",
+    "runes": [
+      "rune_nut",
+      "rune_um",
+      "rune_pul",
+      "rune_lum"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_defense": 290,
+      "increased_attack_speed": 10,
+      "mana_cost_reduction": 3,
+      "to_strength": 20,
+      "to_energy": 20,
+      "to_vitality": 20,
+      "faster_hit_recovery": 60,
+      "all_resistances": 35
+    },
+    "requiresLevel": 47,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_ghost",
+    "name": "Ghost",
+    "runes": [
+      "rune_sal",
+      "rune_mal"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_defense": 150,
+      "all_skills": 2,
+      "movement_speed": 57,
+      "physical_damage_reduction": 4,
+      "magic_damage_reduction": 4
+    },
+    "requiresLevel": 49,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_shelter",
+    "name": "Shelter",
+    "runes": [
+      "rune_co",
+      "rune_co",
+      "rune_mal"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 100,
+      "block_chance": 65,
+      "enhanced_defense": 137,
+      "to_dexterity": 40,
+      "to_intelligence": 7,
+      "faster_hit_recovery": 20,
+      "magic_damage_reduction": 14,
+      "all_resistances": 70
+    },
+    "requiresLevel": 49,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_sonicstep",
+    "name": "Sonicstep",
+    "runes": [
+      "rune_uth",
+      "rune_mal",
+      "rune_nut"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_damage": 50,
+      "enhanced_defense": 300,
+      "all_skills": 1,
+      "movement_speed": 50,
+      "increased_attack_speed": 49,
+      "mana_steal": 4,
+      "damage_recouped_as_mana": 15,
+      "magic_damage_reduction": 3,
+      "all_resistances": 15
+    },
+    "requiresLevel": 49,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_arcane_bastion",
+    "name": "Arcane Bastion",
+    "runes": [
+      "rune_lum",
+      "rune_gul",
+      "rune_ert",
+      "rune_sal"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 100,
+      "enhanced_defense": 200,
+      "all_skills": 3,
+      "attack_rating_pct": 15,
+      "to_energy": 10,
+      "lightning_skill_damage": 5,
+      "magic_skill_damage": 20,
+      "life": 40,
+      "physical_damage_reduction": 4,
+      "all_resistances": 30
+    },
+    "requiresLevel": 53,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_ascendancy",
+    "name": "Ascendancy",
+    "runes": [
+      "rune_io",
+      "rune_gul",
+      "rune_ist"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 680,
+      "attack_rating_pct": 15,
+      "to_dexterity": 15,
+      "to_vitality": 10,
+      "additive_arcane_damage": 1440,
+      "arcane_skill_damage": 40,
+      "increased_mana": 8,
+      "magic_find": 15
+    },
+    "requiresLevel": 53,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_delirium_tremens",
+    "name": "Delirium Tremens",
+    "runes": [
+      "rune_vex",
+      "rune_vex"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_defense": 325,
+      "all_skills": 8,
+      "mana_steal": 15
+    },
+    "requiresLevel": 55,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_epilogue",
+    "name": "Epilogue",
+    "runes": [
+      "rune_vex",
+      "rune_ymn",
+      "rune_gul"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "stats": {
+      "enhanced_damage": 720,
+      "attack_rating_pct": 15,
+      "additive_physical_damage": 50,
+      "life_steal": 7,
+      "mana_steal": 7
+    },
+    "requiresLevel": 55,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_paradox",
+    "name": "Paradox",
+    "runes": [
+      "rune_ist",
+      "rune_vex"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_defense": 440,
+      "all_skills": 2,
+      "movement_speed": 47,
+      "mana_steal": 7,
+      "magic_skill_damage": 15,
+      "life_replenish_pct": 20,
+      "mana_replenish_pct": 20,
+      "physical_damage_reduction": 10,
+      "magic_find": 15
+    },
+    "requiresLevel": 55,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_lone_mystic",
+    "name": "Lone Mystic",
+    "runes": [
+      "rune_del",
+      "rune_hel",
+      "rune_um",
+      "rune_qi"
+    ],
+    "allowedBaseTypes": [],
+    "stats": {},
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_aurora_s_might",
+    "name": "Aurora's Might",
+    "runes": [
+      "rune_ymn",
+      "rune_co",
+      "rune_qi"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Mace"
+    ],
+    "stats": {
+      "enhanced_damage": 550,
+      "life_steal": 7,
+      "defense_ignored": 40,
+      "to_dexterity": 10,
+      "to_energy": 14,
+      "additive_arcane_damage": 320,
+      "additive_cold_damage": 280,
+      "attack_damage": 20,
+      "faster_hit_recovery": 25,
+      "gold_find": 15
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_havoc",
+    "name": "Havoc",
+    "runes": [
+      "rune_vex",
+      "rune_qi",
+      "rune_ist",
+      "rune_del"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 89,
+      "enhanced_defense": 260,
+      "all_skills": 3,
+      "to_armor": 80,
+      "mana_steal": 7,
+      "attack_damage": 20,
+      "arcane_skill_damage": 5,
+      "physical_damage_reduction": 5,
+      "magic_find": 15
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_kogarasumaru",
+    "name": "Kogarasumaru",
+    "runes": [
+      "rune_um",
+      "rune_gul",
+      "rune_qi",
+      "rune_vex",
+      "rune_old"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 570,
+      "all_skills": 1,
+      "crushing_blow_chance": 20,
+      "attack_rating_pct": 15,
+      "life_steal": 5,
+      "mana_steal": 7,
+      "attack_damage": 20,
+      "all_resistances": 20
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_mj_lner",
+    "name": "Mjölner",
+    "runes": [
+      "rune_qi",
+      "rune_ert",
+      "rune_fel",
+      "rune_gul"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 670,
+      "increased_attack_speed": 40,
+      "attack_rating_pct": 15,
+      "to_strength": 10,
+      "additive_lightning_damage": 6180,
+      "attack_damage": 20,
+      "lightning_skill_damage": 35,
+      "ignore_lightning_res": 25
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_valkyrie",
+    "name": "Valkyrie",
+    "runes": [
+      "rune_qi",
+      "rune_lem",
+      "rune_old"
+    ],
+    "allowedBaseTypes": [
+      "Polearm",
+      "Throwing",
+      "Bow"
+    ],
+    "stats": {
+      "enhanced_damage": 645,
+      "all_skills": 4,
+      "attack_rating": 500,
+      "defense_ignored": 40,
+      "to_strength": 25,
+      "attack_damage": 20,
+      "all_resistances": 40,
+      "gold_find": 20
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_will_of_thanos",
+    "name": "Will of Thanos",
+    "runes": [
+      "rune_ymn",
+      "rune_rex",
+      "rune_mal",
+      "rune_ist",
+      "rune_qi"
+    ],
+    "allowedBaseTypes": [
+      "Axe",
+      "Mace",
+      "Polearm",
+      "Staff",
+      "Cane",
+      "Gun",
+      "Bow"
+    ],
+    "stats": {
+      "enhanced_damage": 590,
+      "all_skills": 1,
+      "increased_attack_speed": 20,
+      "life_steal": 7,
+      "to_intelligence": 10,
+      "attack_damage": 20,
+      "fire_skill_damage": 5,
+      "life_replenish_pct": 16,
+      "magic_damage_reduction": 3,
+      "magic_find": 15
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_windstride",
+    "name": "Windstride",
+    "runes": [
+      "rune_del",
+      "rune_qi",
+      "rune_hel",
+      "rune_ist",
+      "rune_tor",
+      "rune_vex"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "stats": {
+      "enhanced_damage": 725,
+      "all_skills": 4,
+      "increased_attack_speed": 60,
+      "skill_haste": 4,
+      "mana_steal": 23,
+      "arcane_skill_damage": 5,
+      "mana_per_kill": 2,
+      "all_resistances": 75,
+      "magic_find": 15
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_chimera",
+    "name": "Chimera",
+    "runes": [
+      "rune_um",
+      "rune_qi",
+      "rune_old",
+      "rune_old"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_damage": 50,
+      "enhanced_defense": 385,
+      "all_skills": 2,
+      "increased_attack_speed": 25,
+      "deadly_blow": 10,
+      "attack_rating_pct": 5,
+      "to_strength": 15,
+      "to_intelligence": 15,
+      "all_attributes": 15,
+      "attack_damage": 20,
+      "all_resistances": 8
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_big_joe",
+    "name": "Big Joe",
+    "runes": [
+      "rune_xo",
+      "rune_io",
+      "rune_fel",
+      "rune_tul",
+      "rune_hel",
+      "rune_naf"
+    ],
+    "allowedBaseTypes": [
+      "Chainsaw",
+      "Mace",
+      "Polearm"
+    ],
+    "stats": {
+      "enhanced_damage": 740,
+      "increased_attack_speed": 40,
+      "skill_haste": 4,
+      "deadly_blow": 50,
+      "attack_rating_pct": 40,
+      "to_strength": 10,
+      "to_vitality": 10,
+      "additive_fire_damage": 460,
+      "poison_skill_damage": 5
+    },
+    "requiresLevel": 59,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_fortress",
+    "name": "Fortress",
+    "runes": [
+      "rune_ol",
+      "rune_sal",
+      "rune_del",
+      "rune_xo"
+    ],
+    "allowedBaseTypes": [
+      "Armor",
+      "Axe",
+      "Mace",
+      "Sword",
+      "Staff",
+      "Bow",
+      "Gun",
+      "Polearm"
+    ],
+    "stats": {
+      "defense": 240,
+      "enhanced_damage": 250,
+      "enhanced_defense": 850,
+      "faster_cast_rate": 15,
+      "deadly_blow": 25,
+      "attack_rating": 50,
+      "arcane_skill_damage": 5,
+      "damage_reduced": 20,
+      "physical_damage_reduction": 7,
+      "all_resistances": 40
+    },
+    "requiresLevel": 59,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_bristle",
+    "name": "Bristle",
+    "runes": [
+      "rune_rex",
+      "rune_qi",
+      "rune_sur",
+      "rune_eth"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "defense": 525,
+      "defense_ignored": 5,
+      "attack_damage": 20,
+      "poison_skill_damage": 50,
+      "fire_skill_damage": 5,
+      "mana_replenish_pct": 15,
+      "faster_hit_recovery": 50,
+      "life_per_kill": 15,
+      "increased_mana": 15,
+      "fire_resistance": 30,
+      "poison_resistance": 100
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_celestus",
+    "name": "Celestus",
+    "runes": [
+      "rune_sur",
+      "rune_hel"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Sword",
+      "Dagger",
+      "Wand",
+      "Book",
+      "Spellblade",
+      "Flask"
+    ],
+    "stats": {
+      "arcane_skills": 5,
+      "skill_haste": 25,
+      "mana_replenish": 6,
+      "to_intelligence": 20,
+      "flat_arcane_skill_damage": 38,
+      "increased_mana": 25,
+      "life": 350,
+      "arcane_resistance": 40,
+      "fire_resistance": 26,
+      "lightning_resistance": 37
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_curse",
+    "name": "Curse",
+    "runes": [
+      "rune_sur",
+      "rune_mal",
+      "rune_um"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_defense": 325,
+      "magic_skill_damage": 40,
+      "increased_mana": 10,
+      "magic_damage_reduction": 4,
+      "all_resistances": 10
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_etherwalk",
+    "name": "Etherwalk",
+    "runes": [
+      "rune_pul",
+      "rune_uth",
+      "rune_sur"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_defense": 300,
+      "all_skills": 2,
+      "movement_speed": 30,
+      "mana_cost_reduction": 3,
+      "magic_skill_damage": 30,
+      "increased_mana": 10,
+      "damage_recouped_as_mana": 5
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_flowing_sands",
+    "name": "Flowing Sands",
+    "runes": [
+      "rune_vex",
+      "rune_tor",
+      "rune_pul",
+      "rune_sur",
+      "rune_hel",
+      "rune_sur"
+    ],
+    "allowedBaseTypes": [
+      "Staff",
+      "Cane"
+    ],
+    "stats": {
+      "all_skills": 4,
+      "skill_haste": 50,
+      "mana_cost_reduction": 3,
+      "mana_steal": 7,
+      "arcane_skill_damage": 5,
+      "mana_per_kill": 2,
+      "increased_mana": 10
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_ravager",
+    "name": "Ravager",
+    "runes": [
+      "rune_mal",
+      "rune_um",
+      "rune_gul",
+      "rune_sur"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 570,
+      "increased_attack_speed": 20,
+      "crushing_blow_chance": 33,
+      "attack_rating_pct": 15,
+      "defense_ignored": 25,
+      "open_wounds": 50,
+      "to_strength": 30,
+      "magic_damage_reduction": 4,
+      "all_resistances": 8,
+      "gold_find": 25
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_virulence",
+    "name": "Virulence",
+    "runes": [
+      "rune_tul",
+      "rune_sur",
+      "rune_sal"
+    ],
+    "allowedBaseTypes": [
+      "Flask",
+      "Wand"
+    ],
+    "stats": {
+      "all_skills": 1,
+      "mana_replenish": 6,
+      "to_energy": 30,
+      "flat_poison_skill_damage": 38,
+      "poison_skill_damage": 35,
+      "ignore_poison_res": 20,
+      "mana_replenish_pct": 15,
+      "increased_mana": 25,
+      "physical_damage_reduction": 7
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_arcanum",
+    "name": "Arcanum",
+    "runes": [
+      "rune_sur",
+      "rune_ber",
+      "rune_gul",
+      "rune_sal",
+      "rune_ist",
+      "rune_lum"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "stats": {
+      "all_skills": 4,
+      "enhanced_damage": 940,
+      "increased_attack_speed": 30,
+      "crushing_blow_chance": 8,
+      "attack_rating_pct": 15,
+      "to_energy": 10,
+      "to_intelligence": 25,
+      "increased_mana": 10,
+      "physical_damage_reduction": 7,
+      "magic_find": 15
+    },
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_carnage",
+    "name": "Carnage",
+    "runes": [
+      "rune_pul",
+      "rune_lum",
+      "rune_ber",
+      "rune_mal"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Bow",
+      "Gun"
+    ],
+    "stats": {
+      "enhanced_damage": 940,
+      "mana_cost_reduction": 3,
+      "crushing_blow_chance": 38,
+      "attack_rating": 250,
+      "to_energy": 10,
+      "all_attributes": 15,
+      "additive_arcane_damage": 460,
+      "additive_lightning_damage": 460,
+      "magic_damage_reduction": 4
+    },
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_catastrophe",
+    "name": "Catastrophe",
+    "runes": [
+      "rune_pul",
+      "rune_um",
+      "rune_sur",
+      "rune_ber",
+      "rune_lum"
+    ],
+    "allowedBaseTypes": [
+      "Staff",
+      "Cane",
+      "Spellblade",
+      "Book",
+      "Sword",
+      "Mace"
+    ],
+    "stats": {
+      "mana_cost_reduction": 3,
+      "crushing_blow_chance": 10,
+      "to_energy": 24,
+      "fire_skill_damage": 50,
+      "mana_per_kill": 12,
+      "mana": 15,
+      "all_resistances": 20,
+      "magic_find": 40
+    },
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_crushfleet",
+    "name": "Crushfleet",
+    "runes": [
+      "rune_ber",
+      "rune_ber",
+      "rune_xo"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_defense": 226,
+      "all_skills": 3,
+      "physical_skills": 3,
+      "movement_speed": 59,
+      "deadly_blow": 25,
+      "crushing_blow_chance": 14,
+      "mana_steal": 15,
+      "defense_ignored": 25,
+      "faster_hit_recovery": 150
+    },
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_force",
+    "name": "Force",
+    "runes": [
+      "rune_del",
+      "rune_um",
+      "rune_ber",
+      "rune_ist"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "defense": 240,
+      "enhanced_defense": 75,
+      "all_skills": 2,
+      "crushing_blow_chance": 8,
+      "life_steal": 8,
+      "to_strength": 30,
+      "arcane_skill_damage": 5,
+      "life_replenish_pct": 7,
+      "physical_damage_reduction": 8,
+      "all_resistances": 73,
+      "magic_find": 30
+    },
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_grief",
+    "name": "Grief",
+    "runes": [
+      "rune_eth",
+      "rune_tor",
+      "rune_xo",
+      "rune_mal",
+      "rune_ber"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 720,
+      "poison_skills": 3,
+      "increased_attack_speed": 25,
+      "deadly_blow": 25,
+      "crushing_blow_chance": 8,
+      "additive_physical_damage": 75,
+      "defense_ignored": 5,
+      "extra_damage_poisoned": 30,
+      "ignore_poison_res": 25,
+      "mana_per_kill": 2,
+      "magic_damage_reduction": 4
+    },
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_atonement",
+    "name": "Atonement",
+    "runes": [
+      "rune_vex",
+      "rune_xo",
+      "rune_ber",
+      "rune_jah",
+      "rune_co"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 550,
+      "increased_attack_speed": 30,
+      "deadly_blow": 25,
+      "crushing_blow_chance": 8,
+      "mana_steal": 7,
+      "defense_ignored": 30,
+      "to_strength": 30,
+      "to_dexterity": 10,
+      "arcane_skill_damage": 45,
+      "fire_skill_damage": 45,
+      "increased_life": 10
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_crematorium_s_pledge",
+    "name": "Crematorium's Pledge",
+    "runes": [
+      "rune_vex",
+      "rune_sur",
+      "rune_sur",
+      "rune_jah",
+      "rune_ber"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 100,
+      "enhanced_defense": 50,
+      "all_skills": 2,
+      "crushing_blow_chance": 8,
+      "mana_steal": 7,
+      "extra_damage_burning": 60,
+      "fire_skill_damage": 50,
+      "ignore_lightning_res": 30,
+      "increased_life": 10,
+      "increased_mana": 20,
+      "fire_absorption": 5,
+      "all_resistances": 20,
+      "fire_resistance": 75
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_deus_ex_machina",
+    "name": "Deus Ex Machina",
+    "runes": [
+      "rune_jah",
+      "rune_qi",
+      "rune_tor"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "stats": {
+      "enhanced_damage": 860,
+      "all_skills": 4,
+      "all_attributes": 60,
+      "attack_damage": 20,
+      "mana_per_kill": 2,
+      "increased_life": 10
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_divinity",
+    "name": "Divinity",
+    "runes": [
+      "rune_co",
+      "rune_vex",
+      "rune_pul",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Mace",
+      "Staff",
+      "Cane"
+    ],
+    "stats": {
+      "all_skills": 3,
+      "faster_cast_rate": 40,
+      "mana_cost_reduction": 3,
+      "mana_steal": 7,
+      "to_dexterity": 10,
+      "life_replenish_pct": 20,
+      "increased_life": 10,
+      "increased_mana": 15,
+      "all_resistances": 30
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_harvester",
+    "name": "Harvester",
+    "runes": [
+      "rune_vex",
+      "rune_sur",
+      "rune_eth",
+      "rune_sal",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Chainsaw",
+      "Mace",
+      "Polearm"
+    ],
+    "stats": {
+      "enhanced_damage": 660,
+      "increased_attack_speed": 35,
+      "additive_physical_damage": 38,
+      "mana_steal": 7,
+      "defense_ignored": 40,
+      "open_wounds": 20,
+      "ignore_lightning_res": 25,
+      "increased_life": 10,
+      "increased_mana": 10,
+      "physical_damage_reduction": 4
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_judge",
+    "name": "Judge",
+    "runes": [
+      "rune_fel",
+      "rune_qi",
+      "rune_ert",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 670,
+      "increased_attack_speed": 30,
+      "life_steal": 12,
+      "defense_ignored": 30,
+      "to_strength": 10,
+      "additive_arcane_damage": 200,
+      "additive_lightning_damage": 200,
+      "additive_fire_damage": 200,
+      "additive_cold_damage": 200,
+      "attack_damage": 20,
+      "lightning_skill_damage": 5,
+      "increased_life": 10
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_mirage",
+    "name": "Mirage",
+    "runes": [
+      "rune_vex",
+      "rune_vex",
+      "rune_xo",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 100,
+      "block_chance": 65,
+      "enhanced_damage": 90,
+      "fire_skills": 4,
+      "deadly_blow": 25,
+      "mana_steal": 14,
+      "ignore_lightning_res": 30,
+      "life": 50,
+      "increased_life": 10,
+      "max_lightning_resistance": 5
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_potency",
+    "name": "Potency",
+    "runes": [
+      "rune_ymn",
+      "rune_nut",
+      "rune_jah",
+      "rune_xo"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Bow",
+      "Gun"
+    ],
+    "stats": {
+      "enhanced_damage": 820,
+      "increased_attack_speed": 30,
+      "deadly_blow": 25,
+      "life_steal": 7,
+      "cold_skill_damage": 45,
+      "ignore_cold_res": 50,
+      "increased_life": 10
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_rainbow",
+    "name": "Rainbow",
+    "runes": [
+      "rune_vex",
+      "rune_jah",
+      "rune_sur"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "enhanced_defense": 30,
+      "mana_cost_reduction": 3,
+      "to_vitality": 10,
+      "faster_hit_recovery": 30,
+      "increased_life": 16,
+      "all_resistances": 20,
+      "magic_find": 25
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_shroud_of_enigma",
+    "name": "Shroud of Enigma",
+    "runes": [
+      "rune_jah",
+      "rune_uth",
+      "rune_ber"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "all_skills": 3,
+      "movement_speed": 58,
+      "crushing_blow_chance": 8,
+      "to_armor": 8,
+      "life_per_kill": 19,
+      "increased_life": 17,
+      "damage_recouped_as_mana": 15,
+      "physical_damage_reduction": 7,
+      "magic_find": 34
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_true_aim",
+    "name": "True Aim",
+    "runes": [
+      "rune_jah",
+      "rune_xo",
+      "rune_mal",
+      "rune_gul"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "stats": {
+      "enhanced_damage": 940,
+      "deadly_blow": 25,
+      "attack_rating_pct": 45,
+      "additive_physical_damage": 38,
+      "increased_life": 10,
+      "magic_damage_reduction": 3
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_legionnaire",
+    "name": "Legionnaire",
+    "runes": [
+      "rune_xo",
+      "rune_qi",
+      "rune_drax"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_damage": 20,
+      "enhanced_defense": 125,
+      "physical_skills": 5,
+      "deadly_blow": 25,
+      "life_steal": 7,
+      "mana_steal": 8,
+      "to_strength": 35,
+      "attack_damage": 20
+    },
+    "requiresLevel": 67,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_nirvana",
+    "name": "Nirvana",
+    "runes": [
+      "rune_sur",
+      "rune_sur",
+      "rune_drax"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_defense": 123,
+      "all_skills": 4,
+      "to_energy": 40,
+      "to_intelligence": 15,
+      "magic_skill_damage": 15,
+      "mana_replenish_pct": 40,
+      "mana": 20
+    },
+    "requiresLevel": 67,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_perdition",
+    "name": "Perdition",
+    "runes": [
+      "rune_hel",
+      "rune_qi",
+      "rune_um",
+      "rune_xo",
+      "rune_drax"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 670,
+      "increased_attack_speed": 45,
+      "skill_haste": 4,
+      "deadly_blow": 25,
+      "open_wounds": 25,
+      "attack_damage": 20,
+      "ignore_cold_res": 60,
+      "all_resistances": 20
+    },
+    "requiresLevel": 67,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_sovereignty",
+    "name": "Sovereignty",
+    "runes": [
+      "rune_drax",
+      "rune_lum",
+      "rune_pul",
+      "rune_ol"
+    ],
+    "allowedBaseTypes": [
+      "Staff",
+      "Cane",
+      "Spellblade",
+      "Book"
+    ],
+    "stats": {
+      "all_skills": 5,
+      "mana_cost_reduction": 3,
+      "attack_rating": 50,
+      "to_energy": 15,
+      "arcane_skill_damage": 45,
+      "ignore_arcane_res": 30
+    },
+    "requiresLevel": 67,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_breath_of_the_damned",
+    "name": "Breath of the Damned",
+    "runes": [
+      "rune_vex",
+      "rune_hel",
+      "rune_qi",
+      "rune_old",
+      "rune_zed",
+      "rune_xo"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "stats": {
+      "enhanced_damage": 800,
+      "all_skills": 4,
+      "increased_attack_speed": 20,
+      "skill_haste": 4,
+      "attack_rating": 50,
+      "life_steal": 15,
+      "mana_steal": 7,
+      "defense_ignored": 5,
+      "all_attributes": 60,
+      "magic_skill_damage": 8
+    },
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_bubonic_plague_s_pledge",
+    "name": "Bubonic Plague's Pledge",
+    "runes": [
+      "rune_gul",
+      "rune_gul",
+      "rune_zed",
+      "rune_jah",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 100,
+      "enhanced_defense": 350,
+      "all_skills": 2,
+      "attack_rating_pct": 30,
+      "extra_damage_poisoned": 60,
+      "to_intelligence": 30,
+      "poison_skill_damage": 50,
+      "ignore_poison_res": 30,
+      "magic_skill_damage": 13,
+      "increased_life": 20,
+      "poison_absorption": 5,
+      "all_resistances": 20,
+      "poison_resistance": 75
+    },
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_disaster",
+    "name": "Disaster",
+    "runes": [
+      "rune_jah",
+      "rune_um",
+      "rune_jah",
+      "rune_sur",
+      "rune_ist",
+      "rune_zed"
+    ],
+    "allowedBaseTypes": [
+      "Chainsaw",
+      "Polearm",
+      "Axe"
+    ],
+    "stats": {
+      "enhanced_damage": 475,
+      "all_skills": 8,
+      "movement_speed": 45,
+      "faster_cast_rate": 80,
+      "skill_haste": 35,
+      "all_attributes": 25,
+      "magic_skill_damage": 13,
+      "increased_life": 20,
+      "increased_mana": 10,
+      "all_resistances": 30,
+      "magic_find": 15
+    },
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_hydrangea",
+    "name": "Hydrangea",
+    "runes": [
+      "rune_zed",
+      "rune_tul",
+      "rune_zed"
+    ],
+    "allowedBaseTypes": [
+      "Polearm",
+      "Bow",
+      "Throwing",
+      "Mace"
+    ],
+    "stats": {
+      "all_skills": 3,
+      "poison_skills": 8,
+      "movement_speed": 30,
+      "mana_replenish": 8,
+      "to_energy": 35,
+      "to_vitality": 25,
+      "additive_poison_damage": 2700,
+      "poison_skill_damage": 20,
+      "ignore_poison_res": 35,
+      "magic_skill_damage": 20,
+      "poison_resistance": 60
+    },
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_justice",
+    "name": "Justice",
+    "runes": [
+      "rune_drax",
+      "rune_zed",
+      "rune_sur"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 100,
+      "enhanced_defense": 400,
+      "all_skills": 4,
+      "movement_speed": 40,
+      "to_energy": 35,
+      "to_armor": 40,
+      "all_attributes": 20,
+      "magic_skill_damage": 10,
+      "increased_mana": 30,
+      "magic_damage_reduction": 15,
+      "all_resistances": 80
+    },
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_lost_dimension",
+    "name": "Lost Dimension",
+    "runes": [
+      "rune_ist",
+      "rune_ist",
+      "rune_zed",
+      "rune_jah",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 100,
+      "enhanced_defense": 350,
+      "all_skills": 3,
+      "faster_cast_rate": 15,
+      "to_armor": 30,
+      "magic_skill_damage": 8,
+      "increased_life": 20,
+      "increased_mana": 20,
+      "all_resistances": 20,
+      "magic_find": 30
+    },
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_ninja_tabi",
+    "name": "Ninja Tabi",
+    "runes": [
+      "rune_zed",
+      "rune_ber"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_defense": 323,
+      "all_skills": 3,
+      "movement_speed": 45,
+      "jumping_power": 125,
+      "crushing_blow_chance": 8,
+      "to_dexterity": 5,
+      "magic_skill_damage": 13,
+      "physical_damage_reduction": 3,
+      "magic_damage_reduction": 3
+    },
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_crown_of_the_antichrist",
+    "name": "Crown of the Antichrist",
+    "runes": [
+      "rune_nju",
+      "rune_zed",
+      "rune_jol"
+    ],
+    "allowedBaseTypes": [
+      "Helmet"
+    ],
+    "stats": {
+      "defense": 80,
+      "enhanced_defense": 625,
+      "all_skills": 3,
+      "projectile_speed": 1,
+      "magic_skill_damage": 13,
+      "all_resistances": 30
+    },
+    "requiresLevel": 100,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_babylon_s_fall",
+    "name": "Babylon's Fall",
+    "runes": [
+      "rune_drax",
+      "rune_jol",
+      "rune_flo",
+      "rune_ber"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_defense": 425,
+      "all_skills": 4,
+      "crushing_blow_chance": 8,
+      "projectile_speed": 1,
+      "life_replenish_pct": 300,
+      "mana_replenish_pct": 300,
+      "damage_mitigation": 15,
+      "all_resistances": 2,
+      "gold_find": 25,
+      "magic_find": 200
+    },
+    "requiresLevel": 100,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_colossus",
+    "name": "Colossus",
+    "runes": [
+      "rune_fawn",
+      "rune_fawn",
+      "rune_jol",
+      "rune_drax",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "defense": 100,
+      "enhanced_defense": 600,
+      "all_skills": 4,
+      "projectile_speed": 1,
+      "to_vitality": 50,
+      "increased_life": 50,
+      "damage_return": 1500,
+      "damage_mitigation": 6,
+      "all_resistances": 50
+    },
+    "requiresLevel": 100,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_flowing_agony",
+    "name": "Flowing Agony",
+    "runes": [
+      "rune_nju",
+      "rune_fawn",
+      "rune_jol"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_defense": 400,
+      "all_skills": 4,
+      "movement_speed": 95,
+      "faster_cast_rate": 50,
+      "projectile_speed": 1,
+      "to_dexterity": 25,
+      "magic_skill_damage": 50,
+      "damage_mitigation": 3
+    },
+    "requiresLevel": 100,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_feral",
+    "name": "Feral",
+    "runes": [
+      "rune_nju",
+      "rune_nju",
+      "rune_ber",
+      "rune_drax"
+    ],
+    "allowedBaseTypes": [
+      "Claw"
+    ],
+    "stats": {
+      "enhanced_damage": 1150,
+      "all_skills": 4,
+      "physical_skills": 4,
+      "movement_speed": 30,
+      "increased_attack_speed": 35,
+      "crit_chance": 15,
+      "deadly_blow": 25,
+      "crushing_blow_chance": 8,
+      "crit_damage": 50,
+      "open_wounds": 25,
+      "extra_damage_bleeding": 100
+    },
+    "requiresLevel": 100,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_grimwalkers",
+    "name": "Grimwalkers",
+    "runes": [
+      "rune_flo",
+      "rune_jol",
+      "rune_nju",
+      "rune_sur"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_defense": 375,
+      "all_skills": 4,
+      "movement_speed": 74,
+      "projectile_speed": 1,
+      "all_attributes": 40,
+      "magic_skill_damage": 40,
+      "mana_per_kill": 25,
+      "increased_mana": 10,
+      "all_resistances": 2
+    },
+    "requiresLevel": 100,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_violence",
+    "name": "Violence",
+    "runes": [
+      "rune_fawn",
+      "rune_jol",
+      "rune_ber",
+      "rune_xo"
+    ],
+    "allowedBaseTypes": [
+      "Boots"
+    ],
+    "stats": {
+      "defense": 64,
+      "enhanced_defense": 375,
+      "all_skills": 3,
+      "physical_skills": 3,
+      "movement_speed": 56,
+      "increased_attack_speed": 25,
+      "deadly_blow": 45,
+      "crushing_blow_chance": 8,
+      "mana_steal": 12,
+      "extra_damage_bleeding": 20,
+      "projectile_speed": 1,
+      "damage_mitigation": 3
+    },
+    "requiresLevel": 100,
+    "requiresItemLevel": 1
+  }
+]

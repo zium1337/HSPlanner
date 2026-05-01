@@ -1,0 +1,31 @@
+[
+  {
+    "id": "helmets_heroic_gabriels_dauntless_vision",
+    "name": "Gabriel's Dauntless Vision",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "defenseMin": 300,
+    "defenseMax": 375,
+    "sockets": 1,
+    "maxSockets": 3,
+    "source": "Uber Gabriel",
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 15,
+        "description": "cast Gabriel's Revenge Level 3"
+      }
+    ],
+    "implicit": {
+      "all_skills": [3, 5],
+      "skill_haste": [30, 50],
+      "magic_skill_damage": [5, 25],
+      "light_radius": [4, 8],
+      "physical_damage_reduction": [8, 15],
+      "magic_damage_reduction": [8, 15]
+    }
+  }
+]

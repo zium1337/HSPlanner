@@ -1,0 +1,25 @@
+[
+  {
+    "id": "amulet_unholy_lilith_s_scorn",
+    "name": "Lilith's Scorn",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "magic_skill_damage": [
+        15,
+        60
+      ],
+      "all_resistances": [
+        15,
+        25
+      ]
+    },
+    "uniqueEffects": [
+      "Chance After Each Kill: Liliths Rage",
+      "Explosion Area Of Effect"
+    ]
+  }
+]

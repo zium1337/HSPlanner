@@ -1,0 +1,1447 @@
+[
+  {
+    "id": "relic_relic_1000_kg",
+    "name": "1000 KG",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Heavy Weight"
+    ]
+  },
+  {
+    "id": "relic_relic_a_wizard_s_hat",
+    "name": "A Wizard's Hat",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Manalicious"
+    ]
+  },
+  {
+    "id": "relic_relic_aaron_s_staff",
+    "name": "Aaron's Staff",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Healing Touch"
+    ]
+  },
+  {
+    "id": "relic_relic_amazon_s_spears",
+    "name": "Amazon's Spears",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Poisonous Hit"
+    ]
+  },
+  {
+    "id": "relic_relic_ancient_rock",
+    "name": "Ancient Rock",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Ancient Rock"
+    ]
+  },
+  {
+    "id": "relic_relic_angel_staff_of_apocalypse",
+    "name": "Angel Staff of Apocalypse",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Arch Angel's Fury"
+    ]
+  },
+  {
+    "id": "relic_relic_apple",
+    "name": "Apple",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Apple Blast"
+    ]
+  },
+  {
+    "id": "relic_relic_arcane_globe",
+    "name": "Arcane Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "arcane_skills": 5,
+      "arcane_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_assassin_s_shuriken",
+    "name": "Assassin's Shuriken",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Attacking: Shruken Strike"
+    ]
+  },
+  {
+    "id": "relic_relic_balalayka",
+    "name": "Balalayka",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Classic Tunes"
+    ]
+  },
+  {
+    "id": "relic_relic_barbed_shield",
+    "name": "Barbed Shield",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "damage_return": 200
+    }
+  },
+  {
+    "id": "relic_relic_basilisk_s_tooth",
+    "name": "Basilisk's Tooth",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Stoned"
+    ]
+  },
+  {
+    "id": "relic_relic_blazing_boots",
+    "name": "Blazing Boots",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Blazing Trail"
+    ]
+  },
+  {
+    "id": "relic_relic_bomb",
+    "name": "Bomb",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic"
+  },
+  {
+    "id": "relic_relic_bonsai_tree",
+    "name": "Bonsai Tree",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "magic_find": 20,
+      "to_vitality": 20
+    }
+  },
+  {
+    "id": "relic_relic_book_of_belial",
+    "name": "Book of Belial",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Satanic Chant"
+    ]
+  },
+  {
+    "id": "relic_relic_boomerang",
+    "name": "Boomerang",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Australian Sport"
+    ]
+  },
+  {
+    "id": "relic_relic_bouncy",
+    "name": "Bouncy",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Bouncing Spikeball"
+    ]
+  },
+  {
+    "id": "relic_relic_bracer_of_life",
+    "name": "Bracer of Life",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life_replenish_pct": 50
+    }
+  },
+  {
+    "id": "relic_relic_butcher_s_knife",
+    "name": "Butcher's Knife",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Meat Bomb"
+    ]
+  },
+  {
+    "id": "relic_relic_butterfly_knife",
+    "name": "Butterfly Knife",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_attack_speed": 10,
+      "crit_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_cactus",
+    "name": "Cactus",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Casting: Spiky Plant"
+    ]
+  },
+  {
+    "id": "relic_relic_cake",
+    "name": "Cake",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_life": 20
+    }
+  },
+  {
+    "id": "relic_relic_candy_crusher",
+    "name": "Candy Crusher",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Candy Crush"
+    ]
+  },
+  {
+    "id": "relic_relic_casino_die",
+    "name": "Casino Die",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Lucky Dice"
+    ]
+  },
+  {
+    "id": "relic_relic_charmed_blood",
+    "name": "Charmed Blood",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life_steal": 10
+    }
+  },
+  {
+    "id": "relic_relic_cheese_burger",
+    "name": "Cheese Burger",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life": 580,
+      "life_replenish_pct": 50
+    }
+  },
+  {
+    "id": "relic_relic_commander_s_sword",
+    "name": "Commander's Sword",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "attack_damage": 100,
+      "movement_speed": -20
+    }
+  },
+  {
+    "id": "relic_relic_cookies_milk",
+    "name": "Cookies & Milk",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life_replenish_pct": 30,
+      "mana_replenish_pct": 30
+    }
+  },
+  {
+    "id": "relic_relic_damned_buckler",
+    "name": "Damned Buckler",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "to_armor": 32,
+      "faster_hit_recovery": 20
+    }
+  },
+  {
+    "id": "relic_relic_daplayer_s_dislocated_head",
+    "name": "DaPlayer's Dislocated Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Casting: Rotting Carcas"
+    ]
+  },
+  {
+    "id": "relic_relic_darts",
+    "name": "Darts",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Flying Darts"
+    ]
+  },
+  {
+    "id": "relic_relic_death_s_scythe",
+    "name": "Death's Scythe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Reaping"
+    ]
+  },
+  {
+    "id": "relic_relic_delicious_pie",
+    "name": "Delicious Pie",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: So Good"
+    ]
+  },
+  {
+    "id": "relic_relic_demon_sheep",
+    "name": "Demon Sheep",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Demon Sheep"
+    ]
+  },
+  {
+    "id": "relic_relic_devil_horn",
+    "name": "Devil Horn",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Struck: Satanic Replenishment"
+    ]
+  },
+  {
+    "id": "relic_relic_devil_skull",
+    "name": "Devil Skull",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Burst of Rage"
+    ]
+  },
+  {
+    "id": "relic_relic_dirge",
+    "name": "Dirge",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "additive_physical_damage": 33,
+      "attack_rating": 475
+    }
+  },
+  {
+    "id": "relic_relic_dislocated_eye",
+    "name": "Dislocated Eye",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Crippling Cold"
+    ]
+  },
+  {
+    "id": "relic_relic_doggo",
+    "name": "Doggo",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: To the Moon"
+    ]
+  },
+  {
+    "id": "relic_relic_doom_flute",
+    "name": "Doom Flute",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "to_dexterity": 22,
+      "to_strength": 22
+    }
+  },
+  {
+    "id": "relic_relic_double_scythe",
+    "name": "Double Scythe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Flying Scythe"
+    ]
+  },
+  {
+    "id": "relic_relic_dragon_shield",
+    "name": "Dragon Shield",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Struck: Breath of Fire"
+    ]
+  },
+  {
+    "id": "relic_relic_dragon_s_head",
+    "name": "Dragon's Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Molten Breath"
+    ]
+  },
+  {
+    "id": "relic_relic_es_energy",
+    "name": "ES Energy",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Jonnen Valinta"
+    ]
+  },
+  {
+    "id": "relic_relic_f_e_t_u_s",
+    "name": "F.E.T.U.S.",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: F.E.T.U.S."
+    ]
+  },
+  {
+    "id": "relic_relic_fire_ice",
+    "name": "Fire & Ice",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Frostburn"
+    ]
+  },
+  {
+    "id": "relic_relic_fire_globe",
+    "name": "Fire Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "fire_skills": 5,
+      "fire_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_fly_swatter",
+    "name": "Fly Swatter",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Memes"
+    ]
+  },
+  {
+    "id": "relic_relic_fortune_card",
+    "name": "Fortune Card",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "gold_find": 30,
+      "magic_find": 30
+    }
+  },
+  {
+    "id": "relic_relic_frozen_orb",
+    "name": "Frozen Orb",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Chilling Strike"
+    ]
+  },
+  {
+    "id": "relic_relic_guardian_angel",
+    "name": "Guardian Angel",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Guardian Angel"
+    ]
+  },
+  {
+    "id": "relic_relic_half_eaten_mochi",
+    "name": "Half Eaten Mochi",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life_per_kill": 21,
+      "mana_per_kill": 21
+    }
+  },
+  {
+    "id": "relic_relic_hand_of_midas",
+    "name": "Hand of Midas",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "gold_find": 40
+    }
+  },
+  {
+    "id": "relic_relic_hand_scythe",
+    "name": "Hand Scythe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_attack_speed": 15,
+      "attack_rating_pct": 20
+    }
+  },
+  {
+    "id": "relic_relic_hellscream_axe",
+    "name": "Hellscream Axe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "additive_fire_damage": 1696,
+      "additive_physical_damage": 21
+    }
+  },
+  {
+    "id": "relic_relic_helm_of_chaos",
+    "name": "Helm of Chaos",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Struck: Odin's Fury"
+    ]
+  },
+  {
+    "id": "relic_relic_honey_bee",
+    "name": "Honey Bee",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Honey Bee"
+    ]
+  },
+  {
+    "id": "relic_relic_horned_mask",
+    "name": "Horned Mask",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "damage_return": 20,
+      "physical_damage_reduction": 10
+    }
+  },
+  {
+    "id": "relic_relic_hungering_blade_of_frost",
+    "name": "Hungering Blade of Frost",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Breath of Ice"
+    ]
+  },
+  {
+    "id": "relic_relic_ice_globe",
+    "name": "Ice Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "cold_skills": 5,
+      "cold_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_jar_of_flies",
+    "name": "Jar of Flies",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Nasty Flies"
+    ]
+  },
+  {
+    "id": "relic_relic_jefre_s_subscription",
+    "name": "Jefre's Subscription",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "light_radius": 10,
+      "magic_find": 30
+    }
+  },
+  {
+    "id": "relic_relic_jungle_vial",
+    "name": "Jungle Vial",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Struck: Envenom"
+    ]
+  },
+  {
+    "id": "relic_relic_karp_head",
+    "name": "Karp Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Karp Head"
+    ]
+  },
+  {
+    "id": "relic_relic_keygen_exe",
+    "name": "Keygen.exe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Bluescreen of Death"
+    ]
+  },
+  {
+    "id": "relic_relic_king_s_crown",
+    "name": "King's Crown",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "gold_find": 35
+    }
+  },
+  {
+    "id": "relic_relic_large_beer",
+    "name": "Large Beer",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Nausea"
+    ]
+  },
+  {
+    "id": "relic_relic_light_cola",
+    "name": "Light Cola",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Boost of Energy"
+    ]
+  },
+  {
+    "id": "relic_relic_light_katana",
+    "name": "Light Katana",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_attack_speed": 20
+    }
+  },
+  {
+    "id": "relic_relic_lightning_globe",
+    "name": "Lightning Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "lightning_skills": 5,
+      "lightning_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_lost_wand",
+    "name": "Lost Wand",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "to_energy": 50,
+      "faster_cast_rate": 20
+    }
+  },
+  {
+    "id": "relic_relic_lottery_ticket",
+    "name": "Lottery Ticket",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance After Each Kill: Lucky Numbers"
+    ]
+  },
+  {
+    "id": "relic_relic_magic_mushroom",
+    "name": "Magic Mushroom",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "all_attributes": 30
+    }
+  },
+  {
+    "id": "relic_relic_mana_dice",
+    "name": "Mana Dice",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Casting: Mana Recovery"
+    ]
+  },
+  {
+    "id": "relic_relic_maryo_s_pipe",
+    "name": "Maryo's Pipe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Pipe Diver"
+    ]
+  },
+  {
+    "id": "relic_relic_mayo_s_old_sock",
+    "name": "Mayo's Old Sock",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life": 600,
+      "to_vitality": 20
+    }
+  },
+  {
+    "id": "relic_relic_meat_hook",
+    "name": "Meat Hook",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Meat Hook"
+    ]
+  },
+  {
+    "id": "relic_relic_metal_detector",
+    "name": "Metal Detector",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Node Detection"
+    ]
+  },
+  {
+    "id": "relic_relic_minisect",
+    "name": "Minisect",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Minisect"
+    ]
+  },
+  {
+    "id": "relic_relic_monkey_king_bar",
+    "name": "Monkey King Bar",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "attack_damage": 20,
+      "movement_speed": 30
+    }
+  },
+  {
+    "id": "relic_relic_necromancer_s_finger",
+    "name": "Necromancer's Finger",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Bone Spirit"
+    ]
+  },
+  {
+    "id": "relic_relic_newt_tail",
+    "name": "Newt Tail",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "magic_find": 20,
+      "movement_speed": 30
+    }
+  },
+  {
+    "id": "relic_relic_ninja_hook",
+    "name": "Ninja Hook",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Ninja Hooks"
+    ]
+  },
+  {
+    "id": "relic_relic_nunchucks",
+    "name": "Nunchucks",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_attack_speed": 20,
+      "crit_damage": 30
+    }
+  },
+  {
+    "id": "relic_relic_odd_book_of_spells",
+    "name": "Odd Book of Spells",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "magic_skill_damage": 10
+    }
+  },
+  {
+    "id": "relic_relic_odin_s_sword",
+    "name": "Odin's Sword",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Divine Scorch"
+    ]
+  },
+  {
+    "id": "relic_relic_ogre_club",
+    "name": "Ogre Club",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "extra_damage_stunned": 30
+    },
+    "uniqueEffects": [
+      "Chance When Striking: Me Smash"
+    ]
+  },
+  {
+    "id": "relic_relic_orb_of_chaos",
+    "name": "Orb of Chaos",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_arcane_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_orb_of_fire",
+    "name": "Orb of Fire",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_lightning_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_orb_of_ice",
+    "name": "Orb of Ice",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_cold_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_orb_of_lightning",
+    "name": "Orb of Lightning",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_lightning_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_orb_of_poison",
+    "name": "Orb of Poison",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_poison_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_pickled_brain",
+    "name": "Pickled Brain",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Aldo's Rotten Brain"
+    ]
+  },
+  {
+    "id": "relic_relic_poison_globe",
+    "name": "Poison Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "poison_skills": 5,
+      "poison_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_rainbow_gate",
+    "name": "Rainbow Gate",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Rainbow Drool"
+    ]
+  },
+  {
+    "id": "relic_relic_razer_blade",
+    "name": "Razer Blade",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "crit_damage": 50
+    }
+  },
+  {
+    "id": "relic_relic_razer_headset",
+    "name": "Razer Headset",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Sonar Pulse"
+    ]
+  },
+  {
+    "id": "relic_relic_razor_leaf",
+    "name": "Razor Leaf",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Attacking: Razor Leaves"
+    ]
+  },
+  {
+    "id": "relic_relic_razorwire",
+    "name": "Razorwire",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_bleeding_damage": 30
+    },
+    "uniqueEffects": [
+      "Chance When Striking: Rupture"
+    ]
+  },
+  {
+    "id": "relic_relic_rice_chopsticks",
+    "name": "Rice & Chopsticks",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Disarming Strike"
+    ]
+  },
+  {
+    "id": "relic_relic_rock_belt",
+    "name": "Rock Belt",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "movement_speed": 30,
+      "to_strength": 30
+    }
+  },
+  {
+    "id": "relic_relic_rocket_barrage",
+    "name": "Rocket Barrage",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Barrage of Rockets"
+    ]
+  },
+  {
+    "id": "relic_relic_rotten_apple",
+    "name": "Rotten Apple",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Mass Hex"
+    ]
+  },
+  {
+    "id": "relic_relic_rubber_duck",
+    "name": "Rubber Duck",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Duck Throw"
+    ]
+  },
+  {
+    "id": "relic_relic_satan_s_eye",
+    "name": "Satan's Eye",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Burning Vision"
+    ]
+  },
+  {
+    "id": "relic_relic_satan_s_tooth",
+    "name": "Satan's Tooth",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Molten Toothache"
+    ]
+  },
+  {
+    "id": "relic_relic_sausage",
+    "name": "Sausage",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_life": 10,
+      "increased_mana": 10
+    }
+  },
+  {
+    "id": "relic_relic_shade_of_death",
+    "name": "Shade of Death",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Skill Movement Diminish"
+    ]
+  },
+  {
+    "id": "relic_relic_shattered_katana",
+    "name": "Shattered Katana",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Gust of Wind"
+    ]
+  },
+  {
+    "id": "relic_relic_shiv",
+    "name": "Shiv",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Attacking: Live by the Sword"
+    ]
+  },
+  {
+    "id": "relic_relic_shredder",
+    "name": "Shredder",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Shredder"
+    ]
+  },
+  {
+    "id": "relic_relic_shrunken_head",
+    "name": "Shrunken Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Shrunken Head"
+    ]
+  },
+  {
+    "id": "relic_relic_skull_axe",
+    "name": "Skull Axe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "attack_rating": 250,
+      "to_strength": 40
+    }
+  },
+  {
+    "id": "relic_relic_skullbat",
+    "name": "Skullbat",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Skull Bat"
+    ]
+  },
+  {
+    "id": "relic_relic_spirit_skull",
+    "name": "Spirit Skull",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "to_strength": 30,
+      "to_vitality": 30
+    }
+  },
+  {
+    "id": "relic_relic_squishy_the_suicidal_pig",
+    "name": "Squishy the Suicidal Pig",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Suicidal Pig"
+    ]
+  },
+  {
+    "id": "relic_relic_steam_sale",
+    "name": "Steam Sale",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Decreased Merchant Prices"
+    ]
+  },
+  {
+    "id": "relic_relic_steve_s_dirty_head",
+    "name": "Steve's Dirty Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Steves Dirty Head"
+    ]
+  },
+  {
+    "id": "relic_relic_stickman_steve",
+    "name": "Stickman Steve",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Call of Steve"
+    ]
+  },
+  {
+    "id": "relic_relic_stigmata",
+    "name": "Stigmata",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "mana_cost_reduction": 30,
+      "mana_replenish_pct": 10
+    }
+  },
+  {
+    "id": "relic_relic_storm_dagger",
+    "name": "Storm Dagger",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Striking: Lightning Strike"
+    ]
+  },
+  {
+    "id": "relic_relic_templar_shield",
+    "name": "Templar Shield",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Templar Shield"
+    ]
+  },
+  {
+    "id": "relic_relic_tequila",
+    "name": "Tequila!!!",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Drunken Arson"
+    ]
+  },
+  {
+    "id": "relic_relic_the_allmighty_fedora",
+    "name": "The Allmighty Fedora",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: The Almighty Fedora"
+    ]
+  },
+  {
+    "id": "relic_relic_the_amputation_kit",
+    "name": "The Amputation Kit",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "movement_speed": 50
+    }
+  },
+  {
+    "id": "relic_relic_the_eye",
+    "name": "The Eye",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: The Eye"
+    ]
+  },
+  {
+    "id": "relic_relic_the_holy_bible",
+    "name": "The Holy Bible",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "all_attributes": 10,
+      "all_skills": 2
+    }
+  },
+  {
+    "id": "relic_relic_the_holy_grail",
+    "name": "The Holy Grail",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "all_attributes": 10
+    },
+    "uniqueEffects": [
+      "Chance When Casting: Heaven’s Light"
+    ]
+  },
+  {
+    "id": "relic_relic_the_mighty_sushi",
+    "name": "The Mighty Sushi",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Tasty Explosion"
+    ]
+  },
+  {
+    "id": "relic_relic_the_spoon",
+    "name": "The Spoon",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "mana": 50,
+      "mana_replenish_pct": 30
+    }
+  },
+  {
+    "id": "relic_relic_token_of_luck",
+    "name": "Token of Luck",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "magic_find": 50
+    }
+  },
+  {
+    "id": "relic_relic_triforce",
+    "name": "Triforce",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "all_attributes": 20,
+      "all_resistances": 10
+    }
+  },
+  {
+    "id": "relic_relic_twin_blade",
+    "name": "Twin Blade",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "crit_chance": 10,
+      "crit_damage": 30
+    }
+  },
+  {
+    "id": "relic_relic_vadjra",
+    "name": "Vadjra",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Stormy Javelin"
+    ]
+  },
+  {
+    "id": "relic_relic_war_zeppelin",
+    "name": "War Zeppelin",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: War Zeppelin"
+    ]
+  },
+  {
+    "id": "relic_relic_whip",
+    "name": "Whip",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "additive_physical_damage": 23,
+      "increased_attack_speed": 10
+    }
+  },
+  {
+    "id": "relic_relic_winner_s_drug",
+    "name": "Winner's Drug",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Casting: Manastream"
+    ]
+  },
+  {
+    "id": "relic_relic_witch_claw",
+    "name": "Witch Claw",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Attacking: Hexing Strike"
+    ]
+  },
+  {
+    "id": "relic_relic_zombie_s_face",
+    "name": "Zombie's Face",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Chance When Struck: Disease"
+    ]
+  }
+]

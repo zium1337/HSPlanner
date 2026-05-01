@@ -1,0 +1,75 @@
+[
+  {
+    "id": "helmet_angelic_lucifers_crown",
+    "name": "Lucifer's Crown",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        565,
+        625
+      ],
+      "enhanced_defense": [
+        450,
+        500
+      ],
+      "all_skills": [
+        4,
+        5
+      ],
+      "damage_mitigation": [
+        11,
+        15
+      ],
+      "all_resistances": -225
+    },
+    "uniqueEffects": [
+      "Damage From Resist",
+      "All Attributes"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "helmet_angelic_mask_of_the_celestial",
+    "name": "Mask of the Celestial",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        565,
+        625
+      ],
+      "enhanced_defense": [
+        450,
+        500
+      ],
+      "life": [
+        280,
+        380
+      ],
+      "increased_life": [
+        10,
+        20
+      ],
+      "physical_damage_reduction": [
+        10,
+        20
+      ],
+      "all_resistances": [
+        30,
+        40
+      ]
+    },
+    "uniqueEffects": [
+      "Buffing Aura Range Increased",
+      "Buffing Aura Effectiveness Increased"
+    ]
+  }
+]

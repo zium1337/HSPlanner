@@ -1,0 +1,308 @@
+import {
+  compressToEncodedURIComponent,
+  decompressFromEncodedURIComponent,
+} from 'lz-string'
+import { z } from 'zod'
+import type {
+  AttributeKey,
+  CustomStat,
+  Inventory,
+  SlotKey,
+  SocketType,
+} from '../types'
+import { sanitizeHtml } from './sanitizeHtml'
+
+const SCHEMA_VERSION = 1
+const URL_PARAM = 'b'
+
+const BUILD_CODE_RE_INPUT = new RegExp(`[#&?]${URL_PARAM}=([^&\\s]+)`)
+const BUILD_CODE_RE_HASH = new RegExp(`[#&]${URL_PARAM}=([^&]+)`)
+const BUILD_CODE_RE_QUERY = new RegExp(`[?&]${URL_PARAM}=([^&]+)`)
+
+// Defensive bounds for untrusted share payloads. Anything past these limits
+// is almost certainly malformed or malicious, never user-authored.
+const MAX_LEVEL = 10_000
+const MAX_KEY_LENGTH = 200
+const MAX_RECORD_ENTRIES = 5_000
+const MAX_TREE_NODES = 10_000
+const MAX_AFFIXES_PER_ITEM = 64
+const MAX_SOCKETS = 32
+const MAX_NOTES_LENGTH = 200_000
+const MAX_CUSTOM_STATS = 200
+const MAX_SHARE_INPUT_LENGTH = 200_000
+
+const FINITE_NUMBER = z.number().finite()
+const SAFE_STRING = z.string().max(MAX_KEY_LENGTH)
+
+const recordOfNumbers = z
+  .record(SAFE_STRING, FINITE_NUMBER)
+  .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
+    message: 'too many entries',
+  })
+
+const recordOfBooleans = z
+  .record(SAFE_STRING, z.boolean())
+  .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
+    message: 'too many entries',
+  })
+
+const equippedItemSchema = z
+  .object({
+    baseId: SAFE_STRING,
+    affixes: z
+      .array(
+        z.object({
+          affixId: SAFE_STRING,
+          tier: FINITE_NUMBER,
+          roll: FINITE_NUMBER,
+        }),
+      )
+      .max(MAX_AFFIXES_PER_ITEM)
+      .optional(),
+    socketCount: FINITE_NUMBER.optional(),
+    socketed: z.array(z.string().max(MAX_KEY_LENGTH).nullable()).max(MAX_SOCKETS).optional(),
+    socketTypes: z.array(SAFE_STRING).max(MAX_SOCKETS).optional(),
+    runewordId: SAFE_STRING.optional(),
+  })
+  .passthrough()
+
+const inventorySchema = z
+  .record(SAFE_STRING, equippedItemSchema)
+  .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
+    message: 'too many slots',
+  })
+
+const shareableBuildSchema = z.object({
+  v: z.number(),
+  c: z.string().max(MAX_KEY_LENGTH).nullable(),
+  l: FINITE_NUMBER,
+  a: recordOfNumbers,
+  i: inventorySchema,
+  s: recordOfNumbers,
+  ss: recordOfNumbers,
+  t: z.array(FINITE_NUMBER).max(MAX_TREE_NODES),
+  m: z.string().max(MAX_KEY_LENGTH).nullable(),
+  u: z.string().max(MAX_KEY_LENGTH).nullable(),
+  buf: recordOfBooleans,
+  ec: recordOfBooleans,
+  pt: recordOfBooleans,
+  kps: FINITE_NUMBER,
+  n: z.string().max(MAX_NOTES_LENGTH).optional(),
+  cs: z
+    .array(
+      z.object({
+        k: z.string().max(MAX_KEY_LENGTH),
+        v: z.string().max(MAX_KEY_LENGTH),
+      }),
+    )
+    .max(MAX_CUSTOM_STATS)
+    .optional(),
+})
+
+export interface ShareableBuild {
+  v: number
+  c: string | null
+  l: number
+  a: Record<AttributeKey, number>
+  i: Inventory
+  s: Record<string, number>
+  ss: Record<string, number>
+  t: number[]
+  m: string | null
+  u: string | null
+  buf: Record<string, boolean>
+  ec: Record<string, boolean>
+  pt: Record<string, boolean>
+  kps: number
+  /** Optional sanitized HTML notes (added later — old snapshots may omit). */
+  n?: string
+  /** Optional custom user-entered stats. k=statKey, v=value (free text). */
+  cs?: { k: string; v: string }[]
+}
+
+export interface BuildSnapshot {
+  classId: string | null
+  level: number
+  allocated: Record<AttributeKey, number>
+  inventory: Inventory
+  skillRanks: Record<string, number>
+  subskillRanks: Record<string, number>
+  allocatedTreeNodes: Set<number>
+  mainSkillId: string | null
+  activeAuraId: string | null
+  activeBuffs: Record<string, boolean>
+  enemyConditions: Record<string, boolean>
+  procToggles: Record<string, boolean>
+  killsPerSec: number
+  customStats: CustomStat[]
+}
+
+function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
+  const out: ShareableBuild = {
+    v: SCHEMA_VERSION,
+    c: snapshot.classId,
+    l: snapshot.level,
+    a: snapshot.allocated,
+    i: snapshot.inventory,
+    s: snapshot.skillRanks,
+    ss: snapshot.subskillRanks,
+    t: [...snapshot.allocatedTreeNodes].sort((x, y) => x - y),
+    m: snapshot.mainSkillId,
+    u: snapshot.activeAuraId,
+    buf: snapshot.activeBuffs,
+    ec: snapshot.enemyConditions,
+    pt: snapshot.procToggles,
+    kps: snapshot.killsPerSec,
+  }
+  if (notes) out.n = notes
+  if (snapshot.customStats.length > 0) {
+    out.cs = snapshot.customStats.map((s) => ({
+      k: s.statKey,
+      v: s.value,
+    }))
+  }
+  return out
+}
+
+export interface DecodedShare {
+  snapshot: BuildSnapshot
+  notes: string
+}
+
+function clampLevel(n: number): number {
+  if (!Number.isFinite(n)) return 1
+  return Math.max(1, Math.min(MAX_LEVEL, Math.floor(n)))
+}
+
+function deserialize(encoded: ShareableBuild): DecodedShare {
+  if (encoded.v !== SCHEMA_VERSION) {
+    throw new Error(
+      `Unsupported share schema v${encoded.v} (expected v${SCHEMA_VERSION})`,
+    )
+  }
+  const snapshot: BuildSnapshot = {
+    classId: encoded.c ?? null,
+    level: clampLevel(encoded.l ?? 1),
+    allocated: encoded.a ?? {},
+    inventory: normalizeInventory(encoded.i),
+    skillRanks: encoded.s ?? {},
+    subskillRanks: encoded.ss ?? {},
+    allocatedTreeNodes: new Set(encoded.t ?? []),
+    mainSkillId: encoded.m ?? null,
+    activeAuraId: encoded.u ?? null,
+    activeBuffs: encoded.buf ?? {},
+    enemyConditions: encoded.ec ?? {},
+    procToggles: encoded.pt ?? {},
+    killsPerSec: Number.isFinite(encoded.kps) ? encoded.kps : 1,
+    customStats: Array.isArray(encoded.cs)
+      ? encoded.cs
+          .filter((s) => s && typeof s.v === 'string')
+          .map((s) => ({
+            statKey: typeof s.k === 'string' ? s.k : '',
+            value: s.v,
+          }))
+      : [],
+  }
+  return {
+    snapshot,
+    notes: encoded.n ? sanitizeHtml(encoded.n) : '',
+  }
+}
+
+function normalizeInventory(inv: Inventory | undefined): Inventory {
+  if (!inv) return {}
+  const out: Inventory = {}
+  for (const [slot, item] of Object.entries(inv)) {
+    if (!item) continue
+    const socketCount = item.socketCount ?? 0
+    const socketed = Array.isArray(item.socketed)
+      ? item.socketed.slice(0, socketCount)
+      : []
+    while (socketed.length < socketCount) socketed.push(null)
+    const socketTypes: SocketType[] = Array.isArray(item.socketTypes)
+      ? (item.socketTypes.slice(0, socketCount) as SocketType[])
+      : []
+    while (socketTypes.length < socketCount) socketTypes.push('normal')
+    out[slot as SlotKey] = {
+      baseId: item.baseId,
+      affixes: Array.isArray(item.affixes) ? item.affixes : [],
+      socketCount,
+      socketed,
+      socketTypes,
+      runewordId: item.runewordId,
+    }
+  }
+  return out
+}
+
+export function encodeBuildToShare(
+  snapshot: BuildSnapshot,
+  notes?: string,
+): string {
+  const payload = serialize(snapshot, notes)
+  const json = JSON.stringify(payload)
+  return compressToEncodedURIComponent(json)
+}
+
+export function decodeShareToBuild(code: string): DecodedShare | null {
+  try {
+    if (typeof code !== 'string' || code.length > MAX_SHARE_INPUT_LENGTH) {
+      return null
+    }
+    const json = decompressFromEncodedURIComponent(code)
+    if (!json || json.length > MAX_SHARE_INPUT_LENGTH) return null
+    const parsed: unknown = JSON.parse(json)
+    const result = shareableBuildSchema.safeParse(parsed)
+    if (!result.success) return null
+    return deserialize(result.data as ShareableBuild)
+  } catch {
+    return null
+  }
+}
+
+export function buildShareUrl(
+  snapshot: BuildSnapshot,
+  base?: string,
+  notes?: string,
+): string {
+  const code = encodeBuildToShare(snapshot, notes)
+  const origin =
+    base ??
+    (typeof window !== 'undefined'
+      ? `${window.location.origin}${window.location.pathname}`
+      : '')
+  return `${origin}#${URL_PARAM}=${code}`
+}
+
+/**
+ * Extract a build code from either a raw share-code string or a URL/fragment
+ * containing one. Used by the import dialog where users may paste either form.
+ */
+export function parseBuildCodeFromInput(input: string): string {
+  const trimmed = input.trim()
+  const m = trimmed.match(BUILD_CODE_RE_INPUT)
+  return m && m[1] ? decodeURIComponent(m[1]) : trimmed
+}
+
+export function readBuildCodeFromUrl(): string | null {
+  if (typeof window === 'undefined') return null
+  const hash = window.location.hash || ''
+  const m = hash.match(BUILD_CODE_RE_HASH)
+  if (m && m[1]) return decodeURIComponent(m[1])
+  const search = window.location.search || ''
+  const sm = search.match(BUILD_CODE_RE_QUERY)
+  if (sm && sm[1]) return decodeURIComponent(sm[1])
+  return null
+}
+
+export function clearBuildCodeFromUrl(): void {
+  if (typeof window === 'undefined') return
+  if (window.location.hash.includes(`${URL_PARAM}=`)) {
+    const cleaned = window.location.hash.replace(BUILD_CODE_RE_HASH, '')
+    window.history.replaceState(
+      null,
+      '',
+      `${window.location.pathname}${window.location.search}${cleaned}`,
+    )
+  }
+}

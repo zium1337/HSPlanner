@@ -1,0 +1,81 @@
+[
+  {
+    "id": "boots_unholy_marcher_s_of_hatred",
+    "name": "Marcher's of Hatred",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        72,
+        90
+      ],
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "movement_speed": [
+        30,
+        100
+      ],
+      "faster_cast_rate": [
+        12,
+        20
+      ],
+      "increased_attack_speed": [
+        12,
+        20
+      ]
+    },
+    "uniqueEffects": [
+      "Skill Movement Diminish",
+      "Unholy None",
+      "Unholy None"
+    ]
+  },
+  {
+    "id": "boots_unholy_peg_leg",
+    "name": "Peg Leg",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 83,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "cold_skills": [
+        2,
+        3
+      ],
+      "movement_speed": [
+        45,
+        75
+      ],
+      "cold_skill_damage": [
+        25,
+        45
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Subskills: Parrot",
+      "Grant Spell: Parrot",
+      "Grant Spell: Remiges",
+      "Summon Attack Speed",
+      "Summon Movement Speed",
+      "Summon Life",
+      "Summon All Resist",
+      "Summon Reduced Dmg Taken"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  }
+]

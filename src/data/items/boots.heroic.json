@@ -1,0 +1,214 @@
+[
+  {
+    "id": "boots_heroic_deserts_storm",
+    "name": "Desert's Storm",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "implicit": {
+      "defense": [
+        52,
+        64
+      ],
+      "enhanced_defense": [
+        130,
+        160
+      ],
+      "movement_speed": [
+        80,
+        100
+      ],
+      "increased_attack_speed": [
+        25,
+        40
+      ],
+      "magic_skill_damage": [
+        20,
+        35
+      ]
+    },
+    "uniqueEffects": [
+      "All Skills Class",
+      "Guardian Additional Attack",
+      "Guardian Attack Range",
+      "Movement Phasing None"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_fumacinha_s_favela_flipflop",
+    "name": "Fumacinha's Favela Flipflop",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 97,
+    "implicit": {
+      "defense": [
+        52,
+        64
+      ],
+      "enhanced_defense": [
+        110,
+        150
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "arcane_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        75
+      ],
+      "jumping_power": [
+        50,
+        75
+      ],
+      "faster_hit_recovery": 50
+    },
+    "uniqueEffects": [
+      "Grant Spell: Sand Gush",
+      "Grant Spell: Sand Vortex",
+      "Grant Spell: Sand Entombment",
+      "Skill Movement Diminish",
+      "Movement Phasing None"
+    ]
+  },
+  {
+    "id": "boots_heroic_pearlescent_dream",
+    "name": "Pearlescent Dream",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 97,
+    "implicit": {
+      "defense": [
+        52,
+        64
+      ],
+      "enhanced_defense": [
+        110,
+        150
+      ],
+      "movement_speed": [
+        40,
+        55
+      ],
+      "jumping_power": [
+        30,
+        50
+      ],
+      "to_energy": [
+        15,
+        20
+      ],
+      "magic_skill_damage": [
+        16,
+        25
+      ],
+      "faster_hit_recovery": 25,
+      "all_resistances": [
+        20,
+        30
+      ],
+      "magic_find": [
+        15,
+        30
+      ]
+    },
+    "uniqueEffects": [
+      "Grant Aura: Holy Aura"
+    ]
+  },
+  {
+    "id": "boots_heroic_steampowered_flamewalkers",
+    "name": "Steampowered Flamewalkers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "defense": [
+        82,
+        100
+      ],
+      "enhanced_defense": [
+        220,
+        250
+      ],
+      "movement_speed": [
+        60,
+        85
+      ],
+      "crit_chance": [
+        8,
+        17
+      ],
+      "crit_damage": [
+        28,
+        50
+      ],
+      "to_dexterity": 20,
+      "all_attributes": [
+        10,
+        20
+      ],
+      "faster_hit_recovery": 40,
+      "light_radius": 3,
+      "fire_resistance": [
+        40,
+        75
+      ]
+    },
+    "uniqueEffects": [
+      "Chance When Attacking: Blazing Trail",
+      "Defense Vs Missiles"
+    ]
+  },
+  {
+    "id": "boots_heroic_wind_walker_s_step",
+    "name": "Wind Walker's Step",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "implicit": {
+      "defense": [
+        52,
+        64
+      ],
+      "enhanced_defense": [
+        130,
+        160
+      ],
+      "movement_speed": [
+        80,
+        100
+      ],
+      "jumping_power": 100,
+      "all_attributes": [
+        12,
+        20
+      ],
+      "magic_skill_damage": 25,
+      "faster_hit_recovery": [
+        50,
+        75
+      ]
+    },
+    "uniqueEffects": [
+      "Defense Vs Missiles",
+      "Movement Phasing None"
+    ]
+  }
+]

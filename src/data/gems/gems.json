@@ -1,0 +1,606 @@
+[
+  {
+    "id": "gem_chipped_amethyst",
+    "name": "Chipped Amethyst",
+    "tier": 1,
+    "stats": {
+      "additive_arcane_damage": 8,
+      "flat_arcane_skill_damage": 4
+    },
+    "color": "purple",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_chipped_diamond",
+    "name": "Chipped Diamond",
+    "tier": 1,
+    "stats": {
+      "additive_physical_damage": 4
+    },
+    "color": "white",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_chipped_emerald",
+    "name": "Chipped Emerald",
+    "tier": 1,
+    "stats": {
+      "additive_poison_damage": 8,
+      "flat_poison_skill_damage": 4
+    },
+    "color": "green",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_chipped_ruby",
+    "name": "Chipped Ruby",
+    "tier": 1,
+    "stats": {
+      "additive_fire_damage": 8,
+      "flat_fire_skill_damage": 4
+    },
+    "color": "red",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_chipped_sapphire",
+    "name": "Chipped Sapphire",
+    "tier": 1,
+    "stats": {
+      "additive_cold_damage": 8,
+      "flat_cold_skill_damage": 4
+    },
+    "color": "blue",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_chipped_skull",
+    "name": "Chipped Skull",
+    "tier": 1,
+    "stats": {},
+    "color": "white",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_chipped_topaz",
+    "name": "Chipped Topaz",
+    "tier": 1,
+    "stats": {
+      "additive_lightning_damage": 8,
+      "flat_lightning_skill_damage": 4
+    },
+    "color": "yellow",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_flawed_amethyst",
+    "name": "Flawed Amethyst",
+    "tier": 1,
+    "stats": {
+      "additive_arcane_damage": 24,
+      "flat_arcane_skill_damage": 7
+    },
+    "color": "purple",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_flawed_diamond",
+    "name": "Flawed Diamond",
+    "tier": 1,
+    "stats": {
+      "additive_physical_damage": 7
+    },
+    "color": "white",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_flawed_emerald",
+    "name": "Flawed Emerald",
+    "tier": 1,
+    "stats": {
+      "additive_poison_damage": 24,
+      "flat_poison_skill_damage": 7
+    },
+    "color": "green",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_flawed_ruby",
+    "name": "Flawed Ruby",
+    "tier": 1,
+    "stats": {
+      "additive_fire_damage": 24,
+      "flat_fire_skill_damage": 7
+    },
+    "color": "red",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_flawed_sapphire",
+    "name": "Flawed Sapphire",
+    "tier": 1,
+    "stats": {
+      "additive_cold_damage": 24,
+      "flat_cold_skill_damage": 7
+    },
+    "color": "blue",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_flawed_skull",
+    "name": "Flawed Skull",
+    "tier": 1,
+    "stats": {},
+    "color": "white",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_flawed_topaz",
+    "name": "Flawed Topaz",
+    "tier": 1,
+    "stats": {
+      "additive_lightning_damage": 24,
+      "flat_lightning_skill_damage": 7
+    },
+    "color": "yellow",
+    "description": "Tier D"
+  },
+  {
+    "id": "gem_aether_jewel",
+    "name": "Aether Jewel",
+    "tier": 2,
+    "stats": {
+      "life_per_kill": 15
+    },
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_amethyst",
+    "name": "Amethyst",
+    "tier": 2,
+    "stats": {
+      "additive_arcane_damage": 48,
+      "flat_arcane_skill_damage": 10
+    },
+    "color": "purple",
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_diamond",
+    "name": "Diamond",
+    "tier": 2,
+    "stats": {
+      "additive_physical_damage": 10
+    },
+    "color": "white",
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_emerald",
+    "name": "Emerald",
+    "tier": 2,
+    "stats": {
+      "additive_poison_damage": 48,
+      "flat_poison_skill_damage": 10
+    },
+    "color": "green",
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_exan_jewel",
+    "name": "Exan Jewel",
+    "tier": 2,
+    "stats": {
+      "increased_mana": 7
+    },
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_fieryzen_jewel",
+    "name": "Fieryzen Jewel",
+    "tier": 2,
+    "stats": {
+      "fire_resistance": 30
+    },
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_helmon_jewel",
+    "name": "Helmon Jewel",
+    "tier": 2,
+    "stats": {
+      "poison_resistance": 30
+    },
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_lyrcon_jewel",
+    "name": "Lyrcon Jewel",
+    "tier": 2,
+    "stats": {
+      "lightning_resistance": 30
+    },
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_mariane_jewel",
+    "name": "Mariane Jewel",
+    "tier": 2,
+    "stats": {
+      "cold_resistance": 30
+    },
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_ruby",
+    "name": "Ruby",
+    "tier": 2,
+    "stats": {
+      "additive_fire_damage": 48,
+      "flat_fire_skill_damage": 10
+    },
+    "color": "red",
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_sapphire",
+    "name": "Sapphire",
+    "tier": 2,
+    "stats": {
+      "additive_cold_damage": 48,
+      "flat_cold_skill_damage": 10
+    },
+    "color": "blue",
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_skull",
+    "name": "Skull",
+    "tier": 2,
+    "stats": {},
+    "color": "white",
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_topaz",
+    "name": "Topaz",
+    "tier": 2,
+    "stats": {
+      "additive_lightning_damage": 48,
+      "flat_lightning_skill_damage": 10
+    },
+    "color": "yellow",
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_volcon_jewel",
+    "name": "Volcon Jewel",
+    "tier": 2,
+    "stats": {
+      "additive_physical_damage": 15,
+      "attack_rating_pct": 5
+    },
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_wildren_jewel",
+    "name": "Wildren Jewel",
+    "tier": 2,
+    "stats": {
+      "increased_life": 6
+    },
+    "description": "Tier C"
+  },
+  {
+    "id": "gem_agathetheum_jewel",
+    "name": "Agathetheum Jewel",
+    "tier": 3,
+    "stats": {
+      "damage_return": 75
+    },
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_flawless_amethyst",
+    "name": "Flawless Amethyst",
+    "tier": 3,
+    "stats": {
+      "additive_arcane_damage": 128,
+      "flat_arcane_skill_damage": 13
+    },
+    "color": "purple",
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_flawless_diamond",
+    "name": "Flawless Diamond",
+    "tier": 3,
+    "stats": {
+      "additive_physical_damage": 13
+    },
+    "color": "white",
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_flawless_emerald",
+    "name": "Flawless Emerald",
+    "tier": 3,
+    "stats": {
+      "additive_poison_damage": 128,
+      "flat_poison_skill_damage": 13
+    },
+    "color": "green",
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_flawless_ruby",
+    "name": "Flawless Ruby",
+    "tier": 3,
+    "stats": {
+      "additive_fire_damage": 128,
+      "flat_fire_skill_damage": 13
+    },
+    "color": "red",
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_flawless_sapphire",
+    "name": "Flawless Sapphire",
+    "tier": 3,
+    "stats": {
+      "additive_cold_damage": 128,
+      "flat_cold_skill_damage": 13
+    },
+    "color": "blue",
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_flawless_skull",
+    "name": "Flawless Skull",
+    "tier": 3,
+    "stats": {},
+    "color": "white",
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_flawless_topaz",
+    "name": "Flawless Topaz",
+    "tier": 3,
+    "stats": {
+      "additive_lightning_damage": 128,
+      "flat_lightning_skill_damage": 13
+    },
+    "color": "yellow",
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_lapis_lazuli_jewel",
+    "name": "Lapis-Lazuli Jewel",
+    "tier": 3,
+    "stats": {
+      "crit_chance": 5
+    },
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_omnipearl_jewel",
+    "name": "Omnipearl Jewel",
+    "tier": 3,
+    "stats": {
+      "jumping_power": 20
+    },
+    "description": "Tier B"
+  },
+  {
+    "id": "gem_perfect_amethyst",
+    "name": "Perfect Amethyst",
+    "tier": 4,
+    "stats": {
+      "additive_arcane_damage": 256,
+      "flat_arcane_skill_damage": 16
+    },
+    "color": "purple",
+    "description": "Tier A"
+  },
+  {
+    "id": "gem_perfect_diamond",
+    "name": "Perfect Diamond",
+    "tier": 4,
+    "stats": {
+      "additive_physical_damage": 16
+    },
+    "color": "white",
+    "description": "Tier A"
+  },
+  {
+    "id": "gem_perfect_emerald",
+    "name": "Perfect Emerald",
+    "tier": 4,
+    "stats": {
+      "additive_poison_damage": 256,
+      "flat_poison_skill_damage": 16
+    },
+    "color": "green",
+    "description": "Tier A"
+  },
+  {
+    "id": "gem_perfect_ruby",
+    "name": "Perfect Ruby",
+    "tier": 4,
+    "stats": {
+      "additive_fire_damage": 256,
+      "flat_fire_skill_damage": 16
+    },
+    "color": "red",
+    "description": "Tier A"
+  },
+  {
+    "id": "gem_perfect_sapphire",
+    "name": "Perfect Sapphire",
+    "tier": 4,
+    "stats": {
+      "additive_cold_damage": 256,
+      "flat_cold_skill_damage": 16
+    },
+    "color": "blue",
+    "description": "Tier A"
+  },
+  {
+    "id": "gem_perfect_skull",
+    "name": "Perfect Skull",
+    "tier": 4,
+    "stats": {},
+    "color": "white",
+    "description": "Tier A"
+  },
+  {
+    "id": "gem_perfect_topaz",
+    "name": "Perfect Topaz",
+    "tier": 4,
+    "stats": {
+      "additive_lightning_damage": 256,
+      "flat_lightning_skill_damage": 16
+    },
+    "color": "yellow",
+    "description": "Tier A"
+  },
+  {
+    "id": "gem_tramal_jewel",
+    "name": "Tramal Jewel",
+    "tier": 4,
+    "stats": {
+      "all_resistances": 2
+    },
+    "description": "Tier A"
+  },
+  {
+    "id": "gem_angelic_gem",
+    "name": "Angelic Gem",
+    "tier": 5,
+    "stats": {
+      "all_skills": 1
+    },
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_chaos_gem",
+    "name": "Chaos Gem",
+    "tier": 5,
+    "stats": {
+      "to_intelligence": 10,
+      "magic_skill_damage": 10
+    },
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_clean_cut_jewel",
+    "name": "Clean Cut Jewel",
+    "tier": 5,
+    "stats": {
+      "defense_ignored": 4
+    },
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_elemental_gem",
+    "name": "Elemental Gem",
+    "tier": 5,
+    "stats": {
+      "all_attributes": 10
+    },
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_moonstone_gem",
+    "name": "Moonstone Gem",
+    "tier": 5,
+    "stats": {
+      "increased_attack_speed": 7,
+      "to_dexterity": 7,
+      "to_strength": 7
+    },
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_mythgonlion_jewel",
+    "name": "Mythgonlion Jewel",
+    "tier": 5,
+    "stats": {
+      "faster_cast_rate": 8
+    },
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_pristine_amethyst",
+    "name": "Pristine Amethyst",
+    "tier": 5,
+    "stats": {
+      "additive_arcane_damage": 512,
+      "flat_arcane_skill_damage": 20
+    },
+    "color": "purple",
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_pristine_diamond",
+    "name": "Pristine Diamond",
+    "tier": 5,
+    "stats": {
+      "additive_physical_damage": 20
+    },
+    "color": "white",
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_pristine_emerald",
+    "name": "Pristine Emerald",
+    "tier": 5,
+    "stats": {
+      "additive_poison_damage": 512,
+      "flat_poison_skill_damage": 20
+    },
+    "color": "green",
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_pristine_ruby",
+    "name": "Pristine Ruby",
+    "tier": 5,
+    "stats": {
+      "additive_fire_damage": 512,
+      "flat_fire_skill_damage": 20
+    },
+    "color": "red",
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_pristine_sapphire",
+    "name": "Pristine Sapphire",
+    "tier": 5,
+    "stats": {
+      "additive_cold_damage": 512,
+      "flat_cold_skill_damage": 20
+    },
+    "color": "blue",
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_pristine_skull",
+    "name": "Pristine Skull",
+    "tier": 5,
+    "stats": {},
+    "color": "white",
+    "description": "Tier S"
+  },
+  {
+    "id": "gem_pristine_topaz",
+    "name": "Pristine Topaz",
+    "tier": 5,
+    "stats": {
+      "additive_lightning_damage": 512,
+      "flat_lightning_skill_damage": 20
+    },
+    "color": "yellow",
+    "description": "Tier S"
+  }
+]

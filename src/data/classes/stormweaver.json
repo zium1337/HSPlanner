@@ -1,0 +1,18 @@
+{
+  "id": "stormweaver",
+  "name": "Stormweaver",
+  "baseAttributes": {
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "energy": 0,
+    "vitality": 0,
+    "armor": 0
+  },
+  "baseStats": {},
+  "statsPerLevel": {},
+  "statsPerAttribute": {},
+  "startingSkills": [
+    "charged_bolts"
+  ]
+}

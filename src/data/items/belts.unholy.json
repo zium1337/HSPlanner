@@ -1,0 +1,25 @@
+[
+  {
+    "id": "belt_unholy_el_patr_n_s_madness",
+    "name": "El Patrón's Madness",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        440,
+        500
+      ],
+      "enhanced_defense": [
+        300,
+        350
+      ]
+    },
+    "uniqueEffects": [
+      "Potion Cooldown Recovery",
+      "Grant Spell: Programmer´s Delirium"
+    ]
+  }
+]
