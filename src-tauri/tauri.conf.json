@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "HSPlanner",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "identifier": "com.zium.hsplanner",
   "build": {
     "frontendDist": "../dist",
@@ -34,6 +34,18 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/zium1337/HSPlanner/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDYxRDIzNjY5QjI0MUExOTMKUldTVG9VR3lhVGJTWWVKdDQ4TWtFTG1mV0E4NkFSd1pDWEw3YzZnTGw0UVFNL25hK3ZkTFI1QzcK",
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }
