@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import changelogMd from '../../CHANGELOG.md?raw'
 import { useBuild } from '../store/build'
+import {
+  inTauriRuntime,
+  installUpdateOnQuit,
+} from '../utils/installUpdate'
 import { getSavedBuild } from '../utils/savedBuilds'
+import { readStorage } from '../utils/storage'
 import {
   APP_VERSION,
   BUILD_CHANNEL,
@@ -12,6 +17,8 @@ import {
   type UpdateInfo,
 } from '../utils/version'
 import UpdateModal from './UpdateModal'
+
+const AUTO_INSTALL_KEY = 'hsplanner.update.auto_install'
 
 type CheckState =
   | { kind: 'idle' }
@@ -46,6 +53,10 @@ export default function BottomBar() {
   )
   const abortRef = useRef<AbortController | null>(null)
   const transientTimer = useRef<number | null>(null)
+  const checkRef = useRef<CheckState>(check)
+  useEffect(() => {
+    checkRef.current = check
+  }, [check])
 
   useEffect(
     () => () => {
@@ -55,6 +66,35 @@ export default function BottomBar() {
     },
     [],
   )
+
+  useEffect(() => {
+    if (!inTauriRuntime()) return
+    let unlisten: (() => void) | undefined
+    let cancelled = false
+    ;(async () => {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window')
+      if (cancelled) return
+      const win = getCurrentWindow()
+      unlisten = await win.onCloseRequested(async (event) => {
+        const auto = readStorage(AUTO_INSTALL_KEY) === '1'
+        const cur = checkRef.current
+        if (!auto || cur.kind !== 'available') return
+        event.preventDefault()
+        try {
+          await installUpdateOnQuit()
+        } catch {
+          // If install fails, fall through and exit anyway so the close
+          // request the user issued is still honoured.
+        }
+        const { exit } = await import('@tauri-apps/plugin-process')
+        await exit(0)
+      })
+    })()
+    return () => {
+      cancelled = true
+      unlisten?.()
+    }
+  }, [])
 
   const scheduleRevert = (delayMs: number) => {
     if (transientTimer.current !== null)
