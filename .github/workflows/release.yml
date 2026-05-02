@@ -58,6 +58,21 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      - name: Read CHANGELOG.md
+        id: changelog
+        shell: bash
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            {
+              echo 'body<<__CHANGELOG_EOF__'
+              cat CHANGELOG.md
+              echo
+              echo '__CHANGELOG_EOF__'
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo 'body=Auto-built release.' >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
@@ -65,6 +80,6 @@ jobs:
         with:
           tagName: ${{ inputs.tag }}
           releaseName: ${{ inputs.tag }}
-          releaseBody: 'Auto-built release. See CHANGELOG.md for details.'
+          releaseBody: ${{ steps.changelog.outputs.body }}
           releaseDraft: false
           prerelease: ${{ inputs.prerelease }}
