@@ -66,12 +66,12 @@ const RESISTANCES: ResistanceStyle[] = [
 ];
 
 const ATTR_COLOR: Record<string, string> = {
-  strength: "text-stat-green",
-  dexterity: "text-stat-red",
-  intelligence: "text-stat-blue",
-  energy: "text-stat-cyan",
-  vitality: "text-stat-orange",
-  armor: "text-stat-purple",
+  strength: "text-stat-orange",
+  dexterity: "text-stat-green",
+  intelligence: "text-stat-purple",
+  energy: "text-stat-blue",
+  vitality: "text-stat-red",
+  armor: "text-muted",
 };
 
 const GOLD_OFFENSE = new Set(["enhanced_damage", "crit_chance", "crit_damage"]);
@@ -107,6 +107,7 @@ export default function LeftStatsPanel() {
         activeAuraId,
         activeBuffs,
         customStats,
+        treeAllocated,
       ),
     [
       classId,
@@ -117,6 +118,7 @@ export default function LeftStatsPanel() {
       activeAuraId,
       activeBuffs,
       customStats,
+      treeAllocated,
     ],
   );
 

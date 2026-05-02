@@ -1,7 +1,22 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import treeData from '../data/hero-siege-tree.json'
 import { useBuild } from '../store/build'
 import { ADJ, findPath, START_IDS, START_SET } from '../utils/treeGraph'
+import {
+  TooltipHeader,
+  TooltipSection,
+  TooltipText,
+  UnsupportedModsList,
+} from '../components/Tooltip'
+import { TONE_BORDER, TONE_GLOW } from '../components/tooltip-tones'
+import type { TooltipTone } from '../components/tooltip-tones'
+import {
+  classifyNodeLines,
+  TREE_NODE_INFO,
+  TREE_WARP_IDS,
+  type TreeNodeInfo,
+} from '../utils/treeStats'
 
 type RawNode = [id: number, x: number, y: number, r: number]
 type RawEdge = [x1: number, y1: number, x2: number, y2: number]
@@ -12,6 +27,23 @@ interface TreeNode {
   y: number
   r: number
   tier: 'minor' | 'notable' | 'keystone'
+}
+
+function tierTone(nodeType: string | undefined, tier: TreeNode['tier']): TooltipTone {
+  if (nodeType === 'jewelry') return 'rare'
+  if (nodeType === 'warp') return 'rare'
+  if (nodeType === 'root') return 'angelic'
+  if (nodeType === 'big' || tier === 'keystone' || tier === 'notable') return 'rare'
+  return 'neutral'
+}
+
+function tierLabel(nodeType: string | undefined, tier: TreeNode['tier']): string {
+  if (nodeType === 'jewelry') return 'Jewelry Socket'
+  if (nodeType === 'warp') return 'Warp Node'
+  if (nodeType === 'root') return 'Starting Node'
+  if (nodeType === 'big') return 'Notable'
+  if (tier === 'keystone') return 'Keystone'
+  return 'Minor'
 }
 
 function classifyTier(r: number): TreeNode['tier'] {
@@ -40,6 +72,13 @@ const POS_ID_MAP = (() => {
   return m
 })()
 
+const SEARCH_INDEX: { id: number; haystack: string }[] = Object.entries(
+  TREE_NODE_INFO,
+).map(([id, info]) => ({
+  id: Number(id),
+  haystack: (info.t + ' ' + info.l.join(' ')).toLowerCase(),
+}))
+
 interface NodePaint {
   isAlloc: boolean
   isHover: boolean
@@ -53,6 +92,12 @@ function nodeFill({ isAlloc, isPreview, isStart, tier }: NodePaint): string {
   if (isPreview) return '#5a4528'
   if (isStart) return '#3a3528'
   return '#1c1d24'
+}
+
+function baseStrokeWidth(isStart: boolean, tier: TreeNode['tier']): number {
+  if (isStart) return 2.5
+  if (tier === 'minor') return 1
+  return 2
 }
 
 function nodeStroke({
@@ -79,8 +124,10 @@ export default function TreeView() {
   const [tx, setTx] = useState(0)
   const [ty, setTy] = useState(0)
   const [hoverId, setHoverId] = useState<number | null>(null)
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null)
   const [dragging, setDragging] = useState(false)
   const [viewportSize, setViewportSize] = useState({ w: 1000, h: 800 })
+  const [searchQuery, setSearchQuery] = useState('')
 
   const containerRef = useRef<HTMLDivElement>(null)
   const dragStart = useRef<{ x: number; y: number; tx: number; ty: number } | null>(null)
@@ -154,6 +201,11 @@ export default function TreeView() {
     [hoverId],
   )
 
+  const hoverInfo: TreeNodeInfo | null = useMemo(() => {
+    if (hoverId == null) return null
+    return TREE_NODE_INFO[String(hoverId)] ?? null
+  }, [hoverId])
+
   const previewPath = useMemo(() => {
     if (hoverId == null || allocated.has(hoverId)) return null
     const sources = allocated.size > 0 ? allocated : new Set<number>(START_IDS)
@@ -173,6 +225,76 @@ export default function TreeView() {
     }
     return keys
   }, [previewPath])
+
+  const searchMatches = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase()
+    if (!q) return null
+    const matches = new Set<number>()
+    for (const entry of SEARCH_INDEX) {
+      if (entry.haystack.includes(q)) matches.add(entry.id)
+    }
+    return matches
+  }, [searchQuery])
+
+  const nodeCircles = useMemo(
+    () =>
+      NODES.map((n) => {
+        const paint: NodePaint = {
+          isAlloc: allocated.has(n.id),
+          isHover: false,
+          isPreview: previewPath?.has(n.id) ?? false,
+          isStart: START_SET.has(n.id),
+          tier: n.tier,
+        }
+        return (
+          <circle
+            key={n.id}
+            cx={n.x}
+            cy={n.y}
+            r={paint.isStart ? n.r + 3 : n.r}
+            fill={nodeFill(paint)}
+            stroke={nodeStroke(paint)}
+            strokeWidth={baseStrokeWidth(paint.isStart, n.tier)}
+            style={{ cursor: 'pointer' }}
+            onMouseEnter={(e) => {
+              setHoverId(n.id)
+              setHoverPos({ x: e.clientX, y: e.clientY })
+            }}
+            onMouseMove={(e) => {
+              setHoverPos({ x: e.clientX, y: e.clientY })
+            }}
+            onMouseLeave={() => {
+              setHoverId((cur) => (cur === n.id ? null : cur))
+              setHoverPos(null)
+            }}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (didDragRef.current) {
+                didDragRef.current = false
+                return
+              }
+              toggleNode(n.id)
+            }}
+          />
+        )
+      }),
+    [allocated, previewPath, toggleNode],
+  )
+
+  const matchOverlay = useMemo(() => {
+    if (!searchMatches) return null
+    return NODES.filter((n) => searchMatches.has(n.id)).map((n) => (
+      <circle
+        key={`match-${n.id}`}
+        cx={n.x}
+        cy={n.y}
+        r={n.r + 4}
+        fill="none"
+        stroke="#e0b864"
+        strokeWidth={3}
+      />
+    ))
+  }, [searchMatches])
 
   const allocatedEdgeKeys = useMemo(() => {
     const keys = new Set<string>()
@@ -218,6 +340,7 @@ export default function TreeView() {
                 const idA = POS_ID_MAP.get(ka)
                 const idB = POS_ID_MAP.get(kb)
                 if (idA != null && idB != null) {
+                  if (TREE_WARP_IDS.has(idA) && TREE_WARP_IDS.has(idB)) return null
                   const key = idA < idB ? `${idA}-${idB}` : `${idB}-${idA}`
                   if (allocatedEdgeKeys.has(key)) {
                     stroke = '#c48a3a'
@@ -240,41 +363,8 @@ export default function TreeView() {
                 )
               })}
             </g>
-            <g>
-              {NODES.map((n) => {
-                const paint: NodePaint = {
-                  isAlloc: allocated.has(n.id),
-                  isHover: hoverId === n.id,
-                  isPreview: previewPath?.has(n.id) ?? false,
-                  isStart: START_SET.has(n.id),
-                  tier: n.tier,
-                }
-                const fill = nodeFill(paint)
-                const stroke = nodeStroke(paint)
-                return (
-                  <circle
-                    key={n.id}
-                    cx={n.x}
-                    cy={n.y}
-                    r={paint.isStart ? n.r + 3 : n.r}
-                    fill={fill}
-                    stroke={stroke}
-                    strokeWidth={paint.isStart ? 2.5 : n.tier === 'minor' ? 1 : 2}
-                    style={{ cursor: 'pointer' }}
-                    onMouseEnter={() => setHoverId(n.id)}
-                    onMouseLeave={() => setHoverId((cur) => (cur === n.id ? null : cur))}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      if (didDragRef.current) {
-                        didDragRef.current = false
-                        return
-                      }
-                      toggleNode(n.id)
-                    }}
-                  />
-                )
-              })}
-            </g>
+            <g style={{ opacity: searchMatches ? 0.25 : 1 }}>{nodeCircles}</g>
+            {matchOverlay && <g pointerEvents="none">{matchOverlay}</g>}
           </g>
         </svg>
       </div>
@@ -311,6 +401,29 @@ export default function TreeView() {
         </div>
 
         <div className="pointer-events-auto flex items-center gap-1.5">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search nodes..."
+              className="w-56 rounded-[3px] border border-border bg-panel/85 backdrop-blur-sm px-3 py-1.5 pr-14 text-xs text-text placeholder:text-faint transition-colors focus:border-accent-deep focus:outline-none"
+            />
+            {searchQuery && (
+              <>
+                <span className="pointer-events-none absolute right-7 top-1/2 -translate-y-1/2 font-mono text-[10px] text-accent-hot">
+                  {searchMatches?.size ?? 0}
+                </span>
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[2px] px-1.5 text-xs text-faint hover:text-accent-hot"
+                  aria-label="Clear search"
+                >
+                  ×
+                </button>
+              </>
+            )}
+          </div>
           <button
             onClick={resetTree}
             className="rounded-[3px] border border-border bg-panel-2/85 backdrop-blur-sm px-3 py-1.5 text-xs text-text transition-colors hover:border-accent-deep hover:text-accent-hot"
@@ -329,6 +442,107 @@ export default function TreeView() {
       <div className="pointer-events-none absolute bottom-3.5 right-3.5 z-10 rounded-[3px] border border-border bg-panel/85 backdrop-blur-sm px-2.5 py-1 font-mono text-[11px] text-muted">
         Zoom: <span className="text-text">{(scale * 100).toFixed(0)}%</span>
       </div>
+
+      {hoverNode && hoverPos && !dragging &&
+        createPortal(
+          <NodeTooltip
+            node={hoverNode}
+            info={hoverInfo}
+            cursor={hoverPos}
+          />,
+          document.body,
+        )}
+    </div>
+  )
+}
+
+function NodeTooltip({
+  node,
+  info,
+  cursor,
+}: {
+  node: TreeNode
+  info: TreeNodeInfo | null
+  cursor: { x: number; y: number }
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
+  const tone = tierTone(info?.n, node.tier)
+  const tierName = tierLabel(info?.n, node.tier)
+  const lineGroups = useMemo(
+    () => (info ? classifyNodeLines(info.l) : null),
+    [info],
+  )
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const margin = 12
+    const offset = 16
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    let left = cursor.x + offset
+    if (left + rect.width + margin > vw) left = cursor.x - rect.width - offset
+    left = Math.max(margin, Math.min(left, vw - rect.width - margin))
+    let top = cursor.y + offset
+    if (top + rect.height + margin > vh) top = cursor.y - rect.height - offset
+    top = Math.max(margin, Math.min(top, vh - rect.height - margin))
+    setPos({ left, top })
+  }, [cursor.x, cursor.y, info, node.id])
+
+  return (
+    <div
+      ref={ref}
+      role="tooltip"
+      className={`fixed z-[1000] min-w-[240px] max-w-[360px] bg-panel border ${TONE_BORDER[tone]} ${TONE_GLOW[tone]} rounded-[4px] overflow-hidden pointer-events-none select-none shadow-[0_8px_32px_rgba(0,0,0,0.8)]`}
+      style={{
+        left: pos?.left ?? -9999,
+        top: pos?.top ?? -9999,
+        opacity: pos ? 1 : 0,
+        transition: 'opacity 80ms ease-out',
+      }}
+    >
+      <TooltipHeader
+        title={info?.t ?? `Node #${node.id}`}
+        subtitle={tierName}
+        tone={tone}
+      />
+      {lineGroups && lineGroups.parsed.length > 0 && (
+        <TooltipSection>
+          <div className="space-y-0.5">
+            {lineGroups.parsed.map((p, i) => (
+              <TooltipText key={i}>{p.line}</TooltipText>
+            ))}
+          </div>
+        </TooltipSection>
+      )}
+      {lineGroups && lineGroups.unsupported.length > 0 && (
+        <TooltipSection>
+          <UnsupportedModsList lines={lineGroups.unsupported} />
+        </TooltipSection>
+      )}
+      {info && info.g && info.g.length > 0 && (
+        <TooltipSection className="bg-panel-2/40">
+          <div className="flex flex-wrap gap-1">
+            {info.g.map((tag, i) => (
+              <span
+                key={i}
+                className="inline-block rounded-[2px] border border-border-2 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.08em] text-muted"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </TooltipSection>
+      )}
+      {!info && (
+        <TooltipSection>
+          <TooltipText>
+            <span className="text-faint">No data available</span>
+          </TooltipText>
+        </TooltipSection>
+      )}
     </div>
   )
 }

@@ -11,6 +11,7 @@ const SOURCE_COLOR: Record<SourceType, string> = {
   socket: 'text-pink-400',
   skill: 'text-yellow-300',
   custom: 'text-orange-400',
+  tree: 'text-amber-400',
 }
 
 const SOURCE_LABEL: Record<SourceType, string> = {
@@ -22,6 +23,7 @@ const SOURCE_LABEL: Record<SourceType, string> = {
   socket: 'Socket',
   skill: 'Skill',
   custom: 'Config',
+  tree: 'Tree',
 }
 
 interface Props {

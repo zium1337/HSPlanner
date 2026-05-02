@@ -302,13 +302,19 @@ export function ItemTooltipBody({
 
       {base.uniqueEffects && base.uniqueEffects.length > 0 && (
         <TooltipSection>
+          <div className="text-[10px] uppercase tracking-[0.12em] text-muted mb-1">
+            Not Yet Supported
+          </div>
           <ul className="space-y-0.5 text-[12px]">
             {base.uniqueEffects.map((effect, idx) => (
-              <li key={idx} className={TONE_TEXT.angelic}>
+              <li key={idx} className={`${TONE_TEXT.angelic} opacity-70`}>
                 {effect}
               </li>
             ))}
           </ul>
+          <p className="text-[10px] text-muted/70 italic mt-1">
+            These mods are not yet calculated by the planner.
+          </p>
         </TooltipSection>
       )}
 
@@ -430,6 +436,7 @@ function NetChangeSection({
   const activeBuffs = useBuild((s) => s.activeBuffs)
   const enemyConditions = useBuild((s) => s.enemyConditions)
   const customStats = useBuild((s) => s.customStats)
+  const allocatedTreeNodes = useBuild((s) => s.allocatedTreeNodes)
 
   const beforeBase = getItem(compareWith.baseId)
 
@@ -461,6 +468,7 @@ function NetChangeSection({
         activeBuffs,
         enemyConditions,
         customStats,
+        allocatedTreeNodes,
       },
       slotKey,
       base,
@@ -477,6 +485,7 @@ function NetChangeSection({
     activeBuffs,
     enemyConditions,
     customStats,
+    allocatedTreeNodes,
   ])
 
   if (!beforeBase) return null
@@ -567,6 +576,7 @@ function computeDpsDelta(
     activeBuffs: Record<string, boolean>
     enemyConditions: Record<string, boolean>
     customStats: CustomStat[]
+    allocatedTreeNodes: Set<number>
   },
   slotKey: SlotKey,
   prospectBase: ItemBase,
@@ -583,6 +593,7 @@ function computeDpsDelta(
       state.activeAuraId,
       state.activeBuffs,
       state.customStats,
+      state.allocatedTreeNodes,
     )
     const dps = computeWeaponDamage(inv, built.stats, state.enemyConditions)
     return {
