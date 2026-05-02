@@ -18,6 +18,8 @@
     "@tauri-apps/api": "~2.10.1"
   },
   "dependencies": {
+    "@emnapi/core": "^1.10.0",
+    "@emnapi/runtime": "^1.10.0",
     "@tauri-apps/api": "~2.10.1",
     "@tauri-apps/plugin-dialog": "2.7.0",
     "@tauri-apps/plugin-fs": "2.5.0",
