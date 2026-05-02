@@ -21,6 +21,7 @@ import type {
   StatMap,
 } from '../types'
 import { parseCustomStatValue } from './parseCustomStat'
+import { parseTreeNodeMod, TREE_NODE_INFO } from './treeStats'
 
 export type SourceType =
   | 'class'
@@ -31,6 +32,7 @@ export type SourceType =
   | 'socket'
   | 'skill'
   | 'custom'
+  | 'tree'
 
 export const CUSTOM_SOURCE_LABEL = 'Custom Config'
 
@@ -144,6 +146,7 @@ export function computeBuildStats(
   activeAuraId?: string | null,
   activeBuffs?: Record<string, boolean>,
   customStats?: CustomStat[],
+  allocatedTreeNodes?: Set<number>,
 ): ComputedStats {
   const cls = classId ? getClass(classId) : undefined
   const attrSources: SourceMap = new Map()
@@ -241,6 +244,26 @@ export function computeBuildStats(
             'socket',
           )
         }
+      }
+    }
+  }
+
+  if (allocatedTreeNodes && allocatedTreeNodes.size > 0) {
+    for (const nodeId of allocatedTreeNodes) {
+      const info = TREE_NODE_INFO[String(nodeId)]
+      if (!info?.l) continue
+      const label = `Tree: ${info.t}`
+      for (const line of info.l) {
+        const parsed = parseTreeNodeMod(line)
+        if (!parsed) continue
+        applyContribution(
+          attrSources,
+          statSources,
+          parsed.key,
+          parsed.value,
+          label,
+          'tree',
+        )
       }
     }
   }

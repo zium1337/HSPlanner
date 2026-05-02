@@ -67,6 +67,7 @@ export default function StatsView() {
     activeBuffs,
     enemyConditions,
     customStats,
+    allocatedTreeNodes,
   } = useBuild()
   const [query, setQuery] = useState('')
   const normalizedQuery = query.trim().toLowerCase()
@@ -84,6 +85,7 @@ export default function StatsView() {
         activeAuraId,
         activeBuffs,
         customStats,
+        allocatedTreeNodes,
       ),
     [
       classId,
@@ -94,6 +96,7 @@ export default function StatsView() {
       activeAuraId,
       activeBuffs,
       customStats,
+      allocatedTreeNodes,
     ],
   )
   const fcrRange = stats.faster_cast_rate ?? 0

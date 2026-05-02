@@ -206,3 +206,23 @@ export function TooltipStat({
 export function TooltipText({ children }: { children: ReactNode }) {
   return <div className="text-[12px] leading-[1.55] text-text/90">{children}</div>
 }
+
+export function UnsupportedModsList({ lines }: { lines: ReactNode[] }) {
+  return (
+    <>
+      <div className="mb-1 text-[10px] uppercase tracking-[0.12em] text-muted">
+        Not Yet Supported
+      </div>
+      <ul className="space-y-0.5 opacity-60">
+        {lines.map((line, i) => (
+          <li key={i} className="text-[12px] leading-[1.55] text-text/90">
+            {line}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-1 text-[10px] italic text-muted/70">
+        These mods are not yet calculated by the planner.
+      </p>
+    </>
+  )
+}
