@@ -1,4 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import {
+  installUpdate,
+  type InstallProgress,
+} from "../utils/installUpdate";
 import { readStorage, writeStorage } from "../utils/storage";
 import {
   BUILD_CHANNEL,
@@ -51,34 +55,53 @@ export default function UpdateModal({
   const [autoInstall, setAutoInstall] = useState<boolean>(
     () => readStorage(AUTO_INSTALL_KEY) === "1",
   );
+  const [progress, setProgress] = useState<InstallProgress | null>(null);
+  const isBusy =
+    progress !== null &&
+    progress.phase !== "done" &&
+    progress.phase !== "error";
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape" && !isBusy) onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, [onClose, isBusy]);
 
   const onAutoInstallChange = (v: boolean) => {
     setAutoInstall(v);
     writeStorage(AUTO_INSTALL_KEY, v ? "1" : "0");
   };
 
-  const onRemindLater = () => onClose();
+  const onRemindLater = () => {
+    if (!isBusy) onClose();
+  };
 
   const onSkip = () => {
+    if (isBusy) return;
     writeStorage(SKIP_KEY, info.latest);
     onSkipVersion?.(info.latest);
     onClose();
   };
 
-  const onDownload = () => {
-    const url = info.assetUrl ?? info.releaseUrl;
-    if (url) {
-      window.open(url, "_blank", "noopener,noreferrer");
+  const onDownload = async () => {
+    if (isBusy) return;
+    setProgress({ phase: "checking" });
+    try {
+      await installUpdate(info.assetUrl ?? info.releaseUrl, setProgress);
+      // In Tauri runtime, `installUpdate` triggers `relaunch()` and the app
+      // restarts — code below will not execute. In browser dev fallback the
+      // browser opens the asset URL and we just close the modal.
+      onClose();
+    } catch {
+      // Error is already surfaced via setProgress; keep modal open so the
+      // user can retry or close manually.
     }
-    onClose();
+  };
+
+  const safeClose = () => {
+    if (!isBusy) onClose();
   };
 
   const releaseDateText = info.publishedAt
@@ -89,7 +112,7 @@ export default function UpdateModal({
     <div
       className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 backdrop-blur-sm"
       role="presentation"
-      onMouseDown={onClose}
+      onMouseDown={safeClose}
     >
       <div
         role="dialog"
@@ -143,9 +166,10 @@ export default function UpdateModal({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={safeClose}
+            disabled={isBusy}
             aria-label="Close"
-            className="h-8 w-8 shrink-0 rounded-[3px] text-muted transition-colors hover:bg-panel-2 hover:text-text"
+            className="h-8 w-8 shrink-0 rounded-[3px] text-muted transition-colors hover:bg-panel-2 hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
           >
             ×
           </button>
@@ -224,11 +248,15 @@ export default function UpdateModal({
           </section>
         )}
 
+        {!isChangelog && progress && (
+          <ProgressBlock progress={progress} />
+        )}
+
         <footer className="flex flex-wrap items-center gap-3 border-t border-border px-5 py-3.5">
           {isChangelog ? (
             <button
               type="button"
-              onClick={onClose}
+              onClick={safeClose}
               className="ml-auto rounded-[3px] border border-border bg-panel-2 px-3.5 py-1.5 text-[12px] text-text transition-colors hover:border-border-2"
             >
               Close
@@ -240,6 +268,7 @@ export default function UpdateModal({
                   type="checkbox"
                   checked={autoInstall}
                   onChange={(e) => onAutoInstallChange(e.target.checked)}
+                  disabled={isBusy}
                   className="accent-accent"
                 />
                 Auto-install on quit
@@ -248,23 +277,26 @@ export default function UpdateModal({
                 <button
                   type="button"
                   onClick={onRemindLater}
-                  className="rounded-[3px] border border-border bg-panel-2 px-3 py-1.5 text-[12px] text-text transition-colors hover:border-border-2"
+                  disabled={isBusy}
+                  className="rounded-[3px] border border-border bg-panel-2 px-3 py-1.5 text-[12px] text-text transition-colors hover:border-border-2 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Remind Me Later
                 </button>
                 <button
                   type="button"
                   onClick={onSkip}
-                  className="rounded-[3px] border border-border bg-panel-2 px-3 py-1.5 text-[12px] text-text transition-colors hover:border-border-2"
+                  disabled={isBusy}
+                  className="rounded-[3px] border border-border bg-panel-2 px-3 py-1.5 text-[12px] text-text transition-colors hover:border-border-2 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Skip This Version
                 </button>
                 <button
                   type="button"
                   onClick={onDownload}
-                  className="btn-primary-gold rounded-[3px] px-3.5 py-1.5 text-[12px] font-medium"
+                  disabled={isBusy}
+                  className="btn-primary-gold rounded-[3px] px-3.5 py-1.5 text-[12px] font-medium disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  ↓ Download &amp; Install
+                  {progressLabel(progress)}
                 </button>
               </div>
             </>
@@ -321,4 +353,88 @@ function formatReleaseDate(iso: string): string {
       year: "numeric",
     })
     .toUpperCase();
+}
+
+function progressLabel(p: InstallProgress | null): string {
+  if (!p) return "↓ Download & Install";
+  switch (p.phase) {
+    case "checking":
+      return "Checking…";
+    case "downloading": {
+      if (p.bytesTotal && p.bytesTotal > 0 && p.bytesDownloaded !== undefined) {
+        const pct = Math.floor((p.bytesDownloaded / p.bytesTotal) * 100);
+        return `Downloading ${pct}%`;
+      }
+      return "Downloading…";
+    }
+    case "installing":
+      return "Installing…";
+    case "done":
+      return "Done";
+    case "error":
+      return "Retry";
+    default:
+      return "↓ Download & Install";
+  }
+}
+
+function ProgressBlock({ progress }: { progress: InstallProgress }) {
+  const pct =
+    progress.phase === "downloading" &&
+    progress.bytesTotal &&
+    progress.bytesTotal > 0 &&
+    progress.bytesDownloaded !== undefined
+      ? Math.min(100, (progress.bytesDownloaded / progress.bytesTotal) * 100)
+      : progress.phase === "installing" || progress.phase === "done"
+        ? 100
+        : null;
+  const bytes =
+    progress.bytesDownloaded !== undefined && progress.bytesTotal
+      ? `${formatBytes(progress.bytesDownloaded)} / ${formatBytes(progress.bytesTotal)}`
+      : null;
+  return (
+    <section className="border-t border-border bg-panel-2/40 px-5 py-3 text-[11px]">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="uppercase tracking-[0.14em] text-muted">
+          {progress.phase === "error" ? "Error" : phaseLabel(progress.phase)}
+        </span>
+        {bytes && (
+          <span className="font-mono text-faint">{bytes}</span>
+        )}
+      </div>
+      {progress.phase === "error" ? (
+        <p className="font-mono text-stat-red text-[11px]">
+          {progress.error ?? "Install failed"}
+        </p>
+      ) : (
+        <div className="h-1.5 w-full rounded-full bg-panel border border-border overflow-hidden">
+          <div
+            className="h-full bg-accent-hot transition-all"
+            style={{
+              width: pct !== null ? `${pct}%` : "30%",
+              animation:
+                pct === null
+                  ? "pulse 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+                  : undefined,
+            }}
+          />
+        </div>
+      )}
+    </section>
+  );
+}
+
+function phaseLabel(phase: InstallProgress["phase"]): string {
+  switch (phase) {
+    case "checking":
+      return "Checking for update";
+    case "downloading":
+      return "Downloading";
+    case "installing":
+      return "Installing";
+    case "done":
+      return "Done";
+    default:
+      return "";
+  }
 }
