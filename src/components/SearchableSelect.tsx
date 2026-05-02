@@ -22,12 +22,6 @@ interface Props {
   onChange: (id: string | null) => void
   emptyLabel?: string
   clearLabel?: string
-  /**
-   * Side panel rendered next to the open dropdown. Receives the id of
-   * the currently hovered option, or `null` when no option is hovered
-   * yet (i.e. dropdown was just opened). Returning `null` hides the
-   * panel.
-   */
   sidePanel?: (hoveredId: string | null) => ReactNode
 }
 
