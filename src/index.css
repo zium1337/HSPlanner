@@ -132,6 +132,45 @@ input[type="checkbox"]:disabled {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
 }
 
+.compare-card {
+  position: relative;
+  margin-top: 22px;
+  overflow: visible !important;
+}
+
+.compare-arc {
+  --arc-bg: #2a2418;
+  --arc-border: var(--color-accent-deep);
+  --arc-text: var(--color-accent-hot);
+  position: absolute;
+  top: -21px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 110px;
+  padding: 5px 22px 4px;
+  background: linear-gradient(180deg, var(--arc-bg), color-mix(in srgb, var(--arc-bg) 65%, #000));
+  border: 1px solid var(--arc-border);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  color: var(--arc-text);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 9.5px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  box-shadow:
+    0 -2px 6px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 color-mix(in srgb, var(--arc-text) 30%, transparent);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+
+
+
 .notes-editor a { color: var(--color-accent-hot); text-decoration: underline; }
 .notes-editor h1, .notes-editor h2, .notes-editor h3, .notes-editor h4 {
   font-family: var(--font-mono);

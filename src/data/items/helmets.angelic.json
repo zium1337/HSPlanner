@@ -7,11 +7,9 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 565,
+    "defenseMax": 625,
     "implicit": {
-      "defense": [
-        565,
-        625
-      ],
       "enhanced_defense": [
         450,
         500
@@ -41,6 +39,8 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 565,
+    "defenseMax": 625,
     "implicit": {
       "defense": [
         565,

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import ItemTooltip from '../components/ItemTooltip'
+import ItemTooltip, { ItemCard } from '../components/ItemTooltip'
 import SearchableSelect from '../components/SearchableSelect'
 import type { SearchableOption } from '../components/SearchableSelect'
 import {
@@ -563,6 +563,80 @@ function CharmSection({
   )
 }
 
+function ItemCompareOverlay({
+  equipped,
+  prospectId,
+  slotKey,
+}: {
+  equipped: EquippedItem | undefined
+  prospectId: string | null
+  slotKey: SlotKey
+}) {
+  const prospectBase = prospectId ? getItem(prospectId) : undefined
+  const equippedBase = equipped ? getItem(equipped.baseId) : undefined
+  const isSame = !!prospectId && equipped?.baseId === prospectId
+
+  if (!equipped && !prospectBase) return null
+
+  if (isSame && prospectBase) {
+    return (
+      <ItemCard
+        base={prospectBase}
+        state="equipped"
+        arcLabel="Currently Equipped"
+        className="w-[260px] pointer-events-auto text-[12px]"
+      />
+    )
+  }
+
+  if (!prospectBase && equipped && equippedBase) {
+    return (
+      <div className="flex items-start gap-3 pointer-events-auto">
+        <div className="w-[260px] shrink-0">
+          <ItemCard
+            equipped={equipped}
+            base={equippedBase}
+            state="equipped"
+            arcLabel="Currently Equipped"
+            className="text-[12px]"
+          />
+        </div>
+        <div className="text-[10px] uppercase tracking-[0.14em] text-faint italic max-w-[110px] leading-tight pt-6">
+          Hover an item to compare
+        </div>
+      </div>
+    )
+  }
+
+  if (!prospectBase) return null
+
+  return (
+    <div className="flex items-start gap-3 pointer-events-auto">
+      {equipped && equippedBase && (
+        <div className="w-[260px] shrink-0">
+          <ItemCard
+            equipped={equipped}
+            base={equippedBase}
+            state="equipped"
+            arcLabel="Currently Equipped"
+            className="text-[12px]"
+          />
+        </div>
+      )}
+      <div className="w-[260px] shrink-0">
+        <ItemCard
+          base={prospectBase}
+          state="selected"
+          arcLabel="Selected"
+          compareWith={equipped}
+          compareSlotKey={slotKey}
+          className="text-[12px]"
+        />
+      </div>
+    </div>
+  )
+}
+
 function EditPanel({
   slot,
   equipped,
@@ -646,6 +720,13 @@ function EditPanel({
           onChange={(id) => {
             if (id) onEquip(id)
           }}
+          sidePanel={(hoveredId) => (
+            <ItemCompareOverlay
+              equipped={equipped}
+              prospectId={hoveredId}
+              slotKey={slot}
+            />
+          )}
         />
 
         {equipped && base && (
