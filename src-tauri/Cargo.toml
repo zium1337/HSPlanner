@@ -1,6 +1,6 @@
 [package]
 name = "HSPlanner"
-version = "0.2.2"
+version = "0.3.1"
 description = "HSPlanner"
 authors = ["zium1337"]
 license = ""
