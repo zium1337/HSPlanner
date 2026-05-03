@@ -44,6 +44,25 @@ function App() {
     writeStorage(SECTION_KEY, section);
   }, [section]);
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "f") {
+        e.preventDefault();
+        if (section === "tree" || section === "stats") {
+          const input = document.querySelector<HTMLInputElement>(
+            "[data-search-input]",
+          );
+          if (input) {
+            input.focus();
+            input.select();
+          }
+        }
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [section]);
+
   const ActiveView = SECTIONS.find((s) => s.id === section)?.view ?? TreeView;
   const classId = useBuild((s) => s.classId);
   const level = useBuild((s) => s.level);

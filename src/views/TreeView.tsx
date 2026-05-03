@@ -407,6 +407,7 @@ export default function TreeView() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search nodes..."
+              data-search-input
               className="w-56 rounded-[3px] border border-border bg-panel/85 backdrop-blur-sm px-3 py-1.5 pr-14 text-xs text-text placeholder:text-faint transition-colors focus:border-accent-deep focus:outline-none"
             />
             {searchQuery && (
