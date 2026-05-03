@@ -315,7 +315,7 @@
     },
     {
       "key": "attack_rating_pct",
-      "name": "Attack Rating %",
+      "name": "Increased Attack Rating",
       "category": "offense",
       "format": "percent"
     },
@@ -579,7 +579,7 @@
     },
     {
       "key": "extra_damage_burning",
-      "name": "Extra Damage to Burning",
+      "name": "Extra Damage to Burning Monsters",
       "category": "offense",
       "format": "percent"
     },

@@ -8,8 +8,10 @@
     "grade": "SS",
     "twoHanded": true,
     "requiresLevel": 100,
+    "damageMin": 158,
+    "damageMax": 165,
+    "attackSpeed": 1,
     "implicit": {
-      "attacks_per_second": 1,
       "enhanced_damage": [
         925,
         1175
@@ -35,16 +37,12 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Deadly Blow Effect",
-      "Unholy None",
-      "Unholy None",
-      "Unholy None",
-      "Attacks Hit Multiple Enemies None",
-      "Grant Aura: Lunar Aura"
+      "Deadly Blow Damage increased by [100-150]%",
+      "Random Unholy Affix",
+      "Lunar Aura Level [12-15]"
     ],
     "sockets": 4,
-    "maxSockets": 4
+    "maxSockets": 6
   },
   {
     "id": "gun_angelic_commander_s_sentry_blaster",
@@ -54,8 +52,10 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 70,
+    "damageMax": 74,
+    "attackSpeed": 1.85,
     "implicit": {
-      "attacks_per_second": 1.85,
       "enhanced_damage": [
         800,
         850
@@ -63,16 +63,15 @@
       "all_skills": 3
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Master Mechanic",
-      "Sentry Skills",
-      "Grant Spell: Gunner Drones",
-      "Grant Spell: Cannon Turret",
-      "Grant Spell: Arrow Turret",
-      "Grant Spell: Rocket Turret",
-      "Sentry Attack Speed",
-      "Sentry Damage",
-      "Sentry Duration"
+      "+[4-6] to Sentry Skills",
+      "8% Chance when Attacking to cast Master Mechanic Level 20",
+      "+[5-7] to Gunner Drones",
+      "+[5-7] to Cannon Turret",
+      "+[5-7] to Arrow Turret",
+      "+[5-7] to Rocket Turret",
+      "+[30-40]% Increased Sentry Attack Speed",
+      "Sentry Damage increased by [35-45]%",
+      "Sentry Duration increased by 25%"
     ],
     "sockets": 4,
     "maxSockets": 4
@@ -85,8 +84,10 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 125,
+    "damageMax": 145,
+    "attackSpeed": 1.85,
     "implicit": {
-      "attacks_per_second": 1.85,
       "enhanced_damage": [
         925,
         950
@@ -106,9 +107,7 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Truth Seeker",
-      "Random Skill Element"
+      "+5 to Random Skill Element"
     ],
     "sockets": 5,
     "maxSockets": 5,
@@ -122,8 +121,10 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 99,
+    "damageMin": 110,
+    "damageMax": 125,
+    "attackSpeed": 1.35,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         850,
         925
@@ -147,13 +148,11 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Tree Trunk Triumph",
-      "Attack Range",
-      "Attacks Hit Multiple Enemies None"
+      "Attack Range Increased by [50-100]%",
+      "20% Chance when Striking to cast Tree Trunk Triumph Level [125-150]"
     ],
-    "sockets": 4,
-    "maxSockets": 4,
+    "sockets": 6,
+    "maxSockets": 6,
     "twoHanded": true
   },
   {
@@ -164,8 +163,10 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 80,
+    "damageMax": 88,
+    "attackSpeed": 1.85,
     "implicit": {
-      "attacks_per_second": 1.85,
       "enhanced_damage": [
         725,
         925
@@ -179,18 +180,21 @@
         30,
         50
       ],
-      "attack_rating_pct": 35,
+      "attack_rating_pct": [
+        25,
+        35
+      ],
       "to_vitality": 55,
       "to_armor": 55,
       "damage_return": [
-        1,
+        1000,
         1250
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Lance Thrust",
-      "Attacks Hit Multiple Enemies None"
+      "15% Chance when Attacking to cast Commending Banner Level 20",
+      "+15 to Crushing Lance",
+      "+15 to Lance Thrust"
     ],
     "sockets": 5,
     "maxSockets": 5,
@@ -204,8 +208,10 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 97,
+    "damageMin": 82,
+    "damageMax": 94,
+    "attackSpeed": 1.65,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
         810,
         920
@@ -246,11 +252,10 @@
       "light_radius": 5
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Gabriels Glory"
+      "18% Chance when Striking to cast Gabriels Glory Level 122"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 4
   },
   {
     "id": "wand_angelic_st_houdeanii_s_tiny_fire_rod",
@@ -260,30 +265,36 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 96,
+    "damageMin": 32,
+    "damageMax": 42,
+    "attackSpeed": 1.75,
     "implicit": {
-      "attacks_per_second": 1.75,
       "all_skills": 4,
       "fire_skills": [
         3,
         4
       ],
-      "faster_cast_rate": 65,
+      "faster_cast_rate": 75,
       "increased_burning_damage": [
         30,
         40
       ],
       "mana_replenish": 10,
+      "extra_damage_burning": 30,
+      "to_intelligence": [
+        40,
+        60
+      ],
       "fire_skill_damage": [
         40,
         50
       ],
-      "ignore_lightning_res": 50
+      "ignore_fire_res": 50
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance After Each Kill: Comet"
+      "22% Chance after each Kill to cast Comet Level 131"
     ],
-    "sockets": 4,
+    "sockets": 3,
     "maxSockets": 4
   },
   {
@@ -294,37 +305,46 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 95,
+    "damageMin": 125,
+    "damageMax": 140,
+    "attackSpeed": 1.75,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         725,
         850
       ],
       "all_skills": 5,
+      "movement_speed": [
+        25,
+        40
+      ],
       "increased_attack_speed": [
-        40,
-        60
+        25,
+        40
       ],
+      "crit_chance": [
+        15,
+        25
+      ],
+      "attack_rating_pct": 25,
       "attack_rating": 1555,
-      "to_energy": 15,
-      "to_vitality": 30,
-      "all_attributes": 35,
-      "additive_lightning_damage": [
-        2175,
-        2425
+      "crit_damage": [
+        35,
+        55
       ],
+      "all_attributes": 45,
+      "additive_lightning_damage": 20000,
       "lightning_skill_damage": [
         35,
         60
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Divine Storm",
-      "Attacks Hit Multiple Enemies None"
+      "18% Chance when Striking to cast Divine Storm Level [75-90]",
+      "18% Chance when Striking to cast Astrope's Battle Maiden Level [15-25]"
     ],
-    "sockets": 2,
-    "maxSockets": 2,
+    "sockets": 5,
+    "maxSockets": 6,
     "twoHanded": true
   },
   {
@@ -335,30 +355,34 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 32,
+    "damageMax": 42,
+    "attackSpeed": 0.77,
     "implicit": {
-      "attacks_per_second": 0.77,
       "all_skills": [
-        4,
-        5
+        7,
+        10
       ],
       "movement_speed": [
         15,
         25
       ],
       "to_vitality": [
-        8,
-        15
+        40,
+        65
       ],
       "attack_damage": -25,
-      "magic_skill_damage": -16,
+      "magic_skill_damage": [
+        -20,
+        -5
+      ],
       "all_resistances": [
         10,
         15
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Aura Holder Only: Mirror Aura"
+      "Mirror Aura Level 1 (Holder Only)"
     ],
     "sockets": 4,
     "maxSockets": 4,
@@ -372,8 +396,10 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 82,
+    "damageMax": 94,
+    "attackSpeed": 1.9,
     "implicit": {
-      "attacks_per_second": 1.9,
       "enhanced_damage": [
         775,
         885
@@ -396,13 +422,11 @@
       "life_per_kill": 45
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Fault Line",
-      "Crushing Blow Stacks",
-      "Attacks Hit Multiple Enemies None"
+      "+1 to Maximum Crushing Blow Stacks",
+      "23% Chance when Striking to cast Fault Line Level 147"
     ],
     "sockets": 3,
-    "maxSockets": 3,
+    "maxSockets": 5,
     "twoHanded": true
   },
   {
@@ -413,14 +437,19 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 94,
+    "damageMin": 126,
+    "damageMax": 138,
+    "attackSpeed": 1.65,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
-        875,
-        955
+        900,
+        1000
       ],
-      "increased_attack_speed": 40,
-      "crit_chance": 50,
+      "increased_attack_speed": [
+        40,
+        80
+      ],
+      "crit_chance": 25,
       "life_steal": [
         8,
         14
@@ -440,12 +469,11 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Holy Bolt",
-      "Piercing Attack None"
+      "17% Chance when Attacking to cast Holy Bolt Level [125-150]",
+      "Piercing Attack"
     ],
     "sockets": 4,
-    "maxSockets": 4,
+    "maxSockets": 5,
     "twoHanded": true
   },
   {
@@ -456,35 +484,38 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 98,
+    "damageMin": 56,
+    "damageMax": 64,
+    "attackSpeed": 1.75,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
-        775,
-        925
+        650,
+        800
       ],
       "all_skills": 2,
-      "lightning_skills": [
-        4,
-        5
-      ],
       "increased_attack_speed": [
+        75,
+        100
+      ],
+      "defense_ignored": 40,
+      "all_attributes": [
+        25,
+        40
+      ],
+      "flat_lightning_skill_damage": [
+        45,
+        75
+      ],
+      "lightning_skill_damage": [
         40,
         50
       ],
-      "to_energy": 50,
-      "flat_lightning_skill_damage": [
-        28,
-        72
-      ],
-      "lightning_skill_damage": [
-        45,
-        52
-      ],
-      "mana_replenish": 10
+      "ignore_lightning_res": 25
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Storm Totem"
+      "+[20-25] to Storm Totem",
+      "15% Chance when Striking to cast Thunder Shield Level [65-85]",
+      "15% Chance when Striking to cast Thor's Fury Level 76"
     ],
     "sockets": 5,
     "maxSockets": 5
@@ -497,17 +528,18 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 58,
+    "damageMax": 64,
+    "attackSpeed": 1.75,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         430,
         480
       ],
-      "all_skills": 3,
-      "faster_cast_rate": 50,
-      "mana_replenish": [
-        8,
-        12
+      "all_skills": 5,
+      "faster_cast_rate": [
+        40,
+        60
       ],
       "all_attributes": [
         25,
@@ -517,15 +549,64 @@
         40,
         50
       ],
-      "damage_mitigation": 5
+      "damage_taken_reduced": 10,
+      "max_all_resistances": 5
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Fist of the Heavens",
-      "Ailment Damage",
-      "Enemy All Resist"
+      "Ailment Damage increased by [25-35]%",
+      "-25% to All Enemy Resistances",
+      "22% Chance when Casting to cast Fist of the Heavens Level [60-70]"
     ],
     "sockets": 3,
     "maxSockets": 3
+  },
+  {
+    "id": "throwing_angelic_st_neri_s_rainbow_lance",
+    "name": "St. Neri's Rainbow Lance",
+    "baseType": "Throwing",
+    "slot": "weapon",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "damageMin": 78,
+    "damageMax": 82,
+    "attackSpeed": 1.75,
+    "implicit": {
+      "enhanced_damage": [
+        800,
+        850
+      ],
+      "all_skills": [
+        4,
+        5
+      ],
+      "attack_rating_pct": 30,
+      "mana_steal": [
+        8,
+        15
+      ],
+      "increased_stasis_damage": [
+        25,
+        35
+      ],
+      "flat_lightning_skill_damage": [
+        35,
+        65
+      ],
+      "lightning_skill_damage": [
+        50,
+        60
+      ],
+      "ignore_lightning_res": [
+        25,
+        50
+      ],
+      "to_dexterity": 125
+    },
+    "uniqueEffects": [
+      "15% Chance when Striking to cast Thunder Fury Level 118"
+    ],
+    "sockets": 3,
+    "maxSockets": 4
   }
 ]
