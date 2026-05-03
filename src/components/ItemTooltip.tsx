@@ -13,7 +13,7 @@ import {
   getRune,
   isGearSlot,
 } from '../data'
-import { RAINBOW_MULTIPLIER, useBuild } from '../store/build'
+import { BONUS_SOCKET_MOD_ID, RAINBOW_MULTIPLIER, useBuild } from '../store/build'
 import type {
   CustomStat,
   EquippedItem,
@@ -144,9 +144,13 @@ export function ItemTooltipBody({
         ? ' · 2-Handed'
         : ' · 1-Handed'
       : ''
+  const isTinkered = !!equipped?.forgedMods?.some(
+    (m) => m.affixId === BONUS_SOCKET_MOD_ID,
+  )
+  const tinkeredSuffix = isTinkered ? ' · Tinkered' : ''
   const subtitle = runeword
-    ? `Runeword · ${base.baseType}${handSuffix}${starSuffix}`
-    : `${RARITY_LABEL[base.rarity]} · ${base.baseType}${handSuffix}${starSuffix}`
+    ? `Runeword · ${base.baseType}${handSuffix}${starSuffix}${tinkeredSuffix}`
+    : `${RARITY_LABEL[base.rarity]} · ${base.baseType}${handSuffix}${starSuffix}${tinkeredSuffix}`
 
   const hasBaseStats =
     base.defenseMin !== undefined ||
@@ -175,20 +179,21 @@ export function ItemTooltipBody({
 
   const socketStats = equipped ? collectSocketStats(equipped, base) : []
 
-  const activeTransformGem = (() => {
-    if (!equipped || !base.socketTransforms) return null
+  const activeTransformGemNames = (() => {
+    if (!equipped || !base.socketTransforms) return [] as string[]
+    const names: string[] = []
     for (const id of equipped.socketed) {
       if (id && base.socketTransforms[id]) {
         const gem = getGem(id)
-        if (gem) return gem
+        if (gem) names.push(gem.name)
       }
     }
-    return null
+    return names
   })()
   const displayName = runeword
     ? runeword.name
-    : activeTransformGem
-      ? `${base.name} (${activeTransformGem.name})`
+    : activeTransformGemNames.length > 0
+      ? `${base.name} (${activeTransformGemNames.join(' + ')})`
       : base.name
 
   const requiresLevel = runeword?.requiresLevel ?? base.requiresLevel

@@ -714,7 +714,7 @@ function EditPanel({
     : undefined
   const itemOpts = useMemo(() => (slot ? itemsForSlot(slot) : []), [slot])
   const base = equipped ? getItem(equipped.baseId) : undefined
-  const maxSockets = equipped ? maxSocketsFor(equipped.baseId) : 0
+  const maxSockets = equipped ? maxSocketsFor(equipped.baseId, equipped.forgedMods) : 0
   const inv = useBuild((s) => s.inventory)
   const set = base?.setId ? getItemSet(base.setId) : undefined
   const setEquippedCount = base?.setId

@@ -897,5 +897,17 @@
     "format": "percent",
     "valueMin": 125,
     "valueMax": 200
+  },
+  {
+    "id": "crystal_add_socket",
+    "groupId": "crystal_add_socket",
+    "tier": 1,
+    "name": "Tinkered",
+    "description": "+1 Socket",
+    "statKey": null,
+    "sign": "+",
+    "format": "flat",
+    "valueMin": null,
+    "valueMax": null
   }
 ]

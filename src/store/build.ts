@@ -182,11 +182,22 @@ function snapshotPatch(snap: BuildSnapshot) {
 }
 
 const HARD_SOCKET_CAP = 6
+export const BONUS_SOCKET_MOD_ID = 'crystal_add_socket'
 
-export function maxSocketsFor(baseId: string): number {
+export function hasBonusSocketMod(
+  forgedMods?: { affixId: string }[] | null,
+): boolean {
+  return !!forgedMods?.some((m) => m.affixId === BONUS_SOCKET_MOD_ID)
+}
+
+export function maxSocketsFor(
+  baseId: string,
+  forgedMods?: { affixId: string }[] | null,
+): number {
   const base = getItem(baseId)
   if (!base) return 0
-  const cap = base.maxSockets ?? base.sockets ?? 0
+  let cap = base.maxSockets ?? base.sockets ?? 0
+  if (hasBonusSocketMod(forgedMods)) cap += 1
   return Math.min(cap, HARD_SOCKET_CAP)
 }
 
@@ -429,7 +440,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
-      const max = maxSocketsFor(cur.baseId)
+      const max = maxSocketsFor(cur.baseId, cur.forgedMods)
       const clamped = Math.max(0, Math.min(max, count))
       const socketed = [...cur.socketed]
       const socketTypes = [...cur.socketTypes]
@@ -753,7 +764,16 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       if (!cur) return s
       // Only one forged mod per item — adding replaces any existing one.
       const forgedMods = [{ affixId: modId, tier, roll: 1 }]
-      return { inventory: { ...s.inventory, [slot]: { ...cur, forgedMods } } }
+      const newMax = maxSocketsFor(cur.baseId, forgedMods)
+      const socketCount = Math.min(cur.socketCount, newMax)
+      const socketed = cur.socketed.slice(0, socketCount)
+      const socketTypes = cur.socketTypes.slice(0, socketCount)
+      return {
+        inventory: {
+          ...s.inventory,
+          [slot]: { ...cur, forgedMods, socketCount, socketed, socketTypes },
+        },
+      }
     })
   },
 
@@ -763,7 +783,16 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       const list = cur?.forgedMods ?? []
       if (!cur || index < 0 || index >= list.length) return s
       const forgedMods = list.filter((_, i) => i !== index)
-      return { inventory: { ...s.inventory, [slot]: { ...cur, forgedMods } } }
+      const newMax = maxSocketsFor(cur.baseId, forgedMods)
+      const socketCount = Math.min(cur.socketCount, newMax)
+      const socketed = cur.socketed.slice(0, socketCount)
+      const socketTypes = cur.socketTypes.slice(0, socketCount)
+      return {
+        inventory: {
+          ...s.inventory,
+          [slot]: { ...cur, forgedMods, socketCount, socketed, socketTypes },
+        },
+      }
     })
   },
 
