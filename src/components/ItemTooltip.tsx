@@ -173,7 +173,23 @@ export function ItemTooltipBody({
     ? Object.entries(runeword.stats).filter(([, v]) => v !== 0)
     : []
 
-  const socketStats = equipped ? collectSocketStats(equipped) : []
+  const socketStats = equipped ? collectSocketStats(equipped, base) : []
+
+  const activeTransformGem = (() => {
+    if (!equipped || !base.socketTransforms) return null
+    for (const id of equipped.socketed) {
+      if (id && base.socketTransforms[id]) {
+        const gem = getGem(id)
+        if (gem) return gem
+      }
+    }
+    return null
+  })()
+  const displayName = runeword
+    ? runeword.name
+    : activeTransformGem
+      ? `${base.name} (${activeTransformGem.name})`
+      : base.name
 
   const requiresLevel = runeword?.requiresLevel ?? base.requiresLevel
   const footerBits: string[] = []
@@ -191,7 +207,7 @@ export function ItemTooltipBody({
     <>
       <TooltipHeader
         tone={tone}
-        title={runeword ? runeword.name : base.name}
+        title={displayName}
         subtitle={subtitle}
         image={getItemImage(base.id)}
       />
@@ -438,7 +454,9 @@ function aggregateItemStats(
       if (!source) continue
       const mult =
         equipped.socketTypes[i] === 'rainbow' ? RAINBOW_MULTIPLIER : 1
-      for (const [k, v] of Object.entries(source.stats)) add(k, v * mult)
+      const transform = base.socketTransforms?.[id]
+      const src = transform ?? source.stats
+      for (const [k, v] of Object.entries(src)) add(k, v * mult)
     }
   }
 
@@ -784,7 +802,10 @@ function BaseStats({ base }: { base: ItemBase }) {
   )
 }
 
-function collectSocketStats(equipped: EquippedItem): [string, number][] {
+function collectSocketStats(
+  equipped: EquippedItem,
+  base?: ItemBase,
+): [string, number][] {
   const stats: StatMap = {}
   for (let i = 0; i < equipped.socketed.length; i++) {
     const id = equipped.socketed[i]
@@ -792,7 +813,9 @@ function collectSocketStats(equipped: EquippedItem): [string, number][] {
     const source = getGem(id) ?? getRune(id)
     if (!source) continue
     const mult = equipped.socketTypes[i] === 'rainbow' ? RAINBOW_MULTIPLIER : 1
-    for (const [k, v] of Object.entries(source.stats)) {
+    const transform = base?.socketTransforms?.[id]
+    const src = transform ?? source.stats
+    for (const [k, v] of Object.entries(src)) {
       stats[k] = (stats[k] ?? 0) + v * mult
     }
   }

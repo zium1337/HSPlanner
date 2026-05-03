@@ -298,10 +298,13 @@ export function computeBuildStats(
         if (!source) continue
         const isRainbow = item.socketTypes[i] === 'rainbow'
         const mult = isRainbow ? RAINBOW_MULTIPLIER : 1
+        const transform = base.socketTransforms?.[id]
+        const stats = transform ?? source.stats
         const socketLabel =
           `${source.name} in ${itemName} #${i + 1}` +
-          (isRainbow ? ' (Rainbow)' : '')
-        for (const [statKey, rawValue] of Object.entries(source.stats)) {
+          (isRainbow ? ' (Rainbow)' : '') +
+          (transform ? ' (Transform)' : '')
+        for (const [statKey, rawValue] of Object.entries(stats)) {
           applyContribution(
             attrSources,
             statSources,

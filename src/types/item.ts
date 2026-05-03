@@ -42,10 +42,9 @@ export interface ItemBase {
   procs?: ProcEffect[]
   skillBonuses?: Record<string, RangedStatMap[string]>
   uniqueEffects?: string[]
-  /** Width in grid cells (for charm inventory). Defaults to 1. */
   width?: number
-  /** Height in grid cells (for charm inventory). Defaults to 1. */
   height?: number
+  socketTransforms?: Record<string, StatMap>
 }
 
 export type ProcTrigger =

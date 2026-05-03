@@ -602,5 +602,93 @@
     },
     "color": "yellow",
     "description": "Tier S"
+  },
+  {
+    "id": "gem_anubis_soulgem",
+    "name": "Anubis' Soulgem",
+    "tier": 6,
+    "stats": {
+      "increased_attack_speed": 5,
+      "to_strength": 10,
+      "attack_damage": 10
+    },
+    "description": "Soulgem"
+  },
+  {
+    "id": "gem_damien_s_soulgem",
+    "name": "Damien's Soulgem",
+    "tier": 6,
+    "stats": {
+      "poison_skill_damage": 5,
+      "ignore_poison_res": 5,
+      "poison_resistance": 10
+    },
+    "description": "Soulgem"
+  },
+  {
+    "id": "gem_death_s_soulgem",
+    "name": "Death's Soulgem",
+    "tier": 6,
+    "stats": {
+      "mana_replenish": 6,
+      "to_energy": 10,
+      "mana": 35
+    },
+    "description": "Soulgem"
+  },
+  {
+    "id": "gem_gurag_s_soulgem",
+    "name": "Gurag's Soulgem",
+    "tier": 6,
+    "stats": {
+      "to_vitality": 10,
+      "life_regeneration": 20,
+      "damage_return": 50
+    },
+    "description": "Soulgem"
+  },
+  {
+    "id": "gem_karp_king_s_soulgem",
+    "name": "Karp King's Soulgem",
+    "tier": 6,
+    "stats": {
+      "lightning_skill_damage": 5,
+      "ignore_lightning_res": 5,
+      "lightning_resistance": 10
+    },
+    "description": "Soulgem"
+  },
+  {
+    "id": "gem_mevius_soulgem",
+    "name": "Mevius' Soulgem",
+    "tier": 6,
+    "stats": {
+      "arcane_skill_damage": 5,
+      "ignore_arcane_res": 5,
+      "arcane_resistance": 10
+    },
+    "description": "Soulgem"
+  },
+  {
+    "id": "gem_odin_s_soulgem",
+    "name": "Odin's Soulgem",
+    "tier": 6,
+    "stats": {
+      "cold_skill_damage": 5,
+      "ignore_cold_res": 5,
+      "cold_resistance": 10
+    },
+    "description": "Soulgem"
+  },
+  {
+    "id": "gem_satan_s_soulgem",
+    "name": "Satan's Soulgem",
+    "tier": 6,
+    "stats": {
+      "fire_skill_damage": 5,
+      "ignore_fire_res": 5,
+      "fire_resistance": 10
+    },
+    "description": "Soulgem"
   }
 ]

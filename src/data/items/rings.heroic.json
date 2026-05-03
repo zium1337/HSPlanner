@@ -14,7 +14,67 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "socketTransforms": {
+      "gem_damien_s_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "poison_skill_damage": 40,
+        "ignore_poison_res": 25,
+        "poison_resistance": 60
+      },
+      "gem_anubis_soulgem": {
+        "increased_attack_speed": 20,
+        "crit_chance": 20,
+        "crushing_blow_chance": 5,
+        "attack_rating_pct": 25,
+        "to_strength": 25,
+        "attack_damage": 25
+      },
+      "gem_death_s_soulgem": {
+        "mana_replenish": 16,
+        "to_energy": 25,
+        "mana_replenish_pct": 25,
+        "mana": 535,
+        "increased_mana": 25,
+        "all_resistances": 10
+      },
+      "gem_gurag_s_soulgem": {
+        "to_vitality": 25,
+        "life_replenish_pct": 45,
+        "life": 500,
+        "damage_return": 250,
+        "damage_taken_reduced": 10
+      },
+      "gem_karp_king_s_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "lightning_skill_damage": 40,
+        "ignore_lightning_res": 25,
+        "lightning_resistance": 60
+      },
+      "gem_mevius_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "arcane_skill_damage": 40,
+        "ignore_arcane_res": 25,
+        "arcane_resistance": 60
+      },
+      "gem_odin_s_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "cold_skill_damage": 40,
+        "ignore_cold_res": 25,
+        "cold_resistance": 60
+      },
+      "gem_satan_s_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "fire_skill_damage": 40,
+        "ignore_fire_res": 25,
+        "fire_resistance": 60
+      }
+    }
   },
   {
     "id": "ring_heroic_giant_s_band_of_strength",
