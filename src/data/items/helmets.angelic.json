@@ -22,14 +22,13 @@
         11,
         15
       ],
-      "all_resistances": -225
+      "all_resistances": -300,
+      "max_all_resistances": -30,
+      "increased_all_attributes": 5
     },
     "uniqueEffects": [
-      "Damage From Resist",
-      "All Attributes"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
+      "Damage From Resist"
+    ]
   },
   {
     "id": "helmet_angelic_mask_of_the_celestial",

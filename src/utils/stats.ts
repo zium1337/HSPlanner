@@ -1,15 +1,19 @@
 import {
   detectRuneword,
+  forgeKindFor,
   gameConfig,
   getAffix,
   getClass,
+  getCrystalMod,
   getGem,
   getItem,
   getItemSet,
   getRune,
   getSkillsByClass,
+  isGearSlot,
 } from '../data'
-import { RAINBOW_MULTIPLIER } from '../store/build'
+import type { ForgeKind } from '../data'
+import { RAINBOW_MULTIPLIER, STAR_AFFIX_BONUS } from '../store/build'
 import type {
   AttributeKey,
   CustomStat,
@@ -71,6 +75,11 @@ export interface SourceContribution {
   label: string
   sourceType: SourceType
   value: RangedValue
+  forge?: {
+    itemName: string
+    modName: string
+    kind: ForgeKind
+  }
 }
 
 export interface ComputedStats {
@@ -107,12 +116,14 @@ function applyContribution(
   value: RangedValue,
   label: string,
   sourceType: SourceType,
+  extra?: { forge?: SourceContribution['forge'] },
 ) {
   if (isZero(value)) return
   const def = statDef(statKey)
   if (def?.itemOnly) return
+  const contribution: SourceContribution = { label, sourceType, value }
+  if (extra?.forge) contribution.forge = extra.forge
   if (def?.modifiesAttribute) {
-    const contribution: SourceContribution = { label, sourceType, value }
     if (def.modifiesAttribute === 'all') {
       for (const attr of gameConfig.attributes) {
         pushSource(attrSources, attr.key, contribution)
@@ -122,14 +133,15 @@ function applyContribution(
     }
     return
   }
-  pushSource(statSources, statKey, { label, sourceType, value })
+  pushSource(statSources, statKey, contribution)
 }
 
 function computeItemEffectiveDefense(
-  base: { defenseMin?: number; defenseMax?: number; implicit?: RangedStatMap },
+  base: { defenseMin?: number; defenseMax?: number },
+  enhancedDefense: RangedValue | undefined,
 ): RangedValue | null {
   if (base.defenseMin === undefined || base.defenseMax === undefined) return null
-  const ed = base.implicit?.enhanced_defense
+  const ed = enhancedDefense
   const [edMin, edMax] =
     ed === undefined ? [0, 0] : typeof ed === 'number' ? [ed, ed] : ed
   const min = Math.floor(base.defenseMin * (1 + edMin / 100))
@@ -180,14 +192,30 @@ export function computeBuildStats(
     }
   }
 
-  for (const item of Object.values(inventory)) {
+  let weaponHasAttackSpeed = false
+  for (const [slotKey, item] of Object.entries(inventory)) {
     if (!item) continue
     const base = getItem(item.baseId)
     if (!base) continue
     const itemName = base.name
     const runeword = detectRuneword(base, item.socketed)
+    const scaleImplicit = shouldScaleImplicit(!!runeword)
+    const isGear = isGearSlot(slotKey)
+    const effectiveStars = isGear ? item.stars : undefined
+    if (
+      slotKey === 'weapon' &&
+      (base.implicit?.attacks_per_second !== undefined ||
+        base.attackSpeed !== undefined)
+    ) {
+      weaponHasAttackSpeed = true
+    }
 
-    const effectiveDef = computeItemEffectiveDefense(base)
+    const edRaw = base.implicit?.enhanced_defense
+    const edScaled =
+      edRaw !== undefined && scaleImplicit
+        ? applyStarsToRangedValue(edRaw, 'enhanced_defense', effectiveStars)
+        : edRaw
+    const effectiveDef = computeItemEffectiveDefense(base, edScaled)
     if (effectiveDef !== null && !isZero(effectiveDef)) {
       pushSource(statSources, 'defense', {
         label: itemName,
@@ -198,14 +226,32 @@ export function computeBuildStats(
 
     if (base.implicit) {
       for (const [statKey, value] of Object.entries(base.implicit)) {
-        applyContribution(attrSources, statSources, statKey, value, itemName, 'item')
+        const scaled = scaleImplicit
+          ? applyStarsToRangedValue(value, statKey, effectiveStars)
+          : value
+        applyContribution(attrSources, statSources, statKey, scaled, itemName, 'item')
       }
+    }
+
+    if (
+      base.slot === 'weapon' &&
+      base.attackSpeed !== undefined &&
+      base.implicit?.attacks_per_second === undefined
+    ) {
+      applyContribution(
+        attrSources,
+        statSources,
+        'attacks_per_second',
+        base.attackSpeed,
+        itemName,
+        'item',
+      )
     }
 
     for (const eq of item.affixes) {
       const affix = getAffix(eq.affixId)
       if (!affix || !affix.statKey) continue
-      const signed = rolledAffixValue(affix, eq.roll)
+      const signed = rolledAffixValueWithStars(affix, eq.roll, effectiveStars)
       if (signed === 0) continue
       const label = `${affix.name} (${itemName})`
       applyContribution(
@@ -216,6 +262,27 @@ export function computeBuildStats(
         label,
         'item',
       )
+    }
+
+    if (isGear) {
+      const forgeKind = forgeKindFor(base.rarity)
+      if (forgeKind) {
+        for (const eq of item.forgedMods ?? []) {
+          const mod = getCrystalMod(eq.affixId)
+          if (!mod || !mod.statKey) continue
+          const ranged = rolledAffixRange(mod)
+          if (isZero(ranged)) continue
+          applyContribution(
+            attrSources,
+            statSources,
+            mod.statKey,
+            ranged,
+            mod.name,
+            'item',
+            { forge: { itemName, modName: mod.name, kind: forgeKind } },
+          )
+        }
+      }
     }
 
     if (runeword) {
@@ -300,6 +367,7 @@ export function computeBuildStats(
   if (gameConfig.defaultBaseStats) {
     for (const [statKey, value] of Object.entries(gameConfig.defaultBaseStats)) {
       if (value !== 0) {
+        if (statKey === 'attacks_per_second' && weaponHasAttackSpeed) continue
         pushSource(statSources, statKey, {
           label: 'Base character',
           sourceType: 'class',
@@ -330,43 +398,6 @@ export function computeBuildStats(
           sourceType: 'level',
           value: total,
         })
-      }
-    }
-  }
-
-  const attrContributionMaps: Array<Record<AttributeKey, StatMap>> = []
-  if (gameConfig.defaultStatsPerAttribute) {
-    attrContributionMaps.push(gameConfig.defaultStatsPerAttribute)
-  }
-  if (cls?.statsPerAttribute) {
-    attrContributionMaps.push(cls.statsPerAttribute)
-  }
-
-  if (attrContributionMaps.length > 0) {
-    const tempAttrs: Record<string, RangedValue> = {}
-    for (const attr of gameConfig.attributes) {
-      tempAttrs[attr.key] = sumContributions(attrSources.get(attr.key) ?? [])
-    }
-    for (const map of attrContributionMaps) {
-      for (const [attrKey, statsMap] of Object.entries(map)) {
-        const attrVal = tempAttrs[attrKey] ?? 0
-        const [amin, amax] =
-          typeof attrVal === 'number' ? [attrVal, attrVal] : attrVal
-        const attrName =
-          gameConfig.attributes.find((a) => a.key === attrKey)?.name ?? attrKey
-        for (const [statKey, perPoint] of Object.entries(statsMap)) {
-          const value: RangedValue =
-            amin === amax
-              ? amin * perPoint
-              : [amin * perPoint, amax * perPoint]
-          if (!isZero(value)) {
-            pushSource(statSources, statKey, {
-              label: `From ${attrName}`,
-              sourceType: 'attribute',
-              value,
-            })
-          }
-        }
       }
     }
   }
@@ -422,6 +453,66 @@ export function computeBuildStats(
       CUSTOM_SOURCE_LABEL,
       'custom',
     )
+  }
+
+  const incrAttrSources = statSources.get('increased_all_attributes') ?? []
+  if (incrAttrSources.length > 0) {
+    for (const attr of gameConfig.attributes) {
+      const flatSum = sumContributions(attrSources.get(attr.key) ?? [])
+      const [fMin, fMax] =
+        typeof flatSum === 'number' ? [flatSum, flatSum] : flatSum
+      for (const pctSrc of incrAttrSources) {
+        const [pMin, pMax] =
+          typeof pctSrc.value === 'number'
+            ? [pctSrc.value, pctSrc.value]
+            : pctSrc.value
+        const bonusMin = Math.floor((fMin * pMin) / 100)
+        const bonusMax = Math.floor((fMax * pMax) / 100)
+        if (bonusMin === 0 && bonusMax === 0) continue
+        pushSource(attrSources, attr.key, {
+          label: pctSrc.label,
+          sourceType: pctSrc.sourceType,
+          value: bonusMin === bonusMax ? bonusMin : [bonusMin, bonusMax],
+        })
+      }
+    }
+  }
+
+  const attrContributionMaps: Array<Record<AttributeKey, StatMap>> = []
+  if (gameConfig.defaultStatsPerAttribute) {
+    attrContributionMaps.push(gameConfig.defaultStatsPerAttribute)
+  }
+  if (cls?.statsPerAttribute) {
+    attrContributionMaps.push(cls.statsPerAttribute)
+  }
+
+  if (attrContributionMaps.length > 0) {
+    const tempAttrs: Record<string, RangedValue> = {}
+    for (const attr of gameConfig.attributes) {
+      tempAttrs[attr.key] = sumContributions(attrSources.get(attr.key) ?? [])
+    }
+    for (const map of attrContributionMaps) {
+      for (const [attrKey, statsMap] of Object.entries(map)) {
+        const attrVal = tempAttrs[attrKey] ?? 0
+        const [amin, amax] =
+          typeof attrVal === 'number' ? [attrVal, attrVal] : attrVal
+        const attrName =
+          gameConfig.attributes.find((a) => a.key === attrKey)?.name ?? attrKey
+        for (const [statKey, perPoint] of Object.entries(statsMap)) {
+          const value: RangedValue =
+            amin === amax
+              ? amin * perPoint
+              : [amin * perPoint, amax * perPoint]
+          if (!isZero(value)) {
+            pushSource(statSources, statKey, {
+              label: `From ${attrName}`,
+              sourceType: 'attribute',
+              value,
+            })
+          }
+        }
+      }
+    }
   }
 
   const attributes: Record<AttributeKey, RangedValue> = {}
@@ -682,6 +773,79 @@ export function rolledAffixValue(
   return affix.sign === '-' ? -rounded : rounded
 }
 
+export function rolledAffixRange(affix: {
+  sign: '+' | '-'
+  format: 'flat' | 'percent'
+  valueMin: number | null
+  valueMax: number | null
+}): RangedValue {
+  if (affix.valueMin === null || affix.valueMax === null) return 0
+  const round = (n: number) => (affix.format === 'flat' ? Math.round(n) : n)
+  const min = round(affix.valueMin)
+  const max = round(affix.valueMax)
+  if (affix.sign === '-') {
+    return min === max ? -max : [-max, -min]
+  }
+  return min === max ? min : [min, max]
+}
+
+export function isAffixStarImmune(statKey: string | null): boolean {
+  return statKey === 'all_skills'
+}
+
+export function affixStarMultiplier(
+  statKey: string | null,
+  stars: number | undefined,
+): number {
+  if (!stars || stars <= 0) return 1
+  if (isAffixStarImmune(statKey)) return 1
+  return 1 + stars * STAR_AFFIX_BONUS
+}
+
+export function rolledAffixValueWithStars(
+  affix: {
+    sign: '+' | '-'
+    format: 'flat' | 'percent'
+    valueMin: number | null
+    valueMax: number | null
+    statKey: string | null
+  },
+  roll: number,
+  stars: number | undefined,
+): number {
+  const base = rolledAffixValue(affix, roll)
+  if (base === 0) return 0
+  const mult = affixStarMultiplier(affix.statKey, stars)
+  if (mult === 1) return base
+  const scaled = base * mult
+  return affix.format === 'flat' ? Math.round(scaled) : scaled
+}
+
+export function applyStarsToRangedValue(
+  value: RangedValue,
+  statKey: string,
+  stars: number | undefined,
+): RangedValue {
+  if (!stars || stars <= 0) return value
+  if (isAffixStarImmune(statKey)) return value
+  const mult = 1 + stars * STAR_AFFIX_BONUS
+  if (typeof value === 'number') {
+    const scaled = value * mult
+    return Number.isInteger(value) ? Math.round(scaled) : scaled
+  }
+  const [min, max] = value
+  const sMin = min * mult
+  const sMax = max * mult
+  return [
+    Number.isInteger(min) ? Math.round(sMin) : sMin,
+    Number.isInteger(max) ? Math.round(sMax) : sMax,
+  ]
+}
+
+export function shouldScaleImplicit(isRuneword: boolean): boolean {
+  return !isRuneword
+}
+
 export function aggregateItemSkillBonuses(
   inventory: Inventory,
 ): Record<string, [number, number]> {
@@ -890,14 +1054,13 @@ export function computeWeaponDamage(
   const critMaxRaw = hitMaxRaw * critMultOnCrit
   const avgMinRaw = hitMinRaw * critMultAvg
   const avgMaxRaw = hitMaxRaw * critMultAvg
-
+  
   const ias = stats.increased_attack_speed ?? 0
   const baseAps = rangedMax(stats.attacks_per_second ?? 0)
   const iasMin = rangedMin(ias)
   const iasMax = rangedMax(ias)
-  const weaponAttackSpeed = hasWeapon ? base!.attackSpeed ?? 1 : 1
-  const apsMin = baseAps * weaponAttackSpeed * (1 + iasMin / 100)
-  const apsMax = baseAps * weaponAttackSpeed * (1 + iasMax / 100)
+  const apsMin = baseAps * (1 + iasMin / 100)
+  const apsMax = baseAps * (1 + iasMax / 100)
 
   const dpsMinRaw = avgMinRaw * apsMin
   const dpsMaxRaw = avgMaxRaw * apsMax

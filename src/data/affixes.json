@@ -7296,6 +7296,66 @@
     "valueMax": 15
   },
   {
+    "id": "1_3_increased_all_attributes_t1_wholesome",
+    "groupId": "1_3_increased_all_attributes",
+    "tier": 1,
+    "name": "Wholesome",
+    "description": "+[1-3]% Increased All Attributes",
+    "statKey": "increased_all_attributes",
+    "sign": "+",
+    "format": "percent",
+    "valueMin": 1,
+    "valueMax": 3
+  },
+  {
+    "id": "1_3_increased_all_attributes_t2_hearty",
+    "groupId": "1_3_increased_all_attributes",
+    "tier": 2,
+    "name": "Hearty",
+    "description": "+[2-5]% Increased All Attributes",
+    "statKey": "increased_all_attributes",
+    "sign": "+",
+    "format": "percent",
+    "valueMin": 2,
+    "valueMax": 5
+  },
+  {
+    "id": "1_3_increased_all_attributes_t3_robust",
+    "groupId": "1_3_increased_all_attributes",
+    "tier": 3,
+    "name": "Robust",
+    "description": "+[3-8]% Increased All Attributes",
+    "statKey": "increased_all_attributes",
+    "sign": "+",
+    "format": "percent",
+    "valueMin": 3,
+    "valueMax": 8
+  },
+  {
+    "id": "1_3_increased_all_attributes_t4_vital",
+    "groupId": "1_3_increased_all_attributes",
+    "tier": 4,
+    "name": "Vital",
+    "description": "+[4-12]% Increased All Attributes",
+    "statKey": "increased_all_attributes",
+    "sign": "+",
+    "format": "percent",
+    "valueMin": 4,
+    "valueMax": 12
+  },
+  {
+    "id": "1_3_increased_all_attributes_t5_ascendant",
+    "groupId": "1_3_increased_all_attributes",
+    "tier": 5,
+    "name": "Ascendant",
+    "description": "+[5-15]% Increased All Attributes",
+    "statKey": "increased_all_attributes",
+    "sign": "+",
+    "format": "percent",
+    "valueMin": 5,
+    "valueMax": 15
+  },
+  {
     "id": "10_magic_find_based_on_level_t1_kobold",
     "groupId": "10_magic_find_based_on_level",
     "tier": 1,

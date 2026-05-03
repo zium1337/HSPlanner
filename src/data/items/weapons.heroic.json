@@ -39,7 +39,8 @@
       "Attack Range"
     ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "bow_heroic_arachno_phobia",
@@ -49,45 +50,45 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 110,
+    "damageMax": 135,
+    "attackSpeed": 1,
     "implicit": {
-      "attacks_per_second": 0.65,
       "enhanced_damage": [
-        720,
-        770
+        850,
+        1000
+      ],
+      "all_skills": [
+        2,
+        4
       ],
       "poison_skills": [
-        4,
-        6
+        5,
+        8
       ],
-      "increased_attack_speed": -35,
-      "deadly_blow": [
-        25,
-        50
-      ],
-      "attack_rating": [
-        600,
-        750
-      ],
-      "mana_steal": 11,
+      "attack_rating": 1500,
+      "mana_steal": 12,
       "defense_ignored": 75,
       "extra_damage_poisoned": [
         40,
         55
       ],
-      "additive_poison_damage": 7500,
       "flat_poison_skill_damage": [
         22,
         50
-      ]
+      ],
+      "poison_skill_damage": [
+        40,
+        70
+      ],
+      "ignore_poison_res": 40
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance After Each Kill: Spiderlings",
-      "Chance When Casting: Cursed Ground",
-      "Grant Spell: Caustic Spearhead"
+      "10% Chance after each Kill to cast Spiderlings Level [5-10]"
     ],
-    "sockets": 2,
-    "maxSockets": 2
+    "sockets": 4,
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "sword_heroic_arch_angel_s_phase_blade",
@@ -167,7 +168,8 @@
       "Grant Spell: Ricochet"
     ],
     "sockets": 4,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "twoHanded": true
   },
   {
     "id": "bow_heroic_astral_projector",
@@ -212,7 +214,8 @@
       "Explosion Area Of Effect"
     ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "twoHanded": true
   },
   {
     "id": "cane_heroic_blood_of_abaddon",
@@ -252,7 +255,8 @@
       "Ailment Damage"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "twoHanded": true
   },
   {
     "id": "sword_heroic_bonetti_s_rapier",
@@ -363,7 +367,8 @@
       "Attacks Hit Multiple Enemies None"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "twoHanded": true
   },
   {
     "id": "chainsaw_heroic_candy_shredder",
@@ -400,7 +405,8 @@
       "Double Jump"
     ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "wand_heroic_clafaxier_s_legacy",
@@ -471,7 +477,8 @@
       "Chance When Striking: Lance Thrust"
     ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "bow_heroic_deathquill",
@@ -507,7 +514,8 @@
       "Chance When Striking: Plague of Rats",
       "Max Poison Resist",
       "Poison Length Reduced"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "chainsaw_heroic_diablo",
@@ -546,7 +554,8 @@
       "Chance When Casting: Tire Fire",
       "Grant Spell: Moonshine Molotov",
       "Attacks Hit Multiple Enemies None"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "gun_heroic_dracula_s_demise",
@@ -618,7 +627,8 @@
       "Attack Dmg"
     ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "twoHanded": true
   },
   {
     "id": "chainsaw_heroic_eden_s_harvester",
@@ -660,7 +670,8 @@
       "Chance When Striking: Revved Up"
     ],
     "sockets": 4,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "twoHanded": true
   },
   {
     "id": "dagger_heroic_fenrirs_bloodfang",
@@ -976,7 +987,8 @@
       "Piercing Attack None"
     ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "twoHanded": true
   },
   {
     "id": "wand_heroic_oculus_of_ages",
@@ -1062,7 +1074,8 @@
       "Ailment Damage"
     ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "bow_heroic_recurving_corrosion",
@@ -1109,7 +1122,8 @@
     },
     "uniqueEffects": [
       "Attack Dmg"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "dagger_heroic_riftmaster_s_dirge",
@@ -1283,7 +1297,8 @@
       "Grant Spell: Mana Devour"
     ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "cane_heroic_the_eye_of_tarethiel",
@@ -1329,7 +1344,8 @@
       "Chance When Casting: Eye of Tarethiel",
       "Grant Spell: Age Proliferation",
       "Grant Spell: Temporal Heroes"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "mace_heroic_the_light_of_dawn",

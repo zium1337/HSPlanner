@@ -46,23 +46,22 @@ const recordOfBooleans = z
     message: 'too many entries',
   })
 
+const equippedAffixSchema = z.object({
+  affixId: SAFE_STRING,
+  tier: FINITE_NUMBER,
+  roll: FINITE_NUMBER,
+})
+
 const equippedItemSchema = z
   .object({
     baseId: SAFE_STRING,
-    affixes: z
-      .array(
-        z.object({
-          affixId: SAFE_STRING,
-          tier: FINITE_NUMBER,
-          roll: FINITE_NUMBER,
-        }),
-      )
-      .max(MAX_AFFIXES_PER_ITEM)
-      .optional(),
+    affixes: z.array(equippedAffixSchema).max(MAX_AFFIXES_PER_ITEM).optional(),
     socketCount: FINITE_NUMBER.optional(),
     socketed: z.array(z.string().max(MAX_KEY_LENGTH).nullable()).max(MAX_SOCKETS).optional(),
     socketTypes: z.array(SAFE_STRING).max(MAX_SOCKETS).optional(),
     runewordId: SAFE_STRING.optional(),
+    stars: FINITE_NUMBER.optional(),
+    forgedMods: z.array(equippedAffixSchema).max(MAX_AFFIXES_PER_ITEM).optional(),
   })
   .passthrough()
 
@@ -223,6 +222,10 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       ? (item.socketTypes.slice(0, socketCount) as SocketType[])
       : []
     while (socketTypes.length < socketCount) socketTypes.push('normal')
+    const rawStars =
+      typeof item.stars === 'number' && Number.isFinite(item.stars)
+        ? Math.max(0, Math.min(5, Math.floor(item.stars)))
+        : 0
     out[slot as SlotKey] = {
       baseId: item.baseId,
       affixes: Array.isArray(item.affixes) ? item.affixes : [],
@@ -230,6 +233,8 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       socketed,
       socketTypes,
       runewordId: item.runewordId,
+      stars: rawStars,
+      forgedMods: Array.isArray(item.forgedMods) ? item.forgedMods : [],
     }
   }
   return out

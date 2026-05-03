@@ -76,7 +76,8 @@
       "Summon Attack Speed",
       "Summon Dmg",
       "Summon Life"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "sword_unholy_stofflix_cooking_cleaver",

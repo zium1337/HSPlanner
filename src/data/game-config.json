@@ -223,6 +223,12 @@
       "modifiesAttribute": "all"
     },
     {
+      "key": "increased_all_attributes",
+      "name": "Increased All Attributes",
+      "category": "base",
+      "format": "percent"
+    },
+    {
       "key": "to_strength",
       "name": "to Strength",
       "category": "base",
@@ -798,6 +804,30 @@
       "name": "Ignore Cold Resistance",
       "category": "offense",
       "format": "percent"
+    },
+    {
+      "key": "ignore_fire_res",
+      "name": "Ignore Fire Resistance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "magic_absorption",
+      "name": "Magic Damage Absorbed",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "defense_vs_missiles",
+      "name": "Defense vs Missiles",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_taken_reduced",
+      "name": "Damage Taken Reduced",
+      "category": "defense",
+      "format": "flat"
     },
     {
       "key": "attack_speed_below_40_life",

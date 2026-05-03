@@ -36,6 +36,9 @@ type AttrMap = Record<AttributeKey, number>
 
 export const RAINBOW_MULTIPLIER = 1.5
 
+export const MAX_STARS = 5
+export const STAR_AFFIX_BONUS = 0.08
+
 interface BuildState {
   classId: string | null
   level: number
@@ -72,12 +75,15 @@ interface BuildActions {
   setSocketCount: (slot: SlotKey, count: number) => void
   setSocketed: (slot: SlotKey, idx: number, socketableId: string | null) => void
   setSocketType: (slot: SlotKey, idx: number, type: SocketType) => void
+  setStars: (slot: SlotKey, count: number) => void
   exportBuildSnapshot: () => BuildSnapshot
   importBuildSnapshot: (snapshot: BuildSnapshot, notes?: string) => void
   applyRuneword: (slot: SlotKey, runewordId: string) => void
   addAffix: (slot: SlotKey, affixId: string, tier: number) => void
   removeAffix: (slot: SlotKey, index: number) => void
   setAffixRoll: (slot: SlotKey, index: number, roll: number) => void
+  addForgedMod: (slot: SlotKey, modId: string, tier: number) => void
+  removeForgedMod: (slot: SlotKey, index: number) => void
   moveItem: (fromSlot: SlotKey, toSlot: SlotKey) => void
   setSkillRank: (skillId: string, rank: number, maxRank: number) => void
   incSkillRank: (skillId: string, maxRank: number) => void
@@ -385,15 +391,30 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   equipItem: (slot, baseId) => {
     const base = getItem(baseId)
     if (!base) return
-    const initial = Math.min(base.sockets ?? 0, maxSocketsFor(baseId))
-    const item: EquippedItem = {
-      baseId,
-      affixes: [],
-      socketCount: initial,
-      socketed: Array(initial).fill(null),
-      socketTypes: Array(initial).fill('normal'),
-    }
-    set((s) => ({ inventory: { ...s.inventory, [slot]: item } }))
+    set((s) => {
+      // Two-handed rule: offhand can't be equipped while a 2H weapon is in
+      // the main hand. Equipping a 2H weapon clears any existing offhand.
+      if (slot === 'offhand') {
+        const cur = s.inventory.weapon
+        const w = cur ? getItem(cur.baseId) : undefined
+        if (w?.twoHanded) return s
+      }
+      const initial = Math.min(base.sockets ?? 0, maxSocketsFor(baseId))
+      const item: EquippedItem = {
+        baseId,
+        affixes: [],
+        socketCount: initial,
+        socketed: Array(initial).fill(null),
+        socketTypes: Array(initial).fill('normal'),
+        stars: 0,
+        forgedMods: [],
+      }
+      const next = { ...s.inventory, [slot]: item }
+      if (slot === 'weapon' && base.twoHanded) {
+        delete next.offhand
+      }
+      return { inventory: next }
+    })
   },
 
   unequipItem: (slot) => {
@@ -447,6 +468,18 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       socketTypes[idx] = type
       return {
         inventory: { ...s.inventory, [slot]: { ...cur, socketTypes } },
+      }
+    })
+  },
+
+  setStars: (slot, count) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      if (!cur) return s
+      const clamped = Math.max(0, Math.min(MAX_STARS, Math.floor(count)))
+      if ((cur.stars ?? 0) === clamped) return s
+      return {
+        inventory: { ...s.inventory, [slot]: { ...cur, stars: clamped } },
       }
     })
   },
@@ -711,6 +744,26 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
         i === index ? { ...a, roll: clamped } : a,
       )
       return { inventory: { ...s.inventory, [slot]: { ...cur, affixes } } }
+    })
+  },
+
+  addForgedMod: (slot, modId, tier) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      if (!cur) return s
+      // Only one forged mod per item — adding replaces any existing one.
+      const forgedMods = [{ affixId: modId, tier, roll: 1 }]
+      return { inventory: { ...s.inventory, [slot]: { ...cur, forgedMods } } }
+    })
+  },
+
+  removeForgedMod: (slot, index) => {
+    set((s) => {
+      const cur = s.inventory[slot]
+      const list = cur?.forgedMods ?? []
+      if (!cur || index < 0 || index >= list.length) return s
+      const forgedMods = list.filter((_, i) => i !== index)
+      return { inventory: { ...s.inventory, [slot]: { ...cur, forgedMods } } }
     })
   },
 

@@ -1,6 +1,16 @@
 import { classes, gameConfig, getClass } from '../data'
 import { attrPointsFor, finalAttributes, useBuild } from '../store/build'
 
+/**
+ * Click → 1, Shift+Click → 5, Ctrl/Cmd+Shift+Click → all available (clamped
+ * by `cap` so we never overshoot remaining points or current allocation).
+ */
+function attrStep(e: React.MouseEvent, cap: number): number {
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey) return cap
+  if (e.shiftKey) return Math.min(5, cap)
+  return 1
+}
+
 export default function CharacterView() {
   const { classId, level, allocated, setClass, setLevel, incAttr, decAttr, resetAttrs } =
     useBuild()
@@ -123,8 +133,9 @@ export default function CharacterView() {
                   </div>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => decAttr(attr.key)}
+                      onClick={(e) => decAttr(attr.key, attrStep(e, added))}
                       disabled={added === 0}
+                      title="−1 · Shift −5 · Ctrl+Shift remove all"
                       className="w-7 h-7 rounded bg-panel border border-border text-muted hover:text-text hover:border-accent disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       −
@@ -133,8 +144,9 @@ export default function CharacterView() {
                       {final}
                     </div>
                     <button
-                      onClick={() => incAttr(attr.key)}
+                      onClick={(e) => incAttr(attr.key, attrStep(e, remaining))}
                       disabled={remaining === 0}
+                      title="+1 · Shift +5 · Ctrl+Shift add all"
                       className="w-7 h-7 rounded bg-panel border border-border text-muted hover:text-text hover:border-accent disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       +

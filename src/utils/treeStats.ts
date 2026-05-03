@@ -99,13 +99,9 @@ const RULES: ParseRule[] = [
   },
   {
     test: /^([+\-\d.]+)%\s+Increased\s+All\s+Attributes$/i,
-    build: (m) => ({ key: 'all_attributes', value: num(m[1]!) }),
+    build: (m) => ({ key: 'increased_all_attributes', value: num(m[1]!) }),
   },
 
-  // === defense ===
-  // NOTE: "+X% Increased Defense" maps to `defense` (matches existing affix
-  // behavior — see affixes.json "Guardsman" et al). Stat def is `flat`, so
-  // these contributions sum together with flat defense values.
   {
     test: /^([+\-\d.]+)\s+to\s+Defense$/i,
     build: (m) => ({ key: 'defense', value: num(m[1]!) }),

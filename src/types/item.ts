@@ -27,6 +27,7 @@ export interface ItemBase {
   damageMin?: number
   damageMax?: number
   attackSpeed?: number
+  twoHanded?: boolean
   itemLevel?: number
   requiresLevel?: number
   implicit?: RangedStatMap

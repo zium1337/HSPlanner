@@ -93,7 +93,8 @@
       "Chance When Casting: Fireball",
       "Energyd On Level",
       "Intelligenced On Level"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_angel",
@@ -147,7 +148,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Grant Spell: Armageddon"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "staff_satanic_archangel_staff",
@@ -183,7 +185,8 @@
       "Grant Spell: Flash Heal",
       "Grant Spell: Divine Healing",
       "Grant Spell: Benediction"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "sword_satanic_ashbringer",
@@ -356,7 +359,8 @@
       "Attack Dmg",
       "Chance When Striking: Trigger Finger",
       "Piercing Attack None"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "cane_satanic_cane_of_the_tundra",
@@ -399,7 +403,8 @@
       "Chance When Casting: Blizzard"
     ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "dagger_satanic_ceremonial_dagger",
@@ -482,7 +487,8 @@
       "Defense Vs Missiles",
       "Lifed On Level"
     ],
-    "setId": "champion_s_valor"
+    "setId": "champion_s_valor",
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_chills_of_war",
@@ -626,7 +632,8 @@
       "Lifed On Level",
       "Attack Dmgd On Level",
       "Grant Aura: Fanaticism Aura"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "cane_satanic_crystal_cane_of_ice",
@@ -659,7 +666,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Chance When Struck: Avalanche"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "axe_satanic_crystal_infused_axe",
@@ -990,7 +998,8 @@
     "uniqueEffects": [
       "Attack Dmg"
     ],
-    "setId": "death_s_toll"
+    "setId": "death_s_toll",
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_demon",
@@ -1161,7 +1170,8 @@
       "Attack Dmg",
       "Chance When Striking: Chainsaw Slash",
       "Attacks Hit Multiple Enemies None"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "flask_satanic_doomweed_vial",
@@ -1240,7 +1250,8 @@
       "Attacks Hit Multiple Enemies None"
     ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "mace_satanic_dragon_knight_s_flail",
@@ -1385,7 +1396,8 @@
     },
     "uniqueEffects": [
       "Attack Dmg"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "claw_satanic_elemental_claws",
@@ -1468,7 +1480,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Chance When Attacking: Chainslice"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_f4_tactical_rifle",
@@ -1510,7 +1523,8 @@
       "Attack Dmg"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "twoHanded": true
   },
   {
     "id": "staff_satanic_flame_of_the_phoenix",
@@ -1555,7 +1569,8 @@
       "Attack Dmg",
       "Chance When Casting: Blazing Trail",
       "Grant Spell: Phoenix Flight"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "bow_satanic_flamebringer",
@@ -1587,7 +1602,8 @@
       "Chance When Striking: Explosive Bullets"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_flamecannon",
@@ -1619,7 +1635,8 @@
       "Chance When Striking: Fireball"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_fred",
@@ -1834,7 +1851,8 @@
     },
     "uniqueEffects": [
       "Attack Dmg"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "book_satanic_god_s_benevolence",
@@ -1933,7 +1951,8 @@
       "Chance After Each Kill: Flash Heal",
       "Defense Vs Missiles",
       "Lifed On Level"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "mace_satanic_gurag_s_stone_crusher",
@@ -1994,7 +2013,8 @@
       "Attack Dmg",
       "Chance When Attacking: Whirlwind",
       "Attacks Hit Multiple Enemies None"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "sword_satanic_gut_s_hfs",
@@ -2027,7 +2047,8 @@
       "Attacks Hit Multiple Enemies None"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "twoHanded": true
   },
   {
     "id": "sword_satanic_hanzo_s_flaming_katana",
@@ -2067,7 +2088,8 @@
       "Cast After Kill: Scorching Flames",
       "Chance When Striking: Fire Nova",
       "Attacks Hit Multiple Enemies None"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "bow_satanic_hellspawn_eradicator",
@@ -2103,7 +2125,8 @@
       "Piercing Attack None"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "twoHanded": true
   },
   {
     "id": "claw_satanic_hemorrhage",
@@ -2166,7 +2189,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Attacks Hit Multiple Enemies None"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "sword_satanic_holy_warrior_s_phase_blade",
@@ -2413,7 +2437,8 @@
       "Attack Dmg",
       "Chance When Struck: Combat Orders",
       "Grant Spell: Damage Reflect"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "polearm_satanic_lancer_s_glory",
@@ -2446,7 +2471,8 @@
     "uniqueEffects": [
       "Attack Dmg"
     ],
-    "setId": "wall_of_god"
+    "setId": "wall_of_god",
+    "twoHanded": true
   },
   {
     "id": "chainsaw_satanic_lumberjack_s_chainsaw",
@@ -2487,7 +2513,8 @@
       "Grant Spell: Revved Up",
       "Attacks Hit Multiple Enemies None"
     ],
-    "setId": "lumberjack_s_forestry_gear"
+    "setId": "lumberjack_s_forestry_gear",
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_marine_s_buddy",
@@ -2563,7 +2590,8 @@
     "uniqueEffects": [
       "Attack Dmg"
     ],
-    "setId": "marksman_s_hunting_gear"
+    "setId": "marksman_s_hunting_gear",
+    "twoHanded": true
   },
   {
     "id": "sword_satanic_masamune",
@@ -2590,7 +2618,8 @@
     ],
     "setId": "masamura",
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "mace_satanic_metal_vocalist_s_warlock",
@@ -2789,7 +2818,8 @@
     ],
     "setId": "masamura",
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "mace_satanic_nightmare_slasher",
@@ -2928,7 +2958,8 @@
       "Attacks Hit Multiple Enemies None"
     ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "twoHanded": true
   },
   {
     "id": "polearm_satanic_odin_s_battle_spear",
@@ -2967,7 +2998,8 @@
       "Attack Dmg",
       "Chance When Striking: Vengeance",
       "Attack Dmgd On Level"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "mace_satanic_pillar_of_niflheim",
@@ -3095,7 +3127,8 @@
     },
     "uniqueEffects": [
       "Attack Dmg"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "polearm_satanic_poseidon_s_might",
@@ -3133,7 +3166,8 @@
     },
     "uniqueEffects": [
       "Attack Dmg"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "staff_satanic_raise_of_the_dead",
@@ -3158,7 +3192,8 @@
       "Summon Attack Speed",
       "Summon Dmg",
       "Summon Life"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "mace_satanic_revenant_s_lasher",
@@ -3272,7 +3307,8 @@
       "Attacks Hit Multiple Enemies None"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_rt_xqc_4910",
@@ -3532,7 +3568,8 @@
       "Chance When Striking: Trigger Finger"
     ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "twoHanded": true
   },
   {
     "id": "sword_satanic_shattered_dimensions",
@@ -3763,7 +3800,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Grant Aura: Ominous Aura"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_steve_s_bang",
@@ -3908,7 +3946,8 @@
     "uniqueEffects": [
       "Attack Dmg"
     ],
-    "setId": "stickman_steve_s_destruction"
+    "setId": "stickman_steve_s_destruction",
+    "twoHanded": true
   },
   {
     "id": "wand_satanic_steve_s_wand_of_fortune",
@@ -3987,7 +4026,8 @@
       "Attacks Hit Multiple Enemies None"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "twoHanded": true
   },
   {
     "id": "claw_satanic_talons_of_wisdom",
@@ -4059,7 +4099,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Attacks Hit Multiple Enemies None"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "staff_satanic_the_iris",
@@ -4103,7 +4144,8 @@
     },
     "uniqueEffects": [
       "Attack Dmg"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "sword_satanic_the_undying",
@@ -4212,7 +4254,8 @@
       "Chance When Casting: Odins Demise",
       "Ailment Damage"
     ],
-    "setId": "odin_s_demise"
+    "setId": "odin_s_demise",
+    "twoHanded": true
   },
   {
     "id": "polearm_satanic_thorn_of_noxus",
@@ -4249,7 +4292,8 @@
       "Less Dmg With Cd Skills"
     ],
     "sockets": 6,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "dagger_satanic_thunder_dagger",
@@ -4439,7 +4483,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Attack Ratingd On Level"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "axe_satanic_viking_s_sacred_axe",
@@ -4543,7 +4588,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Chance When Striking: Slice of Shadows"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "polearm_satanic_war_god_s_lance",
@@ -4570,7 +4616,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Attack Dmgd On Level"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "gun_satanic_warbringer",
@@ -4604,7 +4651,8 @@
     "uniqueEffects": [
       "Attack Dmg",
       "Chance When Attacking: Trigger Finger"
-    ]
+    ],
+    "twoHanded": true
   },
   {
     "id": "sword_satanic_wind_guardian_s_gladius",
@@ -4674,7 +4722,8 @@
       "Attack Dmgd On Level"
     ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "twoHanded": true
   },
   {
     "id": "wand_satanic_witch_s_wand",

@@ -4,18 +4,24 @@ import SearchableSelect from '../components/SearchableSelect'
 import type { SearchableOption } from '../components/SearchableSelect'
 import {
   affixes,
+  crystalMods,
   detectRuneword,
+  FORGE_KIND_LABEL,
+  forgeKindFor,
   gameConfig,
   gems,
   getAffix,
+  getCrystalMod,
   getItem,
   getItemSet,
+  isGearSlot,
   items,
   runes,
   runewords,
 } from '../data'
-import { maxSocketsFor, useBuild } from '../store/build'
-import { fmtStats, rolledAffixValue } from '../utils/stats'
+import type { ForgeKind } from '../data'
+import { MAX_STARS, maxSocketsFor, useBuild } from '../store/build'
+import { fmtStats, rolledAffixValueWithStars } from '../utils/stats'
 import type {
   EquippedItem,
   ItemBase,
@@ -71,9 +77,12 @@ export default function GearView() {
     setSocketCount,
     setSocketed,
     setSocketType,
+    setStars,
     addAffix,
     removeAffix,
     setAffixRoll,
+    addForgedMod,
+    removeForgedMod,
     applyRuneword,
   } = useBuild()
 
@@ -144,6 +153,9 @@ export default function GearView() {
   const gearSlots = gameConfig.slots.filter((s) => !s.key.startsWith('charm_'))
   const charmSlots = gameConfig.slots.filter((s) => s.key.startsWith('charm_'))
 
+  const weaponBase = inventory.weapon ? getItem(inventory.weapon.baseId) : undefined
+  const offhandLocked = !!weaponBase?.twoHanded
+
   return (
     <div className="max-w-7xl">
       <header className="flex items-end justify-between mb-4">
@@ -172,6 +184,7 @@ export default function GearView() {
                     slot={slot}
                     equipped={inventory[slot.key]}
                     active={activeSlot === slot.key}
+                    locked={slot.key === 'offhand' && offhandLocked}
                     onSelect={() =>
                       setActiveSlot(activeSlot === slot.key ? null : slot.key)
                     }
@@ -193,6 +206,7 @@ export default function GearView() {
           <EditPanel
             slot={activeSlot}
             equipped={activeSlot ? inventory[activeSlot] : undefined}
+            offhandLocked={offhandLocked}
             socketOptions={socketOptions}
             onEquip={(id) => {
               if (!activeSlot) return
@@ -213,12 +227,19 @@ export default function GearView() {
             onSocketType={(idx, t) =>
               activeSlot && setSocketType(activeSlot, idx, t)
             }
+            onSetStars={(n) => activeSlot && setStars(activeSlot, n)}
             onAddAffix={(affixId, tier) =>
               activeSlot && addAffix(activeSlot, affixId, tier)
             }
             onRemoveAffix={(idx) => activeSlot && removeAffix(activeSlot, idx)}
             onSetAffixRoll={(idx, roll) =>
               activeSlot && setAffixRoll(activeSlot, idx, roll)
+            }
+            onAddForgedMod={(modId, tier) =>
+              activeSlot && addForgedMod(activeSlot, modId, tier)
+            }
+            onRemoveForgedMod={(idx) =>
+              activeSlot && removeForgedMod(activeSlot, idx)
             }
             onApplyRuneword={(rwId) =>
               activeSlot && applyRuneword(activeSlot, rwId)
@@ -234,11 +255,13 @@ function SlotRow({
   slot,
   equipped,
   active,
+  locked,
   onSelect,
 }: {
   slot: { key: SlotKey; name: string }
   equipped: EquippedItem | undefined
   active: boolean
+  locked?: boolean
   onSelect: () => void
 }) {
   const base = equipped ? getItem(equipped.baseId) : undefined
@@ -249,11 +272,19 @@ function SlotRow({
     ? runeword
       ? 'text-accent-hot'
       : RARITY_TEXT[base.rarity]
-    : 'text-faint'
-  const rarityBg = base ? RARITY_BG[base.rarity] : 'bg-transparent'
+    : locked
+      ? 'text-faint/50'
+      : 'text-faint'
+  const rarityBg = base
+    ? RARITY_BG[base.rarity]
+    : locked
+      ? 'bg-panel-2/50'
+      : 'bg-transparent'
   const rarityBorder = base
     ? RARITY_BORDER[base.rarity]
-    : 'border-border border-dashed'
+    : locked
+      ? 'border-border/40 border-dashed'
+      : 'border-border border-dashed'
 
   const badges: string[] = []
   if (base && equipped) {
@@ -265,6 +296,8 @@ function SlotRow({
       badges.push(
         `${equipped.socketed.filter(Boolean).length}/${equipped.socketCount}◇`,
       )
+    if (equipped.stars && equipped.stars > 0)
+      badges.push(`${'★'.repeat(equipped.stars)}`)
     if (base.requiresLevel) badges.push(`L${base.requiresLevel}`)
   }
 
@@ -293,6 +326,10 @@ function SlotRow({
               {runeword ? `Runeword · ${base.baseType}` : base.baseType}
             </span>
           </>
+        ) : locked ? (
+          <span className="block text-[11px] text-faint/60 italic">
+            locked · 2H weapon equipped
+          </span>
         ) : (
           <span className="block text-[11px] text-faint italic">empty</span>
         )}
@@ -640,28 +677,36 @@ function ItemCompareOverlay({
 function EditPanel({
   slot,
   equipped,
+  offhandLocked,
   socketOptions,
   onEquip,
   onUnequip,
   onSocketCount,
   onSocketed,
   onSocketType,
+  onSetStars,
   onAddAffix,
   onRemoveAffix,
   onSetAffixRoll,
+  onAddForgedMod,
+  onRemoveForgedMod,
   onApplyRuneword,
 }: {
   slot: SlotKey | null
   equipped: EquippedItem | undefined
+  offhandLocked: boolean
   socketOptions: SearchableOption[]
   onEquip: (id: string) => void
   onUnequip: () => void
   onSocketCount: (n: number) => void
   onSocketed: (idx: number, id: string | null) => void
   onSocketType: (idx: number, type: SocketType) => void
+  onSetStars: (n: number) => void
   onAddAffix: (affixId: string, tier: number) => void
   onRemoveAffix: (idx: number) => void
   onSetAffixRoll: (idx: number, roll: number) => void
+  onAddForgedMod: (modId: string, tier: number) => void
+  onRemoveForgedMod: (idx: number) => void
   onApplyRuneword: (rwId: string) => void
 }) {
   const slotConfig = slot
@@ -679,6 +724,8 @@ function EditPanel({
         return b?.setId === base.setId ? acc + 1 : acc
       }, 0)
     : 0
+  const forgeKind =
+    slot && base && isGearSlot(slot) ? forgeKindFor(base.rarity) : null
 
   if (!slot) {
     return (
@@ -707,6 +754,12 @@ function EditPanel({
       </div>
 
       <div className="p-3 space-y-3">
+        {slot === 'offhand' && offhandLocked && !equipped ? (
+          <div className="rounded border border-amber-500/30 bg-amber-500/5 px-2 py-2 text-[11px] text-amber-200">
+            Offhand is locked while a Two-Handed weapon is in the main hand.
+            Remove the weapon to free this slot.
+          </div>
+        ) : (
         <SearchableSelect
           value={equipped?.baseId ?? null}
           options={itemOpts}
@@ -728,6 +781,7 @@ function EditPanel({
             />
           )}
         />
+        )}
 
         {equipped && base && (
           <>
@@ -752,12 +806,30 @@ function EditPanel({
               onSocketType={onSocketType}
             />
 
-            <AffixesSection
-              equipped={equipped}
-              onAdd={onAddAffix}
-              onRemove={onRemoveAffix}
-              onSetRoll={onSetAffixRoll}
-            />
+            {isGearSlot(slot) && (
+              <StarsSection
+                stars={equipped.stars ?? 0}
+                onChange={onSetStars}
+              />
+            )}
+
+            {base.rarity === 'common' && (
+              <AffixesSection
+                equipped={equipped}
+                onAdd={onAddAffix}
+                onRemove={onRemoveAffix}
+                onSetRoll={onSetAffixRoll}
+              />
+            )}
+
+            {forgeKind && (
+              <ForgedModsSection
+                forgeKind={forgeKind}
+                equipped={equipped}
+                onAdd={onAddForgedMod}
+                onRemove={onRemoveForgedMod}
+              />
+            )}
           </>
         )}
       </div>
@@ -925,6 +997,61 @@ function SocketsSection({
   )
 }
 
+function StarsSection({
+  stars,
+  onChange,
+}: {
+  stars: number
+  onChange: (n: number) => void
+}) {
+  const bonusPct = stars * 8
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] uppercase tracking-[0.12em] text-muted">
+          Stars
+        </span>
+        <span className="text-[10px] text-muted tabular-nums">
+          {stars > 0 ? `+${bonusPct}% to affixes` : 'no bonus'}
+        </span>
+      </div>
+      <div className="flex items-center gap-1">
+        {Array.from({ length: MAX_STARS }).map((_, i) => {
+          const target = i + 1
+          const filled = target <= stars
+          return (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onChange(stars === target ? target - 1 : target)}
+              aria-label={`${target} star${target === 1 ? '' : 's'}`}
+              className={`text-lg leading-none transition-colors ${
+                filled
+                  ? 'text-amber-300 hover:text-amber-200'
+                  : 'text-muted/40 hover:text-amber-200/60'
+              }`}
+            >
+              ★
+            </button>
+          )
+        })}
+        {stars > 0 && (
+          <button
+            type="button"
+            onClick={() => onChange(0)}
+            className="ml-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border border-border text-muted hover:text-red-400 hover:border-red-400"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+      <p className="text-[10px] text-faint italic leading-tight">
+        Each star adds +8% to user-added affixes. "+X to all skills" and runeword mods are not affected.
+      </p>
+    </div>
+  )
+}
+
 function SocketTypeToggle({
   value,
   onChange,
@@ -967,11 +1094,13 @@ function formatAffixValue(
     format: 'flat' | 'percent'
     valueMin: number | null
     valueMax: number | null
+    statKey: string | null
   },
   roll: number,
+  stars?: number,
 ): string {
   if (affix.valueMin === null || affix.valueMax === null) return affix.sign
-  const signed = rolledAffixValue(affix, roll)
+  const signed = rolledAffixValueWithStars(affix, roll, stars)
   const abs = Math.abs(signed)
   const num = Number.isInteger(abs) ? abs : Math.round(abs * 100) / 100
   const sign = signed < 0 ? '-' : '+'
@@ -1037,7 +1166,7 @@ function AffixesSection({
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="truncate">
                     <span className="text-yellow-300 font-medium tabular-nums">
-                      {formatAffixValue(affix, eq.roll)}
+                      {formatAffixValue(affix, eq.roll, equipped.stars)}
                     </span>{' '}
                     <span className="text-text/80">{affix.name}</span>{' '}
                     <span className="text-muted">T{affix.tier}</span>
@@ -1094,6 +1223,131 @@ function AffixesSection({
                     <span className="text-accent">{a.name}</span>{' '}
                     <span className="text-muted">· T{a.tier}</span>{' '}
                     <span className="text-text/80">{a.description}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {query.length >= 2 && filtered.length === 0 && (
+            <p className="text-[11px] text-muted italic">No matches.</p>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ForgedModsSection({
+  forgeKind,
+  equipped,
+  onAdd,
+  onRemove,
+}: {
+  forgeKind: ForgeKind
+  equipped: EquippedItem
+  onAdd: (modId: string, tier: number) => void
+  onRemove: (index: number) => void
+}) {
+  const [query, setQuery] = useState('')
+  const [open, setOpen] = useState(false)
+  const mods = equipped.forgedMods ?? []
+  const sourceLabel = FORGE_KIND_LABEL[forgeKind]
+  const isProphecy = forgeKind === 'gypsy_prophecy'
+  const accentText = isProphecy ? 'text-pink-300' : 'text-red-300'
+  const accentTextHover = isProphecy ? 'hover:text-pink-200' : 'hover:text-red-200'
+  const accentBorder = isProphecy ? 'border-pink-400/30' : 'border-red-500/30'
+  const accentBg = isProphecy ? 'bg-pink-400/5' : 'bg-red-500/5'
+  const accentBorderHover = isProphecy ? 'hover:border-pink-300' : 'hover:border-red-400'
+  const accentBorderItem = isProphecy ? 'border-pink-400/20' : 'border-red-500/20'
+  const accentBorderInputFocus = isProphecy
+    ? 'focus:border-pink-300'
+    : 'focus:border-red-400'
+  const accentRowHover = isProphecy ? 'hover:bg-pink-400/10' : 'hover:bg-red-500/10'
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (q.length < 2) return [] as typeof crystalMods
+    return crystalMods
+      .filter(
+        (m) =>
+          m.name.toLowerCase().includes(q) ||
+          m.description.toLowerCase().includes(q) ||
+          (m.statKey ?? '').toLowerCase().includes(q),
+      )
+      .slice(0, 40)
+  }, [query])
+
+  const canAdd = mods.length === 0
+  const isOpen = open && canAdd
+
+  return (
+    <div className={`space-y-2 rounded border ${accentBorder} ${accentBg} p-2`}>
+      <div className="flex items-center justify-between">
+        <span className={`text-[10px] uppercase tracking-[0.12em] ${accentText}`}>
+          {sourceLabel} · Forged
+        </span>
+        {canAdd && (
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border ${accentBorder} ${accentBorderHover} ${accentText} ${accentTextHover}`}
+          >
+            {isOpen ? 'Done' : '+ Add'}
+          </button>
+        )}
+      </div>
+
+      {mods.length > 0 && (
+        <ul className="space-y-1">
+          {mods.map((eq, idx) => {
+            const mod = getCrystalMod(eq.affixId)
+            if (!mod) return null
+            return (
+              <li
+                key={idx}
+                className={`bg-panel-2 border ${accentBorderItem} rounded px-2 py-1 text-[11px]`}
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className={`truncate ${accentText} tabular-nums`}>
+                    {mod.description}
+                  </span>
+                  <button
+                    onClick={() => onRemove(idx)}
+                    className="text-muted hover:text-red-400 px-1 shrink-0"
+                    aria-label="Remove forged mod"
+                  >
+                    ×
+                  </button>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+
+      {isOpen && (
+        <div className="space-y-1">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Search ${sourceLabel} mods…`}
+            autoFocus
+            className={`w-full bg-panel-2 border border-border rounded px-2 py-1 text-[11px] focus:outline-none ${accentBorderInputFocus}`}
+          />
+          {filtered.length > 0 && (
+            <ul className="max-h-60 overflow-y-auto space-y-0.5 border border-border rounded bg-panel-2">
+              {filtered.map((m) => (
+                <li key={m.id}>
+                  <button
+                    onClick={() => {
+                      onAdd(m.id, m.tier)
+                      setQuery('')
+                      setOpen(false)
+                    }}
+                    className={`w-full text-left text-[11px] px-2 py-1 ${accentRowHover}`}
+                  >
+                    <span className={accentText}>{m.name}</span>{' '}
+                    <span className="text-text/80">{m.description}</span>
                   </button>
                 </li>
               ))}

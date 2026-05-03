@@ -13,6 +13,7 @@ import type {
   AngelicAugment,
 } from '../types'
 import affixesJson from './affixes.json'
+import crystalsJson from './crystals.json'
 import gameConfigJson from './game-config.json'
 import runewordsJson from './runewords.json'
 import setsJson from './sets.json'
@@ -43,6 +44,17 @@ const runeModules = import.meta.glob<{ default: Rune[] }>(
   './runes/*.json',
   { eager: true },
 )
+const itemImageModules = import.meta.glob<string>(
+  '../assets/items/*.{png,webp,jpg,jpeg}',
+  { eager: true, query: '?url', import: 'default' },
+)
+
+const itemImageIndex = new Map<string, string>()
+for (const [path, url] of Object.entries(itemImageModules)) {
+  const file = path.split('/').pop() ?? ''
+  const id = file.replace(/\.(png|webp|jpe?g)$/i, '')
+  if (id) itemImageIndex.set(id, url)
+}
 
 function collectScalar<T>(modules: Record<string, { default: T }>): T[] {
   return Object.values(modules).map((m) => m.default)
@@ -60,10 +72,40 @@ export const gems: Gem[] = collectFlat(gemModules)
 export const runes: Rune[] = collectFlat(runeModules)
 
 export const affixes: Affix[] = affixesJson as Affix[]
+export const crystalMods: Affix[] = crystalsJson as Affix[]
 export const runewords: Runeword[] = runewordsJson as unknown as Runeword[]
 export const itemSets: ItemSet[] = setsJson as ItemSet[]
 export const relics: Relic[] = []
 export const augments: AngelicAugment[] = []
+export const GEAR_SLOTS = new Set<string>([
+  'weapon',
+  'offhand',
+  'helmet',
+  'armor',
+  'gloves',
+  'boots',
+  'belt',
+  'amulet',
+  'ring_1',
+  'ring_2',
+])
+export function isGearSlot(slot: string): boolean {
+  return GEAR_SLOTS.has(slot)
+}
+export type ForgeKind = 'satanic_crystal' | 'gypsy_prophecy'
+
+const SATANIC_CRYSTAL_RARITIES = new Set(['satanic', 'satanic_set'])
+const GYPSY_PROPHECY_RARITIES = new Set(['heroic', 'angelic', 'unholy', 'relic'])
+
+export function forgeKindFor(rarity: string): ForgeKind | null {
+  if (SATANIC_CRYSTAL_RARITIES.has(rarity)) return 'satanic_crystal'
+  if (GYPSY_PROPHECY_RARITIES.has(rarity)) return 'gypsy_prophecy'
+  return null
+}
+export const FORGE_KIND_LABEL: Record<ForgeKind, string> = {
+  satanic_crystal: 'Satanic Crystal',
+  gypsy_prophecy: "Gypsy's Prophecy",
+}
 
 function indexById<T extends { id: string }>(list: T[]): Map<string, T> {
   return new Map(list.map((entry) => [entry.id, entry]))
@@ -75,6 +117,7 @@ const gemIndex = indexById(gems)
 const runeIndex = indexById(runes)
 const runewordIndex = indexById(runewords)
 const affixIndex = indexById(affixes)
+const crystalModIndex = indexById(crystalMods)
 const itemSetIndex = indexById(itemSets)
 
 const skillsByClassId = new Map<string, Skill[]>()
@@ -97,6 +140,10 @@ export function getClass(id: string): CharacterClass | undefined {
 
 export function getItem(id: string): ItemBase | undefined {
   return itemIndex.get(id)
+}
+
+export function getItemImage(id: string): string | undefined {
+  return itemImageIndex.get(id)
 }
 
 export function getGem(id: string): Gem | undefined {
@@ -123,6 +170,10 @@ export function getRuneword(id: string): Runeword | undefined {
 
 export function getAffix(id: string): Affix | undefined {
   return affixIndex.get(id)
+}
+
+export function getCrystalMod(id: string): Affix | undefined {
+  return crystalModIndex.get(id)
 }
 
 export function getItemSet(id: string): ItemSet | undefined {

@@ -81,7 +81,8 @@
     "damageMax": 72,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_gun_hunting_rifle",
@@ -94,7 +95,8 @@
     "damageMax": 84,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_throwing_throwing_axe",
@@ -233,7 +235,8 @@
     "damageMax": 46,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_spell_arcane_fork",
@@ -246,7 +249,8 @@
     "damageMax": 52,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_spell_magic_tome",
@@ -272,7 +276,8 @@
     "damageMax": 52,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_spell_wand",
@@ -336,7 +341,8 @@
     "damageMax": 75,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_bow_gothic_bow",
@@ -349,7 +355,8 @@
     "damageMax": 79,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_bow_long_bow",
@@ -362,7 +369,8 @@
     "damageMax": 80,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_bow_crossbow",
@@ -374,7 +382,8 @@
     "damageMin": 72,
     "damageMax": 78,
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_chainsaw_hand_saw",
@@ -400,7 +409,8 @@
     "damageMax": 54,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_chainsaw_battle_slicer",
@@ -413,7 +423,8 @@
     "damageMax": 72,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_chainsaw_war_saw",
@@ -426,7 +437,8 @@
     "damageMax": 72,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_polearm_royal_lance",
@@ -452,7 +464,8 @@
     "damageMax": 14,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_polearm_hyperion_spear",
@@ -465,7 +478,8 @@
     "damageMax": 72,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_polearm_yari",
@@ -478,7 +492,8 @@
     "damageMax": 54,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_polearm_fuscina",
@@ -491,7 +506,8 @@
     "damageMax": 42,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_polearm_war_spear",
@@ -504,7 +520,8 @@
     "damageMax": 28,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_polearm_war_trident",
@@ -516,7 +533,8 @@
     "damageMin": 26,
     "damageMax": 30,
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_polearm_battle_lance",
@@ -538,7 +556,8 @@
     "slot": "weapon",
     "rarity": "common",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_melee_hand_axe",
@@ -590,7 +609,8 @@
     "damageMax": 32,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_melee_war_axe",
@@ -603,7 +623,8 @@
     "damageMax": 68,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_melee_giant_axe",
@@ -616,7 +637,8 @@
     "damageMax": 90,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_mace_cudgel",
@@ -729,7 +751,8 @@
     "damageMax": 90,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_mace_maul",
@@ -742,7 +765,8 @@
     "damageMax": 90,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_sword_scimitar",
@@ -833,7 +857,8 @@
     "damageMax": 28,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_sword_giant_sword",
@@ -846,7 +871,8 @@
     "damageMax": 68,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_sword_katana",
@@ -859,7 +885,8 @@
     "damageMax": 42,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_sword_flamberge",
@@ -872,7 +899,8 @@
     "damageMax": 92,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_sword_zangetsu",
@@ -885,7 +913,8 @@
     "damageMax": 92,
     "description": "Two-Handed",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "twoHanded": true
   },
   {
     "id": "base_claw_blade_talons",

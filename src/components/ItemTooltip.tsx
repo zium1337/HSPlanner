@@ -2,11 +2,16 @@ import { useMemo } from 'react'
 import type { ReactNode } from 'react'
 import {
   detectRuneword,
+  FORGE_KIND_LABEL,
+  forgeKindFor,
   getAffix,
+  getCrystalMod,
   getGem,
   getItem,
+  getItemImage,
   getItemSet,
   getRune,
+  isGearSlot,
 } from '../data'
 import { RAINBOW_MULTIPLIER, useBuild } from '../store/build'
 import type {
@@ -19,13 +24,15 @@ import type {
   StatMap,
 } from '../types'
 import {
+  applyStarsToRangedValue,
   computeBuildStats,
   computeWeaponDamage,
   formatValue,
   isZero,
   rangedMax,
   rangedMin,
-  rolledAffixValue,
+  rolledAffixValueWithStars,
+  shouldScaleImplicit,
   statName,
 } from '../utils/stats'
 import Tooltip, {
@@ -129,9 +136,17 @@ export function ItemTooltipBody({
       }, 0)
     : 0
 
+  const stars = equipped?.stars ?? 0
+  const starSuffix = stars > 0 ? ` · ${'★'.repeat(stars)}` : ''
+  const handSuffix =
+    base.slot === 'weapon'
+      ? base.twoHanded
+        ? ' · 2-Handed'
+        : ' · 1-Handed'
+      : ''
   const subtitle = runeword
-    ? `Runeword · ${base.baseType}`
-    : `${RARITY_LABEL[base.rarity]} · ${base.baseType}`
+    ? `Runeword · ${base.baseType}${handSuffix}${starSuffix}`
+    : `${RARITY_LABEL[base.rarity]} · ${base.baseType}${handSuffix}${starSuffix}`
 
   const hasBaseStats =
     base.defenseMin !== undefined ||
@@ -139,8 +154,17 @@ export function ItemTooltipBody({
     base.blockChance !== undefined ||
     base.attackSpeed !== undefined
 
+  const scaleImplicit = shouldScaleImplicit(!!runeword)
   const implicitEntries = base.implicit
-    ? Object.entries(base.implicit).filter(([, v]) => !isZero(v))
+    ? Object.entries(base.implicit)
+        .map(
+          ([k, v]) =>
+            [
+              k,
+              scaleImplicit ? applyStarsToRangedValue(v, k, stars) : v,
+            ] as [string, typeof v],
+        )
+        .filter(([, v]) => !isZero(v))
     : []
   const skillBonusEntries = base.skillBonuses
     ? Object.entries(base.skillBonuses)
@@ -158,6 +182,10 @@ export function ItemTooltipBody({
   if (base.grade) footerBits.push(`Tier ${base.grade}`)
 
   const equippedAffixes = equipped?.affixes ?? []
+  const equippedForgedMods = equipped?.forgedMods ?? []
+  const forgeKind = isGearSlot(base.slot) ? forgeKindFor(base.rarity) : null
+  const forgeAccent =
+    forgeKind === 'gypsy_prophecy' ? 'text-pink-300' : 'text-red-300'
 
   return (
     <>
@@ -165,6 +193,7 @@ export function ItemTooltipBody({
         tone={tone}
         title={runeword ? runeword.name : base.name}
         subtitle={subtitle}
+        image={getItemImage(base.id)}
       />
 
       {hasBaseStats && (
@@ -221,7 +250,28 @@ export function ItemTooltipBody({
                 .trim()
               return (
                 <li key={idx} className="text-yellow-300">
-                  {formatAffixValue(affix, eq.roll)} {descNoValue}
+                  {formatAffixValue(affix, eq.roll, equipped?.stars)} {descNoValue}
+                </li>
+              )
+            })}
+          </ul>
+        </TooltipSection>
+      )}
+
+      {equippedForgedMods.length > 0 && forgeKind && (
+        <TooltipSection>
+          <div
+            className={`text-[10px] uppercase tracking-[0.12em] ${forgeAccent} mb-1`}
+          >
+            Forged · {FORGE_KIND_LABEL[forgeKind]}
+          </div>
+          <ul className="space-y-0.5 text-[12px]">
+            {equippedForgedMods.map((eq, idx) => {
+              const mod = getCrystalMod(eq.affixId)
+              if (!mod) return null
+              return (
+                <li key={idx} className={forgeAccent}>
+                  {mod.description}
                 </li>
               )
             })}
@@ -359,9 +409,14 @@ function aggregateItemStats(
     out[k] = (out[k] ?? 0) + v
   }
 
+  const stars = equipped?.stars ?? 0
+  const runeword = equipped ? detectRuneword(base, equipped.socketed) : undefined
+  const scaleImplicit = shouldScaleImplicit(!!runeword)
+
   if (base.implicit) {
     for (const [k, v] of Object.entries(base.implicit)) {
-      add(k, (rangedMin(v) + rangedMax(v)) / 2)
+      const scaled = scaleImplicit ? applyStarsToRangedValue(v, k, stars) : v
+      add(k, (rangedMin(scaled) + rangedMax(scaled)) / 2)
     }
   }
 
@@ -370,10 +425,9 @@ function aggregateItemStats(
   for (const eq of equipped.affixes) {
     const affix = getAffix(eq.affixId)
     if (!affix?.statKey) continue
-    add(affix.statKey, rolledAffixValue(affix, eq.roll))
+    add(affix.statKey, rolledAffixValueWithStars(affix, eq.roll, equipped.stars))
   }
 
-  const runeword = detectRuneword(base, equipped.socketed)
   if (runeword) {
     for (const [k, v] of Object.entries(runeword.stats)) add(k, v)
   } else {
@@ -751,11 +805,13 @@ function formatAffixValue(
     format: 'flat' | 'percent'
     valueMin: number | null
     valueMax: number | null
+    statKey: string | null
   },
   roll: number,
+  stars?: number,
 ): string {
   if (affix.valueMin === null || affix.valueMax === null) return affix.sign
-  const signed = rolledAffixValue(affix, roll)
+  const signed = rolledAffixValueWithStars(affix, roll, stars)
   const abs = Math.abs(signed)
   const num = Number.isInteger(abs) ? abs : Math.round(abs * 100) / 100
   const sign = signed < 0 ? '-' : '+'

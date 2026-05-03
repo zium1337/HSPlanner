@@ -15,6 +15,8 @@ export interface EquippedItem {
   socketed: (string | null)[]
   socketTypes: SocketType[]
   runewordId?: string
+  stars?: number
+  forgedMods?: EquippedAffix[]
 }
 
 export type Inventory = Partial<Record<SlotKey, EquippedItem>>

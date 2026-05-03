@@ -127,10 +127,12 @@ export function TooltipHeader({
   title,
   subtitle,
   tone = 'neutral',
+  image,
 }: {
   title: ReactNode
   subtitle?: ReactNode
   tone?: TooltipTone
+  image?: string
 }) {
   const rgb = TONE_RGB[tone]
   return (
@@ -140,17 +142,30 @@ export function TooltipHeader({
         background: `linear-gradient(180deg, rgba(${rgb}, 0.14), rgba(${rgb}, 0.04))`,
       }}
     >
-      <div
-        className={`relative text-[13px] font-semibold leading-tight tracking-[0.02em] ${TONE_TEXT[tone]}`}
-        style={{
-          textShadow: `0 0 10px rgba(${rgb}, 0.45), 0 0 4px rgba(${rgb}, 0.25)`,
-        }}
-      >
-        {title}
+      <div className={image ? 'pr-14' : ''}>
+        <div
+          className={`relative text-[13px] font-semibold leading-tight tracking-[0.02em] ${TONE_TEXT[tone]}`}
+          style={{
+            textShadow: `0 0 10px rgba(${rgb}, 0.45), 0 0 4px rgba(${rgb}, 0.25)`,
+          }}
+        >
+          {title}
+        </div>
+        {subtitle && (
+          <div className="relative mt-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-faint">
+            {subtitle}
+          </div>
+        )}
       </div>
-      {subtitle && (
-        <div className="relative mt-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-faint">
-          {subtitle}
+      {image && (
+        <div className="absolute top-1/2 right-2 -translate-y-1/2 w-12 h-12 flex items-center justify-center">
+          <img
+            src={image}
+            alt=""
+            className="max-w-full max-h-full object-contain"
+            style={{ imageRendering: 'pixelated' }}
+            draggable={false}
+          />
         </div>
       )}
     </div>
