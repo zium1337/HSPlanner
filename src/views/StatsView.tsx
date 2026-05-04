@@ -4,6 +4,7 @@ import { classes, gameConfig, skills } from '../data'
 import { useBuild } from '../store/build'
 import {
   aggregateItemSkillBonuses,
+  combineAdditiveAndMore,
   computeBuildStats,
   computeSkillDamage,
   computeWeaponDamage,
@@ -194,6 +195,8 @@ export default function StatsView() {
               statKey={key}
               value={stats[key] ?? 0}
               sources={statSources[key] ?? []}
+              moreValue={stats[`${key}_more`]}
+              moreSources={statSources[`${key}_more`]}
               highlighted={matches(statName(key))}
               stats={stats}
             />
@@ -262,6 +265,8 @@ export default function StatsView() {
                   statKey={key}
                   value={stats[key] ?? 0}
                   sources={statSources[key] ?? []}
+                  moreValue={stats[`${key}_more`]}
+                  moreSources={statSources[`${key}_more`]}
                   highlighted={matches(statName(key))}
                   stats={stats}
                 />
@@ -278,16 +283,24 @@ function StatRow({
   statKey,
   value,
   sources,
+  moreValue,
+  moreSources,
   highlighted,
   stats,
 }: {
   statKey: string
   value: RangedValue
   sources: SourceContribution[]
+  moreValue?: RangedValue
+  moreSources?: SourceContribution[]
   highlighted: boolean
   stats: RangedStatMap
 }) {
-  const zero = isZero(value)
+  const hasMore = !!moreSources && moreSources.length > 0
+  const displayValue: RangedValue = hasMore
+    ? combineAdditiveAndMore(value, moreValue)
+    : value
+  const zero = isZero(displayValue) && (!hasMore || isZero(moreValue ?? 0))
   const bg = highlighted
     ? 'bg-accent/15 ring-1 ring-accent/40'
     : 'hover:bg-panel-2/60'
@@ -297,12 +310,16 @@ function StatRow({
   const overflow =
     cap !== undefined &&
     !zero &&
-    typeof value === 'number' &&
-    value > cap
+    typeof displayValue === 'number' &&
+    displayValue > cap
   const suffix = def?.format === 'percent' ? '%' : ''
   return (
     <li>
-      <SourceTooltip statKey={statKey} sources={sources}>
+      <SourceTooltip
+        statKey={statKey}
+        sources={sources}
+        moreSources={moreSources}
+      >
         <div
           className={`flex items-baseline justify-between gap-2 text-sm py-0.5 px-1 -mx-1 rounded transition-colors ${bg} ${opacity}`}
         >
@@ -319,12 +336,12 @@ function StatRow({
                 +{cap}
                 {suffix}{' '}
                 <span className="text-muted font-normal">
-                  ({value as number}
+                  ({displayValue as number}
                   {suffix})
                 </span>
               </>
             ) : (
-              formatValue(value, statKey)
+              formatValue(displayValue, statKey)
             )}
           </span>
         </div>

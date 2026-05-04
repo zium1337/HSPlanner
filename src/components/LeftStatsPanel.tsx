@@ -5,6 +5,7 @@ import { isImageUrl } from "../utils/icon";
 import { attrPointsFor, skillPointsFor, useBuild } from "../store/build";
 import {
   aggregateItemSkillBonuses,
+  combineAdditiveAndMore,
   computeBuildStats,
   computeSkillDamage,
   effectiveCap,
@@ -167,8 +168,12 @@ export default function LeftStatsPanel() {
   const baseManaMax = activeSkill
     ? manaCostAtRank(activeSkill, Math.max(effRankMax, 1))
     : undefined;
-  const fcrMin = rangedMin(stats.faster_cast_rate ?? 0);
-  const fcrMax = rangedMax(stats.faster_cast_rate ?? 0);
+  const fcrCombined = combineAdditiveAndMore(
+    stats.faster_cast_rate,
+    stats.faster_cast_rate_more,
+  );
+  const fcrMin = rangedMin(fcrCombined);
+  const fcrMax = rangedMax(fcrCombined);
   const mcrMin = rangedMin(stats.mana_cost_reduction ?? 0);
   const mcrMax = rangedMax(stats.mana_cost_reduction ?? 0);
   const effCastMin = activeSkill?.baseCastRate
@@ -189,8 +194,12 @@ export default function LeftStatsPanel() {
     effManaMax !== undefined && effCastMax !== undefined
       ? effManaMax * effCastMax
       : undefined;
-  const manaRegenMin = rangedMin(stats.mana_replenish ?? 0);
-  const manaRegenMax = rangedMax(stats.mana_replenish ?? 0);
+  const manaRegenCombined = combineAdditiveAndMore(
+    stats.mana_replenish,
+    stats.mana_replenish_more,
+  );
+  const manaRegenMin = rangedMin(manaRegenCombined);
+  const manaRegenMax = rangedMax(manaRegenCombined);
   const sustainable =
     manaPerSecMax !== undefined && manaPerSecMax <= manaRegenMin;
   const unsustainable =

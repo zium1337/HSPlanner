@@ -52,8 +52,11 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'increased_life', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Maximum\s+Mana$/i,
-    build: (m) => ({ key: 'increased_mana', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Maximum\s+Mana$/i,
+    build: (m) => ({
+      key: m[2] ? 'increased_mana_more' : 'increased_mana',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+\-\d.]+)%\s+Increased\s+Mana$/i,
@@ -109,16 +112,25 @@ const RULES: ParseRule[] = [
 
   // === movement / attack / cast ===
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Movement\s+Speed$/i,
-    build: (m) => ({ key: 'movement_speed', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Movement\s+Speed$/i,
+    build: (m) => ({
+      key: m[2] ? 'movement_speed_more' : 'movement_speed',
+      value: num(m[1]!),
+    }),
   },
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Attack\s+Speed$/i,
-    build: (m) => ({ key: 'increased_attack_speed', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Attack\s+Speed$/i,
+    build: (m) => ({
+      key: m[2] ? 'increased_attack_speed_more' : 'increased_attack_speed',
+      value: num(m[1]!),
+    }),
   },
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Faster\s+Cast\s+Rate$/i,
-    build: (m) => ({ key: 'faster_cast_rate', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Faster\s+Cast\s+Rate$/i,
+    build: (m) => ({
+      key: m[2] ? 'faster_cast_rate_more' : 'faster_cast_rate',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+\-\d.]+)%\s+(?:to\s+)?Spell\s+Haste$/i,
@@ -127,8 +139,11 @@ const RULES: ParseRule[] = [
 
   // === crit ===
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Critical\s+Strike\s+Damage$/i,
-    build: (m) => ({ key: 'crit_damage', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Critical\s+Strike\s+Damage$/i,
+    build: (m) => ({
+      key: m[2] ? 'crit_damage_more' : 'crit_damage',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+\-\d.]+)%\s+Critical\s+Damage$/i,
@@ -153,12 +168,18 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'all_resistances', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)\s+to\s+(?:Total\s+)?All\s+Resistances$/i,
-    build: (m) => ({ key: 'all_resistances', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)\s+to\s+(Total\s+)?All\s+Resistances$/i,
+    build: (m) => ({
+      key: m[2] ? 'all_resistances_more' : 'all_resistances',
+      value: num(m[1]!),
+    }),
   },
   {
-    test: /^([+\-\d.]+)%\s+to\s+(?:Total\s+)?All\s+Resistances$/i,
-    build: (m) => ({ key: 'all_resistances', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+to\s+(Total\s+)?All\s+Resistances$/i,
+    build: (m) => ({
+      key: m[2] ? 'all_resistances_more' : 'all_resistances',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+\-\d.]+)%\s+to\s+Maximum\s+All\s+Resistances$/i,
@@ -198,13 +219,18 @@ const RULES: ParseRule[] = [
   // === skill damage (elements) ===
   {
     test: new RegExp(
-      `^([+\\-\\d.]+)%\\s+Increased\\s+(?:Total\\s+)?(${ELEMENT_RE})\\s+Skill\\s+Damage$`,
+      `^([+\\-\\d.]+)%\\s+Increased\\s+(Total\\s+)?(${ELEMENT_RE})\\s+Skill\\s+Damage$`,
       'i',
     ),
-    build: (m) => ({
-      key: `${m[2]!.toLowerCase() as Element}_skill_damage`,
-      value: num(m[1]!),
-    }),
+    build: (m) => {
+      const element = m[3]!.toLowerCase() as Element
+      return {
+        key: m[2]
+          ? `${element}_skill_damage_more`
+          : `${element}_skill_damage`,
+        value: num(m[1]!),
+      }
+    },
   },
   {
     test: new RegExp(
@@ -217,8 +243,11 @@ const RULES: ParseRule[] = [
     }),
   },
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Magic\s+Skill\s+Damage$/i,
-    build: (m) => ({ key: 'magic_skill_damage', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Magic\s+Skill\s+Damage$/i,
+    build: (m) => ({
+      key: m[2] ? 'magic_skill_damage_more' : 'magic_skill_damage',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+\-\d.]+)\s+to\s+Magic\s+Skill\s+Damage$/i,
@@ -231,8 +260,11 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'spell_damage', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Area\s+of\s+Effect(?:\s+(?:skill\s+)?radius(?:\s+of\s+all\s+skills)?)?$/i,
-    build: (m) => ({ key: 'area_of_effect', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Area\s+of\s+Effect(?:\s+(?:skill\s+)?radius(?:\s+of\s+all\s+skills)?)?$/i,
+    build: (m) => ({
+      key: m[2] ? 'area_of_effect_more' : 'area_of_effect',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+\-\d.]+)%\s+Increased\s+Spell\s+Duration$/i,
@@ -313,8 +345,11 @@ const RULES: ParseRule[] = [
 
   // === leech ===
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Life\s+Steal$/i,
-    build: (m) => ({ key: 'life_steal', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Life\s+Steal$/i,
+    build: (m) => ({
+      key: m[2] ? 'life_steal_more' : 'life_steal',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+\-\d.]+)%\s+Increased\s+Mana\s+Steal$/i,
@@ -369,8 +404,11 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'life_replenish_pct', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)%\s+(?:Total\s+)?(?:to\s+)?Mana\s+Replenish$/i,
-    build: (m) => ({ key: 'mana_replenish', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+(Total\s+)?(?:to\s+)?Mana\s+Replenish$/i,
+    build: (m) => ({
+      key: m[2] ? 'mana_replenish_more' : 'mana_replenish',
+      value: num(m[1]!),
+    }),
   },
 
   // === skills ===
@@ -451,8 +489,11 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'explosion_damage', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Enhanced\s+Damage$/i,
-    build: (m) => ({ key: 'enhanced_damage', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Enhanced\s+Damage$/i,
+    build: (m) => ({
+      key: m[2] ? 'enhanced_damage_more' : 'enhanced_damage',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+\-\d.]+)%\s+to\s+(?:Melee\s+|Ranged\s+)?Enhanced\s+Damage$/i,
@@ -463,8 +504,11 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'faster_cast_rate', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Faster\s+Cast\s+Rate(?:\s+while\s+wielding\s+a\s+wand)?$/i,
-    build: (m) => ({ key: 'faster_cast_rate', value: num(m[1]!) }),
+    test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Faster\s+Cast\s+Rate(?:\s+while\s+wielding\s+a\s+wand)?$/i,
+    build: (m) => ({
+      key: m[2] ? 'faster_cast_rate_more' : 'faster_cast_rate',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+\-\d.]+)%\s+to\s+Spell\s+Mana\s+Leech$/i,

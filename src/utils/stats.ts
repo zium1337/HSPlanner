@@ -554,11 +554,13 @@ export function computeBuildStats(
   }
 
   for (const { from, to } of STAT_FAN_OUTS) {
-    const sources = statSources.get(from)
-    if (!sources || sources.length === 0) continue
-    for (const targetKey of to) {
-      for (const src of sources) {
-        pushSource(statSources, targetKey, src)
+    for (const variant of ['', '_more'] as const) {
+      const sources = statSources.get(from + variant)
+      if (!sources || sources.length === 0) continue
+      for (const targetKey of to) {
+        for (const src of sources) {
+          pushSource(statSources, targetKey + variant, src)
+        }
       }
     }
   }
@@ -570,8 +572,8 @@ export function computeBuildStats(
     statSourcesOut[key] = list
   }
 
-  applyMultiplier(stats, 'life', 'increased_life')
-  applyMultiplier(stats, 'mana', 'increased_mana')
+  applyMultiplier(stats, 'life', 'increased_life', 'increased_life_more')
+  applyMultiplier(stats, 'mana', 'increased_mana', 'increased_mana_more')
 
   return {
     attributes,
@@ -585,16 +587,48 @@ function applyMultiplier(
   stats: RangedStatMap,
   flatKey: string,
   pctKey: string,
+  morePctKey?: string,
 ): void {
   const flat = stats[flatKey]
-  const pct = stats[pctKey]
-  if (flat === undefined || pct === undefined || isZero(pct)) return
+  if (flat === undefined) return
+  const pct = stats[pctKey] ?? 0
+  const more = morePctKey ? (stats[morePctKey] ?? 0) : 0
+  if (isZero(pct) && isZero(more)) return
   const [fmin, fmax] =
     typeof flat === 'number' ? [flat, flat] : flat
   const [pmin, pmax] = typeof pct === 'number' ? [pct, pct] : pct
-  const min = Math.floor(fmin * (1 + pmin / 100))
-  const max = Math.floor(fmax * (1 + pmax / 100))
+  const [mmin, mmax] = typeof more === 'number' ? [more, more] : more
+  const min = Math.floor(fmin * (1 + pmin / 100) * (1 + mmin / 100))
+  const max = Math.floor(fmax * (1 + pmax / 100) * (1 + mmax / 100))
   stats[flatKey] = min === max ? min : [min, max]
+}
+
+/**
+ * Combine an additive % stat with its `_more` (Total) multiplier into a
+ * single equivalent additive %.
+ *
+ *   effective = ((1 + add/100) × (1 + more/100) - 1) × 100
+ */
+export function combineAdditiveAndMore(
+  additive: RangedValue | undefined,
+  more: RangedValue | undefined,
+): RangedValue {
+  const [aMin, aMax] =
+    additive === undefined
+      ? [0, 0]
+      : typeof additive === 'number'
+        ? [additive, additive]
+        : additive
+  const [mMin, mMax] =
+    more === undefined
+      ? [0, 0]
+      : typeof more === 'number'
+        ? [more, more]
+        : more
+  const round = (n: number) => Math.round(n * 1e6) / 1e6
+  const min = round(((1 + aMin / 100) * (1 + mMin / 100) - 1) * 100)
+  const max = round(((1 + aMax / 100) * (1 + mMax / 100) - 1) * 100)
+  return min === max ? min : [min, max]
 }
 
 export function statName(key: string): string {
@@ -747,15 +781,6 @@ function collectExtraDamage(
     total += avg
   }
   return { pct: total, sources }
-}
-
-function critMultiplierAverage(
-  critChance: number,
-  critDamagePct: number,
-): number {
-  const cc = Math.max(0, Math.min(95, critChance)) / 100
-  const critMult = 1 + critDamagePct / 100
-  return (1 - cc) * 1 + cc * critMult
 }
 
 export function rolledAffixValue(
@@ -956,23 +981,39 @@ export function computeSkillDamage(
   const skillDamageMinPct = rangedMin(magicDmg) + rangedMin(elementDmg)
   const skillDamageMaxPct = rangedMax(magicDmg) + rangedMax(elementDmg)
 
+  // "Total" multipliers (parsed from `Increased Total X Skill Damage`) apply
+  // as separate multiplicative bonuses on top of the additive sum.
+  const magicMore = stats.magic_skill_damage_more ?? 0
+  const elementMoreKey = elementKey ? (`${elementKey}_more` as const) : null
+  const elementMore = elementMoreKey ? (stats[elementMoreKey] ?? 0) : 0
+  const skillMoreMultMin =
+    (1 + rangedMin(magicMore) / 100) * (1 + rangedMin(elementMore) / 100)
+  const skillMoreMultMax =
+    (1 + rangedMax(magicMore) / 100) * (1 + rangedMax(elementMore) / 100)
+
   const extra = collectExtraDamage(stats, enemyConditions)
   const extraMult = 1 + extra.pct / 100
 
   const critChance = rangedMax(stats.crit_chance ?? 0)
   const critDamagePct = rangedMax(stats.crit_damage ?? 0)
-  const critMultAvg = critMultiplierAverage(critChance, critDamagePct)
-  const critMultOnCrit = 1 + critDamagePct / 100
+  const critDamageMore = rangedMax(stats.crit_damage_more ?? 0)
+  const critMoreMult = 1 + critDamageMore / 100
+  const critMultOnCrit = (1 + critDamagePct / 100) * critMoreMult
+  const critChanceClamped = Math.max(0, Math.min(95, critChance)) / 100
+  const critMultAvg =
+    1 - critChanceClamped + critChanceClamped * critMultOnCrit
 
   const hitMin =
     (baseMin + flatMin) *
     (1 + synergyMinPct / 100) *
     (1 + skillDamageMinPct / 100) *
+    skillMoreMultMin *
     extraMult
   const hitMax =
     (baseMax + flatMax) *
     (1 + synergyMaxPct / 100) *
     (1 + skillDamageMaxPct / 100) *
+    skillMoreMultMax *
     extraMult
 
   const critMin = hitMin * critMultOnCrit
@@ -1026,6 +1067,9 @@ export function computeWeaponDamage(
   const ed = stats.enhanced_damage ?? 0
   const enhancedDamageMinPct = rangedMin(ed)
   const enhancedDamageMaxPct = rangedMax(ed)
+  const edMore = stats.enhanced_damage_more ?? 0
+  const enhancedMoreMinMult = 1 + rangedMin(edMore) / 100
+  const enhancedMoreMaxMult = 1 + rangedMax(edMore) / 100
 
   const addPhys = stats.additive_physical_damage ?? 0
   const additivePhysicalMin = rangedMin(addPhys)
@@ -1040,13 +1084,19 @@ export function computeWeaponDamage(
 
   const critChance = rangedMax(stats.crit_chance ?? 0)
   const critDamagePct = rangedMax(stats.crit_damage ?? 0)
-  const critMultAvg = critMultiplierAverage(critChance, critDamagePct)
-  const critMultOnCrit = 1 + critDamagePct / 100
+  const critDamageMore = rangedMax(stats.crit_damage_more ?? 0)
+  const critMoreMult = 1 + critDamageMore / 100
+  const critMultOnCrit = (1 + critDamagePct / 100) * critMoreMult
+  const critChanceClamped = Math.max(0, Math.min(95, critChance)) / 100
+  const critMultAvg =
+    1 - critChanceClamped + critChanceClamped * critMultOnCrit
 
   const baseMin =
-    weaponDamageMin * (1 + enhancedDamageMinPct / 100) + additivePhysicalMin
+    weaponDamageMin * (1 + enhancedDamageMinPct / 100) * enhancedMoreMinMult +
+    additivePhysicalMin
   const baseMax =
-    weaponDamageMax * (1 + enhancedDamageMaxPct / 100) + additivePhysicalMax
+    weaponDamageMax * (1 + enhancedDamageMaxPct / 100) * enhancedMoreMaxMult +
+    additivePhysicalMax
 
   const hitMinRaw =
     baseMin * (1 + attackDamageMinPct / 100) * extraMult
@@ -1057,13 +1107,16 @@ export function computeWeaponDamage(
   const critMaxRaw = hitMaxRaw * critMultOnCrit
   const avgMinRaw = hitMinRaw * critMultAvg
   const avgMaxRaw = hitMaxRaw * critMultAvg
-  
+
   const ias = stats.increased_attack_speed ?? 0
+  const iasMore = stats.increased_attack_speed_more ?? 0
   const baseAps = rangedMax(stats.attacks_per_second ?? 0)
   const iasMin = rangedMin(ias)
   const iasMax = rangedMax(ias)
-  const apsMin = baseAps * (1 + iasMin / 100)
-  const apsMax = baseAps * (1 + iasMax / 100)
+  const iasMoreMinMult = 1 + rangedMin(iasMore) / 100
+  const iasMoreMaxMult = 1 + rangedMax(iasMore) / 100
+  const apsMin = baseAps * (1 + iasMin / 100) * iasMoreMinMult
+  const apsMax = baseAps * (1 + iasMax / 100) * iasMoreMaxMult
 
   const dpsMinRaw = avgMinRaw * apsMin
   const dpsMaxRaw = avgMaxRaw * apsMax
