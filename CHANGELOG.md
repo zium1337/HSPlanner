@@ -5,8 +5,9 @@
 - **All Damage Taken Reduced** stat.
 - **Item-granted skills** (e.g. *Wings of Hatred*, *Fallen God's Bloodlust*) - gear-rolled ranks are summed, scaled by stars, and contribute passive stats. New `Granted Skill Effects` section in the item tooltip.
 - **Slider** and **Dropdown** component.
-- **Tooltip Section Header** overhual.
+- **Tooltip Section Header** overhaul.
 - **Mask of the Celestial** sprite asset.
+- **Incarnation Tree** visual overhaul.
 
 ### Improved
 - **Spell crit handling** - now uses `Critical Strike Chance for Spells`/`Critical Strike Damage for Spells` for skills tagged `Spell`, separate from melee crit. Spell crit no longer benefits from `Critical Strike Damage` (matches the in-game cap).
