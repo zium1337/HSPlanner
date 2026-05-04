@@ -1,5 +1,34 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import attackSpeedIcon from '../assets/atlas/attack_speed.png'
+import dexterityIcon from '../assets/atlas/dexterity.png'
+import allAttributesIcon from '../assets/atlas/all_attributes.png'
+import blackHole from '../assets/atlas/black_hole.png'
+import forkSmall from '../assets/atlas/fork_small.png'
+import forkBig from '../assets/atlas/fork_big.png'
+import poisonSmall from '../assets/atlas/poison_damage_small.png'
+import poisonBig from '../assets/atlas/poison_damage_big.png'
+import rangedEnhancedDamageSmall from '../assets/atlas/ranged_enhanced_damage_small.png'
+import rangedEnhancedDamageBig from '../assets/atlas/ranged_enhanced_damage_big.png'
+import bleedDamageSmall from '../assets/atlas/bleed_damage_small.png'
+import bleedDamageBig1 from '../assets/atlas/bleed_damage_big_1.png'
+import armorBreakSmall from '../assets/atlas/armor_break_small.png'
+import armorBreakBig from '../assets/atlas/armor_break_big.png'
+import aoeSmall from '../assets/atlas/aoe_small.png'
+import aoeBig from '../assets/atlas/aoe_big.png'
+import explosionDamageSmall from '../assets/atlas/explosion_damage_small.png'
+import energySmall from '../assets/atlas/energy.png'
+import magicDamageSmall from '../assets/atlas/magic_damage_small.png'
+import magicDamageBig from '../assets/atlas/magic_damage_big.png'
+import manaSmall from '../assets/atlas/mana.png'
+import manaBig from '../assets/atlas/mana_big.png'
+import energyBig from '../assets/atlas/energy_big.png'
+import manaBig2 from '../assets/atlas/mana_big_2.png'
+import intSmall from '../assets/atlas/int_small.png'
+import intBig from '../assets/atlas/int_big.png'
+import spellCritSmall from '../assets/atlas/spell_crit_small.png'
+import spellCritBig from '../assets/atlas/spell_crit_big.png'
+import treeBackground from '../assets/atlas/Incarnation_Background.png'
 import treeData from '../data/hero-siege-tree.json'
 import { useBuild } from '../store/build'
 import { ADJ, findPath, START_IDS, START_SET } from '../utils/treeGraph'
@@ -78,6 +107,64 @@ const SEARCH_INDEX: { id: number; haystack: string }[] = Object.entries(
   id: Number(id),
   haystack: (info.t + ' ' + info.l.join(' ')).toLowerCase(),
 }))
+
+const NODE_ICON_BY_TITLE: Record<string, string> = {
+  'Black Hole': blackHole,
+  'Attack Speed': attackSpeedIcon,
+  Dexterity: dexterityIcon,
+  'All Attributes': allAttributesIcon,
+  'Forking Projectile': forkSmall,
+  'Multiforking': forkBig,
+  'Poison Damage': poisonSmall,
+  'Stacked Pandemic': poisonBig,
+  'Rapid Corrosion': poisonBig,
+  'Ranged Enhanced Damage': rangedEnhancedDamageSmall,
+  'Powershot': rangedEnhancedDamageBig,
+  'Carving Shot': rangedEnhancedDamageBig,
+  'Projectile Damage': rangedEnhancedDamageBig,
+  'Blood Loss': bleedDamageBig1,
+  'Garrote': bleedDamageBig1,
+  'Bleed Damage': bleedDamageSmall,
+  'Armor Break': armorBreakSmall,
+  'Crushing Blow': armorBreakSmall,
+  'Crusher': armorBreakBig,
+  'Shattering Elements': armorBreakBig,
+  'Area of Effect': aoeSmall,
+  'Spell Area of Effect Damage': aoeSmall,
+  'Total Chaos': aoeBig,
+  'Ramping Pulse': aoeBig,
+  "Ether's Pull": aoeBig,
+  'Spacial Conversion': aoeBig,
+  'Explosion Damage': explosionDamageSmall,
+  'Explosion Area of Effect': explosionDamageSmall,
+  'Energy': energySmall,
+  'Magic Damage': magicDamageSmall,
+  'Manafueled Damage': magicDamageSmall,
+  'Energetic Carnage': magicDamageBig,
+  "Magister´s Intellect": magicDamageBig,
+  'Maximum Mana': manaSmall,
+  'Increased Mana': manaBig,
+  'Energetic': energyBig,
+  'Patience is Power': manaBig2,
+  'Hunger for Mana': manaBig2,
+  'Soulburn Essence': manaBig2,
+  'Manawell': manaBig2,
+  'Mana Hunger': manaBig2,
+  'Mana Redirection': manaBig2,
+  'Intelligence': intSmall,
+  'Bulk Intelligence': intBig,
+  'Amplified Intelligence': intBig,
+  'Critical Spellhit': spellCritSmall,
+  "Warlock´s Fury": spellCritBig,
+  'Time Surge': spellCritBig,
+}
+
+const NODE_ICONS: { id: number; x: number; y: number; r: number; href: string }[] =
+  NODES.flatMap((n) => {
+    const info = TREE_NODE_INFO[String(n.id)]
+    const href = info ? NODE_ICON_BY_TITLE[info.t] : undefined
+    return href ? [{ id: n.id, x: n.x, y: n.y, r: n.r, href }] : []
+  })
 
 interface NodePaint {
   isAlloc: boolean
@@ -315,14 +402,23 @@ export default function TreeView() {
   }, [allocated])
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full" style={{ backgroundColor: '#0a0b0f' }}>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: `url(${treeBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+        }}
+      />
       <div
         ref={containerRef}
         className="absolute inset-0 overflow-hidden"
         style={{
           cursor: dragging ? 'grabbing' : 'grab',
-          background:
-            'radial-gradient(ellipse at 50% 50%, #14151c 0%, #0a0b0f 80%)',
         }}
         onWheel={onWheel}
         onMouseDown={onMouseDown}
@@ -370,6 +466,23 @@ export default function TreeView() {
               })}
             </g>
             <g style={{ opacity: searchMatches ? 0.25 : 1 }}>{nodeCircles}</g>
+            <g pointerEvents="none" style={{ opacity: searchMatches ? 0.25 : 1 }}>
+              {NODE_ICONS.map((icon) => {
+                const size = icon.r * 2
+                return (
+                  <image
+                    key={`icon-${icon.id}`}
+                    href={icon.href}
+                    x={icon.x - icon.r}
+                    y={icon.y - icon.r}
+                    width={size}
+                    height={size}
+                    preserveAspectRatio="xMidYMid meet"
+                    style={{ imageRendering: 'pixelated' }}
+                  />
+                )
+              })}
+            </g>
             {matchOverlay && <g pointerEvents="none">{matchOverlay}</g>}
           </g>
         </svg>
