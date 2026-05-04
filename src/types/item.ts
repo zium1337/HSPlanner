@@ -44,6 +44,7 @@ export interface ItemBase {
   uniqueEffects?: string[]
   width?: number
   height?: number
+  maxAffixes?: number
   socketTransforms?: Record<string, StatMap>
 }
 

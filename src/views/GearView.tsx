@@ -908,6 +908,7 @@ function EditPanel({
             {base.rarity === 'common' && (
               <AffixesSection
                 equipped={equipped}
+                maxAffixes={base.maxAffixes}
                 onAdd={onAddAffix}
                 onRemove={onRemoveAffix}
                 onSetRoll={onSetAffixRoll}
@@ -1202,17 +1203,24 @@ function formatAffixValue(
 
 function AffixesSection({
   equipped,
+  maxAffixes,
   onAdd,
   onRemove,
   onSetRoll,
 }: {
   equipped: EquippedItem
+  maxAffixes?: number
   onAdd: (affixId: string, tier: number) => void
   onRemove: (index: number) => void
   onSetRoll: (index: number, roll: number) => void
 }) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
+  const atCap =
+    maxAffixes !== undefined && equipped.affixes.length >= maxAffixes
+  useEffect(() => {
+    if (atCap && open) setOpen(false)
+  }, [atCap, open])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -1231,11 +1239,13 @@ function AffixesSection({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-[10px] uppercase tracking-[0.12em] text-muted">
-          Affixes ({equipped.affixes.length})
+          Affixes ({equipped.affixes.length}
+          {maxAffixes !== undefined ? `/${maxAffixes}` : ''})
         </span>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-border hover:border-accent text-muted hover:text-accent"
+          disabled={atCap}
+          className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-border hover:border-accent text-muted hover:text-accent disabled:opacity-40 disabled:hover:border-border disabled:hover:text-muted disabled:cursor-not-allowed"
         >
           {open ? 'Done' : '+ Add'}
         </button>

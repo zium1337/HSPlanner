@@ -729,6 +729,9 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
+      const base = getItem(cur.baseId)
+      if (base?.maxAffixes !== undefined && cur.affixes.length >= base.maxAffixes)
+        return s
       const next: EquippedItem = {
         ...cur,
         affixes: [...cur.affixes, { affixId, tier, roll: 1 }],
