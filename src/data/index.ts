@@ -4,6 +4,7 @@ import type {
   Skill,
   TalentTree,
   ItemBase,
+  ItemGrantedSkill,
   Affix,
   Rune,
   Gem,
@@ -15,6 +16,7 @@ import type {
 import affixesJson from './affixes.json'
 import crystalsJson from './crystals.json'
 import gameConfigJson from './game-config.json'
+import itemGrantedSkillsJson from './item-granted-skills.json'
 import runewordsJson from './runewords.json'
 import setsJson from './sets.json'
 
@@ -75,6 +77,18 @@ export const affixes: Affix[] = affixesJson as Affix[]
 export const crystalMods: Affix[] = crystalsJson as Affix[]
 export const runewords: Runeword[] = runewordsJson as unknown as Runeword[]
 export const itemSets: ItemSet[] = setsJson as ItemSet[]
+export const itemGrantedSkills: ItemGrantedSkill[] =
+  itemGrantedSkillsJson as ItemGrantedSkill[]
+
+const itemGrantedSkillByName = new Map<string, ItemGrantedSkill>(
+  itemGrantedSkills.map((s) => [s.name.trim().toLowerCase(), s]),
+)
+
+export function getItemGrantedSkillByName(
+  name: string,
+): ItemGrantedSkill | undefined {
+  return itemGrantedSkillByName.get(name.trim().toLowerCase())
+}
 export const relics: Relic[] = []
 export const augments: AngelicAugment[] = []
 export const GEAR_SLOTS = new Set<string>([

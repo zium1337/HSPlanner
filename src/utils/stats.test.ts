@@ -3,9 +3,11 @@ import {
   combineAdditiveAndMore,
   computeBuildStats,
   computeSkillDamage,
+  rangedMax,
+  rangedMin,
 } from './stats'
 import { parseTreeNodeMod } from './treeStats'
-import type { Inventory, Skill } from '../types'
+import type { Inventory, RangedValue, Skill } from '../types'
 
 const emptyInventory: Inventory = {}
 
@@ -120,6 +122,74 @@ describe('computeSkillDamage - Total skill damage as multiplier', () => {
       {}, {},
     )
     expect(result?.hitMin).toBe(150)
+  })
+})
+
+describe('Item-granted skills (passiveConverts)', () => {
+  const zeroAttrs = { strength: 0, dexterity: 0, intelligence: 0, energy: 0, vitality: 0, armor: 0 }
+
+  it('Fallen God\'s Bloodlust on equipped Gabriel\'s Broken Wings adds FCR = 10% × rank × Attack Speed', () => {
+    const inventory: Inventory = {
+      armor: {
+        baseId: 'armors_heroic_gabriels_broken_wings',
+        affixes: [],
+        socketed: [],
+        socketTypes: [],
+        forgedMods: [],
+        stars: 0,
+      },
+    }
+    const { stats } = computeBuildStats(null, 1, zeroAttrs, inventory)
+    // Item's IAS implicit [40, 50] (no star scaling at 0★).
+    // Fallen God's Bloodlust roll = [1, 10].
+    // Convert: FCR += 10% × rank × IAS
+    //  min: 10% × 1 × 40 = 4
+    //  max: 10% × 10 × 50 = 50
+    const fcr = stats.faster_cast_rate
+    expect(typeof fcr === 'object').toBe(true)
+    expect(rangedMin(fcr as RangedValue)).toBeCloseTo(4)
+    expect(rangedMax(fcr as RangedValue)).toBeCloseTo(50)
+    // Source IAS unchanged (convert copies, doesn't move).
+    const ias = stats.increased_attack_speed
+    expect(rangedMin(ias as RangedValue)).toBe(40)
+    expect(rangedMax(ias as RangedValue)).toBe(50)
+  })
+
+  it('Stars scale the rolled rank (and rounded to int)', () => {
+    const inventory: Inventory = {
+      armor: {
+        baseId: 'armors_heroic_gabriels_broken_wings',
+        affixes: [],
+        socketed: [],
+        socketTypes: [],
+        forgedMods: [],
+        stars: 5,
+      },
+    }
+    const { stats } = computeBuildStats(
+      null, 1, zeroAttrs, inventory,
+    )
+    // Item's own IAS implicit [40, 50] × 1.40★ = [56, 70].
+    // Roll [1, 10] × 1.40 = [1.4, 14] → rounded to [1, 14].
+    // Convert: FCR += 10% × rank × IAS
+    //  min: 10% × 1 × 56 = 5.6
+    //  max: 10% × 14 × 70 = 98
+    const fcr = stats.faster_cast_rate
+    expect(rangedMin(fcr as RangedValue)).toBeCloseTo(5.6)
+    expect(rangedMax(fcr as RangedValue)).toBeCloseTo(98)
+  })
+
+  it('Convert reads final value of `from` (sees additive sum, not raw item contribution)', () => {
+    // No item-granted skills triggered → no convert. Sanity check baseline.
+    const customStats = [
+      { id: '1', value: '50', statKey: 'increased_attack_speed' },
+    ]
+    const { stats } = computeBuildStats(
+      null, 1, zeroAttrs, {},
+      undefined, undefined, undefined, customStats,
+    )
+    expect(stats.increased_attack_speed).toBe(50)
+    expect(stats.faster_cast_rate).toBeUndefined()
   })
 })
 

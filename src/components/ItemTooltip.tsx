@@ -8,6 +8,7 @@ import {
   getCrystalMod,
   getGem,
   getItem,
+  getItemGrantedSkillByName,
   getItemImage,
   getItemSet,
   getRune,
@@ -19,6 +20,7 @@ import type {
   EquippedItem,
   Inventory,
   ItemBase,
+  ItemGrantedSkill,
   ItemRarity,
   SlotKey,
   StatMap,
@@ -173,6 +175,61 @@ export function ItemTooltipBody({
   const skillBonusEntries = base.skillBonuses
     ? Object.entries(base.skillBonuses)
     : []
+
+  // Map item-granted skills (registered in item-granted-skills.json) to a
+  // displayable rank + per-rank effect lines. Stars scale rank, rounded to int.
+  const grantedSkillEntries = (() => {
+    if (!base.skillBonuses) return [] as Array<{
+      skill: ItemGrantedSkill
+      displayRank: string
+      lines: string[]
+    }>
+    const out: Array<{
+      skill: ItemGrantedSkill
+      displayRank: string
+      lines: string[]
+    }> = []
+    for (const [skillName, val] of Object.entries(base.skillBonuses)) {
+      const skill = getItemGrantedSkillByName(skillName)
+      if (!skill) continue
+      const scaled = applyStarsToRangedValue(val, 'item_granted_skill_rank', stars)
+      const rMin = Math.round(rangedMin(scaled))
+      const rMax = Math.round(rangedMax(scaled))
+      if (rMax <= 0) continue
+      const displayRank = rMin === rMax ? String(rMin) : `${rMin}-${rMax}`
+      const lines: string[] = []
+      if (skill.passiveConverts) {
+        for (const c of skill.passiveConverts.perRank) {
+          const pctMin = c.pct * rMin
+          const pctMax = c.pct * rMax
+          const pctText = pctMin === pctMax ? `${pctMin}%` : `${pctMin}–${pctMax}%`
+          lines.push(
+            `${pctText} of ${statName(c.from)} added as ${statName(c.to)}`,
+          )
+        }
+      }
+      if (skill.passiveStats) {
+        const { base: baseStats, perRank } = skill.passiveStats
+        const totals: Record<string, [number, number]> = {}
+        if (baseStats) {
+          for (const [k, v] of Object.entries(baseStats)) totals[k] = [v, v]
+        }
+        if (perRank) {
+          for (const [k, v] of Object.entries(perRank)) {
+            const cur = totals[k] ?? [0, 0]
+            totals[k] = [cur[0] + v * rMin, cur[1] + v * rMax]
+          }
+        }
+        for (const [k, [a, b]] of Object.entries(totals)) {
+          if (a === 0 && b === 0) continue
+          const txt = a === b ? `${a >= 0 ? '+' : ''}${a}` : `+${a}–${b}`
+          lines.push(`${txt} ${statName(k)}`)
+        }
+      }
+      out.push({ skill, displayRank, lines })
+    }
+    return out
+  })()
   const runewordEntries = runeword
     ? Object.entries(runeword.stats).filter(([, v]) => v !== 0)
     : []
@@ -234,6 +291,40 @@ export function ItemTooltipBody({
             {skillBonusEntries.map(([skill, val]) => (
               <li key={`skill-${skill}`} className="text-accent-hot">
                 {formatValue(val, '')} to {skill}
+              </li>
+            ))}
+          </ul>
+        </TooltipSection>
+      )}
+
+      {grantedSkillEntries.length > 0 && (
+        <TooltipSection>
+          <div className="text-[10px] uppercase tracking-[0.12em] text-muted mb-1">
+            Granted Skill Effects
+          </div>
+          <ul className="space-y-1 text-[11px]">
+            {grantedSkillEntries.map(({ skill, displayRank, lines }) => (
+              <li key={skill.id}>
+                <div className="text-accent-hot text-[12px]">
+                  {skill.name}{' '}
+                  <span className="text-muted text-[10px]">
+                    rank {displayRank}
+                  </span>
+                </div>
+                {skill.description && (
+                  <div className="text-muted text-[10px] italic leading-snug">
+                    {skill.description}
+                  </div>
+                )}
+                {lines.length > 0 && (
+                  <ul className="mt-0.5 ml-2 space-y-0.5 text-text/80">
+                    {lines.map((line, i) => (
+                      <li key={i} className="text-[11px]">
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>

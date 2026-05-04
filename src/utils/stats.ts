@@ -7,10 +7,12 @@ import {
   getCrystalMod,
   getGem,
   getItem,
+  getItemGrantedSkillByName,
   getItemSet,
   getRune,
   getSkillsByClass,
   isGearSlot,
+  itemGrantedSkills,
 } from '../data'
 import type { ForgeKind } from '../data'
 import { RAINBOW_MULTIPLIER, STAR_AFFIX_BONUS } from '../store/build'
@@ -553,6 +555,38 @@ export function computeBuildStats(
     }
   }
 
+  // Item-granted skills (e.g. "Fallen God's Bloodlust" rolled on heroic gear)
+  // contribute passive stats based on their summed-and-star-scaled rank.
+  // `+to All Skills` does NOT apply to these — only the rolled value × stars.
+  const itemGrantedRanks = aggregateItemSkillBonuses(inventory)
+  for (const granted of itemGrantedSkills) {
+    const key = normalizeSkillName(granted.name)
+    const [rankMin, rankMax] = itemGrantedRanks[key] ?? [0, 0]
+    if (rankMax <= 0) continue
+    if (!granted.passiveStats) continue
+    const { base, perRank } = granted.passiveStats
+    const out: Record<string, RangedValue> = {}
+    if (base) {
+      for (const [k, v] of Object.entries(base)) {
+        out[k] = v
+      }
+    }
+    if (perRank) {
+      for (const [k, v] of Object.entries(perRank)) {
+        const min = (out[k] !== undefined ? rangedMin(out[k]) : 0) + v * rankMin
+        const max = (out[k] !== undefined ? rangedMax(out[k]) : 0) + v * rankMax
+        out[k] = min === max ? min : [min, max]
+      }
+    }
+    const label = `${granted.name} (rank ${
+      rankMin === rankMax ? rankMin : `${rankMin}-${rankMax}`
+    })`
+    for (const [k, v] of Object.entries(out)) {
+      if (isZero(v)) continue
+      applyContribution(attrSources, statSources, k, v, label, 'item')
+    }
+  }
+
   for (const { from, to } of STAT_FAN_OUTS) {
     for (const variant of ['', '_more'] as const) {
       const sources = statSources.get(from + variant)
@@ -574,6 +608,46 @@ export function computeBuildStats(
 
   applyMultiplier(stats, 'life', 'increased_life', 'increased_life_more')
   applyMultiplier(stats, 'mana', 'increased_mana', 'increased_mana_more')
+
+  // Item-granted skill `passiveConverts`: `stats[to] += pct/100 × rank × stats[from]`.
+  // Reads the *final* value of `from` (after additive sum + applyMultiplier).
+  // Pushes the contribution to statSources so it shows in the breakdown,
+  // and re-sums stats[to] to reflect the addition.
+  const touchedConvertTargets = new Set<string>()
+  for (const granted of itemGrantedSkills) {
+    if (!granted.passiveConverts) continue
+    const key = normalizeSkillName(granted.name)
+    const [rankMin, rankMax] = itemGrantedRanks[key] ?? [0, 0]
+    if (rankMax <= 0) continue
+    for (const conv of granted.passiveConverts.perRank) {
+      const fromVal = stats[conv.from] ?? 0
+      const fromMin = rangedMin(fromVal)
+      const fromMax = rangedMax(fromVal)
+      const addMin = ((conv.pct * rankMin) / 100) * fromMin
+      const addMax = ((conv.pct * rankMax) / 100) * fromMax
+      if (addMin === 0 && addMax === 0) continue
+      const value: RangedValue = addMin === addMax ? addMin : [addMin, addMax]
+      const label = `Converted from ${statName(conv.from)} (${granted.name}, rank ${
+        rankMin === rankMax ? rankMin : `${rankMin}-${rankMax}`
+      })`
+      pushSource(statSources, conv.to, {
+        label,
+        sourceType: 'item',
+        value,
+      })
+      // Mirror into the externally-returned source list too (which was a
+      // snapshot of the same array, so mutating in place is fine).
+      const outList = statSourcesOut[conv.to]
+      if (!outList) {
+        statSourcesOut[conv.to] = statSources.get(conv.to)!
+      }
+      touchedConvertTargets.add(conv.to)
+    }
+  }
+  for (const k of touchedConvertTargets) {
+    const list = statSources.get(k)
+    if (list) stats[k] = sumContributions(list)
+  }
 
   return {
     attributes,
@@ -882,13 +956,16 @@ export function aggregateItemSkillBonuses(
   inventory: Inventory,
 ): Record<string, [number, number]> {
   const out: Record<string, [number, number]> = {}
-  for (const item of Object.values(inventory)) {
+  for (const [slotKey, item] of Object.entries(inventory)) {
     if (!item) continue
     const base = getItem(item.baseId)
     if (!base?.skillBonuses) continue
+    const stars = isGearSlot(slotKey) ? item.stars : undefined
     for (const [skillName, val] of Object.entries(base.skillBonuses)) {
-      const min = rangedMin(val)
-      const max = rangedMax(val)
+      // Stars scale the rolled rank; round to int afterwards.
+      const scaled = applyStarsToRangedValue(val, 'item_granted_skill_rank', stars)
+      const min = Math.round(rangedMin(scaled))
+      const max = Math.round(rangedMax(scaled))
       const key = normalizeSkillName(skillName)
       const cur = out[key] ?? [0, 0]
       out[key] = [cur[0] + min, cur[1] + max]

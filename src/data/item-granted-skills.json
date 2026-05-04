@@ -1,0 +1,21 @@
+[
+  {
+    "id": "fallen_gods_bloodlust",
+    "name": "Fallen God's Bloodlust",
+    "description": "Converts a portion of your Attack Speed into Faster Cast Rate.",
+    "passiveConverts": {
+      "perRank": [
+        {
+          "from": "increased_attack_speed",
+          "to": "faster_cast_rate",
+          "pct": 10
+        }
+      ]
+    }
+  },
+  {
+    "id": "wings_of_hatred",
+    "name": "Wings of Hatred",
+    "description": "Reduces landing diminish (capped at rank 1)."
+  }
+]

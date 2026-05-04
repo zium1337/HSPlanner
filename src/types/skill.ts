@@ -129,3 +129,27 @@ export interface SubskillNode {
   proc?: SubskillProc
   requiresSubskill?: string
 }
+
+/**
+ * A skill that exists only as an item-granted affix (e.g. "Fallen God's
+ * Bloodlust" rolled on heroic armor). It has no class, no damage, and is
+ * never directly allocatable. Its rank comes from summing item bonus rolls
+ * (scaled by stars). `+to All Skills` does NOT apply.
+ */
+export interface ItemGrantedSkill {
+  id: string
+  name: string
+  description?: string
+  /** Flat / per-rank passive stats (additive into the same buckets). */
+  passiveStats?: {
+    base?: Record<string, number>
+    perRank?: Record<string, number>
+  }
+  /**
+   * Per-rank conversion rules.
+   * `stats[to] += (pct/100 × rank) × stats[from]` (final value of `from`).
+   */
+  passiveConverts?: {
+    perRank: Array<{ from: string; to: string; pct: number }>
+  }
+}
