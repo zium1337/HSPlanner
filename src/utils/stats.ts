@@ -8,7 +8,6 @@ import {
   getCrystalMod,
   getGem,
   getItem,
-  getItemGrantedSkillByName,
   getItemSet,
   getRune,
   getSkillsByClass,

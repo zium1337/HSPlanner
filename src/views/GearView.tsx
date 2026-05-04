@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import ItemTooltip, { ItemCard } from '../components/ItemTooltip'
-import SearchableSelect from '../components/SearchableSelect'
-import type { SearchableOption } from '../components/SearchableSelect'
 import { Dropdown } from '../components/Dropdown'
 import type { DropdownItem } from '../components/Dropdown'
 import {
