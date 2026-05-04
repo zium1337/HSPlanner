@@ -71,20 +71,36 @@ export default function BottomBar() {
     if (!inTauriRuntime()) return
     let unlisten: (() => void) | undefined
     let cancelled = false
+    let quitting = false
+    const QUIT_INSTALL_TIMEOUT_MS = 20000
     ;(async () => {
       const { getCurrentWindow } = await import('@tauri-apps/api/window')
       if (cancelled) return
       const win = getCurrentWindow()
       unlisten = await win.onCloseRequested(async (event) => {
+        if (quitting) {
+          const { exit } = await import('@tauri-apps/plugin-process')
+          await exit(0)
+          return
+        }
         const auto = readStorage(AUTO_INSTALL_KEY) === '1'
         const cur = checkRef.current
         if (!auto || cur.kind !== 'available') return
         event.preventDefault()
+        quitting = true
         try {
-          await installUpdateOnQuit()
+          await Promise.race([
+            installUpdateOnQuit(),
+            new Promise((_, reject) =>
+              window.setTimeout(
+                () => reject(new Error('install-on-quit timeout')),
+                QUIT_INSTALL_TIMEOUT_MS,
+              ),
+            ),
+          ])
         } catch {
-          // If install fails, fall through and exit anyway so the close
-          // request the user issued is still honoured.
+          // If install fails or times out, fall through and exit anyway so
+          // the close request the user issued is still honoured.
         }
         const { exit } = await import('@tauri-apps/plugin-process')
         await exit(0)
