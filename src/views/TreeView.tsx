@@ -1,34 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import attackSpeedIcon from '../assets/atlas/attack_speed.png'
-import dexterityIcon from '../assets/atlas/dexterity.png'
-import allAttributesIcon from '../assets/atlas/all_attributes.png'
-import blackHole from '../assets/atlas/black_hole.png'
-import forkSmall from '../assets/atlas/fork_small.png'
-import forkBig from '../assets/atlas/fork_big.png'
-import poisonSmall from '../assets/atlas/poison_damage_small.png'
-import poisonBig from '../assets/atlas/poison_damage_big.png'
-import rangedEnhancedDamageSmall from '../assets/atlas/ranged_enhanced_damage_small.png'
-import rangedEnhancedDamageBig from '../assets/atlas/ranged_enhanced_damage_big.png'
-import bleedDamageSmall from '../assets/atlas/bleed_damage_small.png'
-import bleedDamageBig1 from '../assets/atlas/bleed_damage_big_1.png'
-import armorBreakSmall from '../assets/atlas/armor_break_small.png'
-import armorBreakBig from '../assets/atlas/armor_break_big.png'
-import aoeSmall from '../assets/atlas/aoe_small.png'
-import aoeBig from '../assets/atlas/aoe_big.png'
-import explosionDamageSmall from '../assets/atlas/explosion_damage_small.png'
-import energySmall from '../assets/atlas/energy.png'
-import magicDamageSmall from '../assets/atlas/magic_damage_small.png'
-import magicDamageBig from '../assets/atlas/magic_damage_big.png'
-import manaSmall from '../assets/atlas/mana.png'
-import manaBig from '../assets/atlas/mana_big.png'
-import energyBig from '../assets/atlas/energy_big.png'
-import manaBig2 from '../assets/atlas/mana_big_2.png'
-import intSmall from '../assets/atlas/int_small.png'
-import intBig from '../assets/atlas/int_big.png'
-import spellCritSmall from '../assets/atlas/spell_crit_small.png'
-import spellCritBig from '../assets/atlas/spell_crit_big.png'
 import treeBackground from '../assets/atlas/Incarnation_Background.png'
+import nodeIconsMap from '../data/node-icons.json'
 import treeData from '../data/hero-siege-tree.json'
 import { useBuild } from '../store/build'
 import { ADJ, findPath, START_IDS, START_SET } from '../utils/treeGraph'
@@ -108,61 +81,21 @@ const SEARCH_INDEX: { id: number; haystack: string }[] = Object.entries(
   haystack: (info.t + ' ' + info.l.join(' ')).toLowerCase(),
 }))
 
-const NODE_ICON_BY_TITLE: Record<string, string> = {
-  'Black Hole': blackHole,
-  'Attack Speed': attackSpeedIcon,
-  Dexterity: dexterityIcon,
-  'All Attributes': allAttributesIcon,
-  'Forking Projectile': forkSmall,
-  'Multiforking': forkBig,
-  'Poison Damage': poisonSmall,
-  'Stacked Pandemic': poisonBig,
-  'Rapid Corrosion': poisonBig,
-  'Ranged Enhanced Damage': rangedEnhancedDamageSmall,
-  'Powershot': rangedEnhancedDamageBig,
-  'Carving Shot': rangedEnhancedDamageBig,
-  'Projectile Damage': rangedEnhancedDamageBig,
-  'Blood Loss': bleedDamageBig1,
-  'Garrote': bleedDamageBig1,
-  'Bleed Damage': bleedDamageSmall,
-  'Armor Break': armorBreakSmall,
-  'Crushing Blow': armorBreakSmall,
-  'Crusher': armorBreakBig,
-  'Shattering Elements': armorBreakBig,
-  'Area of Effect': aoeSmall,
-  'Spell Area of Effect Damage': aoeSmall,
-  'Total Chaos': aoeBig,
-  'Ramping Pulse': aoeBig,
-  "Ether's Pull": aoeBig,
-  'Spacial Conversion': aoeBig,
-  'Explosion Damage': explosionDamageSmall,
-  'Explosion Area of Effect': explosionDamageSmall,
-  'Energy': energySmall,
-  'Magic Damage': magicDamageSmall,
-  'Manafueled Damage': magicDamageSmall,
-  'Energetic Carnage': magicDamageBig,
-  "Magister´s Intellect": magicDamageBig,
-  'Maximum Mana': manaSmall,
-  'Increased Mana': manaBig,
-  'Energetic': energyBig,
-  'Patience is Power': manaBig2,
-  'Hunger for Mana': manaBig2,
-  'Soulburn Essence': manaBig2,
-  'Manawell': manaBig2,
-  'Mana Hunger': manaBig2,
-  'Mana Redirection': manaBig2,
-  'Intelligence': intSmall,
-  'Bulk Intelligence': intBig,
-  'Amplified Intelligence': intBig,
-  'Critical Spellhit': spellCritSmall,
-  "Warlock´s Fury": spellCritBig,
-  'Time Surge': spellCritBig,
+const NODE_ICON_FILES = import.meta.glob<string>(
+  '../assets/atlas/nodes/*.png',
+  { eager: true, query: '?url', import: 'default' },
+)
+const NODE_ICON_URL_BY_KEY: Record<string, string> = {}
+for (const [p, url] of Object.entries(NODE_ICON_FILES)) {
+  const file = p.split('/').pop() ?? ''
+  const key = file.replace(/\.png$/i, '')
+  NODE_ICON_URL_BY_KEY[key] = url
 }
 
 const NODE_ICONS: { id: number; x: number; y: number; r: number; href: string }[] =
   NODES.flatMap((n) => {
-    const info = TREE_NODE_INFO[String(n.id)]
-    const href = info ? NODE_ICON_BY_TITLE[info.t] : undefined
+    const key = (nodeIconsMap as Record<string, string>)[String(n.id)]
+    const href = key ? NODE_ICON_URL_BY_KEY[key] : undefined
     return href ? [{ id: n.id, x: n.x, y: n.y, r: n.r, href }] : []
   })
 
