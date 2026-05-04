@@ -998,10 +998,14 @@ export function computeSkillDamage(
 
   const extra = collectExtraDamage(stats, enemyConditions)
   const extraMult = 1 + extra.pct / 100
-
-  const critChance = rangedMax(stats.crit_chance ?? 0)
-  const critDamagePct = rangedMax(stats.crit_damage ?? 0)
-  const critDamageMore = rangedMax(stats.crit_damage_more ?? 0)
+  const isSpell = !!skill.tags?.includes('Spell')
+  const critChance = isSpell
+    ? rangedMax(stats.spell_crit_chance ?? 0)
+    : rangedMax(stats.crit_chance ?? 0)
+  const critDamagePct = isSpell
+    ? rangedMax(stats.spell_crit_damage ?? 0)
+    : rangedMax(stats.crit_damage ?? 0)
+  const critDamageMore = isSpell ? 0 : rangedMax(stats.crit_damage_more ?? 0)
   const critMoreMult = 1 + critDamageMore / 100
   const critMultOnCrit = (1 + critDamagePct / 100) * critMoreMult
   const critChanceClamped = Math.max(0, Math.min(95, critChance)) / 100

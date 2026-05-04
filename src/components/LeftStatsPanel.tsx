@@ -252,6 +252,14 @@ export default function LeftStatsPanel() {
     damage && effCastMax !== undefined
       ? damage.finalMax * effCastMax
       : undefined;
+  const avgHitDpsMin =
+    damage && effCastMin !== undefined
+      ? damage.avgMin * effCastMin
+      : undefined;
+  const avgHitDpsMax =
+    damage && effCastMax !== undefined
+      ? damage.avgMax * effCastMax
+      : undefined;
 
   const procSkills = useMemo(
     () => allClassSkills.filter((s) => s.proc && (skillRanks[s.id] ?? 0) > 0),
@@ -283,8 +291,9 @@ export default function LeftStatsPanel() {
       if (!targetDmg) continue;
       const rate = procSkill.proc.trigger === "on_kill" ? killsPerSec : 1;
       const factor = rate * (procSkill.proc.chance / 100);
-      min += factor * targetDmg.finalMin;
-      max += factor * targetDmg.finalMax;
+      // Use avg (crit-aware) so combined DPS is realistic.
+      min += factor * targetDmg.avgMin;
+      max += factor * targetDmg.avgMax;
     }
     return { min, max };
   }, [
@@ -300,10 +309,10 @@ export default function LeftStatsPanel() {
   ]);
   const { min: procDpsMin, max: procDpsMax } = procDps;
 
-  const totalDpsMin =
-    hitDpsMin !== undefined ? hitDpsMin + procDpsMin : undefined;
-  const totalDpsMax =
-    hitDpsMax !== undefined ? hitDpsMax + procDpsMax : undefined;
+  const combinedDpsMin =
+    avgHitDpsMin !== undefined ? avgHitDpsMin + procDpsMin : undefined;
+  const combinedDpsMax =
+    avgHitDpsMax !== undefined ? avgHitDpsMax + procDpsMax : undefined;
 
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col overflow-y-auto border-r border-border bg-panel text-[12px]">
@@ -556,23 +565,22 @@ export default function LeftStatsPanel() {
                     )
                   }
                 />
-                {procDpsMax > 0 && (
-                  <Row
-                    label="Combined DPS"
-                    value={
-                      totalDpsMin !== undefined && totalDpsMax !== undefined ? (
-                        <span className="text-green-400 font-semibold">
-                          {formatNumRange(
-                            Math.round(totalDpsMin),
-                            Math.round(totalDpsMax),
-                          )}
-                        </span>
-                      ) : (
-                        <span className="text-muted">—</span>
-                      )
-                    }
-                  />
-                )}
+                <Row
+                  label="Combined DPS"
+                  value={
+                    combinedDpsMin !== undefined &&
+                    combinedDpsMax !== undefined ? (
+                      <span className="text-green-400 font-semibold">
+                        {formatNumRange(
+                          Math.round(combinedDpsMin),
+                          Math.round(combinedDpsMax),
+                        )}
+                      </span>
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )
+                  }
+                />
               </>
             )}
           </>

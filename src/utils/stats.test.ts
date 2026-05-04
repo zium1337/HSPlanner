@@ -123,6 +123,70 @@ describe('computeSkillDamage - Total skill damage as multiplier', () => {
   })
 })
 
+describe('computeSkillDamage - Spell vs Melee crit', () => {
+  const zeroAttrs = { strength: 0, dexterity: 0, intelligence: 0, energy: 0, vitality: 0, armor: 0 }
+
+  const spellSkill: Skill = {
+    id: 'fb', classId: 'test', name: 'Fireball', kind: 'active',
+    damageType: 'fire', damageFormula: { base: 100, perLevel: 0 },
+    tags: ['Cast', 'Active', 'Spell'],
+    ranks: [{ rank: 1 }],
+  } as Skill
+
+  const meleeSkill: Skill = {
+    id: 'cleave', classId: 'test', name: 'Cleave', kind: 'active',
+    damageType: 'physical', damageFormula: { base: 100, perLevel: 0 },
+    tags: ['Attack', 'Melee'],
+    ranks: [{ rank: 1 }],
+  } as Skill
+
+  it('spell uses spell_crit_chance + spell_crit_damage, ignores melee crit stats', () => {
+    const result = computeSkillDamage(
+      spellSkill, 1, zeroAttrs,
+      {
+        crit_chance: 50, crit_damage: 200, crit_damage_more: 50,
+        spell_crit_chance: 20, spell_crit_damage: 100,
+      },
+      {}, {},
+    )
+    // critMultOnCrit = (1 + 100/100) * 1 = 2
+    // critMultAvg = (1 - 0.20) + 0.20 * 2 = 1.20
+    // hitMin=100, critMin = 100 * 2 = 200, avgMin = 100 * 1.2 = 120
+    expect(result?.critChance).toBe(20)
+    expect(result?.critDamagePct).toBe(100)
+    expect(result?.critMin).toBe(200)
+    expect(result?.avgMin).toBe(120)
+  })
+
+  it('melee uses crit_chance + crit_damage (+ crit_damage_more), ignores spell crit stats', () => {
+    const result = computeSkillDamage(
+      meleeSkill, 1, zeroAttrs,
+      {
+        crit_chance: 50, crit_damage: 200, crit_damage_more: 50,
+        spell_crit_chance: 99, spell_crit_damage: 999,
+      },
+      {}, {},
+    )
+    // critMultOnCrit = (1 + 200/100) * 1.5 = 4.5
+    // critMultAvg = (1 - 0.50) + 0.50 * 4.5 = 2.75
+    expect(result?.critChance).toBe(50)
+    expect(result?.critDamagePct).toBe(200)
+    expect(result?.critMin).toBe(450)
+    expect(result?.avgMin).toBe(275)
+  })
+
+  it('spell with no spell crit stats → 0% crit (does not fall back to melee crit)', () => {
+    const result = computeSkillDamage(
+      spellSkill, 1, zeroAttrs,
+      { crit_chance: 50, crit_damage: 200 },
+      {}, {},
+    )
+    expect(result?.critChance).toBe(0)
+    expect(result?.critDamagePct).toBe(0)
+    expect(result?.avgMin).toBe(100) // no crit, just hit
+  })
+})
+
 describe('computeSkillDamage - enemy resistance and ignore_*_res', () => {
   const lightningSkill: Skill = {
     id: 'test_skill',
