@@ -186,6 +186,54 @@ export function TooltipSection({
   )
 }
 
+export type TooltipSectionTone =
+  | 'gold'
+  | 'pink'
+  | 'red'
+  | 'green'
+  | 'muted'
+  | 'blue'
+  | 'orange'
+
+const TOOLTIP_SECTION_HEADER_TONE: Record<TooltipSectionTone, string> = {
+  gold: 'text-accent-hot/85 bg-accent-deep/10',
+  pink: 'text-pink-300 bg-pink-400/10',
+  red: 'text-red-300 bg-red-500/10',
+  green: 'text-green-300 bg-green-500/10',
+  muted: 'text-muted bg-panel-2/60',
+  blue: 'text-stat-blue bg-stat-blue/10',
+  orange: 'text-stat-orange bg-stat-orange/10',
+}
+
+/**
+ * Pełnowymiarowy nagłówek sekcji w stylu SourceTooltip (gold-bar). Renderowany
+ * wewnątrz `<TooltipSection>` z negatywnym marginesem żeby rozciągnąć się na
+ * całą szerokość mimo paddingu sekcji. Opcjonalny `trailing` po prawej stronie
+ * (np. licznik typu "3/5 pieces").
+ */
+export function TooltipSectionHeader({
+  children,
+  trailing,
+  tone = 'gold',
+}: {
+  children: ReactNode
+  trailing?: ReactNode
+  tone?: TooltipSectionTone
+}) {
+  return (
+    <div
+      className={`-mx-3 -mt-2 mb-2 px-3 py-1 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.12em] border-b border-border/40 ${TOOLTIP_SECTION_HEADER_TONE[tone]}`}
+    >
+      <span>{children}</span>
+      {trailing != null && (
+        <span className="font-mono normal-case text-text/70 tracking-normal">
+          {trailing}
+        </span>
+      )}
+    </div>
+  )
+}
+
 export function TooltipFooter({ children }: { children: ReactNode }) {
   return (
     <div className="px-3 py-1.5 border-t border-border/70 bg-panel-2 text-[10px] font-medium uppercase tracking-[0.12em] text-faint">

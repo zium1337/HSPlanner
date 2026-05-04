@@ -14,6 +14,7 @@ import type {
   AngelicAugment,
 } from '../types'
 import affixesJson from './affixes.json'
+import augmentsJson from './augments.json'
 import crystalsJson from './crystals.json'
 import gameConfigJson from './game-config.json'
 import itemGrantedSkillsJson from './item-granted-skills.json'
@@ -90,7 +91,7 @@ export function getItemGrantedSkillByName(
   return itemGrantedSkillByName.get(name.trim().toLowerCase())
 }
 export const relics: Relic[] = []
-export const augments: AngelicAugment[] = []
+export const augments: AngelicAugment[] = augmentsJson as AngelicAugment[]
 export const GEAR_SLOTS = new Set<string>([
   'weapon',
   'offhand',
@@ -106,19 +107,23 @@ export const GEAR_SLOTS = new Set<string>([
 export function isGearSlot(slot: string): boolean {
   return GEAR_SLOTS.has(slot)
 }
-export type ForgeKind = 'satanic_crystal' | 'gypsy_prophecy'
+export type ForgeKind = 'satanic_crystal'
 
-const SATANIC_CRYSTAL_RARITIES = new Set(['satanic', 'satanic_set'])
-const GYPSY_PROPHECY_RARITIES = new Set(['heroic', 'angelic', 'unholy', 'relic'])
+const SATANIC_CRYSTAL_RARITIES = new Set([
+  'satanic',
+  'satanic_set',
+  'heroic',
+  'angelic',
+  'unholy',
+  'relic',
+])
 
 export function forgeKindFor(rarity: string): ForgeKind | null {
   if (SATANIC_CRYSTAL_RARITIES.has(rarity)) return 'satanic_crystal'
-  if (GYPSY_PROPHECY_RARITIES.has(rarity)) return 'gypsy_prophecy'
   return null
 }
 export const FORGE_KIND_LABEL: Record<ForgeKind, string> = {
   satanic_crystal: 'Satanic Crystal',
-  gypsy_prophecy: "Gypsy's Prophecy",
 }
 
 function indexById<T extends { id: string }>(list: T[]): Map<string, T> {
@@ -133,6 +138,7 @@ const runewordIndex = indexById(runewords)
 const affixIndex = indexById(affixes)
 const crystalModIndex = indexById(crystalMods)
 const itemSetIndex = indexById(itemSets)
+const augmentIndex = indexById(augments)
 
 const skillsByClassId = new Map<string, Skill[]>()
 for (const s of skills) {
@@ -192,6 +198,10 @@ export function getCrystalMod(id: string): Affix | undefined {
 
 export function getItemSet(id: string): ItemSet | undefined {
   return itemSetIndex.get(id)
+}
+
+export function getAugment(id: string): AngelicAugment | undefined {
+  return augmentIndex.get(id)
 }
 
 export function detectRuneword(

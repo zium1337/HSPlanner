@@ -1467,5 +1467,41 @@
       "Attacks Hit Multiple Enemies None",
       "Grant Aura Holder Only: Dark Oath"
     ]
+  },
+  {
+    "id": "sword_gabriel_s_broken_resolve",
+    "name": "Gabriel's Broken Resolve",
+    "baseType": "Sword",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 97,
+    "damageMin": 73,
+    "damageMax": 82,
+    "attackSpeed": 1.75,
+    "implicit": {
+      "enhanced_damage": [
+         890,
+         945
+      ],
+      "all_skills": 3,
+      "life_steal": [
+        14,
+        15
+      ],
+      "defense_ignored": 40,
+      "to_strength": 35,
+      "all_attributes": [
+        25,
+        40
+      ]
+    },
+    "uniqueEffects": [
+      "15% Chance when Attacking to cast Gabriels Shadow Level 1"
+    ],
+    "sockets": 3,
+    "maxSockets": 5,
+    "maxAffixes": 2,
+    "randomAffixGroupId": "random_unholy"
   }
 ]

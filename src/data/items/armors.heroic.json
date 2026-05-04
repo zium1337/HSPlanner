@@ -384,5 +384,33 @@
     ],
     "sockets": 3,
     "maxSockets": 3
+  },
+  {
+    "id": "armors_heroic_gabriels_broken_wings",
+    "name": "Gabriel's Broken Wings",
+    "baseType": "Body Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 780,
+    "defenseMax": 820,
+    "sockets": 2,
+    "maxSockets": 6,
+    "source": "Uber Gabriel",
+    "skillBonuses": {
+      "Wings of Hatred": 1,
+      "Fallen God's Bloodlust": [1, 10]
+    },
+    "implicit": {
+      "enhanced_damage": [50, 100],
+      "enhanced_defense": [450, 550],
+      "all_skills": [2, 6],
+      "increased_attack_speed": [40, 50],
+      "attack_rating": [800, 1000],
+      "all_attributes": 80,
+      "magic_skill_damage": [35, 75],
+      "all_damage_taken_reduced_pct": 12
+    }
   }
 ]

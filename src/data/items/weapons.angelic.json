@@ -38,11 +38,12 @@
     },
     "uniqueEffects": [
       "Deadly Blow Damage increased by [100-150]%",
-      "Random Unholy Affix",
       "Lunar Aura Level [12-15]"
     ],
     "sockets": 4,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
   },
   {
     "id": "gun_angelic_commander_s_sentry_blaster",

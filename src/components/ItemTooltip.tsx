@@ -41,6 +41,7 @@ import Tooltip, {
   TooltipFooter,
   TooltipHeader,
   TooltipSection,
+  TooltipSectionHeader,
 } from './Tooltip'
 import { TONE_BORDER, TONE_GLOW, TONE_RGB, TONE_TEXT } from './tooltip-tones'
 import type { CSSProperties } from 'react'
@@ -262,8 +263,7 @@ export function ItemTooltipBody({
   const equippedAffixes = equipped?.affixes ?? []
   const equippedForgedMods = equipped?.forgedMods ?? []
   const forgeKind = isGearSlot(base.slot) ? forgeKindFor(base.rarity) : null
-  const forgeAccent =
-    forgeKind === 'gypsy_prophecy' ? 'text-pink-300' : 'text-red-300'
+  const forgeAccent = 'text-red-300'
 
   return (
     <>
@@ -282,6 +282,7 @@ export function ItemTooltipBody({
 
       {(implicitEntries.length > 0 || skillBonusEntries.length > 0) && (
         <TooltipSection>
+          <TooltipSectionHeader tone="gold">Implicit</TooltipSectionHeader>
           <ul className="space-y-0.5 text-[12px]">
             {implicitEntries.map(([key, value]) => (
               <li key={`impl-${key}`} className="text-accent-hot">
@@ -299,9 +300,9 @@ export function ItemTooltipBody({
 
       {grantedSkillEntries.length > 0 && (
         <TooltipSection>
-          <div className="text-[10px] uppercase tracking-[0.12em] text-muted mb-1">
+          <TooltipSectionHeader tone="orange">
             Granted Skill Effects
-          </div>
+          </TooltipSectionHeader>
           <ul className="space-y-1 text-[11px]">
             {grantedSkillEntries.map(({ skill, displayRank, lines }) => (
               <li key={skill.id}>
@@ -343,40 +344,74 @@ export function ItemTooltipBody({
         </TooltipSection>
       )}
 
-      {equippedAffixes.length > 0 && (
-        <TooltipSection>
-          <ul className="space-y-0.5 text-[12px]">
-            {equippedAffixes.map((eq, idx) => {
-              const affix = getAffix(eq.affixId)
-              if (!affix) return null
-              if (!affix.statKey) {
-                return (
-                  <li key={idx} className="text-yellow-300/90 italic">
-                    {affix.description}
-                  </li>
-                )
-              }
-              const descNoValue = affix.description
-                .replace(/^[+-]?\[?[^\]]*\]?\s*/, '')
-                .replace(/\s+/g, ' ')
-                .trim()
-              return (
-                <li key={idx} className="text-yellow-300">
-                  {formatAffixValue(affix, eq.roll, equipped?.stars)} {descNoValue}
-                </li>
-              )
-            })}
-          </ul>
-        </TooltipSection>
-      )}
+      {(() => {
+        const indexed = equippedAffixes.map((eq, idx) => ({
+          eq,
+          idx,
+          affix: getAffix(eq.affixId),
+        }))
+        const unholy = indexed.filter(
+          (x) => x.affix?.groupId === 'random_unholy',
+        )
+        const standard = indexed.filter(
+          (x) => x.affix?.groupId !== 'random_unholy',
+        )
+        const renderItem = ({
+          eq,
+          idx,
+          affix,
+        }: (typeof indexed)[number]) => {
+          if (!affix) return null
+          const isUnholy = affix.groupId === 'random_unholy'
+          const colorBase = isUnholy ? 'text-pink-300' : 'text-yellow-300'
+          const colorMissing = isUnholy
+            ? 'text-pink-300/90 italic'
+            : 'text-yellow-300/90 italic'
+          if (!affix.statKey) {
+            return (
+              <li key={idx} className={colorMissing}>
+                {affix.description}
+              </li>
+            )
+          }
+          const descNoValue = affix.description
+            .replace(/^[+-]?\[?[^\]]*\]?\s*/, '')
+            .replace(/\s+/g, ' ')
+            .trim()
+          return (
+            <li key={idx} className={colorBase}>
+              {formatAffixValue(affix, eq.roll, equipped?.stars)} {descNoValue}
+            </li>
+          )
+        }
+        return (
+          <>
+            {standard.length > 0 && (
+              <TooltipSection>
+                <ul className="space-y-0.5 text-[12px]">
+                  {standard.map(renderItem)}
+                </ul>
+              </TooltipSection>
+            )}
+            {unholy.length > 0 && (
+              <TooltipSection>
+                <TooltipSectionHeader tone="pink">
+                  Unholy Affixes
+                </TooltipSectionHeader>
+                <ul className="space-y-0.5 text-[12px]">
+                  {unholy.map(renderItem)}
+                </ul>
+              </TooltipSection>
+            )}
+          </>
+        )
+      })()}
 
       {equippedForgedMods.length > 0 && forgeKind && (
         <TooltipSection>
-          <div
-            className={`text-[10px] uppercase tracking-[0.12em] ${forgeAccent} mb-1`}
-          >
+          <TooltipSectionHeader tone="red">
             Forged · {FORGE_KIND_LABEL[forgeKind]}
-          </div>
+          </TooltipSectionHeader>
           <ul className="space-y-0.5 text-[12px]">
             {equippedForgedMods.map((eq, idx) => {
               const mod = getCrystalMod(eq.affixId)
@@ -393,9 +428,9 @@ export function ItemTooltipBody({
 
       {socketStats.length > 0 && (
         <TooltipSection>
-          <div className="text-[10px] uppercase tracking-[0.12em] text-muted mb-1">
+          <TooltipSectionHeader tone="gold">
             From Sockets
-          </div>
+          </TooltipSectionHeader>
           <ul className="space-y-0.5 text-[12px]">
             {socketStats.map(([k, v]) => (
               <li key={k} className="text-accent">
@@ -408,12 +443,12 @@ export function ItemTooltipBody({
 
       {set && set.bonuses.length > 0 && (
         <TooltipSection>
-          <div className="flex items-baseline justify-between text-[10px] uppercase tracking-[0.12em] mb-1">
-            <span className="text-green-400">{set.name}</span>
-            <span className="text-muted">
-              {setEquippedCount}/{set.items.length} pieces
-            </span>
-          </div>
+          <TooltipSectionHeader
+            tone="green"
+            trailing={`${setEquippedCount}/${set.items.length} pieces`}
+          >
+            {set.name}
+          </TooltipSectionHeader>
           <ul className="space-y-1">
             {set.bonuses.map((bonus, idx) => {
               const active = setEquippedCount >= bonus.pieces
@@ -464,9 +499,9 @@ export function ItemTooltipBody({
 
       {base.uniqueEffects && base.uniqueEffects.length > 0 && (
         <TooltipSection>
-          <div className="text-[10px] uppercase tracking-[0.12em] text-muted mb-1">
+          <TooltipSectionHeader tone="muted">
             Not Yet Supported
-          </div>
+          </TooltipSectionHeader>
           <ul className="space-y-0.5 text-[12px]">
             {base.uniqueEffects.map((effect, idx) => (
               <li key={idx} className={`${TONE_TEXT.angelic} opacity-70`}>

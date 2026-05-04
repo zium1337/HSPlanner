@@ -74,6 +74,9 @@ const equippedItemSchema = z
     runewordId: SAFE_STRING.optional(),
     stars: FINITE_NUMBER.optional(),
     forgedMods: z.array(equippedAffixSchema).max(MAX_AFFIXES_PER_ITEM).optional(),
+    augment: z
+      .object({ id: SAFE_STRING, level: FINITE_NUMBER })
+      .optional(),
   })
   .passthrough()
 
@@ -245,6 +248,16 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       typeof item.stars === 'number' && Number.isFinite(item.stars)
         ? Math.max(0, Math.min(5, Math.floor(item.stars)))
         : 0
+    const aug =
+      item.augment &&
+      typeof item.augment === 'object' &&
+      typeof item.augment.id === 'string' &&
+      Number.isFinite(item.augment.level)
+        ? {
+            id: item.augment.id,
+            level: Math.max(1, Math.min(7, Math.floor(item.augment.level))),
+          }
+        : undefined
     out[slot as SlotKey] = {
       baseId: item.baseId,
       affixes: Array.isArray(item.affixes) ? item.affixes : [],
@@ -254,6 +267,7 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       runewordId: item.runewordId,
       stars: rawStars,
       forgedMods: Array.isArray(item.forgedMods) ? item.forgedMods : [],
+      ...(aug ? { augment: aug } : {}),
     }
   }
   return out

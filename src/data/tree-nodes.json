@@ -4599,6 +4599,41 @@
       "Area of Effect"
     ]
   },
+  "1230": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "1232": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "1234": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "1236": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "1238": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
   "1240": {
     "t": "Maximum Life",
     "n": "normal",
@@ -4611,6 +4646,20 @@
     "n": "normal",
     "l": [
       "+25 to Maximum Life"
+    ]
+  },
+  "1244": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "1246": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
     ]
   },
   "1248": {
@@ -5004,6 +5053,20 @@
       "+4% to Spell Haste"
     ]
   },
+  "1348": {
+    "t": "All Attributes",
+    "n": "normal",
+    "l": [
+      "+5 to All Attributes"
+    ]
+  },
+  "1350": {
+    "t": "All Attributes",
+    "n": "normal",
+    "l": [
+      "+5 to All Attributes"
+    ]
+  },
   "1352": {
     "t": "Spell Area of Effect Damage",
     "n": "normal",
@@ -5149,6 +5212,13 @@
       "Area of Effect"
     ]
   },
+  "1382": {
+    "t": "All Attributes",
+    "n": "normal",
+    "l": [
+      "+5 to All Attributes"
+    ]
+  },
   "1384": {
     "t": "Spell Haste",
     "n": "normal",
@@ -5165,6 +5235,13 @@
     "g": [
       "Spell",
       "Area of Effect"
+    ]
+  },
+  "1388": {
+    "t": "All Attributes",
+    "n": "normal",
+    "l": [
+      "+5 to All Attributes"
     ]
   },
   "1390": {
@@ -7002,6 +7079,14 @@
       "+50% of Monster Damage Over Time Immunity Shattered"
     ]
   },
+  "1846": {
+    "t": "Mirror of Valhalla",
+    "n": "big",
+    "l": [
+      "+3% Chance on cast to summon a Mirror of Odin reaking havoc at nearby monsters",
+      "+2500 Lightning Damage scaling from all elemental sources"
+    ]
+  },
   "1848": {
     "t": "Valkyrie´s Embrace",
     "n": "big",
@@ -7165,6 +7250,41 @@
     "n": "normal",
     "l": [
       "+5 to Armor"
+    ]
+  },
+  "1902": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+1% Increased Maximum Mana"
+    ]
+  },
+  "1904": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+1% Increased Maximum Mana"
+    ]
+  },
+  "1906": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+1% Increased Maximum Mana"
+    ]
+  },
+  "1908": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+1% Increased Maximum Mana"
+    ]
+  },
+  "1910": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+1% Increased Maximum Mana"
     ]
   },
   "1912": {
@@ -9374,6 +9494,20 @@
       "+10% All Resistances"
     ]
   },
+  "2522": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "2524": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
   "2526": {
     "t": "Maximum Mana",
     "n": "normal",
@@ -9400,6 +9534,13 @@
     "n": "big",
     "l": [
       "+1% Increased Magic Skills Damage per 750 points in Mana"
+    ]
+  },
+  "2534": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
     ]
   },
   "2536": {
@@ -10808,6 +10949,41 @@
       "+5 to All Attributes"
     ]
   },
+  "2910": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "2912": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "2914": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "2916": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "2918": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
   "2920": {
     "t": "Hunger for Mana",
     "n": "big",
@@ -11441,6 +11617,20 @@
       "+1% Increased Maximum Mana"
     ]
   },
+  "3078": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "3080": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
   "3082": {
     "t": "Maximum Mana",
     "n": "normal",
@@ -12052,6 +12242,46 @@
     "n": "normal",
     "l": [
       "+4% to Melee Enhanced Damage"
+    ],
+    "g": [
+      "Melee"
+    ]
+  },
+  "3232": {
+    "t": "Crushing Blow",
+    "n": "normal",
+    "l": [
+      "+3% Increased Crushing Blow Chance"
+    ],
+    "g": [
+      "Melee"
+    ]
+  },
+  "3234": {
+    "t": "Crushing Blow",
+    "n": "normal",
+    "l": [
+      "+3% Increased Crushing Blow Chance"
+    ],
+    "g": [
+      "Melee"
+    ]
+  },
+  "3236": {
+    "t": "Crushing Blow",
+    "n": "normal",
+    "l": [
+      "+25% Crushing Blow Effectiveness"
+    ],
+    "g": [
+      "Melee"
+    ]
+  },
+  "3238": {
+    "t": "Crushing Blow",
+    "n": "normal",
+    "l": [
+      "+3% Increased Crushing Blow Chance"
     ],
     "g": [
       "Melee"

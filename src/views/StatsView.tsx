@@ -156,112 +156,140 @@ export default function StatsView() {
         )}
       </div>
 
-      <Panel title="Attributes">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {gameConfig.attributes.map((attr) => {
-            const final: RangedValue = attributes[attr.key] ?? 0
-            const sources = attributeSources[attr.key] ?? []
-            const [fmin, fmax] =
-              typeof final === 'number' ? [final, final] : final
-            const highlighted = matches(attr.name)
-            return (
-              <SourceTooltip
-                key={attr.key}
-                statKey={attr.key}
-                sources={sources}
-              >
-                <div
-                  className={`flex items-center justify-between border rounded px-3 py-2 transition-colors ${
-                    highlighted
-                      ? 'bg-accent/15 border-accent'
-                      : 'bg-panel-2 border-border hover:border-accent/50'
-                  }`}
-                >
-                  <span className="text-sm text-muted">{attr.name}</span>
-                  <div className="text-base font-semibold tabular-nums">
-                    {displayRange(fmin, fmax)}
-                  </div>
-                </div>
-              </SourceTooltip>
+      {(() => {
+        const visibleAttrs = gameConfig.attributes.filter(
+          (attr) => normalizedQuery.length === 0 || matches(attr.name),
+        )
+        if (visibleAttrs.length === 0) return null
+        return (
+          <Panel title="Attributes">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {visibleAttrs.map((attr) => {
+                const final: RangedValue = attributes[attr.key] ?? 0
+                const sources = attributeSources[attr.key] ?? []
+                const [fmin, fmax] =
+                  typeof final === 'number' ? [final, final] : final
+                const highlighted = matches(attr.name)
+                return (
+                  <SourceTooltip
+                    key={attr.key}
+                    statKey={attr.key}
+                    sources={sources}
+                  >
+                    <div
+                      className={`flex items-center justify-between border rounded px-3 py-2 transition-colors ${
+                        highlighted
+                          ? 'bg-accent/15 border-accent'
+                          : 'bg-panel-2 border-border hover:border-accent/50'
+                      }`}
+                    >
+                      <span className="text-sm text-muted">{attr.name}</span>
+                      <div className="text-base font-semibold tabular-nums">
+                        {displayRange(fmin, fmax)}
+                      </div>
+                    </div>
+                  </SourceTooltip>
+                )
+              })}
+            </div>
+          </Panel>
+        )
+      })()}
+
+      {(() => {
+        const visibleDamageKeys =
+          normalizedQuery.length === 0
+            ? DAMAGE_KEYS
+            : DAMAGE_KEYS.filter((key) => matches(statName(key)))
+        const showWeaponPanel = normalizedQuery.length === 0
+        if (visibleDamageKeys.length === 0 && !showWeaponPanel) return null
+        return (
+          <Panel title="Damage">
+            <ul className="space-y-1">
+              {visibleDamageKeys.map((key) => (
+                <StatRow
+                  key={key}
+                  statKey={key}
+                  value={stats[key] ?? 0}
+                  sources={statSources[key] ?? []}
+                  moreValue={stats[`${key}_more`]}
+                  moreSources={statSources[`${key}_more`]}
+                  highlighted={matches(statName(key))}
+                  stats={stats}
+                />
+              ))}
+            </ul>
+            {showWeaponPanel && <WeaponDamagePanel breakdown={weaponDamage} />}
+          </Panel>
+        )
+      })()}
+
+      {(() => {
+        const skillsForClass = classId
+          ? skills.filter(
+              (s) => s.classId === classId && s.kind === 'active',
             )
-          })}
-        </div>
-      </Panel>
-
-      <Panel title="Damage">
-        <ul className="space-y-1">
-          {DAMAGE_KEYS.map((key) => (
-            <StatRow
-              key={key}
-              statKey={key}
-              value={stats[key] ?? 0}
-              sources={statSources[key] ?? []}
-              moreValue={stats[`${key}_more`]}
-              moreSources={statSources[`${key}_more`]}
-              highlighted={matches(statName(key))}
-              stats={stats}
-            />
-          ))}
-        </ul>
-        <WeaponDamagePanel breakdown={weaponDamage} />
-      </Panel>
-
-      <Panel title="Per-Skill Damage">
-        {(() => {
-          const skillsForClass = classId
-            ? skills.filter(
-                (s) => s.classId === classId && s.kind === 'active',
-              )
-            : []
-          const allClassSkills = classId
-            ? skills.filter((s) => s.classId === classId)
-            : []
-          if (skillsForClass.length === 0) {
-            return (
+          : []
+        const allClassSkills = classId
+          ? skills.filter((s) => s.classId === classId)
+          : []
+        const visibleSkills =
+          normalizedQuery.length === 0
+            ? skillsForClass
+            : skillsForClass.filter((s) => matches(s.name))
+        if (normalizedQuery.length > 0 && visibleSkills.length === 0)
+          return null
+        return (
+          <Panel title="Per-Skill Damage">
+            {skillsForClass.length === 0 ? (
               <div className="text-sm text-muted italic text-center py-2">
                 No skills defined for this class yet.
                 <br />
                 Add JSON files in{' '}
                 <code className="text-accent">src/data/skills/</code>.
               </div>
-            )
-          }
-          return (
-            <ul className="space-y-2">
-              {(() => {
-                const skillRanksByName: Record<string, number> = {}
-                for (const s of allClassSkills) {
-                  skillRanksByName[s.name.toLowerCase()] =
-                    skillRanks[s.id] ?? 0
-                }
-                return skillsForClass.map((skill) => (
-                  <SkillRow
-                    key={skill.id}
-                    skill={skill}
-                    fcrRange={fcrRange}
-                    mcrRange={mcrRange}
-                    attributes={attributes}
-                    stats={stats}
-                    skillRanksByName={skillRanksByName}
-                    itemSkillBonuses={itemSkillBonuses}
-                    currentRank={skillRanks[skill.id] ?? 0}
-                    enemyConditions={enemyConditions}
-                    enemyResistances={enemyResistances}
-                  />
-                ))
-              })()}
-            </ul>
-          )
-        })()}
-      </Panel>
+            ) : (
+              <ul className="space-y-2">
+                {(() => {
+                  const skillRanksByName: Record<string, number> = {}
+                  for (const s of allClassSkills) {
+                    skillRanksByName[s.name.toLowerCase()] =
+                      skillRanks[s.id] ?? 0
+                  }
+                  return visibleSkills.map((skill) => (
+                    <SkillRow
+                      key={skill.id}
+                      skill={skill}
+                      fcrRange={fcrRange}
+                      mcrRange={mcrRange}
+                      attributes={attributes}
+                      stats={stats}
+                      skillRanksByName={skillRanksByName}
+                      itemSkillBonuses={itemSkillBonuses}
+                      currentRank={skillRanks[skill.id] ?? 0}
+                      enemyConditions={enemyConditions}
+                      enemyResistances={enemyResistances}
+                    />
+                  ))
+                })()}
+              </ul>
+            )}
+          </Panel>
+        )
+      })()}
 
       {CATEGORY_ORDER.map((cat) => {
         const keys = grouped[cat]
         if (!keys || keys.length === 0) return null
+        const visibleKeys =
+          normalizedQuery.length === 0
+            ? keys
+            : keys.filter((key) => matches(statName(key)))
+        if (visibleKeys.length === 0) return null
         return (
           <Panel key={cat} title={CATEGORY_LABEL[cat]}>
             <ul className="space-y-1">
-              {keys.map((key) => (
+              {visibleKeys.map((key) => (
                 <StatRow
                   key={key}
                   statKey={key}

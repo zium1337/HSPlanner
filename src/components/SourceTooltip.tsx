@@ -30,7 +30,6 @@ const SOURCE_LABEL: Record<SourceType, string> = {
 
 const FORGE_COLOR: Record<ForgeKind, string> = {
   satanic_crystal: 'text-red-300',
-  gypsy_prophecy: 'text-pink-300',
 }
 
 interface Props {

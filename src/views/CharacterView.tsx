@@ -69,7 +69,14 @@ export default function CharacterView() {
               max={gameConfig.maxCharacterLevel}
               value={level}
               onChange={(e) => setLevel(Number(e.target.value))}
-              className="flex-1 accent-accent"
+              className="flex-1"
+              style={{
+                ['--sl-pct' as never]:
+                  ((level - 1) /
+                    Math.max(1, gameConfig.maxCharacterLevel - 1)) *
+                    100 +
+                  '%',
+              }}
             />
             <input
               type="number"

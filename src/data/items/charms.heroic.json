@@ -230,5 +230,24 @@
     "uniqueEffects": ["Grant Spell: Wizard's Roll"],
     "width": 1,
     "height": 1
+  },
+  {
+    "id": "charm_heroic_chaos_gemstone",
+    "name": "Chaos Gemstone",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "source": "Possessed Luna",
+    "width": 1,
+    "height": 2,
+    "implicit": {
+      "all_skills": [
+        1, 
+        2]
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
   }
 ]

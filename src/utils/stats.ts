@@ -3,6 +3,7 @@ import {
   forgeKindFor,
   gameConfig,
   getAffix,
+  getAugment,
   getClass,
   getCrystalMod,
   getGem,
@@ -315,6 +316,27 @@ export function computeBuildStats(
             socketLabel,
             'socket',
           )
+        }
+      }
+    }
+
+    if (item.augment) {
+      const aug = getAugment(item.augment.id)
+      if (aug) {
+        const lvl = Math.max(1, Math.min(aug.levels.length, item.augment.level))
+        const tier = aug.levels[lvl - 1]
+        if (tier) {
+          const augLabel = `Augment: ${aug.name} Lv ${lvl} (${itemName})`
+          for (const [statKey, value] of Object.entries(tier.stats)) {
+            applyContribution(
+              attrSources,
+              statSources,
+              statKey,
+              value,
+              augLabel,
+              'item',
+            )
+          }
         }
       }
     }
@@ -849,14 +871,26 @@ function collectExtraDamage(
   const sources: Array<{ label: string; pct: number }> = []
   let total = 0
   if (!enemyConditions) return { pct: 0, sources }
+  let anyAilmentActive = false
   for (const m of EXTRA_DAMAGE_CONDITIONS) {
     if (!enemyConditions[m.condition]) continue
+    anyAilmentActive = true
     const v = stats[m.stat]
     if (v === undefined) continue
     const avg = (rangedMin(v) + rangedMax(v)) / 2
     if (avg === 0) continue
     sources.push({ label: m.label, pct: avg })
     total += avg
+  }
+  if (anyAilmentActive) {
+    const v = stats['extra_damage_ailments']
+    if (v !== undefined) {
+      const avg = (rangedMin(v) + rangedMax(v)) / 2
+      if (avg !== 0) {
+        sources.push({ label: 'Afflicted with Ailments', pct: avg })
+        total += avg
+      }
+    }
   }
   return { pct: total, sources }
 }

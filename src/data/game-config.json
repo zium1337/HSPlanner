@@ -602,6 +602,84 @@
       "format": "percent"
     },
     {
+      "key": "extra_damage_ailments",
+      "name": "Extra Damage to Monsters Afflicted with Ailments",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "arcane_break",
+      "name": "Arcane Resistance Break",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "poison_break",
+      "name": "Poison Resistance Break",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "armor_break",
+      "name": "Armor Break",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "double_cast_chance",
+      "name": "Chance to Double Cast",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "dodge_chance",
+      "name": "Dodge Chance",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_amplification",
+      "name": "Damage Amplification",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "freeze_duration",
+      "name": "Freeze Duration",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "enemy_damage_reduced",
+      "name": "Enemy Damage Reduced",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_increase",
+      "name": "Increased Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "dot_duration",
+      "name": "Damage Over Time Duration",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "immune_duration",
+      "name": "Immunity Duration",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "stun_duration",
+      "name": "Stun Duration",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
       "key": "chance_inflict_bleeding",
       "name": "Chance to Inflict Bleeding on Hit",
       "category": "offense",
@@ -828,6 +906,12 @@
       "name": "Damage Taken Reduced",
       "category": "defense",
       "format": "flat"
+    },
+    {
+      "key": "all_damage_taken_reduced_pct",
+      "name": "All Damage Taken Reduced",
+      "category": "defense",
+      "format": "percent"
     },
     {
       "key": "attack_speed_below_40_life",

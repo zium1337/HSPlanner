@@ -17,6 +17,7 @@ export interface EquippedItem {
   runewordId?: string
   stars?: number
   forgedMods?: EquippedAffix[]
+  augment?: { id: string; level: number }
 }
 
 export type Inventory = Partial<Record<SlotKey, EquippedItem>>

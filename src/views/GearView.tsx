@@ -2,8 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import ItemTooltip, { ItemCard } from '../components/ItemTooltip'
 import SearchableSelect from '../components/SearchableSelect'
 import type { SearchableOption } from '../components/SearchableSelect'
+import { Dropdown } from '../components/Dropdown'
+import type { DropdownItem } from '../components/Dropdown'
 import {
   affixes,
+  augments,
   crystalMods,
   detectRuneword,
   FORGE_KIND_LABEL,
@@ -11,6 +14,7 @@ import {
   gameConfig,
   gems,
   getAffix,
+  getAugment,
   getCrystalMod,
   getItem,
   getItemSet,
@@ -22,6 +26,7 @@ import {
 import type { ForgeKind } from '../data'
 import { MAX_STARS, maxSocketsFor, useBuild } from '../store/build'
 import { fmtStats, rolledAffixValueWithStars } from '../utils/stats'
+import { AUGMENT_MAX_LEVEL } from '../types'
 import type {
   EquippedItem,
   ItemBase,
@@ -54,6 +59,19 @@ const RARITY_BG: Record<ItemRarity, string> = {
   satanic_set: 'bg-green-500/10',
   unholy: 'bg-pink-500/10',
   relic: 'bg-orange-500/10',
+}
+
+const RARITY_ORDER: Record<ItemRarity, number> = {
+  relic: 0,
+  unholy: 1,
+  angelic: 2,
+  satanic_set: 3,
+  satanic: 4,
+  mythic: 5,
+  heroic: 6,
+  rare: 7,
+  uncommon: 8,
+  common: 9,
 }
 
 const RARITY_BORDER: Record<ItemRarity, string> = {
@@ -136,19 +154,19 @@ export default function GearView() {
     return true
   }
 
-  const socketOptions: SearchableOption[] = useMemo(() => {
-    const opts: SearchableOption[] = []
+  const socketOptions: DropdownItem[] = useMemo(() => {
+    const opts: DropdownItem[] = []
     for (const g of gems)
       opts.push({
         id: g.id,
-        label: `💎 ${g.name}`,
-        hint: `T${g.tier} · ${fmtStats(g.stats)}`,
+        name: `💎 ${g.name}`,
+        meta: `T${g.tier} · ${fmtStats(g.stats)}`,
       })
     for (const r of runes)
       opts.push({
         id: r.id,
-        label: `ᚱ ${r.name}`,
-        hint: `T${r.tier} · ${fmtStats(r.stats)}`,
+        name: `ᚱ ${r.name}`,
+        meta: `T${r.tier} · ${fmtStats(r.stats)}`,
       })
     return opts
   }, [])
@@ -787,7 +805,7 @@ function EditPanel({
   slot: SlotKey | null
   equipped: EquippedItem | undefined
   offhandLocked: boolean
-  socketOptions: SearchableOption[]
+  socketOptions: DropdownItem[]
   onEquip: (id: string) => void
   onUnequip: () => void
   onSocketCount: (n: number) => void
@@ -852,9 +870,10 @@ function EditPanel({
             Remove the weapon to free this slot.
           </div>
         ) : (
-        <SearchableSelect
+        <Dropdown
           value={equipped?.baseId ?? null}
-          options={itemOpts}
+          items={itemOpts}
+          allowNone={false}
           placeholder={
             itemOpts.length === 0
               ? 'No items match this slot'
@@ -905,9 +924,10 @@ function EditPanel({
               />
             )}
 
-            {base.rarity === 'common' && (
+            {(base.rarity === 'common' || base.randomAffixGroupId) && (
               <AffixesSection
                 equipped={equipped}
+                base={base}
                 maxAffixes={base.maxAffixes}
                 onAdd={onAddAffix}
                 onRemove={onRemoveAffix}
@@ -923,6 +943,8 @@ function EditPanel({
                 onRemove={onRemoveForgedMod}
               />
             )}
+
+            {slot === 'armor' && <AugmentSection equipped={equipped} />}
           </>
         )}
       </div>
@@ -973,35 +995,41 @@ function slotGroup(slotKey: SlotKey): string {
   return slotKey.replace(/_\d+$/, '')
 }
 
-function itemsForSlot(slotKey: SlotKey): SearchableOption[] {
+function itemsForSlot(slotKey: SlotKey): DropdownItem[] {
   const group = slotGroup(slotKey)
-  return items
+  const matching = items
     .filter((i) => i.slot === slotKey || slotGroup(i.slot) === group)
-    .map((i) => {
-      const parts: string[] = [i.baseType]
-      if (i.grade) parts.push(`Grade ${i.grade}`)
-      if (i.baseType === 'Charm')
-        parts.push(`${i.width ?? 1}×${i.height ?? 1}`)
-      if (i.defenseMin !== undefined && i.defenseMax !== undefined)
-        parts.push(`Def ${i.defenseMin}–${i.defenseMax}`)
-      if (i.damageMin !== undefined && i.damageMax !== undefined)
-        parts.push(`Dmg ${i.damageMin}–${i.damageMax}`)
-      if (i.blockChance !== undefined) parts.push(`Block ${i.blockChance}%`)
-      if (i.sockets !== undefined) {
-        const max = i.maxSockets ?? i.sockets
-        parts.push(
-          max > i.sockets
-            ? `${i.sockets}/${max} sockets`
-            : `${i.sockets} sockets`,
-        )
-      }
-      return {
-        id: i.id,
-        label: i.name,
-        hint: parts.join(' · '),
-        accent: RARITY_BG[i.rarity],
-      }
+    .slice()
+    .sort((a, b) => {
+      const ra = RARITY_ORDER[a.rarity] ?? 99
+      const rb = RARITY_ORDER[b.rarity] ?? 99
+      if (ra !== rb) return ra - rb
+      return a.name.localeCompare(b.name)
     })
+  return matching.map((i) => {
+    const parts: string[] = [i.baseType]
+    if (i.grade) parts.push(`Grade ${i.grade}`)
+    if (i.baseType === 'Charm') parts.push(`${i.width ?? 1}×${i.height ?? 1}`)
+    if (i.defenseMin !== undefined && i.defenseMax !== undefined)
+      parts.push(`Def ${i.defenseMin}–${i.defenseMax}`)
+    if (i.damageMin !== undefined && i.damageMax !== undefined)
+      parts.push(`Dmg ${i.damageMin}–${i.damageMax}`)
+    if (i.blockChance !== undefined) parts.push(`Block ${i.blockChance}%`)
+    if (i.sockets !== undefined) {
+      const max = i.maxSockets ?? i.sockets
+      parts.push(
+        max > i.sockets
+          ? `${i.sockets}/${max} sockets`
+          : `${i.sockets} sockets`,
+      )
+    }
+    return {
+      id: i.id,
+      name: i.name,
+      rarity: i.rarity,
+      meta: parts.join(' · '),
+    }
+  })
 }
 
 function SocketsSection({
@@ -1016,7 +1044,7 @@ function SocketsSection({
   equipped: EquippedItem
   maxSockets: number
   base: ItemBase
-  socketOptions: SearchableOption[]
+  socketOptions: DropdownItem[]
   onSocketCount: (n: number) => void
   onSocketed: (idx: number, id: string | null) => void
   onSocketType: (idx: number, type: SocketType) => void
@@ -1073,12 +1101,12 @@ function SocketsSection({
                   onChange={(t) => onSocketType(i, t)}
                 />
                 <div className="flex-1 min-w-0">
-                  <SearchableSelect
+                  <Dropdown
                     value={socketed ?? null}
-                    options={socketOptions}
+                    items={socketOptions}
                     onChange={(id) => onSocketed(i, id)}
                     placeholder="Empty socket"
-                    clearLabel="— remove —"
+                    allowNone
                   />
                 </div>
               </div>
@@ -1203,12 +1231,14 @@ function formatAffixValue(
 
 function AffixesSection({
   equipped,
+  base,
   maxAffixes,
   onAdd,
   onRemove,
   onSetRoll,
 }: {
   equipped: EquippedItem
+  base?: ItemBase
   maxAffixes?: number
   onAdd: (affixId: string, tier: number) => void
   onRemove: (index: number) => void
@@ -1221,6 +1251,21 @@ function AffixesSection({
   useEffect(() => {
     if (atCap && open) setOpen(false)
   }, [atCap, open])
+
+  const randomGroupId = base?.randomAffixGroupId ?? null
+
+  const groupAffixes = useMemo(() => {
+    if (!randomGroupId) return []
+    return affixes.filter((a) => a.groupId === randomGroupId)
+  }, [randomGroupId])
+
+  const groupItems: DropdownItem[] = useMemo(() => {
+    return groupAffixes.map((a) => ({
+      id: a.id,
+      name: a.description,
+      meta: a.name,
+    }))
+  }, [groupAffixes])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -1235,11 +1280,14 @@ function AffixesSection({
       .slice(0, 40)
   }, [query])
 
+  const sectionTitle =
+    randomGroupId === 'random_unholy' ? 'Unholy Affixes' : 'Affixes'
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-[10px] uppercase tracking-[0.12em] text-muted">
-          Affixes ({equipped.affixes.length}
+          {sectionTitle} ({equipped.affixes.length}
           {maxAffixes !== undefined ? `/${maxAffixes}` : ''})
         </span>
         <button
@@ -1291,7 +1339,8 @@ function AffixesSection({
                     onChange={(e) =>
                       onSetRoll(idx, parseFloat(e.target.value))
                     }
-                    className="w-full mt-1 accent-accent"
+                    className="w-full mt-1"
+                    style={{ ['--sl-pct' as never]: eq.roll * 100 + '%' }}
                   />
                 )}
               </li>
@@ -1300,7 +1349,22 @@ function AffixesSection({
         </ul>
       )}
 
-      {open && (
+      {open && randomGroupId && (
+        <Dropdown
+          items={groupItems}
+          allowNone={false}
+          placeholder="Pick Random Unholy Affix…"
+          onChange={(id) => {
+            if (!id) return
+            const a = groupAffixes.find((x) => x.id === id)
+            if (!a) return
+            onAdd(a.id, a.tier)
+            setOpen(false)
+          }}
+        />
+      )}
+
+      {open && !randomGroupId && (
         <div className="space-y-1">
           <input
             type="text"
@@ -1354,17 +1418,14 @@ function ForgedModsSection({
   const [open, setOpen] = useState(false)
   const mods = equipped.forgedMods ?? []
   const sourceLabel = FORGE_KIND_LABEL[forgeKind]
-  const isProphecy = forgeKind === 'gypsy_prophecy'
-  const accentText = isProphecy ? 'text-pink-300' : 'text-red-300'
-  const accentTextHover = isProphecy ? 'hover:text-pink-200' : 'hover:text-red-200'
-  const accentBorder = isProphecy ? 'border-pink-400/30' : 'border-red-500/30'
-  const accentBg = isProphecy ? 'bg-pink-400/5' : 'bg-red-500/5'
-  const accentBorderHover = isProphecy ? 'hover:border-pink-300' : 'hover:border-red-400'
-  const accentBorderItem = isProphecy ? 'border-pink-400/20' : 'border-red-500/20'
-  const accentBorderInputFocus = isProphecy
-    ? 'focus:border-pink-300'
-    : 'focus:border-red-400'
-  const accentRowHover = isProphecy ? 'hover:bg-pink-400/10' : 'hover:bg-red-500/10'
+  const accentText = 'text-red-300'
+  const accentTextHover = 'hover:text-red-200'
+  const accentBorder = 'border-red-500/30'
+  const accentBg = 'bg-red-500/5'
+  const accentBorderHover = 'hover:border-red-400'
+  const accentBorderItem = 'border-red-500/20'
+  const accentBorderInputFocus = 'focus:border-red-400'
+  const accentRowHover = 'hover:bg-red-500/10'
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -1544,6 +1605,125 @@ function RunewordPresets({
             )
           })}
         </ul>
+      )}
+    </div>
+  )
+}
+
+const AUGMENT_OPTIONS: DropdownItem[] = augments
+  .map((a) => ({
+    id: a.id,
+    name: a.name,
+    meta: a.triggerNote,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name))
+
+function AugmentSection({ equipped }: { equipped: EquippedItem }) {
+  const setAugment = useBuild((s) => s.setAugment)
+  const setAugmentLevel = useBuild((s) => s.setAugmentLevel)
+  const aug = equipped.augment ? getAugment(equipped.augment.id) : undefined
+  const level = equipped.augment?.level ?? 1
+  const tier = aug?.levels[Math.max(0, Math.min(aug.levels.length - 1, level - 1))]
+
+  return (
+    <div className="rounded border border-yellow-200/30 bg-yellow-200/5 p-2 space-y-2">
+      <div className="flex items-baseline justify-between text-[10px] uppercase tracking-[0.12em]">
+        <span className="text-yellow-200 font-semibold">Angelic Augment</span>
+        {aug && (
+          <button
+            onClick={() => setAugment(null)}
+            className="text-faint hover:text-red-300 normal-case tracking-normal"
+            aria-label="Remove augment"
+          >
+            Remove
+          </button>
+        )}
+      </div>
+
+      <Dropdown
+        items={AUGMENT_OPTIONS}
+        value={equipped.augment?.id ?? null}
+        onChange={(id) => setAugment(id)}
+        placeholder="Choose augment…"
+        allowNone={false}
+      />
+
+      {aug && tier && (
+        <>
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="text-muted uppercase tracking-wider">Level</span>
+            <input
+              type="range"
+              min={1}
+              max={AUGMENT_MAX_LEVEL}
+              value={level}
+              onChange={(e) => setAugmentLevel(Number(e.target.value))}
+              className="flex-1"
+              style={{
+                ['--sl-pct' as never]:
+                  ((level - 1) / Math.max(1, AUGMENT_MAX_LEVEL - 1)) * 100 +
+                  '%',
+              }}
+            />
+            <span className="font-mono text-yellow-200 w-6 text-center">
+              {level}
+            </span>
+            <span className="text-faint">/ {AUGMENT_MAX_LEVEL}</span>
+          </div>
+
+          <div className="text-[11px] text-text/85 leading-snug">
+            {aug.description}
+          </div>
+
+          <div className="text-[10px] text-faint italic">
+            {aug.triggerNote}
+            {tier.procChance !== undefined && tier.procChance !== null && (
+              <> · proc {tier.procChance}%</>
+            )}
+            {tier.procDurationSec !== undefined && tier.procDurationSec !== null && (
+              <> · {tier.procDurationSec}s</>
+            )}
+            {tier.cost !== undefined && <> · cost {tier.cost} keys</>}
+          </div>
+
+          {Object.keys(tier.stats).length > 0 && (
+            <ul className="space-y-0.5 text-[11px]">
+              {Object.entries(tier.stats).map(([key, val]) => {
+                const def = gameConfig.stats.find((s) => s.key === key)
+                const label = def?.name ?? key
+                const sign = (val as number) >= 0 ? '+' : ''
+                const suffix = def?.format === 'percent' ? '%' : ''
+                return (
+                  <li key={key} className="flex justify-between">
+                    <span className="text-text/80">{label}</span>
+                    <span className="text-yellow-200 font-mono tabular-nums">
+                      {sign}
+                      {val as number}
+                      {suffix}
+                    </span>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+
+          {tier.meta && Object.keys(tier.meta).length > 0 && (
+            <ul className="space-y-0.5 text-[10px] text-faint">
+              {Object.entries(tier.meta).map(([key, val]) => (
+                <li key={key} className="flex justify-between">
+                  <span>{key.replace(/_/g, ' ')}</span>
+                  <span className="font-mono">{val as number}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {aug.rangedOnly && (
+            <div className="text-[10px] text-orange-300 italic">
+              Effect only applies with a ranged weapon equipped.
+            </div>
+          )}
+        </>
       )}
     </div>
   )

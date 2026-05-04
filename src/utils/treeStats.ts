@@ -386,6 +386,10 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'damage_return', value: num(m[1]!) }),
   },
   {
+    test: /^All\s+Damage\s+Taken\s+Reduced\s+by\s+([+\-\d.]+)%$/i,
+    build: (m) => ({ key: 'all_damage_taken_reduced_pct', value: num(m[1]!) }),
+  },
+  {
     test: /^([+\-\d.]+)\s+to\s+Damage\s+Returned$/i,
     build: (m) => ({ key: 'damage_return', value: num(m[1]!) }),
   },

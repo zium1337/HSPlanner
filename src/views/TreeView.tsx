@@ -233,6 +233,12 @@ export default function TreeView() {
     for (const entry of SEARCH_INDEX) {
       if (entry.haystack.includes(q)) matches.add(entry.id)
     }
+    const idQuery = q.replace(/^#/, '')
+    if (/^\d+$/.test(idQuery)) {
+      for (const n of NODES) {
+        if (String(n.id).includes(idQuery)) matches.add(n.id)
+      }
+    }
     return matches
   }, [searchQuery])
 
@@ -406,7 +412,7 @@ export default function TreeView() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search nodes..."
+              placeholder="Search nodes or #id..."
               data-search-input
               className="w-56 rounded-[3px] border border-border bg-panel/85 backdrop-blur-sm px-3 py-1.5 pr-14 text-xs text-text placeholder:text-faint transition-colors focus:border-accent-deep focus:outline-none"
             />

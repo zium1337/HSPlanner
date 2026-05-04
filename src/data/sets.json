@@ -1932,6 +1932,7 @@
       {
         "pieces": 4,
         "stats": {
+          "all_damage_taken_reduced_pct": 3,
           "mana": 500,
           "mana_per_kill": 35,
           "mana_replenish_pct": 40,

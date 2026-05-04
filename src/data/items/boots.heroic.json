@@ -210,5 +210,42 @@
       "Defense Vs Missiles",
       "Movement Phasing None"
     ]
+  },
+  {
+    "id": "boots_heroic_chaoswalkers",
+    "name": "Chaoswalkers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
+      "movement_speed": [
+        65,
+        80
+      ],
+      "extra_damage_ailments": [
+        15,
+        25
+      ],
+      "all_attributes": 40,
+      "magic_skill_damage": [
+        30,
+        40
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
   }
 ]

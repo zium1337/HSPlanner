@@ -2,11 +2,13 @@ import { create } from 'zustand'
 import {
   classes,
   gameConfig,
+  getAugment,
   getClass,
   getItem,
   getRuneword,
   skills as ALL_SKILLS,
 } from '../data'
+import { AUGMENT_MAX_LEVEL } from '../types'
 import type {
   AttributeKey,
   CustomStat,
@@ -87,6 +89,10 @@ interface BuildActions {
   exportBuildSnapshot: () => BuildSnapshot
   importBuildSnapshot: (snapshot: BuildSnapshot, notes?: string) => void
   applyRuneword: (slot: SlotKey, runewordId: string) => void
+  /** Set or clear the angelic augment on the body armor slot. Pass null to remove. */
+  setAugment: (augmentId: string | null) => void
+  /** Adjust augment level (1..7). No-op if no augment equipped. */
+  setAugmentLevel: (level: number) => void
   addAffix: (slot: SlotKey, affixId: string, tier: number) => void
   removeAffix: (slot: SlotKey, index: number) => void
   setAffixRoll: (slot: SlotKey, index: number, roll: number) => void
@@ -744,6 +750,43 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
             socketed,
             socketTypes,
           },
+        },
+      }
+    })
+  },
+
+  setAugment: (augmentId) => {
+    set((s) => {
+      const slot: SlotKey = 'armor'
+      const cur = s.inventory[slot]
+      if (!cur) return s
+      if (augmentId === null) {
+        const { augment: _drop, ...rest } = cur
+        void _drop
+        return { inventory: { ...s.inventory, [slot]: rest } }
+      }
+      if (!getAugment(augmentId)) return s
+      const level = cur.augment?.id === augmentId ? cur.augment.level : 1
+      return {
+        inventory: {
+          ...s.inventory,
+          [slot]: { ...cur, augment: { id: augmentId, level } },
+        },
+      }
+    })
+  },
+
+  setAugmentLevel: (level) => {
+    set((s) => {
+      const slot: SlotKey = 'armor'
+      const cur = s.inventory[slot]
+      if (!cur || !cur.augment) return s
+      const clamped = Math.max(1, Math.min(AUGMENT_MAX_LEVEL, Math.round(level)))
+      if (clamped === cur.augment.level) return s
+      return {
+        inventory: {
+          ...s.inventory,
+          [slot]: { ...cur, augment: { ...cur.augment, level: clamped } },
         },
       }
     })
