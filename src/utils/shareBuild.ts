@@ -13,6 +13,18 @@ import type {
 import { sanitizeHtml } from './sanitizeHtml'
 
 const SCHEMA_VERSION = 1
+
+export const DEFAULT_ENEMY_RESISTANCE_PCT = 85
+
+export function defaultEnemyResistances(): Record<string, number> {
+  return {
+    fire: DEFAULT_ENEMY_RESISTANCE_PCT,
+    cold: DEFAULT_ENEMY_RESISTANCE_PCT,
+    lightning: DEFAULT_ENEMY_RESISTANCE_PCT,
+    poison: DEFAULT_ENEMY_RESISTANCE_PCT,
+    arcane: DEFAULT_ENEMY_RESISTANCE_PCT,
+  }
+}
 const URL_PARAM = 'b'
 
 const BUILD_CODE_RE_INPUT = new RegExp(`[#&?]${URL_PARAM}=([^&\\s]+)`)
@@ -84,6 +96,7 @@ const shareableBuildSchema = z.object({
   u: z.string().max(MAX_KEY_LENGTH).nullable(),
   buf: recordOfBooleans,
   ec: recordOfBooleans,
+  er: recordOfNumbers.optional(),
   pt: recordOfBooleans,
   kps: FINITE_NUMBER,
   n: z.string().max(MAX_NOTES_LENGTH).optional(),
@@ -111,6 +124,7 @@ export interface ShareableBuild {
   u: string | null
   buf: Record<string, boolean>
   ec: Record<string, boolean>
+  er?: Record<string, number>
   pt: Record<string, boolean>
   kps: number
   /** Optional sanitized HTML notes (added later — old snapshots may omit). */
@@ -131,6 +145,7 @@ export interface BuildSnapshot {
   activeAuraId: string | null
   activeBuffs: Record<string, boolean>
   enemyConditions: Record<string, boolean>
+  enemyResistances: Record<string, number>
   procToggles: Record<string, boolean>
   killsPerSec: number
   customStats: CustomStat[]
@@ -151,6 +166,9 @@ function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
     buf: snapshot.activeBuffs,
     ec: snapshot.enemyConditions,
     pt: snapshot.procToggles,
+    ...(Object.keys(snapshot.enemyResistances ?? {}).length > 0
+      ? { er: snapshot.enemyResistances }
+      : {}),
     kps: snapshot.killsPerSec,
   }
   if (notes) out.n = notes
@@ -191,6 +209,7 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
     activeAuraId: encoded.u ?? null,
     activeBuffs: encoded.buf ?? {},
     enemyConditions: encoded.ec ?? {},
+    enemyResistances: encoded.er ?? defaultEnemyResistances(),
     procToggles: encoded.pt ?? {},
     killsPerSec: Number.isFinite(encoded.kps) ? encoded.kps : 1,
     customStats: Array.isArray(encoded.cs)

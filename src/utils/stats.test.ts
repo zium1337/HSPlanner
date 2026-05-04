@@ -122,3 +122,109 @@ describe('computeSkillDamage - Total skill damage as multiplier', () => {
     expect(result?.hitMin).toBe(150)
   })
 })
+
+describe('computeSkillDamage - enemy resistance and ignore_*_res', () => {
+  const lightningSkill: Skill = {
+    id: 'test_skill',
+    classId: 'test',
+    name: 'Test Bolt',
+    kind: 'active',
+    damageType: 'lightning',
+    damageFormula: { base: 100, perLevel: 0 },
+    ranks: [{ rank: 1 }],
+  } as Skill
+
+  const zeroAttrs = { strength: 0, dexterity: 0, intelligence: 0, energy: 0, vitality: 0, armor: 0 }
+
+  it('applies enemy resistance: 50% lightning res → ×0.5 damage', () => {
+    const result = computeSkillDamage(
+      lightningSkill, 1, zeroAttrs, {}, {}, {},
+      undefined, { lightning: 50 },
+    )
+    expect(result?.hitMin).toBe(50) // 100 × 0.5
+    expect(result?.effectiveResistancePct).toBe(50)
+    expect(result?.resistanceMultiplier).toBe(0.5)
+  })
+
+  it('multiplicative ignore: 50% res with 25% ignore → effective 37.5%, ×0.625', () => {
+    // formula: 1 − (0.50 × (1 − 0.25)) = 1 − 0.375 = 0.625
+    const result = computeSkillDamage(
+      lightningSkill, 1, zeroAttrs,
+      { ignore_lightning_res: 25 },
+      {}, {},
+      undefined, { lightning: 50 },
+    )
+    expect(result?.hitMin).toBe(62) // floor(100 × 0.625) = 62
+    expect(result?.effectiveResistancePct).toBeCloseTo(37.5)
+    expect(result?.resistanceIgnoredPct).toBe(25)
+    expect(result?.resistanceMultiplier).toBeCloseTo(0.625)
+  })
+
+  it('100% ignore fully bypasses resistance even against immune target', () => {
+    // 100% res, 100% ignore → effective 0%, full damage
+    const result = computeSkillDamage(
+      lightningSkill, 1, zeroAttrs,
+      { ignore_lightning_res: 100 },
+      {}, {},
+      undefined, { lightning: 100 },
+    )
+    expect(result?.hitMin).toBe(100)
+    expect(result?.effectiveResistancePct).toBe(0)
+    expect(result?.resistanceMultiplier).toBe(1)
+  })
+
+  it('partial ignore vs immune target still scales: 100% res, 50% ignore → ×0.5', () => {
+    const result = computeSkillDamage(
+      lightningSkill, 1, zeroAttrs,
+      { ignore_lightning_res: 50 },
+      {}, {},
+      undefined, { lightning: 100 },
+    )
+    expect(result?.hitMin).toBe(50)
+    expect(result?.effectiveResistancePct).toBe(50)
+    expect(result?.resistanceMultiplier).toBe(0.5)
+  })
+
+  it('clamps ignore at 100% (over-ignore stat has no effect)', () => {
+    const result = computeSkillDamage(
+      lightningSkill, 1, zeroAttrs,
+      { ignore_lightning_res: 150 },
+      {}, {},
+      undefined, { lightning: 50 },
+    )
+    expect(result?.hitMin).toBe(100) // ignore capped at 100% → full bypass
+    expect(result?.resistanceIgnoredPct).toBe(100)
+  })
+
+  it('no enemy resistance config → defaults to 0% (full damage)', () => {
+    const result = computeSkillDamage(
+      lightningSkill, 1, zeroAttrs, {}, {}, {},
+    )
+    expect(result?.hitMin).toBe(100)
+    expect(result?.effectiveResistancePct).toBe(0)
+  })
+
+  it('only matching damage type is affected', () => {
+    const result = computeSkillDamage(
+      lightningSkill, 1, zeroAttrs, {}, {}, {},
+      undefined, { fire: 75 },
+    )
+    expect(result?.hitMin).toBe(100)
+    expect(result?.effectiveResistancePct).toBe(0)
+  })
+
+  it('combines with all other multipliers correctly', () => {
+    // 100 base × 1.5 (additive) × 1.2 (Total) × 0.625 (50% res, 25% ignore) = 112.5
+    const result = computeSkillDamage(
+      lightningSkill, 1, zeroAttrs,
+      {
+        lightning_skill_damage: 50,
+        lightning_skill_damage_more: 20,
+        ignore_lightning_res: 25,
+      },
+      {}, {},
+      undefined, { lightning: 50 },
+    )
+    expect(result?.hitMin).toBe(112) // floor(112.5)
+  })
+})

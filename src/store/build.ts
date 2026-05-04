@@ -29,7 +29,13 @@ import {
   setBuildNotes as storeSetBuildNotes,
 } from '../utils/savedBuilds'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
-import type { BuildSnapshot } from '../utils/shareBuild'
+import {
+  defaultEnemyResistances,
+  DEFAULT_ENEMY_RESISTANCE_PCT,
+  type BuildSnapshot,
+} from '../utils/shareBuild'
+
+export { defaultEnemyResistances, DEFAULT_ENEMY_RESISTANCE_PCT }
 import { findPath, reachableFromAny, START_IDS } from '../utils/treeGraph'
 
 type AttrMap = Record<AttributeKey, number>
@@ -52,6 +58,8 @@ interface BuildState {
   killsPerSec: number
   activeBuffs: Record<string, boolean>
   enemyConditions: Record<string, boolean>
+  /** Per-element monster resistance %. Subtracted by the player's `ignore_<element>_res` stat. */
+  enemyResistances: Record<string, number>
   subskillRanks: Record<string, number>
   /** Saved-build the in-memory state currently belongs to (null = unsaved freeform). */
   activeBuildId: string | null
@@ -97,6 +105,7 @@ interface BuildActions {
   setKillsPerSec: (rate: number) => void
   setBuffActive: (skillId: string, enabled: boolean) => void
   setEnemyCondition: (key: string, enabled: boolean) => void
+  setEnemyResistance: (damageType: string, value: number | null) => void
   setSubskillRank: (
     skillId: string,
     subskillId: string,
@@ -151,6 +160,7 @@ function emptyAllocation(): AttrMap {
   }, {})
 }
 
+
 function bumpSavedBuilds(
   set: (fn: (s: BuildState) => Partial<BuildState>) => void,
 ) {
@@ -175,6 +185,7 @@ function snapshotPatch(snap: BuildSnapshot) {
     activeAuraId: snap.activeAuraId,
     activeBuffs: snap.activeBuffs,
     enemyConditions: snap.enemyConditions,
+    enemyResistances: snap.enemyResistances ?? defaultEnemyResistances(),
     procToggles: snap.procToggles,
     killsPerSec: snap.killsPerSec,
     customStats: snap.customStats ?? [],
@@ -214,6 +225,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   killsPerSec: 1,
   activeBuffs: {},
   enemyConditions: {},
+  enemyResistances: defaultEnemyResistances(),
   subskillRanks: {},
   activeBuildId: null,
   activeProfileId: null,
@@ -329,6 +341,17 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       if (enabled) next[key] = true
       else delete next[key]
       return { enemyConditions: next }
+    }),
+
+  setEnemyResistance: (damageType, value) =>
+    set((s) => {
+      const next = { ...s.enemyResistances }
+      if (value === null || !Number.isFinite(value)) {
+        delete next[damageType]
+      } else {
+        next[damageType] = value
+      }
+      return { enemyResistances: next }
     }),
 
   setSubskillRank: (skillId, subskillId, rank, maxRank) => {
@@ -509,6 +532,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       activeAuraId: s.activeAuraId,
       activeBuffs: s.activeBuffs,
       enemyConditions: s.enemyConditions,
+      enemyResistances: s.enemyResistances,
       procToggles: s.procToggles,
       killsPerSec: s.killsPerSec,
       customStats: s.customStats,

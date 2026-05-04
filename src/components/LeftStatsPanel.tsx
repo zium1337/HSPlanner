@@ -96,6 +96,8 @@ export default function LeftStatsPanel() {
   const setKillsPerSec = useBuild((s) => s.setKillsPerSec);
 
   const activeBuffs = useBuild((s) => s.activeBuffs);
+  const enemyConditions = useBuild((s) => s.enemyConditions);
+  const enemyResistances = useBuild((s) => s.enemyResistances);
   const customStats = useBuild((s) => s.customStats);
   const { attributes, stats } = useMemo(
     () =>
@@ -238,6 +240,8 @@ export default function LeftStatsPanel() {
           stats,
           skillRanksByName,
           itemSkillBonuses,
+          enemyConditions,
+          enemyResistances,
         )
       : null;
   const hitDpsMin =
@@ -273,6 +277,8 @@ export default function LeftStatsPanel() {
         stats,
         skillRanksByName,
         itemSkillBonuses,
+        enemyConditions,
+        enemyResistances,
       );
       if (!targetDmg) continue;
       const rate = procSkill.proc.trigger === "on_kill" ? killsPerSec : 1;

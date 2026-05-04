@@ -20,6 +20,7 @@ function makeSnapshot(overrides: Partial<BuildSnapshot> = {}): BuildSnapshot {
     activeAuraId: null,
     activeBuffs: {},
     enemyConditions: {},
+    enemyResistances: {},
     procToggles: {},
     killsPerSec: 1,
     customStats: [],

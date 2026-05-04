@@ -67,6 +67,7 @@ export default function StatsView() {
     activeAuraId,
     activeBuffs,
     enemyConditions,
+    enemyResistances,
     customStats,
     allocatedTreeNodes,
   } = useBuild()
@@ -245,6 +246,7 @@ export default function StatsView() {
                     itemSkillBonuses={itemSkillBonuses}
                     currentRank={skillRanks[skill.id] ?? 0}
                     enemyConditions={enemyConditions}
+                    enemyResistances={enemyResistances}
                   />
                 ))
               })()}
@@ -382,6 +384,7 @@ function SkillRow({
   itemSkillBonuses,
   currentRank,
   enemyConditions,
+  enemyResistances,
 }: {
   skill: Skill
   fcrRange: RangedValue
@@ -392,6 +395,7 @@ function SkillRow({
   itemSkillBonuses: Record<string, [number, number]>
   currentRank: number
   enemyConditions: Record<string, boolean>
+  enemyResistances: Record<string, number>
 }) {
   const rank1 = skill.ranks[0]
   const baseMana = rank1?.manaCost
@@ -429,6 +433,7 @@ function SkillRow({
           skillRanksByName,
           itemSkillBonuses,
           enemyConditions,
+          enemyResistances,
         )
       : null
   const typeLabel = skill.damageType
@@ -685,6 +690,30 @@ function DamageBreakdown({
               />
             ))}
           </>
+        )}
+        {(breakdown.enemyResistancePct !== 0 ||
+          breakdown.resistanceIgnoredPct !== 0) && (
+          <BDLine
+            label="Enemy resistance"
+            value={
+              <span
+                className={
+                  breakdown.effectiveResistancePct > 0
+                    ? 'text-stat-red'
+                    : 'text-stat-green'
+                }
+              >
+                ×{breakdown.resistanceMultiplier.toFixed(2)}
+                <span className="text-muted ml-1">
+                  ({formatDecimal(breakdown.enemyResistancePct)}%
+                  {breakdown.resistanceIgnoredPct > 0 &&
+                    ` × (1 − ${formatDecimal(breakdown.resistanceIgnoredPct)}%)`}
+                  {' = '}
+                  {formatDecimal(breakdown.effectiveResistancePct)}%)
+                </span>
+              </span>
+            }
+          />
         )}
         <BDLine
           label="Hit damage"

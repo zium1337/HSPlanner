@@ -703,6 +703,10 @@ export interface SkillDamageBreakdown {
   critChance: number
   critDamagePct: number
   critMultiplierAvg: number
+  enemyResistancePct: number
+  resistanceIgnoredPct: number
+  effectiveResistancePct: number
+  resistanceMultiplier: number
   hitMin: number
   hitMax: number
   critMin: number
@@ -901,6 +905,7 @@ export function computeSkillDamage(
   skillRanksByName: Record<string, number>,
   itemSkillBonuses: Record<string, [number, number]>,
   enemyConditions?: Record<string, boolean>,
+  enemyResistances?: Record<string, number>,
 ): SkillDamageBreakdown | null {
   if (allocatedRank === 0) return null
   const hasFormula = !!skill.damageFormula
@@ -1003,18 +1008,30 @@ export function computeSkillDamage(
   const critMultAvg =
     1 - critChanceClamped + critChanceClamped * critMultOnCrit
 
+  const enemyResPct = skill.damageType
+    ? (enemyResistances?.[skill.damageType] ?? 0)
+    : 0
+  const rawIgnorePct = skill.damageType
+    ? rangedMax(stats[`ignore_${skill.damageType}_res`] ?? 0)
+    : 0
+  const ignoreResPct = Math.max(0, Math.min(100, rawIgnorePct))
+  const effectiveResPct = enemyResPct * (1 - ignoreResPct / 100)
+  const resistanceMult = 1 - effectiveResPct / 100
+
   const hitMin =
     (baseMin + flatMin) *
     (1 + synergyMinPct / 100) *
     (1 + skillDamageMinPct / 100) *
     skillMoreMultMin *
-    extraMult
+    extraMult *
+    resistanceMult
   const hitMax =
     (baseMax + flatMax) *
     (1 + synergyMaxPct / 100) *
     (1 + skillDamageMaxPct / 100) *
     skillMoreMultMax *
-    extraMult
+    extraMult *
+    resistanceMult
 
   const critMin = hitMin * critMultOnCrit
   const critMax = hitMax * critMultOnCrit
@@ -1040,6 +1057,10 @@ export function computeSkillDamage(
     critChance,
     critDamagePct,
     critMultiplierAvg: critMultAvg,
+    enemyResistancePct: enemyResPct,
+    resistanceIgnoredPct: ignoreResPct,
+    effectiveResistancePct: effectiveResPct,
+    resistanceMultiplier: resistanceMult,
     hitMin: Math.floor(hitMin),
     hitMax: Math.floor(hitMax),
     critMin: Math.floor(critMin),

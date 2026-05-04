@@ -17,6 +17,14 @@ const ENEMY_CONDITIONS: { key: string; label: string }[] = [
   { key: 'is_boss', label: 'Target is Boss' },
 ]
 
+const ENEMY_RESISTANCE_TYPES: { key: string; label: string }[] = [
+  { key: 'fire', label: 'Fire' },
+  { key: 'cold', label: 'Cold' },
+  { key: 'lightning', label: 'Lightning' },
+  { key: 'poison', label: 'Poison' },
+  { key: 'arcane', label: 'Arcane' },
+]
+
 export default function ConfigView() {
   const classId = useBuild((s) => s.classId)
   const skillRanks = useBuild((s) => s.skillRanks)
@@ -24,6 +32,8 @@ export default function ConfigView() {
   const setBuffActive = useBuild((s) => s.setBuffActive)
   const enemyConditions = useBuild((s) => s.enemyConditions)
   const setEnemyCondition = useBuild((s) => s.setEnemyCondition)
+  const enemyResistances = useBuild((s) => s.enemyResistances)
+  const setEnemyResistance = useBuild((s) => s.setEnemyResistance)
   const customStats = useBuild((s) => s.customStats)
   const addCustomStat = useBuild((s) => s.addCustomStat)
   const updateCustomStat = useBuild((s) => s.updateCustomStat)
@@ -134,6 +144,46 @@ export default function ConfigView() {
         <p className="mt-3 text-[11px] text-muted italic">
           Future stat modifiers can reference these flags (currently UI-only).
         </p>
+      </Panel>
+
+      <Panel
+        title="Enemy Resistances"
+        subtitle="Per-element resistance % the target has. Damage modifier = 1 − (Enemy Res × (1 − Ignore)). 100% Ignore fully bypasses resistance; lower values help proportionally even against immune targets."
+      >
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {ENEMY_RESISTANCE_TYPES.map((r) => {
+            const value = enemyResistances[r.key]
+            return (
+              <label
+                key={r.key}
+                className="flex items-center justify-between gap-2 rounded border border-border bg-panel-2 px-3 py-2 text-sm"
+              >
+                <span className="text-text/90">{r.label}</span>
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    value={value ?? ''}
+                    placeholder="0"
+                    onChange={(e) => {
+                      const raw = e.target.value
+                      if (raw === '') {
+                        setEnemyResistance(r.key, null)
+                        commitActiveProfile()
+                        return
+                      }
+                      const n = Number(raw)
+                      if (!Number.isFinite(n)) return
+                      setEnemyResistance(r.key, n)
+                      commitActiveProfile()
+                    }}
+                    className="w-16 rounded border border-border bg-panel px-1.5 py-0.5 text-right tabular-nums text-text focus:border-accent focus:outline-none"
+                  />
+                  <span className="text-muted">%</span>
+                </div>
+              </label>
+            )
+          })}
+        </div>
       </Panel>
 
       <Panel
