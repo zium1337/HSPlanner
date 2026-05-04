@@ -24,6 +24,7 @@ import type {
   ItemRarity,
   SlotKey,
   StatMap,
+  TreeSocketContent,
 } from '../types'
 import {
   applyStarsToRangedValue,
@@ -644,6 +645,7 @@ function NetChangeSection({
   const enemyConditions = useBuild((s) => s.enemyConditions)
   const customStats = useBuild((s) => s.customStats)
   const allocatedTreeNodes = useBuild((s) => s.allocatedTreeNodes)
+  const treeSocketed = useBuild((s) => s.treeSocketed)
 
   const beforeBase = getItem(compareWith.baseId)
 
@@ -676,6 +678,7 @@ function NetChangeSection({
         enemyConditions,
         customStats,
         allocatedTreeNodes,
+        treeSocketed,
       },
       slotKey,
       base,
@@ -693,6 +696,7 @@ function NetChangeSection({
     enemyConditions,
     customStats,
     allocatedTreeNodes,
+    treeSocketed,
   ])
 
   if (!beforeBase) return null
@@ -785,6 +789,7 @@ function computeDpsDelta(
     enemyConditions: Record<string, boolean>
     customStats: CustomStat[]
     allocatedTreeNodes: Set<number>
+    treeSocketed: Record<number, TreeSocketContent | null>
   },
   slotKey: SlotKey,
   prospectBase: ItemBase,
@@ -804,6 +809,7 @@ function computeDpsDelta(
       state.activeBuffs,
       state.customStats,
       state.allocatedTreeNodes,
+      state.treeSocketed,
     )
     const dps = computeWeaponDamage(inv, built.stats, state.enemyConditions)
     return {

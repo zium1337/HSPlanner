@@ -100,6 +100,7 @@ export default function LeftStatsPanel() {
   const enemyConditions = useBuild((s) => s.enemyConditions);
   const enemyResistances = useBuild((s) => s.enemyResistances);
   const customStats = useBuild((s) => s.customStats);
+  const treeSocketed = useBuild((s) => s.treeSocketed);
   const { attributes, stats } = useMemo(
     () =>
       computeBuildStats(
@@ -112,6 +113,7 @@ export default function LeftStatsPanel() {
         activeBuffs,
         customStats,
         treeAllocated,
+        treeSocketed,
       ),
     [
       classId,
@@ -123,6 +125,7 @@ export default function LeftStatsPanel() {
       activeBuffs,
       customStats,
       treeAllocated,
+      treeSocketed,
     ],
   );
 
@@ -305,6 +308,8 @@ export default function LeftStatsPanel() {
     stats,
     skillRanksByName,
     itemSkillBonuses,
+    enemyConditions,
+    enemyResistances,
     killsPerSec,
   ]);
   const { min: procDpsMin, max: procDpsMax } = procDps;

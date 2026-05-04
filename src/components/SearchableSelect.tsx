@@ -1,12 +1,7 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
-import { createPortal } from 'react-dom'
+import { useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import { useOutsideClick } from '../hooks/useOutsideClick'
+import HoverPortal from './HoverPortal'
 
 export interface SearchableOption {
   id: string
@@ -40,16 +35,10 @@ export default function SearchableSelect({
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const boxRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    function onClick(e: MouseEvent) {
-      if (!boxRef.current?.contains(e.target as Node)) {
-        setOpen(false)
-        setHoveredId(null)
-      }
-    }
-    window.addEventListener('mousedown', onClick)
-    return () => window.removeEventListener('mousedown', onClick)
-  }, [])
+  useOutsideClick(boxRef, open, () => {
+    setOpen(false)
+    setHoveredId(null)
+  })
 
   const selected = options.find((o) => o.id === value) ?? null
 
@@ -150,59 +139,3 @@ export default function SearchableSelect({
   )
 }
 
-function HoverPortal({
-  anchorRef,
-  children,
-}: {
-  anchorRef: React.RefObject<HTMLDivElement | null>
-  children: ReactNode
-}) {
-  // Renders `children` into a portal pinned to the left of the anchor element with conservative width clamping, kept in sync with window resize/scroll. Used by SearchableSelect's optional `sidePanel` preview to keep the panel visually attached to the dropdown.
-  const [pos, setPos] = useState<{
-    left: number
-    top: number
-    maxWidth: number
-  } | null>(null)
-  const panelRef = useRef<HTMLDivElement>(null)
-
-  useLayoutEffect(() => {
-    function recompute() {
-      // Reads the anchor's viewport rectangle and writes the resulting (left, top, maxWidth) into local state. Used both on mount and as a window resize/scroll listener so the portal tracks its anchor.
-      const anchor = anchorRef.current
-      if (!anchor) return
-      const rect = anchor.getBoundingClientRect()
-      const margin = 12
-      const desiredMaxWidth = Math.min(640, rect.left - margin * 2)
-      const left = Math.max(margin, rect.left - margin)
-      setPos({
-        left,
-        top: rect.top,
-        maxWidth: Math.max(220, desiredMaxWidth),
-      })
-    }
-    recompute()
-    window.addEventListener('resize', recompute)
-    window.addEventListener('scroll', recompute, true)
-    return () => {
-      window.removeEventListener('resize', recompute)
-      window.removeEventListener('scroll', recompute, true)
-    }
-  }, [anchorRef])
-
-  if (!pos) return null
-  return createPortal(
-    <div
-      ref={panelRef}
-      className="fixed z-[1000] pointer-events-none"
-      style={{
-        left: pos.left,
-        top: pos.top,
-        transform: 'translateX(-100%)',
-        maxWidth: `${pos.maxWidth}px`,
-      }}
-    >
-      {children}
-    </div>,
-    document.body,
-  )
-}

@@ -8,6 +8,20 @@ export interface EquippedAffix {
   roll: number
 }
 
+export interface TreeSocketEquipped {
+  kind: 'item'
+  id: string
+}
+
+export interface TreeSocketCrafted {
+  kind: 'uncut'
+  affixes: EquippedAffix[]
+}
+
+export type TreeSocketContent = TreeSocketEquipped | TreeSocketCrafted
+
+export const UNCUT_JEWEL_MAX_AFFIXES = 4
+
 export interface EquippedItem {
   baseId: string
   affixes: EquippedAffix[]

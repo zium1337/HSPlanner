@@ -9,7 +9,9 @@ import type {
   Inventory,
   SlotKey,
   SocketType,
+  TreeSocketContent,
 } from '../types'
+import { AUGMENT_MAX_LEVEL } from '../types'
 import { sanitizeHtml } from './sanitizeHtml'
 
 const SCHEMA_VERSION = 1
@@ -63,6 +65,20 @@ const equippedAffixSchema = z.object({
   roll: FINITE_NUMBER,
 })
 
+const treeSocketContentSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('item'), id: SAFE_STRING }),
+  z.object({
+    kind: z.literal('uncut'),
+    affixes: z.array(equippedAffixSchema).max(MAX_AFFIXES_PER_ITEM),
+  }),
+])
+
+const treeSocketedSchema = z
+  .record(SAFE_STRING, treeSocketContentSchema.nullable())
+  .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
+    message: 'too many tree sockets',
+  })
+
 const equippedItemSchema = z
   .object({
     baseId: SAFE_STRING,
@@ -111,6 +127,7 @@ const shareableBuildSchema = z.object({
     )
     .max(MAX_CUSTOM_STATS)
     .optional(),
+  ts: treeSocketedSchema.optional(),
 })
 
 export interface ShareableBuild {
@@ -131,6 +148,7 @@ export interface ShareableBuild {
   kps: number
   n?: string
   cs?: { k: string; v: string }[]
+  ts?: Record<string, TreeSocketContent | null>
 }
 
 export interface BuildSnapshot {
@@ -149,6 +167,7 @@ export interface BuildSnapshot {
   procToggles: Record<string, boolean>
   killsPerSec: number
   customStats: CustomStat[]
+  treeSocketed: Record<number, TreeSocketContent | null>
 }
 
 function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
@@ -178,6 +197,14 @@ function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
       k: s.statKey,
       v: s.value,
     }))
+  }
+  if (snapshot.treeSocketed && Object.keys(snapshot.treeSocketed).length > 0) {
+    const ts: Record<string, TreeSocketContent | null> = {}
+    for (const [id, content] of Object.entries(snapshot.treeSocketed)) {
+      if (content == null) continue
+      ts[id] = content
+    }
+    if (Object.keys(ts).length > 0) out.ts = ts
   }
   return out
 }
@@ -223,6 +250,13 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
             value: s.v,
           }))
       : [],
+    treeSocketed: encoded.ts
+      ? Object.fromEntries(
+          Object.entries(encoded.ts)
+            .filter(([, v]) => v != null)
+            .map(([id, content]) => [Number(id), content as TreeSocketContent]),
+        )
+      : {},
   }
   return {
     snapshot,
@@ -256,7 +290,7 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       Number.isFinite(item.augment.level)
         ? {
             id: item.augment.id,
-            level: Math.max(1, Math.min(7, Math.floor(item.augment.level))),
+            level: Math.max(1, Math.min(AUGMENT_MAX_LEVEL, Math.floor(item.augment.level))),
           }
         : undefined
     out[slot as SlotKey] = {

@@ -26,9 +26,10 @@ import type {
   Skill,
   StatDef,
   StatMap,
+  TreeSocketContent,
 } from '../types'
 import { parseCustomStatValue } from './parseCustomStat'
-import { parseTreeNodeMod, TREE_NODE_INFO } from './treeStats'
+import { parseTreeNodeMod, TREE_JEWELRY_IDS, TREE_NODE_INFO } from './treeStats'
 
 export type SourceType =
   | 'class'
@@ -167,6 +168,7 @@ export function computeBuildStats(
   activeBuffs?: Record<string, boolean>,
   customStats?: CustomStat[],
   allocatedTreeNodes?: Set<number>,
+  treeSocketed?: Record<number, TreeSocketContent | null>,
 ): ComputedStats {
   // Top-level aggregator that walks every input (class base, allocated attributes, inventory items, sockets/runewords, augments, allocated talent-tree nodes, set bonuses, default per-level stats, allocated active passive/aura/buff skills, custom stats, derived per-attribute stats and item-granted skill effects) and produces a single ComputedStats object containing both the summed values and the per-source breakdown. Used by the build store on every state change to refresh the stats panel and feed the damage calculators.
   const cls = classId ? getClass(classId) : undefined
@@ -352,6 +354,9 @@ export function computeBuildStats(
     for (const nodeId of allocatedTreeNodes) {
       const info = TREE_NODE_INFO[String(nodeId)]
       if (!info?.l) continue
+      // Jewelry sockets contribute via their socketed content, not via the
+      // "+1 Socketable Slot" line.
+      if (TREE_JEWELRY_IDS.has(nodeId)) continue
       const label = `Tree: ${info.t}`
       for (const line of info.l) {
         const parsed = parseTreeNodeMod(line)
@@ -364,6 +369,45 @@ export function computeBuildStats(
           label,
           'tree',
         )
+      }
+    }
+  }
+
+  if (allocatedTreeNodes && treeSocketed) {
+    for (const nodeId of allocatedTreeNodes) {
+      if (!TREE_JEWELRY_IDS.has(nodeId)) continue
+      const content = treeSocketed[nodeId]
+      if (!content) continue
+      const socketLabel = `Tree Socket #${nodeId}`
+      if (content.kind === 'item') {
+        const source = getGem(content.id) ?? getRune(content.id)
+        if (!source) continue
+        for (const [statKey, value] of Object.entries(source.stats)) {
+          if (value === 0) continue
+          applyContribution(
+            attrSources,
+            statSources,
+            statKey,
+            value,
+            `${source.name} (${socketLabel})`,
+            'tree',
+          )
+        }
+      } else {
+        for (const eq of content.affixes) {
+          const affix = getAffix(eq.affixId)
+          if (!affix || !affix.statKey) continue
+          const signed = rolledAffixValue(affix, eq.roll)
+          if (signed === 0) continue
+          applyContribution(
+            attrSources,
+            statSources,
+            affix.statKey,
+            signed,
+            `${affix.name} (${socketLabel})`,
+            'tree',
+          )
+        }
       }
     }
   }

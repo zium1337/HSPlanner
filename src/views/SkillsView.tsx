@@ -6,11 +6,12 @@ import { skillPointsFor, subskillKey, useBuild } from '../store/build'
 import {
   aggregateItemSkillBonuses,
   computeBuildStats,
+  formatValue,
   manaCostAtRank,
+  normalizeSkillName,
   passiveStatsAtRank,
   rangedMax,
   rangedMin,
-  statDef,
   statName,
 } from '../utils/stats'
 import { aggregateSubskillStats } from '../utils/subtree'
@@ -77,6 +78,7 @@ export default function SkillsView() {
   const enemyConditions = useBuild((s) => s.enemyConditions)
   const customStats = useBuild((s) => s.customStats)
   const treeAllocated = useBuild((s) => s.allocatedTreeNodes)
+  const treeSocketed = useBuild((s) => s.treeSocketed)
   const { stats, attributes } = useMemo(
     () =>
       computeBuildStats(
@@ -89,6 +91,7 @@ export default function SkillsView() {
         activeBuffs,
         customStats,
         treeAllocated,
+        treeSocketed,
       ),
     [
       classId,
@@ -100,6 +103,7 @@ export default function SkillsView() {
       activeBuffs,
       customStats,
       treeAllocated,
+      treeSocketed,
     ],
   )
   const itemSkillBonuses = useMemo(
@@ -200,9 +204,9 @@ export default function SkillsView() {
           }
           itemBonus={
             selectedSkill
-              ? (itemSkillBonuses[
-                  selectedSkill.name.trim().toLowerCase()
-                ] ?? [0, 0])
+              ? (itemSkillBonuses[normalizeSkillName(selectedSkill.name)] ?? [
+                  0, 0,
+                ])
               : [0, 0]
           }
           allClassSkills={skillsForClass}
@@ -667,7 +671,7 @@ function SubtreeBonusBlock({
           {statEntries.map(([k, v]) => (
             <div key={k} className="flex justify-between">
               <span className="text-text/80">{statName(k)}</span>
-              <span className="text-accent">{fmtStatValue(k, v)}</span>
+              <span className="text-accent">{formatValue(v, k)}</span>
             </div>
           ))}
         </div>
@@ -687,13 +691,13 @@ function SubtreeBonusBlock({
               const per = perRankMap[k] ?? 0
               const v = base + per * rank
               if (v === 0) continue
-              effectParts.push(`${fmtStatValue(k, v)} ${statName(k)}`)
+              effectParts.push(`${formatValue(v, k)} ${statName(k)}`)
             }
             for (const [k, per] of Object.entries(perRankMap)) {
               if (k in baseMap) continue
               const v = per * rank
               if (v === 0) continue
-              effectParts.push(`${fmtStatValue(k, v)} ${statName(k)}`)
+              effectParts.push(`${formatValue(v, k)} ${statName(k)}`)
             }
             for (const s of proc.appliesStates ?? []) {
               if (typeof s === 'string') {
@@ -731,16 +735,6 @@ function SubtreeBonusBlock({
   )
 }
 
-function fmtStatValue(key: string, value: number): string {
-  // Formats a stat number as a signed string with the stat's percent/flat suffix and at most two decimals. Used by SubtreeBonusBlock and SkillEffectsBlock to render numeric values.
-  const def = statDef(key)
-  const suffix = def?.format === 'percent' ? '%' : ''
-  const rounded = Number.isInteger(value)
-    ? String(value)
-    : (Math.round(value * 100) / 100).toString()
-  const sign = value >= 0 ? '+' : ''
-  return `${sign}${rounded}${suffix}`
-}
 
 function SkillEffectsBlock({
   skill,
@@ -811,8 +805,9 @@ function SkillEffectsBlock({
   if (allocated) {
     for (const bs of skill.bonusSources ?? []) {
       if (bs.per === 'skill_level') {
+        const srcKey = normalizeSkillName(bs.source)
         const srcSkill = allClassSkills.find(
-          (s) => s.name.trim().toLowerCase() === bs.source.trim().toLowerCase(),
+          (s) => normalizeSkillName(s.name) === srcKey,
         )
         if (!srcSkill) continue
         const rank = skillRanks[srcSkill.id] ?? 0
@@ -860,7 +855,7 @@ function SkillEffectsBlock({
     for (const bs of other.bonusSources ?? []) {
       if (
         bs.per === 'skill_level' &&
-        bs.source.trim().toLowerCase() === skill.name.trim().toLowerCase()
+        normalizeSkillName(bs.source) === normalizeSkillName(skill.name)
       ) {
         synergiesProvided.push({
           target: other.name,
@@ -924,10 +919,10 @@ function SkillEffectsBlock({
         {manaCurMin !== undefined && manaCurMax !== undefined && (
           <EffRow
             label="Mana cost"
-            cur={formatNumPair(manaCurMin, manaCurMax)}
+            cur={formatPair([manaCurMin, manaCurMax])}
             next={
               manaNextMin !== undefined && manaNextMax !== undefined
-                ? formatNumPair(manaNextMin, manaNextMax)
+                ? formatPair([manaNextMin, manaNextMax])
                 : undefined
             }
             color={allocated ? 'text-sky-300' : 'text-muted'}
@@ -1007,14 +1002,8 @@ function SkillEffectsBlock({
 
 function formatStatPair(key: string, min: number, max: number): string {
   // Renders a `[min, max]` stat range as either a single signed value or "min-max" with the per-stat unit suffix. Used by SkillEffectsBlock.
-  if (min === max) return fmtStatValue(key, min)
-  return `${fmtStatValue(key, min)}-${fmtStatValue(key, max).replace(/^[+-]/, '')}`
-}
-
-function formatNumPair(min: number, max: number): string {
-  // Renders a plain numeric range as either a single number or "min-max", with no suffix. Used for synergy contributions and other unitless values.
-  if (min === max) return String(min)
-  return `${min}-${max}`
+  if (min === max) return formatValue(min, key)
+  return `${formatValue(min, key)}-${formatValue(max, key).replace(/^[+-]/, '')}`
 }
 
 function formatDmgRange(min: [number, number], max: [number, number]): string {

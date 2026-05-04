@@ -3,18 +3,24 @@ import { createPortal } from 'react-dom'
 import treeBackground from '../assets/atlas/Incarnation_Background.png'
 import nodeIconsMap from '../data/node-icons.json'
 import treeData from '../data/hero-siege-tree.json'
+import { getAffix, getGem, getRune } from '../data'
 import { useBuild } from '../store/build'
 import { ADJ, findPath, START_IDS, START_SET } from '../utils/treeGraph'
+import { formatValue, rolledAffixValue, statName } from '../utils/stats'
+import JewelSocketModal from '../components/JewelSocketModal'
 import {
   TooltipHeader,
   TooltipSection,
+  TooltipSectionHeader,
   TooltipText,
   UnsupportedModsList,
 } from '../components/Tooltip'
 import { TONE_BORDER, TONE_GLOW } from '../components/tooltip-tones'
 import type { TooltipTone } from '../components/tooltip-tones'
+import type { TreeSocketContent } from '../types'
 import {
   classifyNodeLines,
+  TREE_JEWELRY_IDS,
   TREE_NODE_INFO,
   TREE_WARP_IDS,
   type TreeNodeInfo,
@@ -95,12 +101,15 @@ for (const [p, url] of Object.entries(NODE_ICON_FILES)) {
   NODE_ICON_URL_BY_KEY[key] = url
 }
 
+const NODE_ICON_KEY_BY_ID = nodeIconsMap as Record<string, string>
 const NODE_ICONS: { id: number; x: number; y: number; r: number; href: string }[] =
   NODES.flatMap((n) => {
-    const key = (nodeIconsMap as Record<string, string>)[String(n.id)]
+    const key = NODE_ICON_KEY_BY_ID[String(n.id)]
     const href = key ? NODE_ICON_URL_BY_KEY[key] : undefined
     return href ? [{ id: n.id, x: n.x, y: n.y, r: n.r, href }] : []
   })
+
+const JEWELRY_NODES = NODES.filter((n) => TREE_JEWELRY_IDS.has(n.id))
 
 interface NodePaint {
   isAlloc: boolean
@@ -146,6 +155,9 @@ export default function TreeView() {
   const allocated = useBuild((s) => s.allocatedTreeNodes)
   const toggleNode = useBuild((s) => s.toggleTreeNode)
   const resetTree = useBuild((s) => s.resetTreeNodes)
+  const treeSocketed = useBuild((s) => s.treeSocketed)
+  const setTreeSocketed = useBuild((s) => s.setTreeSocketed)
+  const [socketModalNodeId, setSocketModalNodeId] = useState<number | null>(null)
 
   const [scale, setScale] = useState(0.35)
   const [tx, setTx] = useState(0)
@@ -269,6 +281,27 @@ export default function TreeView() {
     return matches
   }, [searchQuery])
 
+  const socketMarks = useMemo(
+    () =>
+      JEWELRY_NODES.flatMap((n) =>
+        treeSocketed[n.id] != null
+          ? [
+              <circle
+                key={`socket-mark-${n.id}`}
+                cx={n.x}
+                cy={n.y}
+                r={n.r + 4}
+                fill="none"
+                stroke="#ffd66b"
+                strokeWidth={2}
+                opacity={0.85}
+              />,
+            ]
+          : [],
+      ),
+    [treeSocketed],
+  )
+
   const nodeCircles = useMemo(
     () =>
       NODES.map((n) => {
@@ -304,6 +337,10 @@ export default function TreeView() {
               e.stopPropagation()
               if (didDragRef.current) {
                 didDragRef.current = false
+                return
+              }
+              if (TREE_JEWELRY_IDS.has(n.id) && allocated.has(n.id)) {
+                setSocketModalNodeId(n.id)
                 return
               }
               toggleNode(n.id)
@@ -424,6 +461,7 @@ export default function TreeView() {
               })}
             </g>
             {matchOverlay && <g pointerEvents="none">{matchOverlay}</g>}
+            <g pointerEvents="none">{socketMarks}</g>
           </g>
         </svg>
       </div>
@@ -509,9 +547,27 @@ export default function TreeView() {
             node={hoverNode}
             info={hoverInfo}
             cursor={hoverPos}
+            socketContent={
+              TREE_JEWELRY_IDS.has(hoverNode.id)
+                ? treeSocketed[hoverNode.id] ?? null
+                : null
+            }
+            isJewelry={TREE_JEWELRY_IDS.has(hoverNode.id)}
+            isAllocated={allocated.has(hoverNode.id)}
           />,
           document.body,
         )}
+
+      {socketModalNodeId != null && (
+        <JewelSocketModal
+          nodeId={socketModalNodeId}
+          current={treeSocketed[socketModalNodeId] ?? null}
+          onClose={() => setSocketModalNodeId(null)}
+          onApply={(content) => {
+            setTreeSocketed(socketModalNodeId, content)
+          }}
+        />
+      )}
     </div>
   )
 }
@@ -520,10 +576,16 @@ function NodeTooltip({
   node,
   info,
   cursor,
+  socketContent,
+  isJewelry,
+  isAllocated,
 }: {
   node: TreeNode
   info: TreeNodeInfo | null
   cursor: { x: number; y: number }
+  socketContent: TreeSocketContent | null
+  isJewelry: boolean
+  isAllocated: boolean
 }) {
   // Floating tooltip rendered next to a hovered tree node. Splits the node's text lines into parsed mods (rendered prettily) and unsupported lines (rendered with a "Not Yet Supported" label), shows the tier label, and clamps its position inside the viewport. Used by TreeView whenever the user mouses over a node.
   const ref = useRef<HTMLDivElement>(null)
@@ -569,19 +631,28 @@ function NodeTooltip({
         subtitle={tierName}
         tone={tone}
       />
-      {lineGroups && lineGroups.parsed.length > 0 && (
-        <TooltipSection>
-          <div className="space-y-0.5">
-            {lineGroups.parsed.map((p, i) => (
-              <TooltipText key={i}>{p.line}</TooltipText>
-            ))}
-          </div>
-        </TooltipSection>
-      )}
-      {lineGroups && lineGroups.unsupported.length > 0 && (
-        <TooltipSection>
-          <UnsupportedModsList lines={lineGroups.unsupported} />
-        </TooltipSection>
+      {isJewelry ? (
+        <JewelrySocketSection
+          content={socketContent}
+          isAllocated={isAllocated}
+        />
+      ) : (
+        <>
+          {lineGroups && lineGroups.parsed.length > 0 && (
+            <TooltipSection>
+              <div className="space-y-0.5">
+                {lineGroups.parsed.map((p, i) => (
+                  <TooltipText key={i}>{p.line}</TooltipText>
+                ))}
+              </div>
+            </TooltipSection>
+          )}
+          {lineGroups && lineGroups.unsupported.length > 0 && (
+            <TooltipSection>
+              <UnsupportedModsList lines={lineGroups.unsupported} />
+            </TooltipSection>
+          )}
+        </>
       )}
       {info && info.g && info.g.length > 0 && (
         <TooltipSection className="bg-panel-2/40">
@@ -605,5 +676,90 @@ function NodeTooltip({
         </TooltipSection>
       )}
     </div>
+  )
+}
+
+function JewelrySocketSection({
+  content,
+  isAllocated,
+}: {
+  content: TreeSocketContent | null
+  isAllocated: boolean
+}) {
+  if (!content) {
+    return (
+      <TooltipSection>
+        <TooltipSectionHeader tone="gold">Socketed</TooltipSectionHeader>
+        <TooltipText>
+          <span className="text-faint italic">
+            Empty socket{isAllocated ? ' — click to insert' : ''}
+          </span>
+        </TooltipText>
+      </TooltipSection>
+    )
+  }
+
+  let socketedTitle: string
+  let socketedSubtitle: string | null = null
+  let statLines: { key: string; value: number }[] = []
+
+  if (content.kind === 'item') {
+    const source = getGem(content.id) ?? getRune(content.id)
+    if (!source) {
+      return (
+        <TooltipSection>
+          <TooltipSectionHeader tone="gold">Socketed</TooltipSectionHeader>
+          <TooltipText>
+            <span className="text-stat-red">
+              unknown socketable: {content.id}
+            </span>
+          </TooltipText>
+        </TooltipSection>
+      )
+    }
+    socketedTitle = source.name
+    socketedSubtitle = `T${source.tier}`
+    statLines = Object.entries(source.stats)
+      .filter(([, v]) => v !== 0)
+      .map(([key, value]) => ({ key, value }))
+  } else {
+    socketedTitle = 'Uncut Jewel'
+    socketedSubtitle = `${content.affixes.length} affix${
+      content.affixes.length === 1 ? '' : 'es'
+    }`
+    statLines = content.affixes
+      .map((eq) => {
+        const def = getAffix(eq.affixId)
+        if (!def || !def.statKey) return null
+        const value = rolledAffixValue(def, eq.roll)
+        if (value === 0) return null
+        return { key: def.statKey, value }
+      })
+      .filter((x): x is { key: string; value: number } => x !== null)
+  }
+
+  return (
+    <>
+      <TooltipSection>
+        <TooltipSectionHeader tone="gold" trailing={socketedSubtitle}>
+          Socketed
+        </TooltipSectionHeader>
+        <div className="text-[12px] font-medium text-accent-hot">
+          {socketedTitle}
+        </div>
+      </TooltipSection>
+      {statLines.length > 0 && (
+        <TooltipSection>
+          <TooltipSectionHeader tone="gold">From Sockets</TooltipSectionHeader>
+          <ul className="space-y-0.5 text-[12px]">
+            {statLines.map(({ key, value }) => (
+              <li key={key} className="text-accent">
+                {formatValue(value, key)} {statName(key)}
+              </li>
+            ))}
+          </ul>
+        </TooltipSection>
+      )}
+    </>
   )
 }

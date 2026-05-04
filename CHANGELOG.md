@@ -8,6 +8,7 @@
 - **Tooltip Section Header** overhaul.
 - **Mask of the Celestial** sprite asset.
 - **Incarnation Tree** visual overhaul.
+- **Jewelry** passive note is finally working. You can now socket gem/soulgem/rune or uncut jewel with custom affix into jewelry socket.
 
 ### Improved
 - **Spell crit handling** - now uses `Critical Strike Chance for Spells`/`Critical Strike Damage for Spells` for skills tagged `Spell`, separate from melee crit. Spell crit no longer benefits from `Critical Strike Damage` (matches the in-game cap).

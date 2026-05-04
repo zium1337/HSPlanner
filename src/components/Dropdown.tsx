@@ -1,14 +1,14 @@
 import {
   Fragment,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
-import { createPortal } from 'react-dom'
+import { useOutsideClick } from '../hooks/useOutsideClick'
+import HoverPortal from './HoverPortal'
 
 export type DropdownRarity = string
 
@@ -42,12 +42,13 @@ function escapeRegExp(s: string): string {
 function Highlight({ text, query }: { text: string; query: string }) {
   // Renders `text` with every case-insensitive occurrence of `query` wrapped in `<mark>` tags. Used by Dropdown to highlight the matching substring inside item names and meta chips.
   if (!query) return <>{text}</>
-  const re = new RegExp(`(${escapeRegExp(query)})`, 'ig')
+  // Capture-group split: every odd-indexed part is the matched substring.
+  const re = new RegExp(`(${escapeRegExp(query)})`, 'i')
   const parts = String(text).split(re)
   return (
     <>
       {parts.map((p, i) =>
-        re.test(p) ? <mark key={i}>{p}</mark> : <Fragment key={i}>{p}</Fragment>,
+        i % 2 === 1 ? <mark key={i}>{p}</mark> : <Fragment key={i}>{p}</Fragment>,
       )}
     </>
   )
@@ -93,17 +94,10 @@ export function Dropdown({
     return () => clearTimeout(t)
   }, [open])
 
-  useEffect(() => {
-    if (!open) return
-    function onDown(e: MouseEvent) {
-      if (!rootRef.current?.contains(e.target as Node)) {
-        setOpen(false)
-        setHoveredId(null)
-      }
-    }
-    document.addEventListener('mousedown', onDown)
-    return () => document.removeEventListener('mousedown', onDown)
-  }, [open])
+  useOutsideClick(rootRef, open, () => {
+    setOpen(false)
+    setHoveredId(null)
+  })
 
   useEffect(() => {
     const els = listRef.current?.querySelectorAll<HTMLElement>('.hs-dd-item')
@@ -156,6 +150,11 @@ export function Dropdown({
     return m
   }, [filtered])
   const hasGroups = [...groups.keys()].some(Boolean)
+  const indexById = useMemo(() => {
+    const m = new Map<string, number>()
+    filtered.forEach((it, i) => m.set(it.id, i))
+    return m
+  }, [filtered])
 
   return (
     <div
@@ -232,7 +231,7 @@ export function Dropdown({
                   {g && hasGroups && <div className="hs-dd-group">{g}</div>}
                   {arr.map((it) => {
                     const idx =
-                      filtered.indexOf(it) + (allowNone && !query ? 1 : 0)
+                      (indexById.get(it.id) ?? 0) + (allowNone && !query ? 1 : 0)
                     const cls = [
                       'hs-dd-item',
                       `rarity-${it.rarity ?? 'normal'}`,
@@ -314,58 +313,3 @@ export function Dropdown({
 }
 
 export default Dropdown
-
-function HoverPortal({
-  anchorRef,
-  children,
-}: {
-  anchorRef: React.RefObject<HTMLDivElement | null>
-  children: ReactNode
-}) {
-  // Renders `children` into a fixed-position portal anchored to the left of the supplied anchor element, recomputing on resize/scroll so the panel stays glued to the dropdown. Used to display the optional `sidePanel` preview without disturbing the dropdown's layout.
-  const [pos, setPos] = useState<{
-    left: number
-    top: number
-    maxWidth: number
-  } | null>(null)
-
-  useLayoutEffect(() => {
-    function recompute() {
-      // Reads the anchor's viewport rectangle and writes the resulting (left, top, maxWidth) into local state. Used both on mount and as a window resize/scroll listener so the portal tracks its anchor.
-      const anchor = anchorRef.current
-      if (!anchor) return
-      const rect = anchor.getBoundingClientRect()
-      const margin = 12
-      const desiredMaxWidth = Math.min(640, rect.left - margin * 2)
-      const left = Math.max(margin, rect.left - margin)
-      setPos({
-        left,
-        top: rect.top,
-        maxWidth: Math.max(220, desiredMaxWidth),
-      })
-    }
-    recompute()
-    window.addEventListener('resize', recompute)
-    window.addEventListener('scroll', recompute, true)
-    return () => {
-      window.removeEventListener('resize', recompute)
-      window.removeEventListener('scroll', recompute, true)
-    }
-  }, [anchorRef])
-
-  if (!pos) return null
-  return createPortal(
-    <div
-      className="fixed z-[1000] pointer-events-none"
-      style={{
-        left: pos.left,
-        top: pos.top,
-        transform: 'translateX(-100%)',
-        maxWidth: `${pos.maxWidth}px`,
-      }}
-    >
-      {children}
-    </div>,
-    document.body,
-  )
-}

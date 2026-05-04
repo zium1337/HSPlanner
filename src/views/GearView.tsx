@@ -1434,14 +1434,6 @@ function ForgedModsSection({
   const [open, setOpen] = useState(false)
   const mods = equipped.forgedMods ?? []
   const sourceLabel = FORGE_KIND_LABEL[forgeKind]
-  const accentText = 'text-red-300'
-  const accentTextHover = 'hover:text-red-200'
-  const accentBorder = 'border-red-500/30'
-  const accentBg = 'bg-red-500/5'
-  const accentBorderHover = 'hover:border-red-400'
-  const accentBorderItem = 'border-red-500/20'
-  const accentBorderInputFocus = 'focus:border-red-400'
-  const accentRowHover = 'hover:bg-red-500/10'
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -1460,15 +1452,15 @@ function ForgedModsSection({
   const isOpen = open && canAdd
 
   return (
-    <div className={`space-y-2 rounded border ${accentBorder} ${accentBg} p-2`}>
+    <div className="space-y-2 rounded border border-red-500/30 bg-red-500/5 p-2">
       <div className="flex items-center justify-between">
-        <span className={`text-[10px] uppercase tracking-[0.12em] ${accentText}`}>
+        <span className="text-[10px] uppercase tracking-[0.12em] text-red-300">
           {sourceLabel} · Forged
         </span>
         {canAdd && (
           <button
             onClick={() => setOpen((v) => !v)}
-            className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border ${accentBorder} ${accentBorderHover} ${accentText} ${accentTextHover}`}
+            className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-red-500/30 hover:border-red-400 text-red-300 hover:text-red-200"
           >
             {isOpen ? 'Done' : '+ Add'}
           </button>
@@ -1483,10 +1475,10 @@ function ForgedModsSection({
             return (
               <li
                 key={idx}
-                className={`bg-panel-2 border ${accentBorderItem} rounded px-2 py-1 text-[11px]`}
+                className="bg-panel-2 border border-red-500/20 rounded px-2 py-1 text-[11px]"
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className={`truncate ${accentText} tabular-nums`}>
+                  <span className="truncate text-red-300 tabular-nums">
                     {mod.description}
                   </span>
                   <button
@@ -1511,7 +1503,7 @@ function ForgedModsSection({
             onChange={(e) => setQuery(e.target.value)}
             placeholder={`Search ${sourceLabel} mods…`}
             autoFocus
-            className={`w-full bg-panel-2 border border-border rounded px-2 py-1 text-[11px] focus:outline-none ${accentBorderInputFocus}`}
+            className="w-full bg-panel-2 border border-border rounded px-2 py-1 text-[11px] focus:outline-none focus:border-red-400"
           />
           {filtered.length > 0 && (
             <ul className="max-h-60 overflow-y-auto space-y-0.5 border border-border rounded bg-panel-2">
@@ -1523,9 +1515,9 @@ function ForgedModsSection({
                       setQuery('')
                       setOpen(false)
                     }}
-                    className={`w-full text-left text-[11px] px-2 py-1 ${accentRowHover}`}
+                    className="w-full text-left text-[11px] px-2 py-1 hover:bg-red-500/10"
                   >
-                    <span className={accentText}>{m.name}</span>{' '}
+                    <span className="text-red-300">{m.name}</span>{' '}
                     <span className="text-text/80">{m.description}</span>
                   </button>
                 </li>

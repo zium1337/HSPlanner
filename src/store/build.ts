@@ -16,6 +16,7 @@ import type {
   Inventory,
   SlotKey,
   SocketType,
+  TreeSocketContent,
 } from '../types'
 import {
   addProfile as storeAddProfile,
@@ -54,6 +55,7 @@ interface BuildState {
   inventory: Inventory
   skillRanks: Record<string, number>
   allocatedTreeNodes: Set<number>
+  treeSocketed: Record<number, TreeSocketContent | null>
   mainSkillId: string | null
   activeAuraId: string | null
   procToggles: Record<string, boolean>
@@ -98,6 +100,7 @@ interface BuildActions {
   resetSkillRanks: () => void
   toggleTreeNode: (nodeId: number) => void
   resetTreeNodes: () => void
+  setTreeSocketed: (nodeId: number, content: TreeSocketContent | null) => void
   setMainSkill: (skillId: string | null) => void
   setActiveAura: (skillId: string | null) => void
   setProcToggle: (skillId: string, enabled: boolean) => void
@@ -165,6 +168,7 @@ function snapshotPatch(snap: BuildSnapshot) {
     skillRanks: snap.skillRanks,
     subskillRanks: snap.subskillRanks,
     allocatedTreeNodes: snap.allocatedTreeNodes,
+    treeSocketed: snap.treeSocketed ?? {},
     mainSkillId: snap.mainSkillId,
     activeAuraId: snap.activeAuraId,
     activeBuffs: snap.activeBuffs,
@@ -205,6 +209,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   inventory: {},
   skillRanks: {},
   allocatedTreeNodes: new Set<number>(),
+  treeSocketed: {},
   mainSkillId: null,
   activeAuraId: null,
   procToggles: {},
@@ -302,8 +307,17 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       return { allocatedTreeNodes: next }
     }),
 
-  resetTreeNodes: () => set({ allocatedTreeNodes: new Set<number>() }),
-  // Clears every allocated talent-tree node. Used by TreeView's reset button.
+  resetTreeNodes: () => set({ allocatedTreeNodes: new Set<number>(), treeSocketed: {} }),
+  // Clears every allocated talent-tree node and any tree-socket content. Used by TreeView's reset button.
+
+  setTreeSocketed: (nodeId, content) =>
+    set((s) => {
+      // Sets (or clears with null) the content of a jewelry tree socket. Used by JewelSocketPicker.
+      const next = { ...s.treeSocketed }
+      if (content == null) delete next[nodeId]
+      else next[nodeId] = content
+      return { treeSocketed: next }
+    }),
 
   setMainSkill: (skillId) => set({ mainSkillId: skillId }),
   // Marks a skill as the build's main skill, which the StatsView uses to drive the headline damage breakdown.
@@ -541,6 +555,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       skillRanks: s.skillRanks,
       subskillRanks: s.subskillRanks,
       allocatedTreeNodes: s.allocatedTreeNodes,
+      treeSocketed: s.treeSocketed,
       mainSkillId: s.mainSkillId,
       activeAuraId: s.activeAuraId,
       activeBuffs: s.activeBuffs,

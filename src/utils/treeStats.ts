@@ -15,6 +15,12 @@ export const TREE_WARP_IDS = new Set<number>(
     .map(([id]) => Number(id)),
 )
 
+export const TREE_JEWELRY_IDS = new Set<number>(
+  Object.entries(TREE_NODE_INFO)
+    .filter(([, info]) => info.n === 'jewelry')
+    .map(([id]) => Number(id)),
+)
+
 export interface ParsedMod {
   key: string
   value: number

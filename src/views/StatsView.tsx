@@ -11,6 +11,7 @@ import {
   effectiveCap,
   formatValue,
   isZero,
+  normalizeSkillName,
   rangedMax,
   rangedMin,
   statDef,
@@ -71,6 +72,7 @@ export default function StatsView() {
     enemyResistances,
     customStats,
     allocatedTreeNodes,
+    treeSocketed,
   } = useBuild()
   const [query, setQuery] = useState('')
   const normalizedQuery = query.trim().toLowerCase()
@@ -89,6 +91,7 @@ export default function StatsView() {
         activeBuffs,
         customStats,
         allocatedTreeNodes,
+        treeSocketed,
       ),
     [
       classId,
@@ -100,11 +103,15 @@ export default function StatsView() {
       activeBuffs,
       customStats,
       allocatedTreeNodes,
+      treeSocketed,
     ],
   )
   const fcrRange = stats.faster_cast_rate ?? 0
   const mcrRange = stats.mana_cost_reduction ?? 0
-  const itemSkillBonuses = aggregateItemSkillBonuses(inventory)
+  const itemSkillBonuses = useMemo(
+    () => aggregateItemSkillBonuses(inventory),
+    [inventory],
+  )
   const weaponDamage = useMemo(
     () => computeWeaponDamage(inventory, stats, enemyConditions),
     [inventory, stats, enemyConditions],
@@ -254,7 +261,7 @@ export default function StatsView() {
                 {(() => {
                   const skillRanksByName: Record<string, number> = {}
                   for (const s of allClassSkills) {
-                    skillRanksByName[s.name.toLowerCase()] =
+                    skillRanksByName[normalizeSkillName(s.name)] =
                       skillRanks[s.id] ?? 0
                   }
                   return visibleSkills.map((skill) => (
@@ -579,7 +586,7 @@ function DamageBreakdown({
     []
   for (const b of skill.bonusSources ?? []) {
     if (b.per === 'skill_level') {
-      const rank = skillRanksByName[b.source.trim().toLowerCase()] ?? 0
+      const rank = skillRanksByName[normalizeSkillName(b.source)] ?? 0
       if (rank === 0) continue
       synergyLines.push({
         label: `${b.source} (rank ${rank})`,
