@@ -34,6 +34,7 @@ export default function SearchableSelect({
   clearLabel = '— none —',
   sidePanel,
 }: Props) {
+  // Lighter-weight searchable select used by ConfigView for things like classes and skills. Filters by label and hint, supports a "clear" entry, and an optional left-anchored portal side panel that previews the hovered option.
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -156,6 +157,7 @@ function HoverPortal({
   anchorRef: React.RefObject<HTMLDivElement | null>
   children: ReactNode
 }) {
+  // Renders `children` into a portal pinned to the left of the anchor element with conservative width clamping, kept in sync with window resize/scroll. Used by SearchableSelect's optional `sidePanel` preview to keep the panel visually attached to the dropdown.
   const [pos, setPos] = useState<{
     left: number
     top: number
@@ -165,6 +167,7 @@ function HoverPortal({
 
   useLayoutEffect(() => {
     function recompute() {
+      // Reads the anchor's viewport rectangle and writes the resulting (left, top, maxWidth) into local state. Used both on mount and as a window resize/scroll listener so the portal tracks its anchor.
       const anchor = anchorRef.current
       if (!anchor) return
       const rect = anchor.getBoundingClientRect()

@@ -26,6 +26,7 @@ const ENEMY_RESISTANCE_TYPES: { key: string; label: string }[] = [
 ]
 
 export default function ConfigView() {
+  // Combat-context configuration view that lets the user toggle which class buffs are active, which enemy ailments / states the target has, the per-element enemy resistance values, and freeform "Custom Config" overrides that feed into the stats pipeline as additional contributions.
   const classId = useBuild((s) => s.classId)
   const skillRanks = useBuild((s) => s.skillRanks)
   const activeBuffs = useBuild((s) => s.activeBuffs)
@@ -282,6 +283,7 @@ function Panel({
   subtitle?: string
   children: React.ReactNode
 }) {
+  // Renders a titled section card used to group ConfigView's panels (Active Buffs, Enemy Conditions, Enemy Resistances, Custom Config), with an optional subtitle line.
   return (
     <section className="bg-panel border border-border rounded-lg p-4">
       <div className="mb-3">

@@ -147,7 +147,6 @@ describe('<UpdateModal>', () => {
         onClose={() => {}}
       />,
     )
-    // The script tag must NOT be rendered as a real <script> element.
     expect(document.querySelector('script')).toBeNull()
     expect(screen.getByText(/XSS attempt/)).toBeInTheDocument()
   })

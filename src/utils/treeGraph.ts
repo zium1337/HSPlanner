@@ -7,6 +7,7 @@ const NODES = treeData.nodes as RawNode[]
 const EDGES = treeData.edges as RawEdge[]
 
 function posKey(x: number, y: number): string {
+  // Builds a stable string key from a node's (x, y) coordinates rounded to one decimal so that floating-point edge endpoints reliably resolve back to a node id. Used during module load to construct the position-to-id index.
   return `${Math.round(x * 10)}_${Math.round(y * 10)}`
 }
 
@@ -33,6 +34,7 @@ export function findPath(
   sources: Iterable<number>,
   target: number,
 ): number[] | null {
+  // Performs a multi-source BFS over the talent-tree adjacency graph and returns the shortest sequence of node ids reaching `target`, or null when no path exists. Used by the TreeView to find the cheapest cluster of nodes to allocate when the user clicks a distant node.
   const srcSet = new Set(sources)
   if (srcSet.has(target)) return [target]
   if (srcSet.size === 0) return null
@@ -72,6 +74,7 @@ export function reachableFromAny(
   starts: Iterable<number>,
   allowed: Set<number>,
 ): Set<number> {
+  // BFS-style search that returns the set of nodes reachable from any starting node while only stepping through nodes that appear in `allowed`. Used by the TreeView to detect "orphaned" allocated nodes when the player removes a connecting node.
   const seen = new Set<number>()
   const queue: number[] = []
   for (const s of starts) {

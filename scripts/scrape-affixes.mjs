@@ -10,12 +10,14 @@ const GAME_CONFIG_PATH = join(ROOT, 'src/data/game-config.json')
 const SOURCE_URL = 'https://hero-siege-helper.vercel.app/data/affixes'
 
 async function getHtml() {
+  // Fetches the affix table HTML page from the upstream source URL, throwing on a non-2xx response. Used by main when not in --local mode.
   const res = await fetch(SOURCE_URL)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.text()
 }
 
 function decode(s) {
+  // Decodes a small set of HTML entities back into their literal characters. Used by stripTags before returning a clean text string.
   return s
     .replace(/&#x27;/g, "'")
     .replace(/&amp;/g, '&')
@@ -26,10 +28,12 @@ function decode(s) {
 }
 
 function stripTags(s) {
+  // Removes every HTML tag from a fragment, decodes leftover entities, and collapses whitespace. Used by every parser to convert raw cell HTML to clean text.
   return decode(s.replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim()
 }
 
 function parseTables(html) {
+  // Splits a full HTML page into the inner contents of every `<table>` element. Used by main to walk every affix table on the page.
   const tables = []
   const re = /<table[^>]*>([\s\S]*?)<\/table>/g
   let m
@@ -38,6 +42,7 @@ function parseTables(html) {
 }
 
 function parseRows(table) {
+  // Splits a `<table>` body into the inner contents of every `<tr>` element. Used by main inside each table.
   const rows = []
   const re = /<tr[^>]*>([\s\S]*?)<\/tr>/g
   let m
@@ -46,10 +51,12 @@ function parseRows(table) {
 }
 
 function stripStyles(html) {
+  // Removes every `<style>` block from an HTML fragment so cell parsing does not pick up CSS rules. Used by parseCells.
   return html.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
 }
 
 function parseCells(row) {
+  // Splits a `<tr>` row into the inner contents of every `<th>` / `<td>` cell, after stripping any embedded `<style>` blocks. Used by main to extract the affix-name and description columns.
   const clean = stripStyles(row)
   const cells = []
   const re = /<t[hd][^>]*>([\s\S]*?)<\/t[hd]>/g
@@ -128,6 +135,7 @@ const MANUAL_MAPPINGS = {
 }
 
 function guessStatKey(desc) {
+  // Tries to map an affix description back to a stat key by normalising the text (lowercasing, stripping numbers/percent/brackets), checking the manual-mappings table first and then progressively-fuzzier matches against the game-config stat names. Returns null when nothing matches so main can count unmapped entries.
   let norm = desc
     .toLowerCase()
     .replace(/^[+-]/, '')
@@ -148,6 +156,7 @@ function guessStatKey(desc) {
 }
 
 function parseStatString(raw) {
+  // Parses an affix description into `{ sign, format, valueMin, valueMax }`, recognising explicit ranges like `[12-18]` and falling back to a single number. Used by main to fill in the numeric fields on each generated affix entry.
   const desc = raw.trim()
   const signMatch = desc.match(/^([+-])/)
   const sign = signMatch ? signMatch[1] : '+'
@@ -174,6 +183,7 @@ function parseStatString(raw) {
 }
 
 function slug(s) {
+  // Converts an arbitrary string into a snake_case slug suitable for use inside an id (lowercased, non-alphanumerics collapsed to underscores, no leading/trailing underscores). Used by main when synthesising affix ids.
   return s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
@@ -181,6 +191,7 @@ function slug(s) {
 }
 
 async function main() {
+  // Top-level scraper that fetches (or reads `/tmp/affixes.html` in --local mode) the upstream HTML, parses every affix table into `{ id, groupId, tier, name, description, statKey, sign, format, valueMin, valueMax }` records, writes the result to `src/data/affixes.json`, and reports unmapped entries on stdout.
   const useLocal = process.argv.includes('--local')
   const html = useLocal
     ? readFileSync('/tmp/affixes.html', 'utf8')

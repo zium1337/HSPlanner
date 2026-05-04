@@ -9,12 +9,14 @@ const ITEMS_DIR = join(ROOT, 'src/data/items')
 const SOURCE_URL = 'https://hero-siege-helper.vercel.app/data/bases'
 
 async function getHtml() {
+  // Fetches the upstream item-base HTML page and returns its body, throwing on a non-2xx response. Used by main when not in --local mode.
   const res = await fetch(SOURCE_URL)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.text()
 }
 
 function decode(s) {
+  // Decodes a small set of HTML entities back into their literal characters. Used by every cell parser before the value is exposed.
   return s
     .replace(/&#x27;/g, "'")
     .replace(/&amp;/g, '&')
@@ -24,6 +26,7 @@ function decode(s) {
 }
 
 function parseTables(html) {
+  // Splits a full HTML page into the inner contents of every `<table>` element. Used by main to walk each item-base table on the page.
   const tables = []
   const re = /<table[^>]*>([\s\S]*?)<\/table>/g
   let m
@@ -32,6 +35,7 @@ function parseTables(html) {
 }
 
 function parseRows(table) {
+  // Splits a `<table>` body into the inner contents of every `<tr>` element. Used by main inside each base table.
   const rows = []
   const re = /<tr[^>]*>([\s\S]*?)<\/tr>/g
   let m
@@ -40,10 +44,12 @@ function parseRows(table) {
 }
 
 function stripStyles(html) {
+  // Removes every `<style>` block from an HTML fragment so cell parsing does not pick up CSS rules. Used by parseCells.
   return html.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
 }
 
 function parseCells(row) {
+  // Splits a `<tr>` row into the inner contents of every `<td>` cell, after stripping any embedded `<style>` blocks. Used by main to extract base columns.
   const clean = stripStyles(row)
   const cells = []
   const re = /<td[^>]*>([\s\S]*?)<\/td>/g
@@ -53,6 +59,7 @@ function parseCells(row) {
 }
 
 function parseStatsCell(html) {
+  // Extracts every `<span title="Tier">…</span><span title="Range">…</span>` pair from a stats cell into an array of `{ tier, range }` strings. Used by parseWeaponRow and parseArmorRow to grab the per-tier number ranges.
   const out = []
   const re =
     /<span title="Tier">([^<]+)<\/span><span title="Range">([^<]+)<\/span>/g
@@ -64,6 +71,7 @@ function parseStatsCell(html) {
 }
 
 function parseRange(str) {
+  // Parses a "min-max" string into a `[min, max]` tuple, returning null on empty / TBD / unparseable inputs. Used by parseWeaponRow and parseArmorRow.
   if (!str || str === 'TBD') return null
   const m = str.match(/(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)/)
   if (!m) return null
@@ -119,10 +127,12 @@ const MAX_SOCKETS_BY_SLOT = {
 }
 
 function itemIdFromGameId(gameId) {
+  // Translates an upstream game id (e.g. `normal_axe_1`) into the local item id convention (`base_axe_1`). Used by toItemBase when building each ItemBase entry.
   return gameId.replace(/^normal_/, 'base_')
 }
 
 function parseWeaponRow(cells) {
+  // Decodes a single weapon-table row into `{ type, gameId, name, aps, hand, damage }` after parsing the embedded stats cell. Used by main to walk the weapon table.
   if (cells.length < 6) return null
   const [type, gameId, name, apsStr, handStr, statsHtml] = cells
   const aps = apsStr && apsStr !== 'TBD' ? parseFloat(apsStr) : null
@@ -140,6 +150,7 @@ function parseWeaponRow(cells) {
 }
 
 function parseArmorRow(cells) {
+  // Decodes a single armor-table row into `{ type, gameId, name, defense, block }`. Used by main to walk the armor table.
   if (cells.length < 5) return null
   const [type, gameId, name, defenseHtml, blockStr] = cells
   const tiers = parseStatsCell(defenseHtml)
@@ -156,6 +167,7 @@ function parseArmorRow(cells) {
 }
 
 function toItemBase(entry) {
+  // Converts a parsed weapon / armor row into the ItemBase JSON shape consumed by the app, mapping the type to a slot, generating an id, copying numeric stats, and seeding socket counts from the slot table. Returns null and warns when the type is unrecognised. Used by main once per parsed row.
   const slot = SLOT_BY_TYPE[entry.type]
   if (!slot) {
     console.warn(`Unknown type: ${entry.type} (${entry.name})`)
@@ -190,6 +202,7 @@ function toItemBase(entry) {
 }
 
 async function main() {
+  // Top-level scraper that fetches (or reads `/tmp/bases.html` in --local mode) the upstream HTML, parses the weapon and armor tables into ItemBase records, groups them by slot, and writes one JSON file per slot under `src/data/items/`.
   const useLocal = process.argv.includes('--local')
   const html = useLocal
     ? readFileSync('/tmp/bases.html', 'utf8')

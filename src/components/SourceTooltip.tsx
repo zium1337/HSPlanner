@@ -40,6 +40,7 @@ interface Props {
 }
 
 function orderSources(sources: SourceContribution[]): SourceContribution[] {
+  // Reorders a flat list of source contributions so each item-source is immediately followed by its forged crystal mod children, with any orphaned forged mods appended at the end. Used by SourceTooltip to render the parent/child indented layout.
   const forgedByParent = new Map<string, SourceContribution[]>()
   for (const s of sources) {
     if (!s.forge) continue
@@ -78,6 +79,7 @@ function SourceItem({
   statKey: string
   index: number
 }) {
+  // Renders a single contribution row inside the tooltip: an indented "Forged modifier" entry when the source carries forge metadata, or a normal "tag · label · value" row for everything else. Used by SourceTooltip's list rendering.
   if (s.forge) {
     const color = FORGE_COLOR[s.forge.kind]
     return (
@@ -119,6 +121,7 @@ function SourceItem({
 }
 
 function sectionLabel(text: string, trailing?: string) {
+  // Renders the gold sub-section bar inside the tooltip with an optional right-aligned trailing string (e.g. a subtotal). Used by SourceTooltip to separate the "Additive" and "Multiplicative (Total)" groups.
   return (
     <div className="flex items-center justify-between px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-accent-hot/80 bg-accent-deep/10 border-b border-border/40">
       <span>{text}</span>
@@ -132,6 +135,7 @@ function sectionLabel(text: string, trailing?: string) {
 }
 
 function sumRangePct(sources: SourceContribution[]): [number, number] {
+  // Sums a list of source contributions into a single `[min, max]` percentage range. Used to compute the additive and multiplicative subtotals shown in the tooltip's section bars.
   let min = 0
   let max = 0
   for (const s of sources) {
@@ -144,6 +148,7 @@ function sumRangePct(sources: SourceContribution[]): [number, number] {
 }
 
 function fmtSubtotal([min, max]: [number, number]): string {
+  // Formats an additive subtotal range as a signed percentage (e.g. "+12%" or "+12–18%"). Used by SourceTooltip's "Additive" section header.
   const round = (n: number) =>
     Number.isInteger(n) ? n : Math.round(n * 100) / 100
   if (min === max) return `${min >= 0 ? '+' : ''}${round(min)}%`
@@ -151,6 +156,7 @@ function fmtSubtotal([min, max]: [number, number]): string {
 }
 
 function fmtMult([min, max]: [number, number]): string {
+  // Formats a Total / multiplicative range as a `×N` (or `×A–B`) multiplier string. Used by SourceTooltip's "Multiplicative" section header so the user can see the effective multiplier at a glance.
   const round = (n: number) => Math.round(n * 1000) / 1000
   const a = round(1 + min / 100)
   const b = round(1 + max / 100)
@@ -164,6 +170,7 @@ export default function SourceTooltip({
   moreSources,
   children,
 }: Props) {
+  // Renders a hover-only popover next to its child element that breaks down a stat into its individual contributions, optionally split into Additive vs Multiplicative (Total) sections with subtotals. Used by the StatsView and weapon-damage panels to explain how each displayed value is computed.
   const hasMore = !!moreSources && moreSources.length > 0
   if (sources.length === 0 && !hasMore) return <>{children}</>
   const orderedAdd = orderSources(sources)

@@ -80,6 +80,7 @@ const GOLD_DEFENSE = new Set(["life"]);
 const BLUE_DEFENSE = new Set(["mana", "mana_replenish"]);
 
 export default function LeftStatsPanel() {
+  // Persistent left sidebar that summarises the build at a glance: header, attribute totals, derived offense/defense/resistance stats, the main-skill damage breakdown, the active aura/buff selectors, the proc toggles, and the combined-DPS estimate. Used as the always-visible status panel in the app shell.
   const classId = useBuild((s) => s.classId);
   const level = useBuild((s) => s.level);
   const allocated = useBuild((s) => s.allocated);
@@ -291,7 +292,6 @@ export default function LeftStatsPanel() {
       if (!targetDmg) continue;
       const rate = procSkill.proc.trigger === "on_kill" ? killsPerSec : 1;
       const factor = rate * (procSkill.proc.chance / 100);
-      // Use avg (crit-aware) so combined DPS is realistic.
       min += factor * targetDmg.avgMin;
       max += factor * targetDmg.avgMax;
     }
@@ -710,6 +710,7 @@ function StatLine({
   value: RangedValue;
   highlight?: "gold" | "blue";
 }) {
+  // Renders a single label/value row inside the LeftStatsPanel sections, dimming both sides when the value is zero and applying optional gold/blue highlights for headline stats. Used by the offense/defense/resistance lists.
   const zero = isZero(value);
   const def = statDef(statKey);
   const label = def?.name ?? statKey;
@@ -746,6 +747,7 @@ function Section({
   title: string;
   children: React.ReactNode;
 }) {
+  // Renders a titled section block inside the LeftStatsPanel with the standard uppercase heading and divider. Used to group related stat rows visually.
   return (
     <div className="border-b border-border/70 px-4 py-3">
       <div className="mb-2 text-[10px] uppercase tracking-[0.14em] text-muted/90 font-medium">
@@ -757,6 +759,7 @@ function Section({
 }
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
+  // Renders a generic label/value row used by sections that show ad-hoc strings or React nodes (rather than RangedValues). Used by the LeftStatsPanel sub-sections that display custom-formatted values like attribute totals.
   return (
     <div className="flex items-baseline justify-between gap-2 py-0.5">
       <span className="text-muted flex-1 min-w-0 leading-tight">{label}</span>
@@ -768,7 +771,9 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 function formatNumRange(min: number, max: number): string {
+  // Formats a [min, max] number range for display, collapsing identical bounds and stripping trailing zeros from fractional values. Used by the headline DPS / damage rows.
   const fmt = (v: number) =>
+    // Renders a single number with up to two decimals and no trailing zeros, used inside formatNumRange for both endpoints.
     Number.isInteger(v) ? String(v) : v.toFixed(2).replace(/\.?0+$/, "");
   if (Math.abs(min - max) < 0.005) return fmt(min);
   return `${fmt(min)}–${fmt(max)}`;

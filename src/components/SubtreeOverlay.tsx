@@ -26,6 +26,7 @@ interface Props {
 }
 
 export default function SubtreeOverlay({ skill, onClose }: Props) {
+  // Modal overlay that renders a skill's subtree as an SVG node graph laid out from the shared subtree template, with click-to-allocate / right-click-to-deallocate, hover tooltips showing current vs next-rank stats and proc breakdowns, and a points-spent counter. Used by SkillsView when the user opens a skill's subtree.
   const level = useBuild((s) => s.level)
   const subskillRanks = useBuild((s) => s.subskillRanks)
   const incSubskillRank = useBuild((s) => s.incSubskillRank)
@@ -247,6 +248,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
 }
 
 function formatStatValue(key: string, value: number): string {
+  // Renders a numeric stat value with the stat's percent/flat suffix, rounded to two decimals when not an integer. Used by SubskillTooltip to format every per-rank stat row.
   const def = statDef(key)
   const suffix = def?.format === 'percent' ? '%' : ''
   const rounded = Number.isInteger(value)
@@ -266,6 +268,7 @@ function SubskillTooltip({
   x: number
   y: number
 }) {
+  // Renders the floating tooltip shown when hovering a subskill node, listing current and next-rank stat values, proc chance, proc effects, and any applied states. Used by SubtreeOverlay.
   const nextRank = Math.min(rank + 1, sub.maxRank)
   const hasNext = nextRank > rank
 

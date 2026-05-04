@@ -5,6 +5,7 @@ export function useOutsideClick(
   enabled: boolean,
   onOutside: () => void,
 ): void {
+  // Hook that fires the supplied callback when a mousedown happens outside the referenced element. Used by dropdowns, popovers, and modal-like UI to dismiss themselves when the user clicks elsewhere on the page.
   useEffect(() => {
     if (!enabled) return;
     const handler = (e: MouseEvent) => {

@@ -28,13 +28,13 @@ type CheckState =
   | { kind: 'error'; message: string }
 
 export default function BottomBar() {
+  // Persistent footer that displays the app version, build channel badge, the live update-check badge, the active build name, and a hint about pan/zoom controls. Also wires up the Tauri "install on quit" flow when the user enables auto-install. Used as the page-bottom status bar throughout the app.
   const activeBuildId = useBuild((s) => s.activeBuildId)
   const savedBuildsVersion = useBuild((s) => s.savedBuildsVersion)
   const buildName = useMemo(() => {
     if (!activeBuildId) return 'Unnamed'
     const b = getSavedBuild(activeBuildId)
     return b?.name ?? 'Unnamed'
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeBuildId, savedBuildsVersion])
 
   const [check, setCheck] = useState<CheckState>({ kind: 'idle' })
@@ -99,8 +99,7 @@ export default function BottomBar() {
             ),
           ])
         } catch {
-          // If install fails or times out, fall through and exit anyway so
-          // the close request the user issued is still honoured.
+          void 0
         }
         const { exit } = await import('@tauri-apps/plugin-process')
         await exit(0)
@@ -113,6 +112,7 @@ export default function BottomBar() {
   }, [])
 
   const scheduleRevert = (delayMs: number) => {
+    // Schedules the update-check status to revert to idle after `delayMs`, replacing any in-flight revert timer. Used to clear the transient "Up to date" / "Check failed" pill after a few seconds.
     if (transientTimer.current !== null)
       window.clearTimeout(transientTimer.current)
     transientTimer.current = window.setTimeout(
@@ -122,6 +122,7 @@ export default function BottomBar() {
   }
 
   const onCheck = async () => {
+    // Manually triggers an update check via the GitHub API (or the dev mock), aborting any previous in-flight request, and translates the result into the `check` state machine. Used by the "Check" button.
     if (check.kind === 'checking') return
     if (transientTimer.current !== null) {
       window.clearTimeout(transientTimer.current)
@@ -218,6 +219,7 @@ function UpdateBadge({
   onCheck: () => void
   onOpenModal: () => void
 }) {
+  // Renders the right-aligned status pill of the bottom bar update flow, showing one of: a disabled placeholder when no GitHub repo is configured, a "Checking…" indicator, an "Up to date" check, an "available" CTA opening the UpdateModal, an error pill, or the default "Check" button. Used inside BottomBar.
   if (!hasRepo) {
     return (
       <button
@@ -279,6 +281,7 @@ function UpdateBadge({
 }
 
 function BuildChannelBadge({ channel }: { channel: 'dev' | 'stable' }) {
+  // Renders a tiny coloured "DEV" / "STABLE" badge to make it obvious which build the user is running. Used inside BottomBar next to the version number.
   const isDev = channel === 'dev'
   const label = isDev ? 'DEV' : 'STABLE'
   const className = isDev

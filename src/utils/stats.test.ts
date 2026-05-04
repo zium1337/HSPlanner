@@ -46,13 +46,9 @@ describe('_more stays separate; combineAdditiveAndMore handles compounding', () 
   })
 
   it('combineAdditiveAndMore: (1 + B/100) × (1 + M/100) - 1 → additive equivalent', () => {
-    // 20% additive × 5% Total = 26% effective
     expect(combineAdditiveAndMore(20, 5)).toBe(26)
-    // 50% × 20% = 80% effective
     expect(combineAdditiveAndMore(50, 20)).toBe(80)
-    // No more = unchanged additive
     expect(combineAdditiveAndMore(50, undefined)).toBe(50)
-    // No additive = unchanged more
     expect(combineAdditiveAndMore(undefined, 20)).toBe(20)
   })
 
@@ -73,7 +69,6 @@ describe('_more stays separate; combineAdditiveAndMore handles compounding', () 
         { id: '2', value: '20', statKey: 'increased_mana_more' },
       ],
     )
-    // base × 1.5 × 1.2 = base × 1.80
     expect(withMore.stats.mana).toBe(Math.floor((baseMana as number) * 1.5 * 1.2))
   })
 })
@@ -90,20 +85,17 @@ describe('computeSkillDamage - Total skill damage as multiplier', () => {
   } as Skill
 
   it('multiplies by (1 + lightning_more/100) on top of additive', () => {
-    // Base = 100, no additive lightning, +20% lightning_more
     const result = computeSkillDamage(
       lightningSkill, 1,
       { strength: 0, dexterity: 0, intelligence: 0, energy: 0, vitality: 0, armor: 0 },
       { lightning_skill_damage_more: 20 },
       {}, {},
     )
-    // 100 * 1.20 = 120
     expect(result?.hitMin).toBe(120)
     expect(result?.hitMax).toBe(120)
   })
 
   it('combines additive and Total: base x (1+add/100) x (1+more/100)', () => {
-    // Base 100, +50% additive lightning, +20% Total lightning -> 100 * 1.5 * 1.2 = 180
     const result = computeSkillDamage(
       lightningSkill, 1,
       { strength: 0, dexterity: 0, intelligence: 0, energy: 0, vitality: 0, armor: 0 },
@@ -114,7 +106,6 @@ describe('computeSkillDamage - Total skill damage as multiplier', () => {
   })
 
   it('preserves existing additive-only behavior when no _more present', () => {
-    // Base 100, +50% additive lightning -> 100 * 1.5 = 150
     const result = computeSkillDamage(
       lightningSkill, 1,
       { strength: 0, dexterity: 0, intelligence: 0, energy: 0, vitality: 0, armor: 0 },
@@ -140,16 +131,10 @@ describe('Item-granted skills (passiveConverts)', () => {
       },
     }
     const { stats } = computeBuildStats(null, 1, zeroAttrs, inventory)
-    // Item's IAS implicit [40, 50] (no star scaling at 0★).
-    // Fallen God's Bloodlust roll = [1, 10].
-    // Convert: FCR += 10% × rank × IAS
-    //  min: 10% × 1 × 40 = 4
-    //  max: 10% × 10 × 50 = 50
     const fcr = stats.faster_cast_rate
     expect(typeof fcr === 'object').toBe(true)
     expect(rangedMin(fcr as RangedValue)).toBeCloseTo(4)
     expect(rangedMax(fcr as RangedValue)).toBeCloseTo(50)
-    // Source IAS unchanged (convert copies, doesn't move).
     const ias = stats.increased_attack_speed
     expect(rangedMin(ias as RangedValue)).toBe(40)
     expect(rangedMax(ias as RangedValue)).toBe(50)
@@ -169,18 +154,12 @@ describe('Item-granted skills (passiveConverts)', () => {
     const { stats } = computeBuildStats(
       null, 1, zeroAttrs, inventory,
     )
-    // Item's own IAS implicit [40, 50] × 1.40★ = [56, 70].
-    // Roll [1, 10] × 1.40 = [1.4, 14] → rounded to [1, 14].
-    // Convert: FCR += 10% × rank × IAS
-    //  min: 10% × 1 × 56 = 5.6
-    //  max: 10% × 14 × 70 = 98
     const fcr = stats.faster_cast_rate
     expect(rangedMin(fcr as RangedValue)).toBeCloseTo(5.6)
     expect(rangedMax(fcr as RangedValue)).toBeCloseTo(98)
   })
 
   it('Convert reads final value of `from` (sees additive sum, not raw item contribution)', () => {
-    // No item-granted skills triggered → no convert. Sanity check baseline.
     const customStats = [
       { id: '1', value: '50', statKey: 'increased_attack_speed' },
     ]
@@ -219,9 +198,6 @@ describe('computeSkillDamage - Spell vs Melee crit', () => {
       },
       {}, {},
     )
-    // critMultOnCrit = (1 + 100/100) * 1 = 2
-    // critMultAvg = (1 - 0.20) + 0.20 * 2 = 1.20
-    // hitMin=100, critMin = 100 * 2 = 200, avgMin = 100 * 1.2 = 120
     expect(result?.critChance).toBe(20)
     expect(result?.critDamagePct).toBe(100)
     expect(result?.critMin).toBe(200)
@@ -237,8 +213,6 @@ describe('computeSkillDamage - Spell vs Melee crit', () => {
       },
       {}, {},
     )
-    // critMultOnCrit = (1 + 200/100) * 1.5 = 4.5
-    // critMultAvg = (1 - 0.50) + 0.50 * 4.5 = 2.75
     expect(result?.critChance).toBe(50)
     expect(result?.critDamagePct).toBe(200)
     expect(result?.critMin).toBe(450)
@@ -253,7 +227,7 @@ describe('computeSkillDamage - Spell vs Melee crit', () => {
     )
     expect(result?.critChance).toBe(0)
     expect(result?.critDamagePct).toBe(0)
-    expect(result?.avgMin).toBe(100) // no crit, just hit
+    expect(result?.avgMin).toBe(100)
   })
 })
 
@@ -275,27 +249,25 @@ describe('computeSkillDamage - enemy resistance and ignore_*_res', () => {
       lightningSkill, 1, zeroAttrs, {}, {}, {},
       undefined, { lightning: 50 },
     )
-    expect(result?.hitMin).toBe(50) // 100 × 0.5
+    expect(result?.hitMin).toBe(50)
     expect(result?.effectiveResistancePct).toBe(50)
     expect(result?.resistanceMultiplier).toBe(0.5)
   })
 
   it('multiplicative ignore: 50% res with 25% ignore → effective 37.5%, ×0.625', () => {
-    // formula: 1 − (0.50 × (1 − 0.25)) = 1 − 0.375 = 0.625
     const result = computeSkillDamage(
       lightningSkill, 1, zeroAttrs,
       { ignore_lightning_res: 25 },
       {}, {},
       undefined, { lightning: 50 },
     )
-    expect(result?.hitMin).toBe(62) // floor(100 × 0.625) = 62
+    expect(result?.hitMin).toBe(62)
     expect(result?.effectiveResistancePct).toBeCloseTo(37.5)
     expect(result?.resistanceIgnoredPct).toBe(25)
     expect(result?.resistanceMultiplier).toBeCloseTo(0.625)
   })
 
   it('100% ignore fully bypasses resistance even against immune target', () => {
-    // 100% res, 100% ignore → effective 0%, full damage
     const result = computeSkillDamage(
       lightningSkill, 1, zeroAttrs,
       { ignore_lightning_res: 100 },
@@ -326,7 +298,7 @@ describe('computeSkillDamage - enemy resistance and ignore_*_res', () => {
       {}, {},
       undefined, { lightning: 50 },
     )
-    expect(result?.hitMin).toBe(100) // ignore capped at 100% → full bypass
+    expect(result?.hitMin).toBe(100)
     expect(result?.resistanceIgnoredPct).toBe(100)
   })
 
@@ -348,7 +320,6 @@ describe('computeSkillDamage - enemy resistance and ignore_*_res', () => {
   })
 
   it('combines with all other multipliers correctly', () => {
-    // 100 base × 1.5 (additive) × 1.2 (Total) × 0.625 (50% res, 25% ignore) = 112.5
     const result = computeSkillDamage(
       lightningSkill, 1, zeroAttrs,
       {
@@ -359,6 +330,6 @@ describe('computeSkillDamage - enemy resistance and ignore_*_res', () => {
       {}, {},
       undefined, { lightning: 50 },
     )
-    expect(result?.hitMin).toBe(112) // floor(112.5)
+    expect(result?.hitMin).toBe(112)
   })
 })

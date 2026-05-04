@@ -10,6 +10,7 @@ const CHUNK_URL =
   'https://hero-siege-helper.vercel.app/_next/static/chunks/0r~z2px73s~11.js'
 
 async function getChunk() {
+  // Fetches the upstream Next.js chunk file containing the embedded item data and returns its body. Used by main when not in --local mode.
   const res = await fetch(CHUNK_URL)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.text()
@@ -183,18 +184,21 @@ const SLOT_FILE_BASE = {
 }
 
 function parseValue(str, key) {
+  // Returns the numeric value of a `"key":number` entry inside the chunk text as a float, or null when not found. Used by extractStatEntries.
   const re = new RegExp(`"${key}":(-?[\\d.]+)`)
   const m = str.match(re)
   return m ? parseFloat(m[1]) : null
 }
 
 function parseString(str, key) {
+  // Returns the string value of a `"key":"value"` entry inside the chunk text, or null when not found. Used by extractStatEntries and pickBestVersion.
   const re = new RegExp(`"${key}":"([^"]+)"`)
   const m = str.match(re)
   return m ? m[1] : null
 }
 
 function parseArray(str, key) {
+  // Returns a `"key":["…","…"]` array as a list of trimmed, dequoted strings. Used by main to read each item's base-types.
   const re = new RegExp(`"${key}":\\[([^\\]]*)\\]`)
   const m = str.match(re)
   if (!m) return null
@@ -205,6 +209,7 @@ function parseArray(str, key) {
 }
 
 function extractStatEntries(statsBody) {
+  // Walks the contents of a `stats:[…]` array, splitting it into top-level `{…}` blocks and parsing each into `{ statId, min, max, spellName }`. Used by main to read every item's stat list.
   const entries = []
   let depth = 0
   let objStart = null
@@ -230,6 +235,7 @@ function extractStatEntries(statsBody) {
 }
 
 function extractItems(chunkJs) {
+  // Scans the entire chunk JS and returns one `{ id, name, block }` per top-level item literal, where `block` is the raw text of that literal. Used by main to enumerate every item in the chunk.
   const data = chunkJs
   const re = /\{id:"([^"]+)",name:"([^"]+)",variants:/g
   const results = []
@@ -256,6 +262,7 @@ function extractItems(chunkJs) {
 }
 
 function pickBestVersion(block) {
+  // Extracts the `versions:[…]` sub-array from an item block, splits it into top-level `{…}` version objects, and returns the one with the highest sortable `versionId`. Used by main to pick the most-recent stats for each item.
   const vIdx = block.indexOf('versions:[')
   if (vIdx < 0) return null
   let depth = 0
@@ -297,6 +304,7 @@ function pickBestVersion(block) {
 }
 
 function getSlotAndBaseType(itemType, itemBases) {
+  // Maps an upstream item type to the local slot key and base type, preferring the first entry of `itemBases` when one is supplied. Returns null when the type is unrecognised. Used by main when classifying each item.
   const slot = SLOT_BY_TYPE[itemType]
   if (!slot) return null
   let baseType = itemType === 'Body Armor' ? 'Armor' : itemType
@@ -309,6 +317,7 @@ function getSlotAndBaseType(itemType, itemBases) {
 }
 
 function formatStatId(id) {
+  // Renders an upstream stat id into a Title Case label by stripping the `_flat`/`_percent`/`_base` suffixes and converting underscores to spaces. Used as the fallback display for unsupported stat ids.
   return id
     .replace(/_flat|_percent|_base/g, '')
     .replace(/_/g, ' ')
@@ -316,6 +325,7 @@ function formatStatId(id) {
 }
 
 function statsToImplicit(stats, unmapped) {
+  // Walks every parsed stat entry and folds it into either the structured `implicit` map (when the stat id is mapped) or the freeform `extraEffects` list (otherwise). Returns both, and records unmapped ids on the supplied set so main can report them.
   const implicit = {}
   const extraEffects = []
   for (const s of stats) {
@@ -340,6 +350,7 @@ function statsToImplicit(stats, unmapped) {
 }
 
 function slugify(s) {
+  // Converts an arbitrary string into a snake_case slug suitable for use inside an id. Used by normalizeItemId.
   return s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
@@ -347,11 +358,13 @@ function slugify(s) {
 }
 
 function normalizeItemId(type, slug, rarity) {
+  // Composes the canonical local item id `<type>_<rarity>_<slug>` from a base type, an item slug, and a rarity name. Used by main when synthesising item ids.
   const typeSlug = slugify(type ?? 'item')
   return `${typeSlug}_${rarity}_${slug}`
 }
 
 function getSocketsCount(stats) {
+  // Returns the minimum socket count declared in a parsed stat list, or null when no `socketed_flat` entry is present. Used by main to seed the item's `sockets` field.
   const s = stats.find((x) => x.statId === 'socketed_flat')
   if (!s) return null
   return s.min ?? null
@@ -369,6 +382,7 @@ const KNOWN_RARITIES = [
 ]
 
 async function main() {
+  // Top-level scraper that fetches (or reads `/tmp/chunk_big.js` in --local mode) the upstream chunk, walks every item, picks the most-recent version, maps its stats, and writes one JSON file per slot under `src/data/items/` filtered by the requested rarity (defaults to "satanic"). Reports unmapped Stat IDs at the end so the operator can extend STAT_ID_MAP.
   const useLocal = process.argv.includes('--local')
   const rarityArg =
     process.argv.find((a) => a.startsWith('--rarity='))?.split('=')[1] ??

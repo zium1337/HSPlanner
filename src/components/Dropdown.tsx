@@ -21,9 +21,6 @@ export interface DropdownItem {
   sockets?: number | string | null
   def?: string
   group?: string
-  /**
-   * Freeform meta line; if set, replaces type/grade/sockets/def chips entirely.
-   */
   meta?: ReactNode
 }
 
@@ -34,18 +31,16 @@ export interface DropdownProps {
   placeholder?: string
   allowNone?: boolean
   className?: string
-  /**
-   * Renderowane jako overlay na lewo od menu, kiedy menu jest otwarte.
-   * `hoveredId` zmienia się na hoverze/keyboard nav.
-   */
   sidePanel?: (hoveredId: string | null) => ReactNode
 }
 
 function escapeRegExp(s: string): string {
+  // Escapes every character in `s` that has special meaning in a regular expression so it can be safely embedded inside one. Used by Highlight to build a per-query case-insensitive matching regex.
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 function Highlight({ text, query }: { text: string; query: string }) {
+  // Renders `text` with every case-insensitive occurrence of `query` wrapped in `<mark>` tags. Used by Dropdown to highlight the matching substring inside item names and meta chips.
   if (!query) return <>{text}</>
   const re = new RegExp(`(${escapeRegExp(query)})`, 'ig')
   const parts = String(text).split(re)
@@ -67,6 +62,7 @@ export function Dropdown({
   className = '',
   sidePanel,
 }: DropdownProps) {
+  // Searchable dropdown that filters items by name/type/grade, supports keyboard navigation, optional grouping, an optional "(none)" entry, and an optional left-anchored side panel that previews the hovered item. Used wherever the gear/build UIs need to pick from a long list (items, runewords, augments, etc.).
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [kb, setKb] = useState(-1)
@@ -120,12 +116,14 @@ export function Dropdown({
   }, [kb])
 
   function pick(id: string | null) {
+    // Resolves the id back to the source item (or null) and notifies the parent via `onChange`, then closes the menu. Used by both mouse clicks and keyboard Enter.
     const it = id === null ? null : items.find((x) => x.id === id) ?? null
     onChange?.(id, it)
     setOpen(false)
   }
 
   function onKey(e: KeyboardEvent<HTMLInputElement>) {
+    // Handles arrow-up/down for keyboard navigation, Enter to commit the highlighted entry, and Escape to close the menu. Used as the search input's keydown handler.
     const els =
       listRef.current?.querySelectorAll<HTMLElement>('.hs-dd-item') ?? []
     if (e.key === 'ArrowDown') {
@@ -324,6 +322,7 @@ function HoverPortal({
   anchorRef: React.RefObject<HTMLDivElement | null>
   children: ReactNode
 }) {
+  // Renders `children` into a fixed-position portal anchored to the left of the supplied anchor element, recomputing on resize/scroll so the panel stays glued to the dropdown. Used to display the optional `sidePanel` preview without disturbing the dropdown's layout.
   const [pos, setPos] = useState<{
     left: number
     top: number
@@ -332,6 +331,7 @@ function HoverPortal({
 
   useLayoutEffect(() => {
     function recompute() {
+      // Reads the anchor's viewport rectangle and writes the resulting (left, top, maxWidth) into local state. Used both on mount and as a window resize/scroll listener so the portal tracks its anchor.
       const anchor = anchorRef.current
       if (!anchor) return
       const rect = anchor.getBoundingClientRect()

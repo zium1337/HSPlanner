@@ -58,6 +58,7 @@ const CATEGORY_LABEL: Record<StatDef['category'], string> = {
 }
 
 export default function StatsView() {
+  // Comprehensive read-only stats view that runs the full computeBuildStats / computeWeaponDamage pipeline and renders attribute totals, every grouped stat row (with hover-source breakdown), the per-skill rank/damage table, the main-skill damage breakdown, and the weapon damage panel. Used as the main "all numbers in one place" tab.
   const {
     classId,
     level,
@@ -326,6 +327,7 @@ function StatRow({
   highlighted: boolean
   stats: RangedStatMap
 }) {
+  // Renders one stat row inside StatsView with the formatted value, the optional cap (e.g. resistance max), and a SourceTooltip on hover that explains the additive and Total contributions. Used for every stat in the grouped category lists.
   const hasMore = !!moreSources && moreSources.length > 0
   const displayValue: RangedValue = hasMore
     ? combineAdditiveAndMore(value, moreValue)
@@ -425,6 +427,7 @@ function SkillRow({
   enemyConditions: Record<string, boolean>
   enemyResistances: Record<string, number>
 }) {
+  // Renders one row of the per-skill table inside StatsView: shows skill name, current rank, computed damage range (factoring in skill-damage stats, crits, resistances), and FCR-adjusted cast/cooldown info. Used per allocated skill in StatsView's "Skills" panel.
   const rank1 = skill.ranks[0]
   const baseMana = rank1?.manaCost
   const mcrMin = rangedMin(mcrRange)
@@ -571,6 +574,7 @@ function DamageBreakdown({
   attributes: Record<AttributeKey, RangedValue>
   skillRanksByName: Record<string, number>
 }) {
+  // Renders the line-by-line damage breakdown for the main/selected skill: base × synergies × additive × Total × ailment extras × crit avg × resistance, with each contributor labelled. Used inside the StatsView damage panel to make every multiplier visible.
   const synergyLines: Array<{ label: string; pctMin: number; pctMax: number }> =
     []
   for (const b of skill.bonusSources ?? []) {
@@ -781,6 +785,7 @@ function WeaponDamagePanel({
 }: {
   breakdown: WeaponDamageBreakdown
 }) {
+  // Renders the weapon's hit / crit / average / DPS breakdown produced by `computeWeaponDamage`, with every contributing multiplier labelled. Falls back to a "Equip a weapon" prompt when no weapon is present.
   if (!breakdown.hasWeapon) {
     return (
       <div className="mt-3 pt-2 border-t border-border text-xs text-muted text-center italic">
@@ -910,6 +915,7 @@ function BDLine({
   value: React.ReactNode
   indent?: boolean
 }) {
+  // Renders one label/value row inside DamageBreakdown / WeaponDamagePanel with optional indentation. Used to keep the breakdown tables visually consistent.
   return (
     <div className="flex items-baseline justify-between gap-3">
       <span className={`text-muted ${indent ? 'pl-3' : ''}`}>{label}</span>
@@ -919,21 +925,25 @@ function BDLine({
 }
 
 function formatDecimal(v: number): string {
+  // Renders a number as an integer when it is one, otherwise as a fixed-2 decimal. Used by formatRange and the weapon-damage display.
   if (Number.isInteger(v)) return String(v)
   return v.toFixed(2)
 }
 
 function formatRange(min: number, max: number): string {
+  // Renders a numeric range as either a single decimal or "min-max" with two decimals each. Used by WeaponDamagePanel for percent stats.
   if (min === max) return formatDecimal(min)
   return `${formatDecimal(min)}-${formatDecimal(max)}`
 }
 
 function formatRangeInt(min: number, max: number): string {
+  // Renders a numeric range as a hyphen-separated integer string ("12-18"), collapsing identical ends. Used by WeaponDamagePanel for damage and DPS.
   if (min === max) return String(min)
   return `${min}-${max}`
 }
 
 function displayRange(min: number, max: number): string {
+  // Renders a numeric range using an en-dash ("12–18") for visual variety. Used in the StatsView damage breakdown headings.
   if (min === max) return String(min)
   return `${min}–${max}`
 }
@@ -945,6 +955,7 @@ function Panel({
   title: string
   children: React.ReactNode
 }) {
+  // Renders a titled section card used to group every block inside StatsView.
   return (
     <div className="bg-panel border border-border rounded-lg p-4">
       <h3 className="text-sm font-semibold tracking-wider uppercase text-muted mb-3">

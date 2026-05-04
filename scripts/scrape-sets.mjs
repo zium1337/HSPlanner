@@ -10,12 +10,14 @@ const GAME_CONFIG_PATH = join(ROOT, 'src/data/game-config.json')
 const SOURCE_URL = 'https://hero-siege-helper.vercel.app/items/sets'
 
 async function getHtml() {
+  // Fetches the upstream item-set HTML page and returns its body. Used by main when not in --local mode.
   const res = await fetch(SOURCE_URL)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.text()
 }
 
 function decode(s) {
+  // Decodes a small set of HTML entities back into their literal characters. Used by every cell parser.
   return s
     .replace(/&#x27;/g, "'")
     .replace(/&amp;/g, '&')
@@ -26,6 +28,7 @@ function decode(s) {
 }
 
 function flatten(html) {
+  // Strips every `<style>` block, replaces remaining tags with `|`, decodes entities, and collapses repeated `|`s. Returns a deterministic pipe-separated text representation. Used by main to walk each set card.
   const noStyles = html.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
   const piped = noStyles.replace(/<[^>]+>/g, '|')
   return decode(piped).replace(/\|+/g, '|').replace(/^\||\|$/g, '')
@@ -116,6 +119,7 @@ const MANUAL = {
 }
 
 function guessStatKey(desc) {
+  // Tries to map a set-bonus description to a stat key by aggressively normalising the text (lowercasing, stripping numbers/percent/brackets/parentheses and the words "increased"/"by"), checking the manual-mappings table first and then progressively-fuzzier matches against the game-config stat names. Returns null when nothing matches.
   const norm = desc
     .toLowerCase()
     .replace(/^[+-]/, '')
@@ -139,6 +143,7 @@ function guessStatKey(desc) {
 }
 
 function parseStatLine(line) {
+  // Parses a single set-bonus stat line into `{ description, statKey, sign, format, value }` by detecting the sign, percent suffix, numeric value, and best-effort stat key. Used by main once per parsed bonus tier.
   const desc = line.trim()
   const sign = desc.startsWith('-') ? '-' : '+'
   const isPct = /%/.test(desc)
@@ -155,6 +160,7 @@ function parseStatLine(line) {
 }
 
 function slugify(s) {
+  // Converts an arbitrary string into a snake_case slug suitable for use inside an id. Used by main when synthesising set ids.
   return s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
@@ -254,6 +260,7 @@ const KNOWN_SETS = [
 ]
 
 async function main() {
+  // Top-level scraper that fetches (or reads `/tmp/sets.html` in --local mode) the set-list HTML page, parses every set card into `{ id, name, items, bonuses }`, and writes the resulting array to `src/data/sets.json`.
   const useLocal = process.argv.includes('--local')
   const html = useLocal
     ? readFileSync('/tmp/sets.html', 'utf8')

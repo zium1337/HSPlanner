@@ -46,10 +46,6 @@ export interface ItemBase {
   height?: number
   maxAffixes?: number
   socketTransforms?: Record<string, StatMap>
-  /**
-   * Gdy ustawione, picker afixów dla tego itemu pokazuje wyłącznie afixy
-   * o `groupId === randomAffixGroupId` (np. "random_unholy") jako dropdown.
-   */
   randomAffixGroupId?: string
 }
 

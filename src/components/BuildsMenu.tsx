@@ -15,6 +15,7 @@ import {
 type Mode = "closed" | "menu" | "save" | "import" | "rename";
 
 export default function BuildsMenu() {
+  // Top-bar dropdown that lists every saved build and exposes Save / Import / Rename / Delete actions, with a transient notice flash, an outside-click closer, and a two-click confirm for delete. Used as the primary management surface for the persisted build library.
   const exportSnapshot = useBuild((s) => s.exportBuildSnapshot);
   const importBuildSnapshot = useBuild((s) => s.importBuildSnapshot);
   const loadSavedBuildAction = useBuild((s) => s.loadSavedBuild);
@@ -37,8 +38,6 @@ export default function BuildsMenu() {
 
   const list = useMemo(
     () => (mode === "menu" || mode === "save" ? listSavedBuilds() : []),
-    // savedBuildsVersion forces a re-read on any SavedBuild mutation.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [mode, savedBuildsVersion],
   );
 
@@ -56,12 +55,14 @@ export default function BuildsMenu() {
   }, []);
 
   const flash = (msg: string) => {
+    // Shows a transient notice banner inside the dropdown and clears it after two seconds, replacing any previously-pending banner. Used after every save/load/import/delete action to give the user feedback.
     setNotice(msg);
     if (flashTimer.current !== null) window.clearTimeout(flashTimer.current);
     flashTimer.current = window.setTimeout(() => setNotice(null), 2000);
   };
 
   const doSaveAsNew = () => {
+    // Persists the current state as a brand-new SavedBuild (with the typed name), binds the in-memory state to it so further edits autosave, and flashes a confirmation. Used by the "Save as new build" action.
     const name = saveName.trim() || "Untitled build";
     const notes = useBuild.getState().notes;
     const rec = createBuild(name, exportSnapshot(), undefined, notes);
@@ -72,12 +73,14 @@ export default function BuildsMenu() {
   };
 
   const doOverwriteActive = () => {
+    // Commits the current state into the currently-active SavedProfile and flashes a confirmation. Used by the "Save into active profile" action when a build is bound.
     if (!activeBuildId || !activeProfileId) return;
     if (commitActiveProfile()) flash("Updated active profile");
     setMode("menu");
   };
 
   const doLoad = (b: SavedBuild) => {
+    // Loads a SavedBuild into the live state via the build store, closing the dropdown on success. Used as the row-click handler in the saved-builds list.
     const ok = loadSavedBuildAction(b.id);
     if (!ok) {
       flash("Failed to load build");
@@ -88,6 +91,7 @@ export default function BuildsMenu() {
   };
 
   const doDelete = (b: SavedBuild) => {
+    // Implements the two-click confirmed delete: the first call arms the row, the second actually deletes via the build store and clears the armed state. Used by the per-row delete button.
     if (pendingDeleteId !== b.id) {
       setPendingDeleteId(b.id);
       return;
@@ -98,6 +102,7 @@ export default function BuildsMenu() {
   };
 
   const doImport = () => {
+    // Parses the pasted text (URL or raw code), decodes it to a snapshot, imports it as freeform unsaved state, and closes the dropdown. Used by the Import tab's primary action.
     const code = parseBuildCodeFromInput(importText);
     if (!code) return;
     const decoded = decodeShareToBuild(code);
@@ -112,12 +117,14 @@ export default function BuildsMenu() {
   };
 
   const doStartRename = (b: SavedBuild) => {
+    // Switches the dropdown into rename mode pre-filled with the build's current name. Used by the per-row rename button.
     setRenameTarget(b);
     setRenameValue(b.name);
     setMode("rename");
   };
 
   const doRename = () => {
+    // Persists the typed rename via the build store (falling back to the original name when the input is blank) and returns to the saved-builds list. Used as the rename submit handler.
     if (!renameTarget) return;
     renameSavedBuild(renameTarget.id, renameValue.trim() || renameTarget.name);
     setRenameTarget(null);
@@ -272,6 +279,7 @@ export default function BuildsMenu() {
 }
 
 function buildLabel(b: SavedBuild): string {
+  // Returns a one-line meta description for a SavedBuild row ("ClassName · N profiles"), used in the saved list under each build's title.
   const cls = b.classId ? getClass(b.classId) : undefined;
   const profileCount = b.profiles.length;
   return `${cls?.name ?? "No class"} · ${profileCount} profile${profileCount === 1 ? "" : "s"}`;
@@ -292,6 +300,7 @@ function SavedList({
   onDelete: (b: SavedBuild) => void;
   onRename: (b: SavedBuild) => void;
 }) {
+  // Renders the scrollable list of saved builds inside the menu, each row exposing load / rename / delete actions and an "(active)" badge. Used inside BuildsMenu when in the "menu" tab.
   if (list.length === 0) {
     return (
       <div className="text-center text-muted italic py-4">
@@ -364,6 +373,7 @@ function TabBtn({
   onClick: () => void;
   children: React.ReactNode;
 }) {
+  // Renders a small dropdown tab pill with the active variant highlighted in the accent palette. Used by BuildsMenu's tab strip.
   return (
     <button
       onClick={onClick}
@@ -379,6 +389,7 @@ function TabBtn({
 }
 
 function formatDate(iso: string): string {
+  // Renders an ISO timestamp as a short "MMM D HH:MM" using the user's locale, falling back to the original string on parse failure. Used by SavedList to show each build's last-updated time.
   try {
     const d = new Date(iso);
     const day = d.toLocaleDateString(undefined, {

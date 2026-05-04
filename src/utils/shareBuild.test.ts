@@ -8,6 +8,7 @@ import {
 } from './shareBuild'
 
 function makeSnapshot(overrides: Partial<BuildSnapshot> = {}): BuildSnapshot {
+  // Test helper that returns a complete BuildSnapshot pre-filled with sensible defaults, allowing each test to override only the fields it cares about. Used throughout the share-encoding tests to keep individual cases small and focused.
   return {
     classId: 'stormweaver',
     level: 50,
@@ -75,7 +76,7 @@ describe('decodeShareToBuild — invalid input', () => {
       JSON.stringify({
         v: 1,
         c: 'x',
-        l: 'fifty', // should be number
+        l: 'fifty',
         a: {},
         i: {},
         s: {},
@@ -135,7 +136,7 @@ describe('decodeShareToBuild — invalid input', () => {
         v: 1,
         c: 'x',
         l: 1,
-        a: { strength: Number.NaN }, // NaN serializes to null, but try direct
+        a: { strength: Number.NaN },
         i: {},
         s: {},
         ss: {},
@@ -148,7 +149,6 @@ describe('decodeShareToBuild — invalid input', () => {
         kps: 1,
       }),
     )
-    // NaN is encoded as null in JSON, which fails number validation
     expect(decodeShareToBuild(code)).toBeNull()
   })
 

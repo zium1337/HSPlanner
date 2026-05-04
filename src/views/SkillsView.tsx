@@ -43,6 +43,7 @@ const CELL = 72
 const GAP = 16
 
 export default function SkillsView() {
+  // Top-level Skills view: lays out the active class's skill tree as a clickable grid, lets the user spend skill points (with prerequisite cascades), and renders a per-skill details side panel showing the current/next-rank stats, damage breakdown, mana cost, subtree bonuses, and the "Open subtree" entry point. Used as one of the main app tabs.
   const {
     classId,
     level,
@@ -242,6 +243,7 @@ function SkillTree({
   onDec: (id: string) => void
   onOpenSubtree: (id: string | null) => void
 }) {
+  // Renders one named tree of skills as a fixed-cell grid: draws prerequisite arrow lines, places each skill icon at its (row, col) position, and wires hover/inc/dec/open-subtree callbacks. Used by SkillsView once per tree (e.g. main tree, secondary tree).
   const maxRow = list.reduce((m, s) => Math.max(m, s.position?.row ?? 0), 0)
   const maxCol = list.reduce((m, s) => Math.max(m, s.position?.col ?? 0), 0)
   const cols = Math.max(maxCol + 1, 3)
@@ -351,6 +353,7 @@ function SkillIcon({
   onDec: () => void
   onOpenSubtree: () => void
 }) {
+  // Renders a single clickable skill cell inside the SkillTree grid: shows the icon, current rank, locked state, hover ring, damage-type border colour, and exposes the small subtree button when the skill has subskills. Used by SkillTree for every skill in the grid.
   const allocated = rank > 0
   const border = skill.damageType
     ? DAMAGE_BORDER[skill.damageType]
@@ -448,6 +451,7 @@ function SkillDetailsPanel({
   subskillRanks: Record<string, number>
   enemyConditions: Record<string, boolean>
 }) {
+  // Renders the right-hand details panel for the hovered/selected skill: header, current vs next rank, mana cost, cooldown, damage breakdown (with synergies, total multipliers, crit, resistance), passive stats, subskill bonuses, and the "Open subtree" CTA. Falls back to a help message when no skill is selected.
   if (!skill) {
     return (
       <aside className="h-full min-h-0 w-80 shrink-0 overflow-y-auto border-l border-border bg-panel p-4 text-sm text-muted">
@@ -618,6 +622,7 @@ function SkillDetailsPanel({
 }
 
 function formatPair(pair: [number, number]): string {
+  // Renders a `[min, max]` integer tuple as either a single number ("12") or a "min-max" range ("12-18"). Used by SkillDetailsPanel to show effective rank ranges.
   return pair[0] === pair[1] ? String(pair[0]) : `${pair[0]}-${pair[1]}`
 }
 
@@ -630,6 +635,7 @@ function SubtreeBonusBlock({
   subskillRanks: Record<string, number>
   enemyConditions: Record<string, boolean>
 }) {
+  // Renders the "Subtree bonuses" block inside SkillDetailsPanel: aggregates allocated subskill stats via `aggregateSubskillStats` (gated on enemy conditions) and lists them, plus a per-proc breakdown showing chance, trigger, effects and applied states. Shown only when at least one allocated subskill contributes.
   const agg = useMemo(
     () => aggregateSubskillStats(skill, subskillRanks, enemyConditions),
     [skill, subskillRanks, enemyConditions],
@@ -726,6 +732,7 @@ function SubtreeBonusBlock({
 }
 
 function fmtStatValue(key: string, value: number): string {
+  // Formats a stat number as a signed string with the stat's percent/flat suffix and at most two decimals. Used by SubtreeBonusBlock and SkillEffectsBlock to render numeric values.
   const def = statDef(key)
   const suffix = def?.format === 'percent' ? '%' : ''
   const rounded = Number.isInteger(value)
@@ -752,6 +759,7 @@ function SkillEffectsBlock({
   skillRanks: Record<string, number>
   attributes: Record<AttributeKey, RangedValue>
 }) {
+  // Renders the per-skill numeric breakdown inside SkillDetailsPanel: damage tables / formulas, mana cost, area of effect, cast time, applied states, and the synergy contributions from other skills + attributes that scale this skill. Used by SkillDetailsPanel.
   const allocated = currentRank > 0
   const curMin = allocated ? effRankMin : 1
   const curMax = allocated ? effRankMax : 1
@@ -998,21 +1006,25 @@ function SkillEffectsBlock({
 }
 
 function formatStatPair(key: string, min: number, max: number): string {
+  // Renders a `[min, max]` stat range as either a single signed value or "min-max" with the per-stat unit suffix. Used by SkillEffectsBlock.
   if (min === max) return fmtStatValue(key, min)
   return `${fmtStatValue(key, min)}-${fmtStatValue(key, max).replace(/^[+-]/, '')}`
 }
 
 function formatNumPair(min: number, max: number): string {
+  // Renders a plain numeric range as either a single number or "min-max", with no suffix. Used for synergy contributions and other unitless values.
   if (min === max) return String(min)
   return `${min}-${max}`
 }
 
 function formatDmgRange(min: [number, number], max: [number, number]): string {
+  // Renders a damage range that itself has min/max bounds. Collapses to a single tuple when both endpoints match. Used by SkillEffectsBlock for hit ranges.
   if (min[0] === max[0] && min[1] === max[1]) return formatRangeTuple(min)
   return `${formatRangeTuple(min)} … ${formatRangeTuple(max)}`
 }
 
 function formatRangeTuple([min, max]: [number, number]): string {
+  // Renders a single `[min, max]` tuple as "min-max" (or just "min" when both ends match), rounding each end to two decimals. Used by formatDmgRange.
   const m = Math.round(min * 100) / 100
   const mx = Math.round(max * 100) / 100
   if (m === mx) return String(m)
@@ -1030,6 +1042,7 @@ function EffRow({
   next?: string
   color: string
 }) {
+  // Renders a single label / current → next-rank value row inside SkillEffectsBlock. Used for every numeric line that benefits from showing the user the impact of taking the next rank.
   return (
     <div className="flex items-baseline justify-between gap-2 min-w-0">
       <span className="text-text/80 truncate" title={label}>
@@ -1049,6 +1062,7 @@ function EffRow({
 }
 
 function EmptyState({ message }: { message: string }) {
+  // Renders the centred "nothing to show" placeholder used by SkillsView when the active class has no skills (or no class is selected).
   return (
     <div className="flex h-full items-center justify-center p-8 text-center text-sm text-muted">
       {message}

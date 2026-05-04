@@ -1,12 +1,7 @@
 import type { RangedValue } from '../types'
 
-/**
- * Parse a free-text custom-stat value into a RangedValue, or null when the
- * input is unparseable (entry then treated as informational only).
- *
- * Accepts: "100", "+100", "-50", "100%", "1.5", "12-18", "[12-18]", "+12 - +18".
- */
 export function parseCustomStatValue(raw: string): RangedValue | null {
+  // Parses a free-text user-entered stat value (such as "100", "+12", "12-18", "[12-18]", "100%") into a RangedValue (number or [min, max] tuple), returning null if the input cannot be parsed. Used by the custom-stat input UI to translate user text into the numeric form consumed by the stat-aggregation pipeline.
   const trimmed = raw.trim().replace(/[[\]]/g, '').replace(/%/g, '')
   if (!trimmed) return null
 

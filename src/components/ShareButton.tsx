@@ -5,12 +5,14 @@ import { encodeBuildToShare } from '../utils/shareBuild'
 type Status = 'idle' | 'copied' | 'error'
 
 export default function ShareButton() {
+  // Top-bar button that generates a compact, lz-string-encoded share code from the current build (and its notes) on first open, exposes it in a popover, and offers a one-click copy-to-clipboard with a transient "Copied!" / "Copy failed" status. Used as the primary entry point for sharing builds outside the app.
   const exportSnapshot = useBuild((s) => s.exportBuildSnapshot)
   const [status, setStatus] = useState<Status>('idle')
   const [code, setCode] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
 
   const generate = (): string => {
+    // Encodes the current build snapshot and notes into a fresh share code, stores it in component state, and opens the popover. Used by the toggle and copy actions to lazily produce a code only when needed.
     const { notes } = useBuild.getState()
     const next = encodeBuildToShare(exportSnapshot(), notes)
     setCode(next)
@@ -20,6 +22,7 @@ export default function ShareButton() {
   }
 
   const onToggle = () => {
+    // Opens the popover (generating a code if one isn't ready) or closes it when already open. Used as the click handler for the Share button.
     if (open) {
       setOpen(false)
       return
@@ -28,6 +31,7 @@ export default function ShareButton() {
   }
 
   const onCopy = async () => {
+    // Copies the (possibly just-generated) build code to the clipboard and toggles a transient "Copied!" / "Copy failed" status for 2.5 seconds. Used as the click handler for the Copy button inside the popover.
     const next = code ?? generate()
     try {
       await navigator.clipboard.writeText(next)

@@ -97,6 +97,7 @@ export default function ItemTooltip({
   placement = 'right',
   className,
 }: Props) {
+  // Hover-tooltip wrapper that renders the rich item details (header, base stats, implicits, affixes, sockets, set bonuses, procs, flavour) for an equipped item, picking the rarity-appropriate tone (and runeword override). Used by GearView's slot tiles and any other surface that wants to expose an item's full info on hover.
   const base = getItem(equipped.baseId)
   if (!base) return <>{children}</>
 
@@ -126,6 +127,7 @@ export function ItemTooltipBody({
   compareWith?: EquippedItem
   compareSlotKey?: SlotKey
 }) {
+  // Renders the entire body of an item tooltip / item card: header with name, base stats, implicits, granted-skill effects, runeword stats, standard and unholy affix lists, forged crystal mods, socket contributions, set bonuses, procs, unsupported unique effects, description/flavour, optional Net Change comparison block, and footer (level/iLvl/tier). Used both by ItemTooltip (popover) and ItemCard (panel).
   const inventory = useBuild((s) => s.inventory)
 
   const runeword = equipped ? detectRuneword(base, equipped.socketed) : undefined
@@ -177,8 +179,6 @@ export function ItemTooltipBody({
     ? Object.entries(base.skillBonuses)
     : []
 
-  // Map item-granted skills (registered in item-granted-skills.json) to a
-  // displayable rank + per-rank effect lines. Stars scale rank, rounded to int.
   const grantedSkillEntries = (() => {
     if (!base.skillBonuses) return [] as Array<{
       skill: ItemGrantedSkill
@@ -550,8 +550,10 @@ function aggregateItemStats(
   base: ItemBase,
   equipped: EquippedItem | undefined,
 ): Record<string, number> {
+  // Lightweight aggregator that sums an item's implicits (averaged over the roll range), affixes (rolled & star-scaled), runeword stats, and socket contributions into a flat statKey→number map. Used by NetChangeSection to compute the diff between an equipped item and a hovered candidate without running the full computeBuildStats pipeline.
   const out: Record<string, number> = {}
   const add = (k: string, v: number) => {
+    // Increments the running total for a stat key, ignoring zero contributions. Used as the fold helper inside aggregateItemStats.
     if (v === 0) return
     out[k] = (out[k] ?? 0) + v
   }
@@ -603,6 +605,7 @@ function DiffRow({
   diff: number
   direction: 'up' | 'down'
 }) {
+  // Renders a single coloured up/down arrow stat-diff row inside NetChangeSection. Used to display per-stat upgrades and downgrades when comparing two items.
   const colorClass = direction === 'up' ? 'text-stat-green' : 'text-stat-red'
   const arrow = direction === 'up' ? '▲' : '▼'
   return (
@@ -630,6 +633,7 @@ function NetChangeSection({
   compareWith: EquippedItem
   slotKey?: SlotKey
 }) {
+  // Renders the per-item "Net Change" comparison block inside an item tooltip: green positives, red negatives, and an optional weapon DPS delta (with before/after numbers) computed by re-running the stats pipeline with the candidate item swapped in. Used by ItemCard's compare flow.
   const classId = useBuild((s) => s.classId)
   const level = useBuild((s) => s.level)
   const allocated = useBuild((s) => s.allocated)
@@ -763,6 +767,7 @@ function NetChangeSection({
 }
 
 function formatDpsValue(n: number): string {
+  // Returns a human-friendly DPS number with thousands separators, defaulting to "0" for non-finite or zero inputs. Used by NetChangeSection to render the before/after DPS line.
   if (!Number.isFinite(n) || n === 0) return '0'
   const rounded = Math.round(n)
   return rounded.toLocaleString('en-US')
@@ -784,9 +789,11 @@ function computeDpsDelta(
   slotKey: SlotKey,
   prospectBase: ItemBase,
 ): { beforeAvg: number; afterAvg: number; diffAvg: number; hasWeapon: boolean } | null {
+  // Re-runs `computeBuildStats` and `computeWeaponDamage` for both the current inventory and a hypothetical inventory with the prospect item swapped into `slotKey`, returning the average-DPS before/after deltas. Used by NetChangeSection to display weapon-DPS impact for upgrade comparisons.
   const computeForInventory = (
     inv: Inventory,
   ): { avg: number; hasWeapon: boolean } => {
+    // Local helper that runs the stats + weapon-damage pipeline for a single Inventory and reduces the result to `avg DPS` and a hasWeapon flag. Used twice inside computeDpsDelta (once for the current inventory, once for the swapped one).
     const built = computeBuildStats(
       state.classId,
       state.level,
@@ -840,16 +847,13 @@ export function ItemCard({
 }: {
   equipped?: EquippedItem
   base: ItemBase | undefined
-  /** Text shown inside the banner arc (e.g. "Equipped", "Upgrade"). */
   arcLabel?: ReactNode
-  /** Visual state controlling banner arc + border color. */
   state?: CompareState
-  /** When set, renders a Net Change section comparing this item to it. */
   compareWith?: EquippedItem
-  /** Which inventory slot the comparison is for (drives DPS recompute). */
   compareSlotKey?: SlotKey
   className?: string
 }) {
+  // Renders the same body as ItemTooltip but as a static panel (with optional banner arc and compare highlight). Used by GearView's side-by-side compare picker so the user can see two items in full detail at once.
   const stateClass = state ? `compare-card is-${state}` : ''
 
   if (!base) {
@@ -892,16 +896,17 @@ export function ItemCard({
 }
 
 function arcStyle(tone: TooltipTone): CSSProperties {
+  // Returns the CSS custom-property bag (`--arc-text`, `--arc-border`, `--arc-bg`) used to style the rarity-coloured banner arc on item cards. Used by ItemCard's banner.
   const rgb = TONE_RGB[tone]
   return {
     '--arc-text': `rgb(${rgb})`,
     '--arc-border': `rgba(${rgb}, 0.6)`,
-    // Solid dark base + subtle rarity tint so text behind never bleeds through.
     '--arc-bg': `color-mix(in srgb, rgb(${rgb}) 18%, #14151b)`,
   } as CSSProperties
 }
 
 function BaseStats({ base }: { base: ItemBase }) {
+  // Renders the two-column "base stats" grid (defense, damage, block, attack speed) inside an item tooltip. Used by ItemTooltipBody when the base item carries any of those numbers.
   const rows: { label: string; value: string }[] = []
   if (base.defenseMin !== undefined && base.defenseMax !== undefined) {
     rows.push({
@@ -937,6 +942,7 @@ function collectSocketStats(
   equipped: EquippedItem,
   base?: ItemBase,
 ): [string, number][] {
+  // Walks the item's sockets and aggregates stat contributions from gems / runes (with rainbow multiplier and per-base socket transforms applied), returning a `[statKey, value][]` tuple for non-zero entries. Used by ItemTooltipBody to render the "From Sockets" section.
   const stats: StatMap = {}
   for (let i = 0; i < equipped.socketed.length; i++) {
     const id = equipped.socketed[i]
@@ -964,6 +970,7 @@ function formatAffixValue(
   roll: number,
   stars?: number,
 ): string {
+  // Formats a single affix's rolled (and star-scaled) value as a signed string with a percent suffix when appropriate. Used by ItemTooltipBody to render each affix line in the standard / unholy lists.
   if (affix.valueMin === null || affix.valueMax === null) return affix.sign
   const signed = rolledAffixValueWithStars(affix, roll, stars)
   const abs = Math.abs(signed)

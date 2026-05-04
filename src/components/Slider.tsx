@@ -49,6 +49,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
   },
   ref,
 ) {
+  // Themed range slider component supporting controlled or uncontrolled modes, custom value formatting (int / percent / fixed-decimals / function), optional label/unit/ticks, colour variants, and a compact layout. Used throughout the app for any percentage / numeric input that benefits from a visual track.
   const reactId = useId()
   const id = idProp ?? reactId
   const isControlled = value !== undefined
@@ -58,6 +59,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
 
   const formatValue = useCallback(
     (v: number): ReactNode => {
+      // Renders the slider's current numeric value in the requested format. Supports a function for full custom rendering, "pct" / "int" presets, and "fixed:N" for fixed-decimal output. Used to render the value pill above the slider track.
       if (typeof format === 'function') return format(v)
       if (format === 'pct') return v + '%'
       if (format === 'int') return Math.round(v)
@@ -70,6 +72,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
   )
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // Forwards the native input change event to the consumer's `onChange` callback as a parsed number plus the original event. Used as the single change handler for both controlled and uncontrolled modes.
     onChange?.(Number(e.target.value), e)
   }
 

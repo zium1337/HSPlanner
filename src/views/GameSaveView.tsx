@@ -35,6 +35,7 @@ function defaultFormFromSummary(
   buildLevel: number,
   buildClassGameId: number | null,
 ): FormState {
+  // Builds the initial GameSaveView form state from a parsed save-file summary, falling back to the active build's level / class id where the save has no hero. Used both on first render and whenever the user selects a different save slot.
   const hero = summary?.hero
   return {
     name: hero?.name ?? '',
@@ -55,6 +56,7 @@ function defaultFormFromSummary(
 }
 
 export default function GameSaveView() {
+  // Tauri-only view that lets the user point HeroPlanner at the Hero Siege save directory, pick a save slot, edit the hero fields (name, level, hardcore, wormhole, chaos towers, class) with per-field "apply" toggles, and write the changes back into the .hss file via the Rust backend. Renders a friendly "Tauri-only" notice in the browser build.
   const buildLevel = useBuild((s) => s.level)
   const buildClassId = useBuild((s) => s.classId)
   const buildClass = buildClassId ? getClass(buildClassId) : undefined
@@ -73,6 +75,7 @@ export default function GameSaveView() {
   const [info, setInfo] = useState<string | null>(null)
 
   const refreshFolder = useCallback(async (dir: string) => {
+    // Asks the Rust backend to enumerate `.hss` files in the supplied directory and updates the slots/error/info state accordingly. Used after the user picks a folder, manually types one, or refreshes the listing.
     setBusy(true)
     setError(null)
     try {
@@ -513,6 +516,7 @@ interface FieldRowProps {
 }
 
 function FieldRow({ label, toggle, onToggle, hint, children }: FieldRowProps) {
+  // Renders one editable hero field as a row with a leading "apply this on save" checkbox, a label, the input(s), and an optional hint. Used by GameSaveView for each writeable hero attribute (name, level, hardcore, etc.).
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2">

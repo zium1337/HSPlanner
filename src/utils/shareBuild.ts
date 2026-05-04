@@ -17,6 +17,7 @@ const SCHEMA_VERSION = 1
 export const DEFAULT_ENEMY_RESISTANCE_PCT = 85
 
 export function defaultEnemyResistances(): Record<string, number> {
+  // Returns a fresh map containing the default 85% enemy resistance for each elemental damage type. Used when an imported share lacks the optional `er` field and when the build store needs a clean baseline.
   return {
     fire: DEFAULT_ENEMY_RESISTANCE_PCT,
     cold: DEFAULT_ENEMY_RESISTANCE_PCT,
@@ -31,8 +32,6 @@ const BUILD_CODE_RE_INPUT = new RegExp(`[#&?]${URL_PARAM}=([^&\\s]+)`)
 const BUILD_CODE_RE_HASH = new RegExp(`[#&]${URL_PARAM}=([^&]+)`)
 const BUILD_CODE_RE_QUERY = new RegExp(`[?&]${URL_PARAM}=([^&]+)`)
 
-// Defensive bounds for untrusted share payloads. Anything past these limits
-// is almost certainly malformed or malicious, never user-authored.
 const MAX_LEVEL = 10_000
 const MAX_KEY_LENGTH = 200
 const MAX_RECORD_ENTRIES = 5_000
@@ -130,9 +129,7 @@ export interface ShareableBuild {
   er?: Record<string, number>
   pt: Record<string, boolean>
   kps: number
-  /** Optional sanitized HTML notes (added later — old snapshots may omit). */
   n?: string
-  /** Optional custom user-entered stats. k=statKey, v=value (free text). */
   cs?: { k: string; v: string }[]
 }
 
@@ -155,6 +152,7 @@ export interface BuildSnapshot {
 }
 
 function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
+  // Translates an in-memory BuildSnapshot (and optional notes) into the compact ShareableBuild wire format with short single-letter keys, sorting tree ids and dropping empty optional fields. Used internally by encodeBuildToShare before lz-string compression.
   const out: ShareableBuild = {
     v: SCHEMA_VERSION,
     c: snapshot.classId,
@@ -190,11 +188,13 @@ export interface DecodedShare {
 }
 
 function clampLevel(n: number): number {
+  // Coerces any number into a valid character level in the inclusive range [1, MAX_LEVEL], defaulting non-finite inputs to 1. Used during deserialization so a hostile share cannot push the level into a degenerate state.
   if (!Number.isFinite(n)) return 1
   return Math.max(1, Math.min(MAX_LEVEL, Math.floor(n)))
 }
 
 function deserialize(encoded: ShareableBuild): DecodedShare {
+  // Converts a validated ShareableBuild back into the in-memory BuildSnapshot consumed by the build store, applying defaults for optional fields and sanitising the notes HTML. Used by decodeShareToBuild to produce the runtime shape from a parsed wire payload.
   if (encoded.v !== SCHEMA_VERSION) {
     throw new Error(
       `Unsupported share schema v${encoded.v} (expected v${SCHEMA_VERSION})`,
@@ -231,6 +231,7 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
 }
 
 function normalizeInventory(inv: Inventory | undefined): Inventory {
+  // Reshapes a possibly-malformed Inventory into a strictly valid form: arrays are clamped/back-filled to match `socketCount`, star count is clamped to 0–5, and augment level to 1–7. Used by deserialize to repair shares produced by older or hostile clients.
   if (!inv) return {}
   const out: Inventory = {}
   for (const [slot, item] of Object.entries(inv)) {
@@ -277,12 +278,14 @@ export function encodeBuildToShare(
   snapshot: BuildSnapshot,
   notes?: string,
 ): string {
+  // Serialises a BuildSnapshot (plus optional notes) into the compact ShareableBuild form, JSON-stringifies it, and lz-string-compresses it into a URL-safe string. Used by buildShareUrl, the saved-builds store, and the share-button flow.
   const payload = serialize(snapshot, notes)
   const json = JSON.stringify(payload)
   return compressToEncodedURIComponent(json)
 }
 
 export function decodeShareToBuild(code: string): DecodedShare | null {
+  // Reverses encodeBuildToShare: lz-string-decompresses the input, validates the JSON against the zod schema, and deserialises it into a DecodedShare. Returns null on length, decode, parse, or validation failure so callers can treat any failure uniformly. Used by share-import and saved-build hydration.
   try {
     if (typeof code !== 'string' || code.length > MAX_SHARE_INPUT_LENGTH) {
       return null
@@ -303,6 +306,7 @@ export function buildShareUrl(
   base?: string,
   notes?: string,
 ): string {
+  // Composes a full shareable URL by encoding the snapshot and embedding it in the `#b=` fragment of the supplied (or current) origin/path. Used by ShareButton and any caller producing a copyable link.
   const code = encodeBuildToShare(snapshot, notes)
   const origin =
     base ??
@@ -312,17 +316,15 @@ export function buildShareUrl(
   return `${origin}#${URL_PARAM}=${code}`
 }
 
-/**
- * Extract a build code from either a raw share-code string or a URL/fragment
- * containing one. Used by the import dialog where users may paste either form.
- */
 export function parseBuildCodeFromInput(input: string): string {
+  // Extracts the raw build code from arbitrary user input that may be either a bare code or a full share URL with a `#b=`/`?b=`/`&b=` parameter. Used by the import dialog so users can paste either form.
   const trimmed = input.trim()
   const m = trimmed.match(BUILD_CODE_RE_INPUT)
   return m && m[1] ? decodeURIComponent(m[1]) : trimmed
 }
 
 export function readBuildCodeFromUrl(): string | null {
+  // Returns the build code present in the current `window.location` hash or query string, preferring the hash form. Used at startup so opening a share link auto-loads the build.
   if (typeof window === 'undefined') return null
   const hash = window.location.hash || ''
   const m = hash.match(BUILD_CODE_RE_HASH)
@@ -334,6 +336,7 @@ export function readBuildCodeFromUrl(): string | null {
 }
 
 export function clearBuildCodeFromUrl(): void {
+  // Strips the `#b=...` fragment from the current URL via `history.replaceState` without triggering a navigation. Used right after a share link has been consumed so subsequent reloads do not re-import the snapshot.
   if (typeof window === 'undefined') return
   if (window.location.hash.includes(`${URL_PARAM}=`)) {
     const cleaned = window.location.hash.replace(BUILD_CODE_RE_HASH, '')

@@ -88,6 +88,7 @@ const RARITY_BORDER: Record<ItemRarity, string> = {
 }
 
 export default function GearView() {
+  // Gear management view: shows every equipment slot, the relic/charm grid (with backtracking-based packing) and the per-slot edit panel for picking items, applying runewords, choosing sockets/gems/runes, setting stars, editing affix rolls, applying forge mods, and equipping angelic augments. The main inventory editor.
   const {
     inventory,
     equipItem,
@@ -285,6 +286,7 @@ function SlotRow({
   locked?: boolean
   onSelect: () => void
 }) {
+  // Renders a single inventory-slot row in GearView's left rail with the slot label, the equipped item's name + rarity colour (or empty hint), the runeword override colour, and the click-to-select handler. Used once per slot inside GearView.
   const base = equipped ? getItem(equipped.baseId) : undefined
   const runeword =
     base && equipped ? detectRuneword(base, equipped.socketed) : undefined
@@ -388,6 +390,7 @@ interface PlacedCharm {
 }
 
 function buildInitialOccupancy(): boolean[] {
+  // Returns a fresh boolean grid for the charm-pack solver, with the structurally-blocked cells of the charm grid pre-set to true. Used by `packCharms` (and the backtracker) before running each placement attempt.
   const occ = new Array(CHARM_GRID_ROWS * CHARM_GRID_COLS).fill(false)
   for (const [r, c] of CHARM_BLOCKED_CELLS) {
     occ[r * CHARM_GRID_COLS + c] = true
@@ -401,6 +404,7 @@ function canPlaceAt(
   c: number,
   occupancy: boolean[],
 ): boolean {
+  // Returns true when the rectangular charm `ch` can be placed at (r, c) without overlapping any already-occupied cell. Used by the backtracking and greedy charm-packing routines.
   for (let dr = 0; dr < ch.h; dr++) {
     for (let dc = 0; dc < ch.w; dc++) {
       if (occupancy[(r + dr) * CHARM_GRID_COLS + (c + dc)]) return false
@@ -416,6 +420,7 @@ function setOccupancy(
   occupancy: boolean[],
   value: boolean,
 ): void {
+  // Marks every cell that the rectangular charm `ch` occupies starting at (r, c) as `value`, used to claim or release a placement during backtracking.
   for (let dr = 0; dr < ch.h; dr++) {
     for (let dc = 0; dc < ch.w; dc++) {
       occupancy[(r + dr) * CHARM_GRID_COLS + (c + dc)] = value
@@ -429,9 +434,9 @@ function backtrackPack(
   occupancy: boolean[],
   positions: ({ row: number; col: number } | null)[],
 ): boolean {
+  // Recursive depth-first backtracking that tries to place every charm in the supplied order, with a fast path for trailing 1×1 charms (which only need a free-cell count, not full backtracking). Returns true when a complete placement is found and writes the chosen positions into the `positions` array. Used by `packCharms`.
   if (idx === charms.length) return true
 
-  // Fast path: trailing 1×1s only need a free-cell count, not backtracking.
   let allUnit = true
   for (let i = idx; i < charms.length; i++) {
     const c = charms[i]!
@@ -470,6 +475,7 @@ function backtrackPack(
 function packCharms(
   charms: { slotKey: SlotKey; w: number; h: number }[],
 ): { placed: PlacedCharm[]; overflow: SlotKey[]; occupancy: boolean[] } {
+  // Packs every supplied charm into the constrained charm grid, sorting largest-first and trying the full backtracking solver first; if total area exceeds capacity it falls back to a greedy first-fit-decreasing algorithm and reports any charms that overflow. Used by GearView's CharmSection to render the visual layout.
   const sorted = [...charms].sort((a, b) => {
     const areaDiff = b.w * b.h - a.w * a.h
     if (areaDiff !== 0) return areaDiff
@@ -499,8 +505,6 @@ function packCharms(
     }
   }
 
-  // Fallback: greedy first-fit decreasing. Reports overflow for whatever
-  // doesn't fit so the UI can warn the user.
   const occupancy = buildInitialOccupancy()
   const placed: PlacedCharm[] = []
   const overflow: SlotKey[] = []
@@ -540,6 +544,7 @@ function CharmSection({
   onSelect: (s: SlotKey) => void
   fitError?: string | null
 }) {
+  // Renders the visual charm grid (with blocked cells, multi-cell charms, click-to-edit, and an "overflow" warning when the user tries to equip more area than the grid can hold). Used by GearView underneath the slot rail.
   const inventory = useBuild((s) => s.inventory)
 
   const { placed, overflow, occupancy, totalUsable, occupiedCells } =
@@ -719,6 +724,7 @@ function ItemCompareOverlay({
   prospectId: string | null
   slotKey: SlotKey
 }) {
+  // Floating comparison panel rendered next to the gear dropdown when the user hovers a candidate item: shows the currently-equipped item card on one side and the prospect (with computed Net Change vs the equipped one) on the other. Used by GearView's item picker.
   const prospectBase = prospectId ? getItem(prospectId) : undefined
   const equippedBase = equipped ? getItem(equipped.baseId) : undefined
   const isSame = !!prospectId && equipped?.baseId === prospectId
@@ -819,6 +825,7 @@ function EditPanel({
   onRemoveForgedMod: (idx: number) => void
   onApplyRuneword: (rwId: string) => void
 }) {
+  // Right-panel editor for the currently-selected slot: hosts the item picker (with hover compare overlay), runeword presets, sockets section, stars section, affixes editor, forge mods editor, and (for armour) the augment picker. Used inside GearView whenever a slot is selected.
   const slotConfig = slot
     ? gameConfig.slots.find((s) => s.key === slot)
     : undefined
@@ -959,6 +966,7 @@ function SetSummary({
   set: NonNullable<ReturnType<typeof getItemSet>>
   count: number
 }) {
+  // Renders a compact summary card for an item set inside the EditPanel showing the set name, equipped-count badge, and each tier with its description coloured by activation state. Used when the equipped item belongs to a set.
   return (
     <div className="rounded border border-green-500/30 bg-green-500/5 p-2">
       <div className="flex items-baseline justify-between text-[10px] uppercase tracking-[0.12em] mb-1">
@@ -992,10 +1000,12 @@ function SetSummary({
 }
 
 function slotGroup(slotKey: SlotKey): string {
+  // Strips a trailing `_N` suffix from a slot key so paired slots (e.g. `ring_1`, `ring_2`) collapse into a single shared group ("ring"). Used by `itemsForSlot` and the inventory move logic.
   return slotKey.replace(/_\d+$/, '')
 }
 
 function itemsForSlot(slotKey: SlotKey): DropdownItem[] {
+  // Returns every base item that can equip into the given slot (matched by exact slot or shared slot group), sorted by rarity then name and decorated with a one-line meta description for the dropdown picker. Used by GearView's item picker.
   const group = slotGroup(slotKey)
   const matching = items
     .filter((i) => i.slot === slotKey || slotGroup(i.slot) === group)
@@ -1049,6 +1059,7 @@ function SocketsSection({
   onSocketed: (idx: number, id: string | null) => void
   onSocketType: (idx: number, type: SocketType) => void
 }) {
+  // Renders the per-item sockets editor: socket-count stepper, one socket dropdown per socket slot (with normal/rainbow toggle), and detection of any active runeword. Used inside EditPanel.
   if (maxSockets === 0) return null
   return (
     <div className="space-y-2">
@@ -1125,6 +1136,7 @@ function StarsSection({
   stars: number
   onChange: (n: number) => void
 }) {
+  // Renders the 0-MAX_STARS star picker for the equipped gear item. Used by EditPanel for any gear-slot equip.
   const bonusPct = stars * 8
   return (
     <div className="space-y-1">
@@ -1180,6 +1192,7 @@ function SocketTypeToggle({
   value: SocketType
   onChange: (t: SocketType) => void
 }) {
+  // Renders the small N/R toggle next to a socket dropdown that lets the user mark a socket as Rainbow (+50% effect on the socketed gem/rune). Used inside SocketsSection.
   return (
     <div className="flex border border-border rounded overflow-hidden text-[10px] font-medium shrink-0">
       <button
@@ -1220,6 +1233,7 @@ function formatAffixValue(
   roll: number,
   stars?: number,
 ): string {
+  // Renders an affix's rolled (and star-scaled) value as a signed string with the percent suffix when appropriate. Used by AffixesSection to label each affix row in the editor.
   if (affix.valueMin === null || affix.valueMax === null) return affix.sign
   const signed = rolledAffixValueWithStars(affix, roll, stars)
   const abs = Math.abs(signed)
@@ -1244,6 +1258,7 @@ function AffixesSection({
   onRemove: (index: number) => void
   onSetRoll: (index: number, roll: number) => void
 }) {
+  // Per-item affix editor that lists each rolled affix with a roll slider and remove button, and exposes a searchable add-affix popover restricted to the affix groups available on the current item slot. Honours the item's `maxAffixes` cap and supports the special `random_unholy` group as a single dropdown.
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const atCap =
@@ -1414,6 +1429,7 @@ function ForgedModsSection({
   onAdd: (modId: string, tier: number) => void
   onRemove: (index: number) => void
 }) {
+  // Editor for the (single) crystal-forge mod on a gear item, exposing a searchable picker filtered to the item's rarity-appropriate forge kind and a remove button. Used inside EditPanel for satanic-tier and above items.
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const mods = equipped.forgedMods ?? []
@@ -1536,6 +1552,7 @@ function RunewordPresets({
   activeRunewordId?: string
   onApply: (runewordId: string) => void
 }) {
+  // Renders the runeword picker shown for common-rarity items: filters to runewords whose base-type and rune count fit, exposes a one-click "Apply" for each, and highlights the currently active runeword. Hidden when no runeword fits.
   const compatible = useMemo(() => {
     if (base.rarity !== 'common') return []
     return runewords.filter(
@@ -1619,6 +1636,7 @@ const AUGMENT_OPTIONS: DropdownItem[] = augments
   .sort((a, b) => a.name.localeCompare(b.name))
 
 function AugmentSection({ equipped }: { equipped: EquippedItem }) {
+  // Renders the Angelic Augment editor on the body-armour slot: searchable picker, level slider (1..AUGMENT_MAX_LEVEL), trigger / proc duration / cost metadata, and the per-level stat list. Used inside EditPanel only when the armour slot is active.
   const setAugment = useBuild((s) => s.setAugment)
   const setAugmentLevel = useBuild((s) => s.setAugmentLevel)
   const aug = equipped.augment ? getAugment(equipped.augment.id) : undefined

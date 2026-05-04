@@ -9,6 +9,7 @@ function applyEffect(
   rank: number,
   multiplier = 1,
 ): void {
+  // Adds a SubskillEffect's `base` and per-rank contributions into the supplied accumulator map, scaling the per-rank portion by `rank` and the whole result by `multiplier`. Used internally by aggregateSubskillStats to fold both deterministic and proc-weighted effects into the same kind of stat map.
   if (!effect || rank <= 0) return
   if (effect.base) {
     for (const [k, v] of Object.entries(effect.base)) {
@@ -40,6 +41,7 @@ export function aggregateSubskillStats(
   subskillRanks: Record<string, number>,
   enemyConditions?: Record<string, boolean>,
 ): SubtreeAggregation {
+  // Walks every subskill node on a skill, gating conditional bonuses by the supplied enemy conditions, and folds deterministic effects, proc-weighted effects, and applied-state metadata into a single SubtreeAggregation. Used by the stat pipeline and skill tooltip to compute the contribution of a skill's subtree at the player's current allocation.
   const stats: StatMap = {}
   const procStats: StatMap = {}
   const appliedStates: AppliedStateInfo[] = []
@@ -129,6 +131,7 @@ export function aggregateSubskillStats(
 }
 
 function isConditionalKey(key: string): boolean {
+  // Returns true when a stat key ends with one of the recognised enemy-condition suffixes (`_stasis`, `_burning`, `_low_life`, etc.). Used by aggregateSubskillStats to decide whether a stat entry must be gated behind an active enemy condition.
   return /_(stasis|slow|lightning_break|burning|poisoned|frozen|shocked|bleeding|stunned|low_life)$/.test(
     key,
   )
@@ -138,6 +141,7 @@ function isConditionActive(
   key: string,
   enemyConditions?: Record<string, boolean>,
 ): boolean {
+  // Extracts the enemy-condition suffix from a stat key and looks it up in the supplied conditions map, returning true only when that condition is currently flagged active. Used by aggregateSubskillStats to apply gated stat values.
   if (!enemyConditions) return false
   const m = key.match(
     /_(stasis|slow|lightning_break|burning|poisoned|frozen|shocked|bleeding|stunned|low_life)$/,
@@ -150,6 +154,7 @@ export function sumSubskillRanks(
   skill: Skill,
   subskillRanks: Record<string, number>,
 ): number {
+  // Returns the total number of points the player has allocated across every node in the supplied skill's subtree. Used by the SkillsView and budget logic to display and validate subtree spend.
   let total = 0
   for (const sub of skill.subskills ?? []) {
     total += subskillRanks[subskillKey(skill.id, sub.id)] ?? 0
@@ -162,5 +167,6 @@ export function hasAllocatedSubskill(
   skill: Skill,
   subskillRanks: Record<string, number>,
 ): boolean {
+  // Returns true when the player has put at least one point into the given subskill node. Used by the SubtreeOverlay/UI to decide whether a node should render in its allocated state and whether prerequisites are satisfied.
   return (subskillRanks[subskillKey(skill.id, sub.id)] ?? 0) > 0
 }

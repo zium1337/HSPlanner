@@ -11,12 +11,14 @@ const CHUNK_URL =
   'https://hero-siege-helper.vercel.app/_next/static/chunks/0r~z2px73s~11.js'
 
 async function getHtml() {
+  // Fetches the upstream runeword index HTML page and returns its body. Used by main when not in --local mode.
   const res = await fetch(SOURCE_URL)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.text()
 }
 
 async function getChunk() {
+  // Fetches the upstream Next.js chunk file containing the embedded runeword stat data and returns its body. Used by main when not in --local mode.
   const res = await fetch(CHUNK_URL)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.text()
@@ -145,6 +147,7 @@ const STAT_ID_MAP = {
 }
 
 function extractRunewordStats(chunkJs) {
+  // Walks the chunk JS to find every item literal carrying `"Item Rarity":"Runeword"`, parses its `stats:[…]` array, and returns a `Map<runewordName, parsedStats[]>` keyed by lowercased name. Used by main to enrich the names scraped from the HTML index with their full stat list.
   const data = chunkJs
   const starts = []
   const startRe = /\{id:"([^"]+)",name:"([^"]+)",variants:/g
@@ -174,7 +177,6 @@ function extractRunewordStats(chunkJs) {
       j++
     }
     const arrText = block.slice(arrStart, j)
-    // split objects
     const entries = []
     let d = 0
     let objStart = null
@@ -208,9 +210,10 @@ function extractRunewordStats(chunkJs) {
 }
 
 function statsToStatMap(parsed, warnUnmapped) {
+  // Translates a list of parsed stat entries into the local statKey→number map by looking each id up in STAT_ID_MAP, ignoring `socketed_flat` (it's a required-sockets count rather than a stat) and recording unmapped ids on the supplied set. Used by main to build the runeword stats payload.
   const out = {}
   for (const { statId, min, max } of parsed) {
-    if (statId === 'socketed_flat') continue // just required sockets
+    if (statId === 'socketed_flat') continue
     const key = STAT_ID_MAP[statId]
     if (!key) {
       if (warnUnmapped) warnUnmapped.add(statId)
@@ -224,6 +227,7 @@ function statsToStatMap(parsed, warnUnmapped) {
 }
 
 function decode(s) {
+  // Decodes a small set of HTML entities back into their literal characters. Used by every parser before exposing scraped text.
   return s
     .replace(/&#x27;/g, "'")
     .replace(/&amp;/g, '&')
@@ -234,12 +238,14 @@ function decode(s) {
 }
 
 function flattenToText(html) {
+  // Strips every `<style>` block, replaces remaining tags with `|`, decodes entities, and collapses repeated `|`s. Returns a deterministic pipe-separated text representation of the original HTML. Used by parseBlock to walk a runeword card.
   const noStyles = html.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
   const piped = noStyles.replace(/<[^>]+>/g, '|')
   return decode(piped).replace(/\|+/g, '|').replace(/^\|/, '').replace(/\|$/, '')
 }
 
 function extractNames(html) {
+  // Scans the runeword index page for the "Click to copy" name divs and returns the trimmed name list in source order. Used by main to enumerate every runeword the upstream lists.
   const decoded = decode(html)
   const re =
     /title="Click to copy"><div class="css-0">([A-Za-z\u00c0-\u00ff][A-Za-z\u00c0-\u00ff\s'´]{1,40})<\/div>/g
@@ -250,6 +256,7 @@ function extractNames(html) {
 }
 
 function slug(s) {
+  // Converts an arbitrary string into a snake_case slug suitable for use inside an id. Used when synthesising rune ids.
   return s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
@@ -257,6 +264,7 @@ function slug(s) {
 }
 
 function normalizeBase(str) {
+  // Strips a leading `1H`/`2H` marker and collapses whitespace from a base-type token. Used by canonicalBase to clean upstream labels.
   return str
     .replace(/^[12]H\s*\|?\s*/i, '')
     .replace(/\s+/g, ' ')
@@ -268,11 +276,13 @@ const BASE_ALIASES = {
 }
 
 function canonicalBase(s) {
+  // Returns the canonical local base-type name for a scraped string by normalising it and applying BASE_ALIASES (e.g. `Body Armor` → `Armor`). Used by parseBlock when building the runeword's allowed-base list.
   const n = normalizeBase(s)
   return BASE_ALIASES[n] ?? n
 }
 
 function parseBlock(block) {
+  // Parses a single runeword card (already flattened to pipe-separated text) into `{ name, level, bases, runes }`, walking the tokens to extract the rune sequence and the list of allowed bases. Used by main once per scraped runeword.
   const parts = block.split('|').map((p) => p.trim()).filter(Boolean)
   const name = parts[0]
   let level = null
@@ -313,6 +323,7 @@ function parseBlock(block) {
 }
 
 async function main() {
+  // Top-level scraper that fetches both the runeword index HTML and the chunk JS (or reads `/tmp/runewords.html` and `/tmp/chunk_big.js` in --local mode), correlates each runeword name with its parsed stats, and writes the resulting array to `src/data/runewords.json`. Reports unmapped Stat IDs at the end.
   const useLocal = process.argv.includes('--local')
   const html = useLocal
     ? readFileSync('/tmp/runewords.html', 'utf8')

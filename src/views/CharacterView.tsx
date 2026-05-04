@@ -1,17 +1,15 @@
 import { classes, gameConfig, getClass } from '../data'
 import { attrPointsFor, finalAttributes, useBuild } from '../store/build'
 
-/**
- * Click → 1, Shift+Click → 5, Ctrl/Cmd+Shift+Click → all available (clamped
- * by `cap` so we never overshoot remaining points or current allocation).
- */
 function attrStep(e: React.MouseEvent, cap: number): number {
+  // Returns the number of attribute points a single +/- click should move: 1 normally, 5 with Shift, and `cap` (the remaining budget or current allocation) with Ctrl/Cmd+Shift, never overshooting `cap`. Used by both incAttr and decAttr handlers in CharacterView.
   if ((e.ctrlKey || e.metaKey) && e.shiftKey) return cap
   if (e.shiftKey) return Math.min(5, cap)
   return 1
 }
 
 export default function CharacterView() {
+  // View that lets the user pick a class, set the character level (with a synced slider/number input), and allocate attribute points (with +/- steppers honouring `attrStep`'s shift/ctrl shortcuts). Shows the available point budget and a reset action.
   const { classId, level, allocated, setClass, setLevel, incAttr, decAttr, resetAttrs } =
     useBuild()
 
@@ -178,6 +176,7 @@ function Panel({
   right?: React.ReactNode
   children: React.ReactNode
 }) {
+  // Renders a titled panel container with an optional right-side slot for action controls. Used by CharacterView to group class / level / attribute sections.
   return (
     <div className="bg-panel border border-border rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">

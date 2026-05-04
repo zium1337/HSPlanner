@@ -41,29 +41,35 @@ pub struct ApplyHeroPayload {
 }
 
 fn parse_quoted_number(value: &str) -> Option<f64> {
+    // Strips surrounding quotes/whitespace from a Hero Siege INI string and parses the inside as an f64. Used by every getter that reads numeric hero fields.
     let trimmed = value.trim().trim_matches('"');
     trimmed.parse::<f64>().ok()
 }
 
 fn format_number(value: i64) -> String {
+    // Renders an integer as Hero Siege's expected `"N.000000"` quoted-decimal string for round-tripping into the save file. Used by `apply_hero` for every numeric field.
     format!("\"{}.000000\"", value)
 }
 
 fn quote(value: &str) -> String {
+    // Wraps a string in literal double quotes so it matches Hero Siege's INI quoting convention. Used by `apply_hero` for the `name` field.
     format!("\"{}\"", value)
 }
 
 fn read_ini(path: &Path) -> Result<Ini, String> {
+    // Loads an INI file at `path` and converts any parse error into a path-tagged String. Used by the save reader and writer.
     Ini::load_from_file(path)
         .map_err(|e| format!("INI parse error at {}: {}", path.display(), e))
 }
 
 fn write_ini(ini: &Ini, path: &Path) -> Result<(), String> {
+    // Writes an in-memory INI back to `path`, converting any I/O error into a path-tagged String. Used by `apply_hero` to persist edits.
     ini.write_to_file(path)
         .map_err(|e| format!("INI write error at {}: {}", path.display(), e))
 }
 
 fn extract_hero(ini: &Ini) -> Option<HeroInfo> {
+    // Reads the `[0]` section of a Hero Siege save and constructs a HeroInfo, defaulting most fields when absent and returning None only when `class` is missing. Used by `read_save_file` and after `apply_hero` to return the post-write state.
     let section = ini.section(Some("0"))?;
 
     let class_id = section
@@ -112,6 +118,7 @@ fn extract_hero(ini: &Ini) -> Option<HeroInfo> {
 }
 
 fn extract_equipped(ini: &Ini) -> Vec<InventoryItemRaw> {
+    // Walks the `[inventory]` section of a save and decodes every entry, attempting to base64-decode the value into JSON for the front-end. Returns the raw key/value plus the optionally-decoded JSON. Used by `read_save_file`.
     let mut items = Vec::new();
     if let Some(section) = ini.section(Some("inventory")) {
         for (key, value) in section.iter() {
@@ -132,6 +139,7 @@ fn extract_equipped(ini: &Ini) -> Vec<InventoryItemRaw> {
 }
 
 fn slot_from_filename(path: &Path) -> Option<i64> {
+    // Parses a save's slot number out of the `herosiegeN.hss` filename pattern, returning None when the filename does not follow that convention. Used by `read_save_file` to label the returned summary.
     let stem = path.file_stem()?.to_str()?;
     if let Some(rest) = stem.strip_prefix("herosiege") {
         rest.parse::<i64>().ok()
@@ -141,6 +149,7 @@ fn slot_from_filename(path: &Path) -> Option<i64> {
 }
 
 pub fn read_save_file(path: &Path) -> Result<SaveFileSummary, String> {
+    // Reads a single `.hss` file and returns a SaveFileSummary containing its parsed hero block, decoded inventory, and slot number. Used by the `gs_read_save_file` Tauri command.
     let ini = read_ini(path)?;
     Ok(SaveFileSummary {
         path: path.display().to_string(),
@@ -151,6 +160,7 @@ pub fn read_save_file(path: &Path) -> Result<SaveFileSummary, String> {
 }
 
 pub fn list_save_dir(dir: &Path) -> Result<Vec<SaveFileSummary>, String> {
+    // Scans a directory for the `herosiege0.hss` … `herosiege35.hss` pattern, parsing every present file into a SaveFileSummary (and inserting a placeholder summary for files that fail to parse). Used by the `gs_list_save_dir` Tauri command.
     if !dir.exists() {
         return Err(format!("Folder {} nie istnieje", dir.display()));
     }
@@ -180,6 +190,7 @@ pub fn list_save_dir(dir: &Path) -> Result<Vec<SaveFileSummary>, String> {
 }
 
 pub fn apply_hero(path: &Path, payload: &ApplyHeroPayload) -> Result<HeroInfo, String> {
+    // Loads the save at `path`, overwrites whichever hero fields are present in `payload`, persists the file back, and returns the freshly-read HeroInfo. Used by the `gs_apply_hero` Tauri command.
     let mut ini = read_ini(path)?;
 
     {
@@ -220,6 +231,7 @@ pub fn apply_hero(path: &Path, payload: &ApplyHeroPayload) -> Result<HeroInfo, S
 }
 
 pub fn detect_default_save_dir() -> Option<PathBuf> {
+    // Returns the platform-default Hero Siege save directory by checking the documented Windows / macOS / Linux locations (including the Steam Proton path) and returning the first one that exists. Used by the `gs_default_save_dir` Tauri command.
     #[cfg(target_os = "windows")]
     {
         if let Some(local) = dirs::data_local_dir() {
@@ -285,20 +297,24 @@ pub fn detect_default_save_dir() -> Option<PathBuf> {
 
 #[tauri::command]
 pub fn gs_default_save_dir() -> Option<String> {
+    // Tauri command bridge that exposes `detect_default_save_dir` to the front-end as a string path. Used by GameSaveView on first mount.
     detect_default_save_dir().map(|p| p.display().to_string())
 }
 
 #[tauri::command]
 pub fn gs_list_save_dir(dir: String) -> Result<Vec<SaveFileSummary>, String> {
+    // Tauri command bridge that converts the string path argument into a `Path` and delegates to `list_save_dir`. Used by GameSaveView when scanning a folder.
     list_save_dir(Path::new(&dir))
 }
 
 #[tauri::command]
 pub fn gs_read_save_file(path: String) -> Result<SaveFileSummary, String> {
+    // Tauri command bridge that converts the string path argument into a `Path` and delegates to `read_save_file`. Used by GameSaveView when opening a single save outside the auto-detected directory.
     read_save_file(Path::new(&path))
 }
 
 #[tauri::command]
 pub fn gs_apply_hero(path: String, payload: ApplyHeroPayload) -> Result<HeroInfo, String> {
+    // Tauri command bridge that converts the string path into a `Path` and delegates to `apply_hero`. Used by GameSaveView's "Apply" action to write hero changes back into the save.
     apply_hero(Path::new(&path), &payload)
 }

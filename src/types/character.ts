@@ -11,6 +11,5 @@ export interface CharacterClass {
   statsPerLevel?: StatMap
   statsPerAttribute?: Record<AttributeKey, StatMap>
   startingSkills?: string[]
-  /** Native Hero Siege class ID — required to write `class` field into game .hss save. */
   gameClassId?: number
 }

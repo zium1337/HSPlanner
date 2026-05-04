@@ -32,6 +32,7 @@ interface TreeNode {
 }
 
 function tierTone(nodeType: string | undefined, tier: TreeNode['tier']): TooltipTone {
+  // Returns the tooltip tone (which drives the rarity-coloured border / glow / text colours) for a tree node based on its type and tier. Used by NodeTooltip and the TreeView renderer.
   if (nodeType === 'jewelry') return 'rare'
   if (nodeType === 'warp') return 'rare'
   if (nodeType === 'root') return 'angelic'
@@ -40,6 +41,7 @@ function tierTone(nodeType: string | undefined, tier: TreeNode['tier']): Tooltip
 }
 
 function tierLabel(nodeType: string | undefined, tier: TreeNode['tier']): string {
+  // Returns a human-readable label ("Notable", "Keystone", "Warp", etc.) for the given tree node type/tier. Used by NodeTooltip's subtitle.
   if (nodeType === 'jewelry') return 'Jewelry Socket'
   if (nodeType === 'warp') return 'Warp Node'
   if (nodeType === 'root') return 'Starting Node'
@@ -49,6 +51,7 @@ function tierLabel(nodeType: string | undefined, tier: TreeNode['tier']): string
 }
 
 function classifyTier(r: number): TreeNode['tier'] {
+  // Maps a node's radius (from the precomputed tree JSON) to one of the named tiers (`minor`, `notable`, `keystone`, etc.). Used while indexing the tree-node table at module load.
   if (r >= 12) return 'keystone'
   if (r >= 10) return 'notable'
   return 'minor'
@@ -108,6 +111,7 @@ interface NodePaint {
 }
 
 function nodeFill({ isAlloc, isPreview, isStart, tier }: NodePaint): string {
+  // Returns the SVG fill colour for a tree node based on whether it is allocated, currently being previewed, a start node, and its tier. Used by the TreeView SVG renderer.
   if (isAlloc) return tier === 'keystone' ? '#e94f37' : '#c9a55a'
   if (isPreview) return '#5a4528'
   if (isStart) return '#3a3528'
@@ -115,6 +119,7 @@ function nodeFill({ isAlloc, isPreview, isStart, tier }: NodePaint): string {
 }
 
 function baseStrokeWidth(isStart: boolean, tier: TreeNode['tier']): number {
+  // Returns the SVG stroke width to use for a tree node, with start nodes and higher tiers getting a thicker outline. Used by the TreeView renderer.
   if (isStart) return 2.5
   if (tier === 'minor') return 1
   return 2
@@ -127,6 +132,7 @@ function nodeStroke({
   isStart,
   tier,
 }: NodePaint): string {
+  // Returns the SVG stroke colour for a tree node based on the same paint state used by `nodeFill`. Used by the TreeView renderer to outline nodes consistently with their fill.
   if (isAlloc) return '#d4cfbf'
   if (isHover || isPreview) return '#e0b864'
   if (isStart) return '#c9a55a'
@@ -136,6 +142,7 @@ function nodeStroke({
 }
 
 export default function TreeView() {
+  // Top-level Talent Tree view: renders the full Hero Siege passive tree as a pan-and-zoomable SVG with allocated nodes, preview path on hover, search, node tooltips, and click-to-allocate / click-to-deallocate that defers cleanup of orphaned subtrees to the build store.
   const allocated = useBuild((s) => s.allocatedTreeNodes)
   const toggleNode = useBuild((s) => s.toggleTreeNode)
   const resetTree = useBuild((s) => s.resetTreeNodes)
@@ -518,6 +525,7 @@ function NodeTooltip({
   info: TreeNodeInfo | null
   cursor: { x: number; y: number }
 }) {
+  // Floating tooltip rendered next to a hovered tree node. Splits the node's text lines into parsed mods (rendered prettily) and unsupported lines (rendered with a "Not Yet Supported" label), shows the tier label, and clamps its position inside the viewport. Used by TreeView whenever the user mouses over a node.
   const ref = useRef<HTMLDivElement>(null)
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
   const tone = tierTone(info?.n, node.tier)

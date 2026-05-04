@@ -1,12 +1,3 @@
-/**
- * Whitelist-based HTML sanitizer for user notes.
- *
- * Notes are stored as HTML and travel through shareable URLs, so untrusted
- * input must be sanitized. Only the small surface listed below is allowed —
- * scripts, event handlers, javascript:/data: URLs, and style properties
- * other than color/decoration are stripped.
- */
-
 const ALLOWED_TAGS = new Set([
   'B',
   'STRONG',
@@ -34,10 +25,6 @@ const ALLOWED_TAGS = new Set([
   'PRE',
 ])
 
-// Tags whose entire subtree must be removed without "lifting" descendants —
-// otherwise script/style text content (or SVG-namespaced script payloads)
-// leaks back into the output as plain text and remains executable when
-// re-inserted into HTML.
 const DANGEROUS_TAGS = new Set([
   'SCRIPT',
   'STYLE',
@@ -56,8 +43,6 @@ const DANGEROUS_TAGS = new Set([
 const ALLOWED_ATTRS_BY_TAG: Record<string, Set<string>> = {
   A: new Set(['href', 'title', 'target', 'rel']),
   FONT: new Set(['color']),
-  // SPAN, DIV, P, LI etc. → only "style" survives the per-attribute filter
-  // (see allowedStyleProperty below).
 }
 
 const ALLOWED_STYLE_PROPS = new Set([
@@ -71,10 +56,12 @@ const ALLOWED_STYLE_PROPS = new Set([
 export const SAFE_URL_RE = /^(https?:|mailto:|#|\/)/i
 
 export function isSafeUrl(url: string): boolean {
+  // Returns true when a URL passes the SAFE_URL_RE allowlist (http(s), mailto, anchor, or root-relative). Used by sanitizeUrl and any caller that needs a quick safety check before rendering a user-supplied link.
   return SAFE_URL_RE.test(url.trim())
 }
 
 function isAllowedAttribute(tagName: string, attr: string): boolean {
+  // Decides whether an attribute is permitted on a given tag according to the per-tag allowlist (style is always allowed because it is filtered separately by sanitizeStyle). Used by sanitizeNode while pruning attributes.
   if (attr === 'style') return true
   const allowed = ALLOWED_ATTRS_BY_TAG[tagName]
   if (!allowed) return false
@@ -82,6 +69,7 @@ function isAllowedAttribute(tagName: string, attr: string): boolean {
 }
 
 function sanitizeStyle(value: string): string {
+  // Filters a CSS inline-style declaration string down to the small ALLOWED_STYLE_PROPS set and rejects values that try to use url(), expression(), or javascript: payloads. Used by sanitizeNode to neutralise potentially dangerous style attributes while keeping basic formatting like color and decoration.
   const out: string[] = []
   for (const decl of value.split(';')) {
     const colon = decl.indexOf(':')
@@ -96,6 +84,7 @@ function sanitizeStyle(value: string): string {
 }
 
 function sanitizeUrl(url: string): string | null {
+  // Trims a URL string and returns it if it passes the SAFE_URL_RE allowlist, otherwise returns null. Used by sanitizeNode to clean up href attributes before they are reinserted into the DOM.
   const trimmed = url.trim()
   if (!trimmed) return null
   if (!SAFE_URL_RE.test(trimmed)) return null
@@ -103,6 +92,7 @@ function sanitizeUrl(url: string): string | null {
 }
 
 function sanitizeNode(node: Element): void {
+  // Strips disallowed attributes from a single element, sanitises any surviving style/href values, and forces external-link safety attributes on anchor tags. Used by walk to clean every node visited during sanitisation.
   for (const attr of Array.from(node.attributes)) {
     const name = attr.name.toLowerCase()
     if (name.startsWith('on')) {
@@ -134,16 +124,14 @@ function sanitizeNode(node: Element): void {
 }
 
 function walk(root: Element): void {
+  // Recursively walks the children of an element, fully removing any DANGEROUS_TAGS subtree, lifting children out of disallowed-but-safe wrappers, and sanitising allowed elements in place. Used by sanitizeHtml as the recursion engine that traverses the parsed DOM.
   for (const child of Array.from(root.children)) {
     const tag = child.tagName.toUpperCase()
     if (DANGEROUS_TAGS.has(tag)) {
-      // Delete the whole subtree — never lift descendants, otherwise
-      // <script>alert(1)</script> leaks "alert(1)" as text.
       child.remove()
       continue
     }
     if (!ALLOWED_TAGS.has(tag)) {
-      // Lift safe descendants up before removing the disallowed wrapper.
       const parent = child.parentNode
       if (!parent) continue
       while (child.firstChild) parent.insertBefore(child.firstChild, child)
@@ -156,6 +144,7 @@ function walk(root: Element): void {
 }
 
 export function sanitizeHtml(html: string): string {
+  // Public entry point that parses an arbitrary HTML string with DOMParser and returns the cleaned innerHTML, falling back to a tag-stripping regex in non-DOM environments. Used to sanitise user-authored notes that are persisted, rendered with dangerouslySetInnerHTML, and shared via URLs.
   if (!html) return ''
   if (typeof window === 'undefined' || !('DOMParser' in window)) {
     return html.replace(/<[^>]*>/g, '')

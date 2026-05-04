@@ -60,16 +60,11 @@ interface BuildState {
   killsPerSec: number
   activeBuffs: Record<string, boolean>
   enemyConditions: Record<string, boolean>
-  /** Per-element monster resistance %. Subtracted by the player's `ignore_<element>_res` stat. */
   enemyResistances: Record<string, number>
   subskillRanks: Record<string, number>
-  /** Saved-build the in-memory state currently belongs to (null = unsaved freeform). */
   activeBuildId: string | null
-  /** Saved-profile within the active build that the in-memory state belongs to. */
   activeProfileId: string | null
-  /** Bumped after any localStorage SavedBuild mutation. Subscribers can re-read. */
   savedBuildsVersion: number
-  /** Sanitized HTML notes — shared by all profiles in the active build. */
   notes: string
   customStats: CustomStat[]
 }
@@ -89,9 +84,7 @@ interface BuildActions {
   exportBuildSnapshot: () => BuildSnapshot
   importBuildSnapshot: (snapshot: BuildSnapshot, notes?: string) => void
   applyRuneword: (slot: SlotKey, runewordId: string) => void
-  /** Set or clear the angelic augment on the body armor slot. Pass null to remove. */
   setAugment: (augmentId: string | null) => void
-  /** Adjust augment level (1..7). No-op if no augment equipped. */
   setAugmentLevel: (level: number) => void
   addAffix: (slot: SlotKey, affixId: string, tier: number) => void
   removeAffix: (slot: SlotKey, index: number) => void
@@ -125,34 +118,21 @@ interface BuildActions {
   ) => void
   decSubskillRank: (skillId: string, subskillId: string) => void
   resetSubskillsFor: (skillId: string) => void
-  /** Replace the current notes (HTML). Always re-sanitized in the store. */
   setNotes: (html: string) => void
-  /** Persist current notes into the active SavedBuild (no-op if unsaved). */
   commitBuildNotes: () => boolean
   addCustomStat: (init?: Partial<CustomStat>) => void
   updateCustomStat: (index: number, patch: Partial<CustomStat>) => void
   removeCustomStat: (index: number) => void
-  /** Replace in-memory state with a saved profile from a saved build. Commits the previously active profile first. */
   loadSavedBuild: (buildId: string, profileId?: string) => boolean
-  /** Switch profile within the currently active build. Auto-commits current state into the previously active profile. */
   switchActiveProfile: (profileId: string) => boolean
-  /** Persist current in-memory state into the currently active profile. Returns true on success. */
   commitActiveProfile: () => boolean
-  /** Add a new profile to the currently active build seeded with the current snapshot, then activate it. */
   addProfileToActiveBuild: (name: string) => string | null
-  /** Duplicate a profile in the active build, then activate the copy. */
   duplicateActiveProfile: (profileId: string) => string | null
-  /** Rename a profile inside the active build. */
   renameActiveProfile: (profileId: string, name: string) => boolean
-  /** Remove a profile from the active build (must keep at least one). */
   removeActiveProfile: (profileId: string) => boolean
-  /** Detach the in-memory state from any saved build (unsaved freeform mode). */
   detachFromBuild: () => void
-  /** Bind in-memory state to an existing saved build/profile (no snapshot import). */
   bindToBuild: (buildId: string, profileId: string) => void
-  /** Delete a saved build from disk and detach if it was active. */
   deleteSavedBuild: (buildId: string) => void
-  /** Rename a saved build on disk. */
   renameSavedBuild: (buildId: string, name: string) => boolean
 }
 
@@ -160,6 +140,7 @@ export { START_IDS as TREE_START_IDS, START_SET as TREE_START_SET } from '../uti
 export { findPath as findTreePath } from '../utils/treeGraph'
 
 function emptyAllocation(): AttrMap {
+  // Returns an attribute map with every game-defined attribute initialised to zero. Used to seed the build store and to reset attribute allocations.
   return gameConfig.attributes.reduce<AttrMap>((acc, a) => {
     acc[a.key] = 0
     return acc
@@ -170,15 +151,12 @@ function emptyAllocation(): AttrMap {
 function bumpSavedBuilds(
   set: (fn: (s: BuildState) => Partial<BuildState>) => void,
 ) {
+  // Increments the `savedBuildsVersion` counter via the supplied zustand setter so subscribed components know to re-read from localStorage. Used after every successful mutation of the persisted SavedBuilds list.
   set((s) => ({ savedBuildsVersion: s.savedBuildsVersion + 1 }))
 }
 
-/**
- * Translate a profile snapshot into the slice of state that profile-load
- * actions need to write. Notes live on the build (not the profile) so they
- * are excluded — callers must layer them on separately.
- */
 function snapshotPatch(snap: BuildSnapshot) {
+  // Translates a BuildSnapshot into the slice of build-store state needed by every "load profile" code path, deliberately excluding `notes` (which live on the build, not the profile). Used by importBuildSnapshot, loadSavedBuild, switchActiveProfile, duplicateActiveProfile, and removeActiveProfile.
   return {
     classId: snap.classId,
     level: snap.level,
@@ -204,6 +182,7 @@ export const BONUS_SOCKET_MOD_ID = 'crystal_add_socket'
 export function hasBonusSocketMod(
   forgedMods?: { affixId: string }[] | null,
 ): boolean {
+  // Returns true when the supplied forged-mod list contains the BONUS_SOCKET_MOD_ID crystal mod. Used by maxSocketsFor (and gear UI) to decide whether to extend an item's socket cap by one.
   return !!forgedMods?.some((m) => m.affixId === BONUS_SOCKET_MOD_ID)
 }
 
@@ -211,6 +190,7 @@ export function maxSocketsFor(
   baseId: string,
   forgedMods?: { affixId: string }[] | null,
 ): number {
+  // Computes the maximum number of sockets an item can have at the moment, starting from `maxSockets`/`sockets` on the base, adding one if the bonus-socket forged mod is present, and clamping to HARD_SOCKET_CAP. Used by the gear UI and the equip/forge actions to validate socket counts.
   const base = getItem(baseId)
   if (!base) return 0
   let cap = base.maxSockets ?? base.sockets ?? 0
@@ -241,6 +221,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   setClass: (id) =>
     set((s) => {
+      // Switches the active character class, resetting all class-scoped state (allocated points, skills, subskills, main skill / aura / buffs / procs, notes, custom stats) and detaching from any saved build/profile because a class change effectively starts a new build.
       if (s.classId === id) return s
       return {
         classId: id,
@@ -251,7 +232,6 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
         procToggles: {},
         activeBuffs: {},
         subskillRanks: {},
-        // Changing class effectively starts a new build — detach from any saved one.
         activeBuildId: null,
         activeProfileId: null,
         notes: '',
@@ -261,11 +241,13 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   setNotes: (html) =>
     set((s) => {
+      // Replaces the in-memory notes HTML, running it through sanitizeHtml first and short-circuiting when the cleaned value matches the current state. Used by the NotesView editor on every change.
       const cleaned = sanitizeHtml(html)
       return s.notes === cleaned ? s : { notes: cleaned }
     }),
 
   commitBuildNotes: () => {
+    // Persists the current `notes` field onto the active SavedBuild (and bumps the savedBuilds version). No-op when no build is currently active. Used by NotesView to flush edits to disk.
     const s = get()
     if (!s.activeBuildId) return false
     const ok = storeSetBuildNotes(s.activeBuildId, s.notes) !== null
@@ -275,6 +257,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   addCustomStat: (init = {}) =>
     set((s) => ({
+      // Appends a new (possibly partially-prefilled) custom stat row to the list. Used by ConfigView's "Add custom stat" button.
       customStats: [
         ...s.customStats,
         {
@@ -286,6 +269,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   updateCustomStat: (index, patch) =>
     set((s) => {
+      // Patches the custom-stat row at `index` with the partial fields in `patch`, no-op when the index is out of range. Used by ConfigView when the user edits a custom stat row.
       if (index < 0 || index >= s.customStats.length) return s
       const next = s.customStats.map((cs, i) =>
         i === index ? { ...cs, ...patch } : cs,
@@ -295,12 +279,14 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   removeCustomStat: (index) =>
     set((s) => {
+      // Removes the custom-stat row at `index`. Used by ConfigView's per-row delete button.
       if (index < 0 || index >= s.customStats.length) return s
       return { customStats: s.customStats.filter((_, i) => i !== index) }
     }),
 
   toggleTreeNode: (nodeId) =>
     set((s) => {
+      // Toggles a talent-tree node's allocation. When deallocating, prunes any nodes that are no longer reachable from a START node; when allocating, automatically allocates the cheapest path connecting the click target to the existing allocation (or to a starting node if the tree is empty). Used by TreeView clicks.
       const cur = s.allocatedTreeNodes
       if (cur.has(nodeId)) {
         const next = new Set(cur)
@@ -317,13 +303,17 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     }),
 
   resetTreeNodes: () => set({ allocatedTreeNodes: new Set<number>() }),
+  // Clears every allocated talent-tree node. Used by TreeView's reset button.
 
   setMainSkill: (skillId) => set({ mainSkillId: skillId }),
+  // Marks a skill as the build's main skill, which the StatsView uses to drive the headline damage breakdown.
 
   setActiveAura: (skillId) => set({ activeAuraId: skillId }),
+  // Sets which aura skill is currently active so its passive stats contribute to the build. Used by SkillsView when the user enables an aura.
 
   setProcToggle: (skillId, enabled) =>
     set((s) => {
+      // Adds or removes a skill id from the `procToggles` map (deletion when disabled to keep the object minimal). Used by SkillsView to opt skill procs into the stat aggregation.
       const next = { ...s.procToggles }
       if (enabled) next[skillId] = true
       else delete next[skillId]
@@ -332,9 +322,11 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   setKillsPerSec: (rate) =>
     set({ killsPerSec: Math.max(0, rate) }),
+  // Sets the assumed kills-per-second number used by on-kill proc damage approximations, clamped to non-negative.
 
   setBuffActive: (skillId, enabled) =>
     set((s) => {
+      // Adds or removes a skill id from the `activeBuffs` map. Used by SkillsView when the user toggles a buff so its passiveStats apply.
       const next = { ...s.activeBuffs }
       if (enabled) next[skillId] = true
       else delete next[skillId]
@@ -343,6 +335,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   setEnemyCondition: (key, enabled) =>
     set((s) => {
+      // Toggles a single enemy-condition flag (e.g. "burning", "frozen", "low_life"). Used by ConfigView to gate conditional stat contributions and `extra_damage_*` bonuses.
       const next = { ...s.enemyConditions }
       if (enabled) next[key] = true
       else delete next[key]
@@ -351,6 +344,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   setEnemyResistance: (damageType, value) =>
     set((s) => {
+      // Sets the assumed enemy resistance percentage for a given damage type, or removes the key when the value is null/non-finite (which lets the default cover it). Used by ConfigView's resistance sliders.
       const next = { ...s.enemyResistances }
       if (value === null || !Number.isFinite(value)) {
         delete next[damageType]
@@ -361,6 +355,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     }),
 
   setSubskillRank: (skillId, subskillId, rank, maxRank) => {
+    // Sets a subskill node's rank, clamped against its individual maxRank, against the unallocated subskill point budget at the current level, and against zero. Removes the entry when the resulting rank is zero. Used by SubtreeOverlay click and slider interactions.
     const { subskillRanks, level } = get()
     const total = subskillPointsFor(level)
     const key = subskillKey(skillId, subskillId)
@@ -378,12 +373,14 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   incSubskillRank: (skillId, subskillId, maxRank) => {
+    // Convenience helper that increments a subskill rank by one through `setSubskillRank` so the same clamping rules apply. Used by SubtreeOverlay's "+" button.
     const cur =
       get().subskillRanks[subskillKey(skillId, subskillId)] ?? 0
     get().setSubskillRank(skillId, subskillId, cur + 1, maxRank)
   },
 
   decSubskillRank: (skillId, subskillId) => {
+    // Decrements a subskill rank by one (no-op at zero). Used by SubtreeOverlay's "-" button.
     const key = subskillKey(skillId, subskillId)
     const cur = get().subskillRanks[key] ?? 0
     if (cur <= 0) return
@@ -397,6 +394,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   resetSubskillsFor: (skillId) =>
     set((s) => {
+      // Drops every subskillRanks entry that belongs to the supplied parent skill (the `${skillId}:` prefix). Used by SubtreeOverlay's "Reset subskills" action.
       const next: Record<string, number> = {}
       for (const [k, v] of Object.entries(s.subskillRanks)) {
         if (!k.startsWith(`${skillId}:`)) next[k] = v
@@ -405,11 +403,13 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     }),
 
   setLevel: (lvl) => {
+    // Sets the character level, clamped to the [1, gameConfig.maxCharacterLevel] range. Used by CharacterView's level field.
     const clamped = Math.max(1, Math.min(gameConfig.maxCharacterLevel, lvl))
     set({ level: clamped })
   },
 
   incAttr: (key, amount = 1) => {
+    // Spends up to `amount` unallocated attribute points on the supplied attribute key, capped by the remaining budget at the current level. Used by CharacterView's "+" button.
     const { allocated, level } = get()
     const total = Object.values(allocated).reduce((s, v) => s + v, 0)
     const available = attrPointsFor(level) - total
@@ -419,6 +419,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   decAttr: (key, amount = 1) => {
+    // Refunds up to `amount` allocated points from the given attribute, never going below zero. Used by CharacterView's "-" button.
     const { allocated } = get()
     const cur = allocated[key] ?? 0
     const step = Math.min(amount, cur)
@@ -427,13 +428,13 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   resetAttrs: () => set({ allocated: emptyAllocation() }),
+  // Clears every allocated attribute point. Used by CharacterView's reset button.
 
   equipItem: (slot, baseId) => {
+    // Equips a base item into the named slot, seeding socket count/types/stars and enforcing the two-handed rule (offhand cannot coexist with a 2H weapon, and equipping a 2H weapon clears any offhand). Used by GearView's item picker.
     const base = getItem(baseId)
     if (!base) return
     set((s) => {
-      // Two-handed rule: offhand can't be equipped while a 2H weapon is in
-      // the main hand. Equipping a 2H weapon clears any existing offhand.
       if (slot === 'offhand') {
         const cur = s.inventory.weapon
         const w = cur ? getItem(cur.baseId) : undefined
@@ -458,6 +459,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   unequipItem: (slot) => {
+    // Removes any equipped item from the named slot. Used by GearView's "remove" action.
     set((s) => {
       const next = { ...s.inventory }
       delete next[slot]
@@ -466,6 +468,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   setSocketCount: (slot, count) => {
+    // Resizes the equipped item's socket array up to `count`, clamped by `maxSocketsFor`, padding new sockets with null/normal and truncating extras. Used by GearView's socket-count stepper.
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
@@ -489,6 +492,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   setSocketed: (slot, idx, socketableId) => {
+    // Inserts (or clears) a runeword/gem id into the socket at `idx` on the equipped item in `slot`. Used by GearView's socket picker.
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur || idx < 0 || idx >= cur.socketCount) return s
@@ -501,6 +505,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   setSocketType: (slot, idx, type) => {
+    // Sets a socket's type (normal vs rainbow) at index `idx`. Used by GearView when the user converts a socket to rainbow.
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur || idx < 0 || idx >= cur.socketCount) return s
@@ -513,6 +518,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   setStars: (slot, count) => {
+    // Sets the star count of the equipped item, clamped to the [0, MAX_STARS] range. Used by GearView's star control.
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
@@ -525,6 +531,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   exportBuildSnapshot: () => {
+    // Returns a fresh BuildSnapshot describing the live in-memory state, suitable for share-link encoding or saved-build persistence. Used by ShareButton, the saved-builds layer and every profile-mutating action that needs to capture current state.
     const s = get()
     return {
       classId: s.classId,
@@ -546,7 +553,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   importBuildSnapshot: (snapshot, notes = '') => {
-    // Imported snapshots are unsaved freeform until user saves them.
+    // Replaces the live state with the supplied snapshot (and notes), detaching from any saved build/profile so the imported build behaves as unsaved freeform until the user explicitly saves it. Used by share-URL imports and paste-import flows.
     set(() => ({
       ...snapshotPatch(snapshot),
       notes,
@@ -557,6 +564,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   bindToBuild: (buildId, profileId) =>
     set((cur) => ({
+      // Marks the live state as belonging to the named saved build/profile without importing a snapshot, then bumps the savedBuilds version. Used by BuildsMenu when associating an in-memory build with a freshly-created saved entry.
       activeBuildId: buildId,
       activeProfileId: profileId,
       savedBuildsVersion: cur.savedBuildsVersion + 1,
@@ -564,8 +572,10 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   detachFromBuild: () =>
     set(() => ({ activeBuildId: null, activeProfileId: null })),
+  // Detaches the live state from any saved build/profile so further edits are not auto-committed. Used when the user explicitly leaves a saved build.
 
   deleteSavedBuild: (buildId) => {
+    // Deletes a SavedBuild from disk and, if it was the active build, also detaches the live state. Used by BuildsMenu's delete action.
     storeDeleteBuild(buildId)
     set((cur) => {
       const detach = cur.activeBuildId === buildId
@@ -579,12 +589,14 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   renameSavedBuild: (buildId, name) => {
+    // Renames a SavedBuild on disk and bumps the savedBuilds version. Returns false when the build does not exist. Used by BuildsMenu's inline rename.
     const ok = storeRenameBuild(buildId, name) !== null
     if (ok) bumpSavedBuilds(set)
     return ok
   },
 
   commitActiveProfile: () => {
+    // Persists the current in-memory state into the active SavedProfile of the active SavedBuild. No-op when nothing is active. Used by autosave-style flows and the "Save" button.
     const s = get()
     if (!s.activeBuildId || !s.activeProfileId) return false
     const snap = s.exportBuildSnapshot()
@@ -594,7 +606,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   loadSavedBuild: (buildId, profileId) => {
-    // Auto-commit currently active profile before switching out
+    // Loads a SavedBuild (optionally a specific profile) into the live state, after auto-committing whatever profile was previously active. Used by BuildsMenu when the user opens a saved build.
     const cur = get()
     if (cur.activeBuildId && cur.activeProfileId) {
       storeCommitProfile(
@@ -623,10 +635,10 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   switchActiveProfile: (profileId) => {
+    // Switches the active profile within the currently active SavedBuild, auto-committing the outgoing profile so unsaved edits survive. Returns true when the switch succeeded. Used by ProfileSwitcher.
     const s = get()
     if (!s.activeBuildId) return false
     if (s.activeProfileId === profileId) return true
-    // Auto-commit current state into outgoing profile
     if (s.activeProfileId) {
       storeCommitProfile(
         s.activeBuildId,
@@ -646,9 +658,9 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   addProfileToActiveBuild: (name) => {
+    // Forks the current state into a new profile inside the active SavedBuild, auto-committing the outgoing profile first, and activates the new profile. Returns the new profile id, or null when no build is active. Used by ProfileSwitcher's "Add profile" action.
     const s = get()
     if (!s.activeBuildId) return null
-    // Commit current state before forking
     if (s.activeProfileId) {
       storeCommitProfile(
         s.activeBuildId,
@@ -671,9 +683,9 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   duplicateActiveProfile: (profileId) => {
+    // Duplicates a profile within the active SavedBuild, auto-committing the outgoing profile first so the duplicate captures the user's current edits, and switches the live state to the copy. Returns the new profile id, or null on failure. Used by ProfileSwitcher's duplicate action.
     const s = get()
     if (!s.activeBuildId) return null
-    // Commit current state so the duplicate reflects what the user sees
     if (s.activeProfileId) {
       storeCommitProfile(
         s.activeBuildId,
@@ -697,6 +709,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   renameActiveProfile: (profileId, name) => {
+    // Renames a profile inside the active SavedBuild on disk. Used by ProfileSwitcher's inline rename.
     const s = get()
     if (!s.activeBuildId) return false
     const ok = storeRenameProfile(s.activeBuildId, profileId, name) !== null
@@ -705,6 +718,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   removeActiveProfile: (profileId) => {
+    // Removes a profile from the active SavedBuild and, if the deleted profile was active, hydrates the live state from the new active profile. Used by ProfileSwitcher's delete action.
     const s = get()
     if (!s.activeBuildId) return false
     const isActive = s.activeProfileId === profileId
@@ -728,6 +742,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   applyRuneword: (slot, runewordId) => {
+    // Applies a runeword to a common-rarity item by inserting its rune sequence into the sockets, validating the base type and socket cap. Used by GearView's runeword picker.
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
@@ -756,6 +771,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   setAugment: (augmentId) => {
+    // Sets or clears the angelic augment on the body-armor slot, defaulting newly-applied augments to level 1 while preserving the level when the same augment is reapplied. Used by GearView's augment picker.
     set((s) => {
       const slot: SlotKey = 'armor'
       const cur = s.inventory[slot]
@@ -777,6 +793,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   setAugmentLevel: (level) => {
+    // Sets the augment's level on the body-armor slot, clamped to [1, AUGMENT_MAX_LEVEL]. No-op when nothing is equipped or no augment is set. Used by GearView's augment level slider.
     set((s) => {
       const slot: SlotKey = 'armor'
       const cur = s.inventory[slot]
@@ -793,6 +810,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   addAffix: (slot, affixId, tier) => {
+    // Appends a new affix entry to the equipped item, refusing to add when the item already holds its `maxAffixes` cap. Used by GearView's affix picker.
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
@@ -808,6 +826,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   removeAffix: (slot, index) => {
+    // Removes the affix at `index` from the equipped item. Used by GearView's per-affix delete button.
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur || index < 0 || index >= cur.affixes.length) return s
@@ -817,6 +836,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   setAffixRoll: (slot, index, roll) => {
+    // Sets the 0-1 roll position of an affix on the equipped item, clamping out-of-range values. Used by GearView's affix roll slider.
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur || index < 0 || index >= cur.affixes.length) return s
@@ -829,10 +849,10 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   addForgedMod: (slot, modId, tier) => {
+    // Sets the (single) forged crystal mod on the equipped item, replacing any existing one, and resyncs the socket arrays against the (possibly new) max socket count. Used by GearView's forge picker.
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
-      // Only one forged mod per item — adding replaces any existing one.
       const forgedMods = [{ affixId: modId, tier, roll: 1 }]
       const newMax = maxSocketsFor(cur.baseId, forgedMods)
       const socketCount = Math.min(cur.socketCount, newMax)
@@ -848,6 +868,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   removeForgedMod: (slot, index) => {
+    // Removes the forged mod at `index` from the equipped item and re-clamps socket arrays in case the bonus-socket mod has been removed. Used by GearView's forge clear action.
     set((s) => {
       const cur = s.inventory[slot]
       const list = cur?.forgedMods ?? []
@@ -867,12 +888,13 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   moveItem: (fromSlot, toSlot) => {
+    // Swaps the items in two inventory slots (no-op when the source equals the destination). Used by GearView drag-and-drop between slots.
     set((s) => {
       if (fromSlot === toSlot) return s
       const fromItem = s.inventory[fromSlot]
       const toItem = s.inventory[toSlot]
       const next = { ...s.inventory }
-      
+
       if (fromItem) {
         next[toSlot] = fromItem
       } else {
@@ -890,6 +912,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   setSkillRank: (skillId, rank, maxRank) => {
+    // Sets a skill's rank, clamped against the unallocated skill-points budget at the current level, the per-skill maxRank, and zero. Refuses to allocate a rank when the skill has a prerequisite that is not yet learned, and cascades-removes dependants when the skill is reduced to 0. Used by SkillsView's per-skill rank controls.
     const { skillRanks, level } = get()
     const total = skillPointsFor(level)
     const currentSkillRank = skillRanks[skillId] ?? 0
@@ -932,12 +955,14 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   incSkillRank: (skillId, maxRank) => {
+    // Convenience helper that adds one rank to a skill through `setSkillRank` so the same clamping/cascade rules apply. Used by SkillsView's "+" button.
     const { skillRanks } = get()
     const cur = skillRanks[skillId] ?? 0
     get().setSkillRank(skillId, cur + 1, maxRank)
   },
 
   decSkillRank: (skillId) => {
+    // Decrements a skill's rank by one (no-op at zero). Does not handle prerequisite cascades because reducing rank above zero never invalidates any dependant. Used by SkillsView's "-" button.
     const { skillRanks } = get()
     const cur = skillRanks[skillId] ?? 0
     if (cur <= 0) return
@@ -948,21 +973,26 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   resetSkillRanks: () => set({ skillRanks: {} }),
+  // Clears every allocated skill rank. Used by SkillsView's reset button.
 }))
 
 export function skillPointsFor(level: number): number {
+  // Returns the total number of skill points the character has earned at the supplied level. Used by setSkillRank's budget check and by the SkillsView header.
   return level * gameConfig.skillPointsPerLevel
 }
 
 export function subskillPointsFor(level: number): number {
+  // Returns the total number of subskill points available at the supplied level (one per five levels). Used by setSubskillRank's clamping and by the subtree UI.
   return Math.floor(level / 5)
 }
 
 export function subskillKey(skillId: string, subskillId: string): string {
+  // Returns the composite key (`skillId:subskillId`) used to address a single subskill node inside the flat `subskillRanks` map. Used everywhere subskill ranks are read or written.
   return `${skillId}:${subskillId}`
 }
 
 export function attrPointsFor(level: number): number {
+  // Returns the total number of attribute points the character has earned at the supplied level. Used by incAttr's budget check and by CharacterView's header.
   return level * gameConfig.attributePointsPerLevel
 }
 
@@ -970,6 +1000,7 @@ export function finalAttributes(
   classId: string | null,
   allocated: AttrMap,
 ): AttrMap {
+  // Computes the final attribute totals (default base + class base + allocated points) for every game attribute. Used by CharacterView and any caller that needs the player's actual attribute values.
   const cls = classId ? getClass(classId) : undefined
   const out = emptyAllocation()
   for (const attr of gameConfig.attributes) {

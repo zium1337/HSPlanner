@@ -4,6 +4,7 @@ import { useBuild } from '../store/build'
 import { getSavedBuild } from '../utils/savedBuilds'
 
 export default function ProfileSwitcher() {
+  // Top-bar dropdown that lets the user switch, add, duplicate, rename, and remove profiles within the active SavedBuild. Each switch auto-commits the outgoing profile, and delete uses a two-click confirm; renders nothing when no SavedBuild is currently bound.
   const activeBuildId = useBuild((s) => s.activeBuildId)
   const activeProfileId = useBuild((s) => s.activeProfileId)
   const savedBuildsVersion = useBuild((s) => s.savedBuildsVersion)
@@ -16,8 +17,6 @@ export default function ProfileSwitcher() {
 
   const build = useMemo(
     () => (activeBuildId ? getSavedBuild(activeBuildId) : null),
-    // savedBuildsVersion forces a re-read on any SavedBuild mutation.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeBuildId, savedBuildsVersion],
   )
 
@@ -37,11 +36,13 @@ export default function ProfileSwitcher() {
   if (!activeBuildId || !build) return null
 
   const handleSwitch = (profileId: string) => {
+    // Activates a different profile within the current build (no-op when it is already active). Used as the row-click handler in the profile list.
     if (profileId === activeProfileId) return
     switchActiveProfile(profileId)
   }
 
   const handleAdd = () => {
+    // Adds a new profile to the active build (defaulting to "Profile N+1" when the user leaves the input blank). Used by the "Create" button on the add popover.
     const name = addValue.trim() || `Profile ${build.profiles.length + 1}`
     addProfileToActiveBuild(name)
     setAddValue('')
@@ -49,12 +50,14 @@ export default function ProfileSwitcher() {
   }
 
   const handleStartRename = (profileId: string, currentName: string) => {
+    // Switches the popover into rename mode pre-filled with the supplied profile's current name. Used by the per-row rename pencil button.
     setRenameTargetId(profileId)
     setRenameValue(currentName)
     setPopover('rename')
   }
 
   const handleRename = () => {
+    // Persists the rename via the build store and closes the popover (silently ignores blank input). Used as the rename submit handler.
     if (!renameTargetId) return
     const name = renameValue.trim()
     if (name) renameActiveProfile(renameTargetId, name)
@@ -63,6 +66,7 @@ export default function ProfileSwitcher() {
   }
 
   const handleRemove = (profileId: string) => {
+    // Implements the two-click confirmed remove: arms the row on the first call, actually removes via the build store on the second. Refuses to remove the last surviving profile. Used by the per-row delete button.
     if (build.profiles.length <= 1) return
     if (pendingDeleteId !== profileId) {
       setPendingDeleteId(profileId)

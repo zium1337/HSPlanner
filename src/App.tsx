@@ -32,12 +32,14 @@ const LEGACY_SECTION_KEY = "heroplanner.activeSection.v1";
 const SECTION_IDS = new Set<Section>(SECTIONS.map((s) => s.id));
 
 function readInitialSection(): Section {
+  // Reads the previously-active app section from localStorage (with the legacy "heroplanner" key fallback) and validates it against the known section ids, defaulting to "tree". Used to seed the App component so the user lands on the same tab they left.
   const stored = readStorageWithLegacy(SECTION_KEY, LEGACY_SECTION_KEY);
   if (stored && SECTION_IDS.has(stored as Section)) return stored as Section;
   return "tree";
 }
 
 function App() {
+  // Top-level shell that hosts the navigation header (section tabs, class/level controls, ProfileSwitcher, BuildsMenu, ShareButton), the persistent LeftStatsPanel, the active section view, and the BottomBar. Persists the active section to localStorage and binds Ctrl/Cmd+F to focus the search input on Tree/Stats views.
   const [section, setSection] = useState<Section>(readInitialSection);
 
   useEffect(() => {

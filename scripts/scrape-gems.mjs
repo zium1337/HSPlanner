@@ -10,6 +10,7 @@ const CHUNK_URL =
   'https://hero-siege-helper.vercel.app/_next/static/chunks/0r~z2px73s~11.js'
 
 async function getChunk() {
+  // Fetches the upstream Next.js chunk file containing the embedded gem data and returns its body. Used by main when not in --local mode.
   const res = await fetch(CHUNK_URL)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.text()
@@ -85,18 +86,21 @@ const GEM_COLOR_BY_NAME = {
 }
 
 function parseString(str, key) {
+  // Returns the string value of a `"key":"value"` JSON-ish entry inside the supplied chunk text, or null when not found. Used by extractStatEntries and pickBestVersion.
   const re = new RegExp(`"${key}":"([^"]+)"`)
   const m = str.match(re)
   return m ? m[1] : null
 }
 
 function parseValue(str, key) {
+  // Returns the numeric value of a `"key":number` entry inside the chunk text as a float, or null when not found. Used by extractStatEntries.
   const re = new RegExp(`"${key}":(-?[\\d.]+)`)
   const m = str.match(re)
   return m ? parseFloat(m[1]) : null
 }
 
 function extractStatEntries(statsBody) {
+  // Walks the contents of a `stats:[…]` array, splitting it into top-level `{…}` blocks and parsing each into `{ statId, min, max }`. Uses brace-depth tracking instead of JSON.parse because the upstream payload is JS, not JSON. Used by main once per gem.
   const entries = []
   let depth = 0
   let objStart = null
@@ -121,6 +125,7 @@ function extractStatEntries(statsBody) {
 }
 
 function extractItems(chunkJs) {
+  // Scans the entire chunk JS and returns one `{ id, name, block }` per top-level item literal, where `block` is the raw text of that literal. Brace-depth tracking is used to find the matching closing brace. Used by main to enumerate every gem in the chunk.
   const data = chunkJs
   const re = /\{id:"([^"]+)",name:"([^"]+)",variants:/g
   const results = []
@@ -147,6 +152,7 @@ function extractItems(chunkJs) {
 }
 
 function pickBestVersion(block) {
+  // Extracts the `versions:[…]` sub-array from a gem block, splits it into top-level `{…}` version objects, and returns the one with the highest sortable `versionId`. Used by main to pick the most-recent stats for each gem.
   const vIdx = block.indexOf('versions:[')
   if (vIdx < 0) return null
   let depth = 0
@@ -188,6 +194,7 @@ function pickBestVersion(block) {
 }
 
 function slugify(s) {
+  // Converts an arbitrary string into a snake_case slug suitable for use inside an id. Used by main when synthesising gem ids.
   return s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
@@ -197,11 +204,13 @@ function slugify(s) {
 const TIER_RANK = { D: 1, C: 2, B: 3, A: 4, S: 5, SS: 6, SSS: 7 }
 
 function tierToNumber(tierStr) {
+  // Maps a letter-grade tier ("D", "C", … "SSS") to its numeric rank used by the app, defaulting to 1 for unknown / missing values. Used by main when normalising each gem entry.
   if (!tierStr) return 1
   return TIER_RANK[tierStr] ?? 1
 }
 
 function colorOf(name) {
+  // Returns the colour code associated with a gem name by checking GEM_COLOR_BY_NAME for any substring match. Used by main to label each gem with its visual colour.
   const lower = name.trim().toLowerCase()
   for (const key of Object.keys(GEM_COLOR_BY_NAME)) {
     if (lower.includes(key)) return GEM_COLOR_BY_NAME[key]
@@ -210,6 +219,7 @@ function colorOf(name) {
 }
 
 async function main() {
+  // Top-level scraper that fetches (or reads `/tmp/chunk_big.js` in --local mode) the upstream JS chunk, walks every gem item, picks the latest version, maps each upstream stat id to the local key, and writes the resulting array (sorted by tier then name, deduped by id) to `src/data/gems/hero-siege.json`.
   const useLocal = process.argv.includes('--local')
   const chunk = useLocal
     ? readFileSync('/tmp/chunk_big.js', 'utf8')

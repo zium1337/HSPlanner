@@ -31,12 +31,12 @@ type Element = (typeof ELEMENTS)[number]
 const ELEMENT_RE = ELEMENTS.join('|')
 
 function num(s: string): number {
+  // Strips a leading "+" sign and parses the remainder as a Number, used so the affix-text rules can hand the captured value group straight to Number() without worrying about the sign character.
   const cleaned = s.replace(/^\+/, '')
   return Number(cleaned)
 }
 
 const RULES: ParseRule[] = [
-  // === flat life / mana ===
   {
     test: /^([+\-\d.]+)\s+to\s+Maximum\s+Life$/i,
     build: (m) => ({ key: 'life', value: num(m[1]!) }),
@@ -45,8 +45,6 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)\s+to\s+Maximum\s+Mana$/i,
     build: (m) => ({ key: 'mana', value: num(m[1]!) }),
   },
-
-  // === % life / mana ===
   {
     test: /^([+\-\d.]+)%\s+Increased\s+Maximum\s+Life$/i,
     build: (m) => ({ key: 'increased_life', value: num(m[1]!) }),
@@ -62,8 +60,6 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)%\s+Increased\s+Mana$/i,
     build: (m) => ({ key: 'increased_mana', value: num(m[1]!) }),
   },
-
-  // === flat attributes ===
   {
     test: /^([+\-\d.]+)\s+to\s+Strength$/i,
     build: (m) => ({ key: 'to_strength', value: num(m[1]!) }),
@@ -104,13 +100,10 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)%\s+Increased\s+All\s+Attributes$/i,
     build: (m) => ({ key: 'increased_all_attributes', value: num(m[1]!) }),
   },
-
   {
     test: /^([+\-\d.]+)\s+to\s+Defense$/i,
     build: (m) => ({ key: 'defense', value: num(m[1]!) }),
   },
-
-  // === movement / attack / cast ===
   {
     test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Movement\s+Speed$/i,
     build: (m) => ({
@@ -136,8 +129,6 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)%\s+(?:to\s+)?Spell\s+Haste$/i,
     build: (m) => ({ key: 'skill_haste', value: num(m[1]!) }),
   },
-
-  // === crit ===
   {
     test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Critical\s+Strike\s+Damage$/i,
     build: (m) => ({
@@ -161,8 +152,6 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)%\s+Increased\s+Spell\s+Critical\s+Damage$/i,
     build: (m) => ({ key: 'spell_crit_damage', value: num(m[1]!) }),
   },
-
-  // === resistances ===
   {
     test: /^([+\-\d.]+)%\s+(?:to\s+)?All\s+Resistances$/i,
     build: (m) => ({ key: 'all_resistances', value: num(m[1]!) }),
@@ -215,8 +204,6 @@ const RULES: ParseRule[] = [
       value: num(m[1]!),
     }),
   },
-
-  // === skill damage (elements) ===
   {
     test: new RegExp(
       `^([+\\-\\d.]+)%\\s+Increased\\s+(Total\\s+)?(${ELEMENT_RE})\\s+Skill\\s+Damage$`,
@@ -253,8 +240,6 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)\s+to\s+Magic\s+Skill\s+Damage$/i,
     build: (m) => ({ key: 'flat_skill_damage', value: num(m[1]!) }),
   },
-
-  // === spell damage / area / duration ===
   {
     test: /^([+\-\d.]+)%\s+Increased\s+Spell\s+Damage$/i,
     build: (m) => ({ key: 'spell_damage', value: num(m[1]!) }),
@@ -270,14 +255,10 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)%\s+Increased\s+Spell\s+Duration$/i,
     build: (m) => ({ key: 'spell_duration_pct', value: num(m[1]!) }),
   },
-
-  // === recovery / hit ===
   {
     test: /^([+\-\d.]+)%\s+Increased\s+Hit\s+Recovery$/i,
     build: (m) => ({ key: 'faster_hit_recovery', value: num(m[1]!) }),
   },
-
-  // === ailments ===
   {
     test: /^([+\-\d.]+)%\s+Increased\s+Bleed(?:ing)?\s+Damage$/i,
     build: (m) => ({ key: 'increased_bleeding_damage', value: num(m[1]!) }),
@@ -342,8 +323,6 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)\s+to\s+Maximum\s+Colossus\s+Stacks$/i,
     build: (m) => ({ key: 'max_colossus_stacks', value: num(m[1]!) }),
   },
-
-  // === leech ===
   {
     test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Life\s+Steal$/i,
     build: (m) => ({
@@ -363,8 +342,6 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)%\s+Increases\s+Rate\s+of\s+Mana\s+Steal$/i,
     build: (m) => ({ key: 'mana_steal_rate', value: num(m[1]!) }),
   },
-
-  // === mitigation / reduction / return ===
   {
     test: /^([+\-\d.]+)%\s+Damage\s+Mitigation$/i,
     build: (m) => ({ key: 'damage_mitigation', value: num(m[1]!) }),
@@ -393,8 +370,6 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)\s+to\s+Damage\s+Returned$/i,
     build: (m) => ({ key: 'damage_return', value: num(m[1]!) }),
   },
-
-  // === replenish ===
   {
     test: /^([+\-\d.]+)\s+Life\s+Replenished\s+per\s+second$/i,
     build: (m) => ({ key: 'life_replenish', value: num(m[1]!) }),
@@ -414,8 +389,6 @@ const RULES: ParseRule[] = [
       value: num(m[1]!),
     }),
   },
-
-  // === skills ===
   {
     test: /^([+\-\d.]+)\s+to\s+All\s+Skills$/i,
     build: (m) => ({ key: 'all_skills', value: num(m[1]!) }),
@@ -442,8 +415,6 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)\s+to\s+Summon\s+Skills$/i,
     build: (m) => ({ key: 'summon_skills', value: num(m[1]!) }),
   },
-
-  // === misc ===
   {
     test: /^([+\-\d.]+)\s+to\s+Light\s+Radius$/i,
     build: (m) => ({ key: 'light_radius', value: num(m[1]!) }),
@@ -468,14 +439,10 @@ const RULES: ParseRule[] = [
     test: /^([+\-\d.]+)%\s+Increased\s+Attack\s+Rating$/i,
     build: (m) => ({ key: 'attack_rating_pct', value: num(m[1]!) }),
   },
-
-  // === flat physical damage ===
   {
     test: /^([+\-\d.]+)\s+to\s+Physical\s+Damage$/i,
     build: (m) => ({ key: 'additive_physical_damage', value: num(m[1]!) }),
   },
-
-  // === extras commonly seen on tree ===
   {
     test: /^([+\-\d.]+)%\s+Chance\s+for\s+a\s+deadly\s+blow$/i,
     build: (m) => ({ key: 'deadly_blow', value: num(m[1]!) }),
@@ -539,6 +506,7 @@ const RULES: ParseRule[] = [
 const PARSE_CACHE = new Map<string, ParsedMod | null>()
 
 export function parseTreeNodeMod(line: string): ParsedMod | null {
+  // Tries every regex rule in RULES against the supplied tree-node mod text and returns the first matching ParsedMod (a stat key + value), or null when nothing matches. Caches results per input line so repeated tree-aggregation passes do not reparse the same text. Used by computeBuildStats and aggregateTreeStats to translate human-readable tree node lines into stat contributions.
   const trimmed = line.trim()
   const cached = PARSE_CACHE.get(trimmed)
   if (cached !== undefined) return cached
@@ -562,6 +530,7 @@ export interface NodeModBreakdown {
 }
 
 export function classifyNodeLines(lines: string[]): NodeModBreakdown {
+  // Splits a tree node's raw text lines into a parsed group (with their resolved ParsedMod) and an unsupported group (lines none of the rules matched). Used by the TreeView tooltip so the UI can show parsed mods inline and surface any text the parser couldn't recognise.
   const parsed: NodeModBreakdown['parsed'] = []
   const unsupported: string[] = []
   for (const line of lines) {
@@ -575,6 +544,7 @@ export function classifyNodeLines(lines: string[]): NodeModBreakdown {
 export function aggregateTreeStats(
   allocated: Set<number>,
 ): Record<string, number> {
+  // Sums the parsed stat contributions of every allocated tree node into a single `Record<statKey, number>` map. Used by tree-stat previews and by tests as a lightweight alternative to the full computeBuildStats pipeline.
   const out: Record<string, number> = {}
   for (const id of allocated) {
     const info = TREE_NODE_INFO[String(id)]
