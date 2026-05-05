@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Dropdown } from './Dropdown'
 import type { DropdownItem } from './Dropdown'
+import SocketPickerModal from './SocketPickerModal'
 import {
   affixes,
   augments,
@@ -9,19 +10,19 @@ import {
   FORGE_KIND_LABEL,
   forgeKindFor,
   gameConfig,
-  gems,
   getAffix,
   getAugment,
   getCrystalMod,
+  getGem,
   getItem,
   getItemSet,
+  getRune,
   isGearSlot,
-  runes,
   runewords,
 } from '../data'
 import type { ForgeKind } from '../data'
 import { MAX_STARS, maxSocketsFor, useBuild } from '../store/build'
-import { fmtStats, rolledAffixValueWithStars } from '../utils/stats'
+import { rolledAffixValueWithStars } from '../utils/stats'
 import { AUGMENT_MAX_LEVEL } from '../types'
 import type {
   EquippedItem,
@@ -29,23 +30,6 @@ import type {
   SlotKey,
   SocketType,
 } from '../types'
-
-const SOCKET_OPTIONS: DropdownItem[] = (() => {
-  const opts: DropdownItem[] = []
-  for (const g of gems)
-    opts.push({
-      id: g.id,
-      name: `💎 ${g.name}`,
-      meta: `T${g.tier} · ${fmtStats(g.stats)}`,
-    })
-  for (const r of runes)
-    opts.push({
-      id: r.id,
-      name: `ᚱ ${r.name}`,
-      meta: `T${r.tier} · ${fmtStats(r.stats)}`,
-    })
-  return opts
-})()
 
 interface Props {
   slot: SlotKey
@@ -214,6 +198,7 @@ function SocketsSection({
   onSocketed: (idx: number, id: string | null) => void
   onSocketType: (idx: number, type: SocketType) => void
 }) {
+  const [pickerIndex, setPickerIndex] = useState<number | null>(null)
   if (maxSockets === 0) return null
   return (
     <div className="space-y-2">
@@ -251,7 +236,7 @@ function SocketsSection({
       {equipped.socketCount > 0 && (
         <div className="space-y-1.5">
           {Array.from({ length: equipped.socketCount }).map((_, i) => {
-            const socketed = equipped.socketed[i]
+            const socketedId = equipped.socketed[i]
             const type = equipped.socketTypes[i] ?? 'normal'
             return (
               <div
@@ -266,12 +251,9 @@ function SocketsSection({
                   onChange={(t) => onSocketType(i, t)}
                 />
                 <div className="flex-1 min-w-0">
-                  <Dropdown
-                    value={socketed ?? null}
-                    items={SOCKET_OPTIONS}
-                    onChange={(id) => onSocketed(i, id)}
-                    placeholder="Empty socket"
-                    allowNone
+                  <SocketSlotTrigger
+                    socketedId={socketedId ?? null}
+                    onClick={() => setPickerIndex(i)}
                   />
                 </div>
               </div>
@@ -279,7 +261,64 @@ function SocketsSection({
           })}
         </div>
       )}
+
+      {pickerIndex !== null && (
+        <SocketPickerModal
+          socketIndex={pickerIndex}
+          totalSockets={equipped.socketCount}
+          currentId={equipped.socketed[pickerIndex] ?? null}
+          socketType={equipped.socketTypes[pickerIndex] ?? 'normal'}
+          onClose={() => setPickerIndex(null)}
+          onSelect={(id) => onSocketed(pickerIndex, id)}
+        />
+      )}
     </div>
+  )
+}
+
+function SocketSlotTrigger({
+  socketedId,
+  onClick,
+}: {
+  socketedId: string | null
+  onClick: () => void
+}) {
+  const source = socketedId
+    ? getGem(socketedId) ?? getRune(socketedId)
+    : null
+  const isRune = socketedId ? !!getRune(socketedId) : false
+  const isJewel = source?.name.toLowerCase().includes('jewel') ?? false
+  const kindLabel = isRune ? 'Rune' : isJewel ? 'Jewel' : 'Gem'
+  return (
+    <button
+      type="button"
+      className="hs-dd-trigger"
+      onClick={onClick}
+    >
+      <span
+        className={[
+          'hs-dd-trigger-label',
+          source ? '' : 'is-empty',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        {source ? (
+          <>
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint mr-1.5">
+              {kindLabel}
+            </span>
+            <span>{source.name}</span>
+            <span className="ml-1.5 font-mono text-[10px] text-muted">
+              T{source.tier}
+            </span>
+          </>
+        ) : (
+          'Empty socket'
+        )}
+      </span>
+      <span className="hs-dd-chev" />
+    </button>
   )
 }
 
