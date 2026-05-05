@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Dropdown } from './Dropdown'
-import type { DropdownItem } from './Dropdown'
+import { useMemo, useState } from 'react'
+import AffixPickerModal from './AffixPickerModal'
+import AugmentPickerModal from './AugmentPickerModal'
+import CrystalModPickerModal from './CrystalModPickerModal'
 import SocketPickerModal from './SocketPickerModal'
 import {
-  affixes,
-  augments,
-  crystalMods,
   detectRuneword,
   FORGE_KIND_LABEL,
   forgeKindFor,
@@ -133,6 +131,7 @@ export default function ItemConfigurator({ slot }: Props) {
           <ForgedModsSection
             forgeKind={forgeKind}
             equipped={equipped}
+            itemName={base.name}
             onAdd={(modId, tier) => addForgedMod(slot, modId, tier)}
             onRemove={(idx) => removeForgedMod(slot, idx)}
           />
@@ -448,42 +447,10 @@ function AffixesSection({
   onRemove: (index: number) => void
   onSetRoll: (index: number, roll: number) => void
 }) {
-  const [query, setQuery] = useState('')
-  const [open, setOpen] = useState(false)
+  const [pickerOpen, setPickerOpen] = useState(false)
   const atCap =
     maxAffixes !== undefined && equipped.affixes.length >= maxAffixes
-  useEffect(() => {
-    if (atCap && open) setOpen(false)
-  }, [atCap, open])
-
   const randomGroupId = base?.randomAffixGroupId ?? null
-
-  const groupAffixes = useMemo(() => {
-    if (!randomGroupId) return []
-    return affixes.filter((a) => a.groupId === randomGroupId)
-  }, [randomGroupId])
-
-  const groupItems: DropdownItem[] = useMemo(() => {
-    return groupAffixes.map((a) => ({
-      id: a.id,
-      name: a.description,
-      meta: a.name,
-    }))
-  }, [groupAffixes])
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (q.length < 2) return [] as typeof affixes
-    return affixes
-      .filter(
-        (a) =>
-          a.name.toLowerCase().includes(q) ||
-          a.description.toLowerCase().includes(q) ||
-          (a.statKey ?? '').toLowerCase().includes(q),
-      )
-      .slice(0, 40)
-  }, [query])
-
   const sectionTitle =
     randomGroupId === 'random_unholy' ? 'Unholy Affixes' : 'Affixes'
 
@@ -495,11 +462,11 @@ function AffixesSection({
           {maxAffixes !== undefined ? `/${maxAffixes}` : ''})
         </span>
         <button
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setPickerOpen(true)}
           disabled={atCap}
           className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-border hover:border-accent text-muted hover:text-accent disabled:opacity-40 disabled:hover:border-border disabled:hover:text-muted disabled:cursor-not-allowed"
         >
-          {open ? 'Done' : '+ Add'}
+          + Add
         </button>
       </div>
 
@@ -553,55 +520,15 @@ function AffixesSection({
         </ul>
       )}
 
-      {open && randomGroupId && (
-        <Dropdown
-          items={groupItems}
-          allowNone={false}
-          placeholder="Pick Random Unholy Affix…"
-          onChange={(id) => {
-            if (!id) return
-            const a = groupAffixes.find((x) => x.id === id)
-            if (!a) return
-            onAdd(a.id, a.tier)
-            setOpen(false)
-          }}
+      {pickerOpen && (
+        <AffixPickerModal
+          randomGroupId={randomGroupId}
+          itemName={base?.name ?? ''}
+          affixCount={equipped.affixes.length}
+          maxAffixes={maxAffixes}
+          onClose={() => setPickerOpen(false)}
+          onSelect={(a) => onAdd(a.id, a.tier)}
         />
-      )}
-
-      {open && !randomGroupId && (
-        <div className="space-y-1">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search affixes…"
-            autoFocus
-            className="w-full bg-panel-2 border border-border rounded px-2 py-1 text-[11px] focus:outline-none focus:border-accent"
-          />
-          {filtered.length > 0 && (
-            <ul className="max-h-60 overflow-y-auto space-y-0.5 border border-border rounded bg-panel-2">
-              {filtered.map((a) => (
-                <li key={a.id}>
-                  <button
-                    onClick={() => {
-                      onAdd(a.id, a.tier)
-                      setQuery('')
-                      setOpen(false)
-                    }}
-                    className="w-full text-left text-[11px] px-2 py-1 hover:bg-accent/10"
-                  >
-                    <span className="text-accent">{a.name}</span>{' '}
-                    <span className="text-muted">· T{a.tier}</span>{' '}
-                    <span className="text-text/80">{a.description}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-          {query.length >= 2 && filtered.length === 0 && (
-            <p className="text-[11px] text-muted italic">No matches.</p>
-          )}
-        </div>
       )}
     </div>
   )
@@ -610,34 +537,20 @@ function AffixesSection({
 function ForgedModsSection({
   forgeKind,
   equipped,
+  itemName,
   onAdd,
   onRemove,
 }: {
   forgeKind: ForgeKind
   equipped: EquippedItem
+  itemName: string
   onAdd: (modId: string, tier: number) => void
   onRemove: (index: number) => void
 }) {
-  const [query, setQuery] = useState('')
-  const [open, setOpen] = useState(false)
+  const [pickerOpen, setPickerOpen] = useState(false)
   const mods = equipped.forgedMods ?? []
   const sourceLabel = FORGE_KIND_LABEL[forgeKind]
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (q.length < 2) return [] as typeof crystalMods
-    return crystalMods
-      .filter(
-        (m) =>
-          m.name.toLowerCase().includes(q) ||
-          m.description.toLowerCase().includes(q) ||
-          (m.statKey ?? '').toLowerCase().includes(q),
-      )
-      .slice(0, 40)
-  }, [query])
-
   const canAdd = mods.length === 0
-  const isOpen = open && canAdd
 
   return (
     <div className="space-y-2 rounded border border-red-500/30 bg-red-500/5 p-2">
@@ -647,10 +560,10 @@ function ForgedModsSection({
         </span>
         {canAdd && (
           <button
-            onClick={() => setOpen((v) => !v)}
+            onClick={() => setPickerOpen(true)}
             className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-red-500/30 hover:border-red-400 text-red-300 hover:text-red-200"
           >
-            {isOpen ? 'Done' : '+ Add'}
+            + Add
           </button>
         )}
       </div>
@@ -683,39 +596,13 @@ function ForgedModsSection({
         </ul>
       )}
 
-      {isOpen && (
-        <div className="space-y-1">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Search ${sourceLabel} mods…`}
-            autoFocus
-            className="w-full bg-panel-2 border border-border rounded px-2 py-1 text-[11px] focus:outline-none focus:border-red-400"
-          />
-          {filtered.length > 0 && (
-            <ul className="max-h-60 overflow-y-auto space-y-0.5 border border-border rounded bg-panel-2">
-              {filtered.map((m) => (
-                <li key={m.id}>
-                  <button
-                    onClick={() => {
-                      onAdd(m.id, m.tier)
-                      setQuery('')
-                      setOpen(false)
-                    }}
-                    className="w-full text-left text-[11px] px-2 py-1 hover:bg-red-500/10"
-                  >
-                    <span className="text-red-300">{m.name}</span>{' '}
-                    <span className="text-text/80">{m.description}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-          {query.length >= 2 && filtered.length === 0 && (
-            <p className="text-[11px] text-muted italic">No matches.</p>
-          )}
-        </div>
+      {pickerOpen && (
+        <CrystalModPickerModal
+          forgeKind={forgeKind}
+          itemName={itemName}
+          onClose={() => setPickerOpen(false)}
+          onSelect={(m) => onAdd(m.id, m.tier)}
+        />
       )}
     </div>
   )
@@ -806,17 +693,10 @@ function RunewordPresets({
   )
 }
 
-const AUGMENT_OPTIONS: DropdownItem[] = augments
-  .map((a) => ({
-    id: a.id,
-    name: a.name,
-    meta: a.triggerNote,
-  }))
-  .sort((a, b) => a.name.localeCompare(b.name))
-
 function AugmentSection({ equipped }: { equipped: EquippedItem }) {
   const setAugment = useBuild((s) => s.setAugment)
   const setAugmentLevel = useBuild((s) => s.setAugmentLevel)
+  const [pickerOpen, setPickerOpen] = useState(false)
   const aug = equipped.augment ? getAugment(equipped.augment.id) : undefined
   const level = equipped.augment?.level ?? 1
   const tier = aug?.levels[Math.max(0, Math.min(aug.levels.length - 1, level - 1))]
@@ -836,13 +716,28 @@ function AugmentSection({ equipped }: { equipped: EquippedItem }) {
         )}
       </div>
 
-      <Dropdown
-        items={AUGMENT_OPTIONS}
-        value={equipped.augment?.id ?? null}
-        onChange={(id) => setAugment(id)}
-        placeholder="Choose augment…"
-        allowNone={false}
-      />
+      <button
+        type="button"
+        className="hs-dd-trigger"
+        onClick={() => setPickerOpen(true)}
+      >
+        <span
+          className={['hs-dd-trigger-label', aug ? 'text-yellow-200' : 'is-empty']
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {aug ? aug.name : 'Choose augment…'}
+        </span>
+        <span className="hs-dd-chev" />
+      </button>
+
+      {pickerOpen && (
+        <AugmentPickerModal
+          currentId={equipped.augment?.id ?? null}
+          onClose={() => setPickerOpen(false)}
+          onSelect={(id) => setAugment(id)}
+        />
+      )}
 
       {aug && tier && (
         <>
