@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import ItemTooltip, { ItemCard } from '../components/ItemTooltip'
+import ItemTooltip from '../components/ItemTooltip'
 import { Dropdown } from '../components/Dropdown'
 import type { DropdownItem } from '../components/Dropdown'
+import GearItemModal from '../components/GearItemModal'
 import {
   affixes,
   augments,
@@ -59,19 +60,6 @@ const RARITY_BG: Record<ItemRarity, string> = {
   relic: 'bg-orange-500/10',
 }
 
-const RARITY_ORDER: Record<ItemRarity, number> = {
-  relic: 0,
-  unholy: 1,
-  angelic: 2,
-  satanic_set: 3,
-  satanic: 4,
-  mythic: 5,
-  heroic: 6,
-  rare: 7,
-  uncommon: 8,
-  common: 9,
-}
-
 const RARITY_BORDER: Record<ItemRarity, string> = {
   common: 'border-white/30',
   uncommon: 'border-sky-400/40',
@@ -104,6 +92,7 @@ export default function GearView() {
   } = useBuild()
 
   const [activeSlot, setActiveSlot] = useState<SlotKey | null>(null)
+  const [pickerSlot, setPickerSlot] = useState<SlotKey | null>(null)
   const [charmFitError, setCharmFitError] = useState<string | null>(null)
   const charmErrorTimer = useRef<number | null>(null)
   useEffect(
@@ -176,6 +165,16 @@ export default function GearView() {
   const weaponBase = inventory.weapon ? getItem(inventory.weapon.baseId) : undefined
   const offhandLocked = !!weaponBase?.twoHanded
 
+  const openSlot = (slotKey: SlotKey) => {
+    setActiveSlot(slotKey)
+    if (slotKey === 'offhand' && offhandLocked && !inventory.offhand) return
+    setPickerSlot(slotKey)
+  }
+
+  const pickerSlotConfig = pickerSlot
+    ? gameConfig.slots.find((s) => s.key === pickerSlot)
+    : null
+
   return (
     <div className="max-w-7xl">
       <header className="flex items-end justify-between mb-4">
@@ -205,9 +204,7 @@ export default function GearView() {
                     equipped={inventory[slot.key]}
                     active={activeSlot === slot.key}
                     locked={slot.key === 'offhand' && offhandLocked}
-                    onSelect={() =>
-                      setActiveSlot(activeSlot === slot.key ? null : slot.key)
-                    }
+                    onSelect={() => openSlot(slot.key)}
                   />
                 </li>
               ))}
@@ -217,7 +214,7 @@ export default function GearView() {
           <CharmSection
             charmSlots={charmSlots}
             activeSlot={activeSlot}
-            onSelect={(s) => setActiveSlot(activeSlot === s ? null : s)}
+            onSelect={(s) => openSlot(s)}
             fitError={charmFitError}
           />
         </div>
@@ -228,13 +225,6 @@ export default function GearView() {
             equipped={activeSlot ? inventory[activeSlot] : undefined}
             offhandLocked={offhandLocked}
             socketOptions={socketOptions}
-            onEquip={(id) => {
-              if (!activeSlot) return
-              if (activeSlot.startsWith('charm_')) {
-                if (!tryEquipCharm(activeSlot, id)) return
-              }
-              equipItem(activeSlot, id)
-            }}
             onUnequip={() => {
               if (!activeSlot) return
               unequipItem(activeSlot)
@@ -267,6 +257,21 @@ export default function GearView() {
           />
         </aside>
       </div>
+
+      {pickerSlot && (
+        <GearItemModal
+          slotKey={pickerSlot}
+          slotLabel={pickerSlotConfig?.name ?? pickerSlot}
+          currentBaseId={inventory[pickerSlot]?.baseId ?? null}
+          onClose={() => setPickerSlot(null)}
+          onSelect={(id) => {
+            if (pickerSlot.startsWith('charm_')) {
+              if (!tryEquipCharm(pickerSlot, id)) return
+            }
+            equipItem(pickerSlot, id)
+          }}
+        />
+      )}
     </div>
   )
 }
@@ -713,87 +718,11 @@ function CharmSection({
   )
 }
 
-function ItemCompareOverlay({
-  equipped,
-  prospectId,
-  slotKey,
-}: {
-  equipped: EquippedItem | undefined
-  prospectId: string | null
-  slotKey: SlotKey
-}) {
-  // Floating comparison panel rendered next to the gear dropdown when the user hovers a candidate item: shows the currently-equipped item card on one side and the prospect (with computed Net Change vs the equipped one) on the other. Used by GearView's item picker.
-  const prospectBase = prospectId ? getItem(prospectId) : undefined
-  const equippedBase = equipped ? getItem(equipped.baseId) : undefined
-  const isSame = !!prospectId && equipped?.baseId === prospectId
-
-  if (!equipped && !prospectBase) return null
-
-  if (isSame && prospectBase) {
-    return (
-      <ItemCard
-        base={prospectBase}
-        state="equipped"
-        arcLabel="Currently Equipped"
-        className="w-[260px] pointer-events-auto text-[12px]"
-      />
-    )
-  }
-
-  if (!prospectBase && equipped && equippedBase) {
-    return (
-      <div className="flex items-start gap-3 pointer-events-auto">
-        <div className="w-[260px] shrink-0">
-          <ItemCard
-            equipped={equipped}
-            base={equippedBase}
-            state="equipped"
-            arcLabel="Currently Equipped"
-            className="text-[12px]"
-          />
-        </div>
-        <div className="text-[10px] uppercase tracking-[0.14em] text-faint italic max-w-[110px] leading-tight pt-6">
-          Hover an item to compare
-        </div>
-      </div>
-    )
-  }
-
-  if (!prospectBase) return null
-
-  return (
-    <div className="flex items-start gap-3 pointer-events-auto">
-      {equipped && equippedBase && (
-        <div className="w-[260px] shrink-0">
-          <ItemCard
-            equipped={equipped}
-            base={equippedBase}
-            state="equipped"
-            arcLabel="Currently Equipped"
-            className="text-[12px]"
-          />
-        </div>
-      )}
-      <div className="w-[260px] shrink-0">
-        <ItemCard
-          base={prospectBase}
-          state="selected"
-          arcLabel="Selected"
-          compareWith={equipped}
-          compareSlotKey={slotKey}
-          className="text-[12px]"
-        />
-      </div>
-    </div>
-  )
-}
-
 function EditPanel({
   slot,
   equipped,
   offhandLocked,
   socketOptions,
-  onEquip,
   onUnequip,
   onSocketCount,
   onSocketed,
@@ -810,7 +739,6 @@ function EditPanel({
   equipped: EquippedItem | undefined
   offhandLocked: boolean
   socketOptions: DropdownItem[]
-  onEquip: (id: string) => void
   onUnequip: () => void
   onSocketCount: (n: number) => void
   onSocketed: (idx: number, id: string | null) => void
@@ -823,11 +751,10 @@ function EditPanel({
   onRemoveForgedMod: (idx: number) => void
   onApplyRuneword: (rwId: string) => void
 }) {
-  // Right-panel editor for the currently-selected slot: hosts the item picker (with hover compare overlay), runeword presets, sockets section, stars section, affixes editor, forge mods editor, and (for armour) the augment picker. Used inside GearView whenever a slot is selected.
+  // Right-panel editor for the currently-selected slot: shows runeword presets, sockets, stars, affixes, forge mods and (for armour) the augment picker. Item picking happens via the slot tile click which opens GearItemModal at GearView level. Used inside GearView whenever a slot is selected.
   const slotConfig = slot
     ? gameConfig.slots.find((s) => s.key === slot)
     : undefined
-  const itemOpts = useMemo(() => (slot ? itemsForSlot(slot) : []), [slot])
   const base = equipped ? getItem(equipped.baseId) : undefined
   const maxSockets = equipped ? maxSocketsFor(equipped.baseId, equipped.forgedMods) : 0
   const inv = useBuild((s) => s.inventory)
@@ -869,34 +796,17 @@ function EditPanel({
       </div>
 
       <div className="p-3 space-y-3">
-        {slot === 'offhand' && offhandLocked && !equipped ? (
+        {slot === 'offhand' && offhandLocked && !equipped && (
           <div className="rounded border border-amber-500/30 bg-amber-500/5 px-2 py-2 text-[11px] text-amber-200">
             Offhand is locked while a Two-Handed weapon is in the main hand.
             Remove the weapon to free this slot.
           </div>
-        ) : (
-        <Dropdown
-          value={equipped?.baseId ?? null}
-          items={itemOpts}
-          allowNone={false}
-          placeholder={
-            itemOpts.length === 0
-              ? 'No items match this slot'
-              : equipped
-                ? 'Swap item…'
-                : 'Select an item…'
-          }
-          onChange={(id) => {
-            if (id) onEquip(id)
-          }}
-          sidePanel={(hoveredId) => (
-            <ItemCompareOverlay
-              equipped={equipped}
-              prospectId={hoveredId}
-              slotKey={slot}
-            />
-          )}
-        />
+        )}
+
+        {!equipped && !(slot === 'offhand' && offhandLocked) && (
+          <div className="rounded border border-dashed border-border-2 bg-panel-2/40 px-3 py-3 text-center text-[11px] text-faint italic">
+            Click the slot tile to choose an item.
+          </div>
         )}
 
         {equipped && base && (
@@ -997,48 +907,6 @@ function SetSummary({
   )
 }
 
-function slotGroup(slotKey: SlotKey): string {
-  // Strips a trailing `_N` suffix from a slot key so paired slots (e.g. `ring_1`, `ring_2`) collapse into a single shared group ("ring"). Used by `itemsForSlot` and the inventory move logic.
-  return slotKey.replace(/_\d+$/, '')
-}
-
-function itemsForSlot(slotKey: SlotKey): DropdownItem[] {
-  // Returns every base item that can equip into the given slot (matched by exact slot or shared slot group), sorted by rarity then name and decorated with a one-line meta description for the dropdown picker. Used by GearView's item picker.
-  const group = slotGroup(slotKey)
-  const matching = items
-    .filter((i) => i.slot === slotKey || slotGroup(i.slot) === group)
-    .slice()
-    .sort((a, b) => {
-      const ra = RARITY_ORDER[a.rarity] ?? 99
-      const rb = RARITY_ORDER[b.rarity] ?? 99
-      if (ra !== rb) return ra - rb
-      return a.name.localeCompare(b.name)
-    })
-  return matching.map((i) => {
-    const parts: string[] = [i.baseType]
-    if (i.grade) parts.push(`Grade ${i.grade}`)
-    if (i.baseType === 'Charm') parts.push(`${i.width ?? 1}×${i.height ?? 1}`)
-    if (i.defenseMin !== undefined && i.defenseMax !== undefined)
-      parts.push(`Def ${i.defenseMin}–${i.defenseMax}`)
-    if (i.damageMin !== undefined && i.damageMax !== undefined)
-      parts.push(`Dmg ${i.damageMin}–${i.damageMax}`)
-    if (i.blockChance !== undefined) parts.push(`Block ${i.blockChance}%`)
-    if (i.sockets !== undefined) {
-      const max = i.maxSockets ?? i.sockets
-      parts.push(
-        max > i.sockets
-          ? `${i.sockets}/${max} sockets`
-          : `${i.sockets} sockets`,
-      )
-    }
-    return {
-      id: i.id,
-      name: i.name,
-      rarity: i.rarity,
-      meta: parts.join(' · '),
-    }
-  })
-}
 
 function SocketsSection({
   equipped,
