@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { getItem, getItemImage, items } from '../data'
 import Tooltip from './Tooltip'
 import { ItemTooltipBody, RARITY_LABEL, RARITY_TONE } from './ItemTooltip'
+import ItemConfigurator from './ItemConfigurator'
 import type { ItemBase, ItemRarity, SlotKey } from '../types'
 
 const RARITY_TEXT: Record<ItemRarity, string> = {
@@ -93,7 +94,6 @@ export default function GearItemModal({
   onClose,
   onSelect,
 }: Props) {
-  const [pending, setPending] = useState<string | null>(currentBaseId)
   const [q, setQ] = useState('')
 
   useEffect(() => {
@@ -117,11 +117,10 @@ export default function GearItemModal({
       )
     : all
 
-  const pendingBase = pending ? getItem(pending) : null
-  const dirty = pending !== currentBaseId
-  const statusText = pendingBase
-    ? `${pendingBase.name} · ${RARITY_LABEL[pendingBase.rarity]} ${pendingBase.baseType}`
-    : 'Nothing selected'
+  const equippedBase = currentBaseId ? getItem(currentBaseId) : null
+  const statusText = equippedBase
+    ? `${equippedBase.name} · ${RARITY_LABEL[equippedBase.rarity]} ${equippedBase.baseType}`
+    : 'Empty slot'
 
   return createPortal(
     <div
@@ -137,7 +136,7 @@ export default function GearItemModal({
         role="dialog"
         aria-modal="true"
         onMouseDown={(e) => e.stopPropagation()}
-        className="relative flex h-[88vh] w-[640px] max-w-[94vw] flex-col overflow-hidden rounded-[6px] border border-border"
+        className="relative flex h-[90vh] w-[1100px] max-w-[96vw] flex-col overflow-hidden rounded-[6px] border border-border"
         style={{
           background:
             'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
@@ -170,7 +169,7 @@ export default function GearItemModal({
                 textShadow: '0 0 16px rgba(224,184,100,0.15)',
               }}
             >
-              Choose Item
+              Choose &amp; Configure Item
             </h2>
           </div>
           <button
@@ -181,103 +180,89 @@ export default function GearItemModal({
           </button>
         </header>
 
-        {/* Search */}
-        <div className="border-b border-border px-4 py-3">
-          <div className="relative">
-            <svg
-              className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-faint"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-3.5-3.5" />
-            </svg>
-            <input
-              autoFocus
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search items by name, type, or rarity…"
-              className="w-full rounded-[3px] border border-border-2 px-3 py-2 pl-9 text-text placeholder:text-faint focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
-              style={{
-                background:
-                  'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
-                boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* List */}
-        <div className="min-h-0 flex-1 overflow-y-auto py-1">
-          {rows.length === 0 && (
-            <div className="p-8 text-center text-sm text-muted">
-              {all.length === 0 ? 'No items for this slot' : 'No matches'}
+        {/* Body — two columns: list | configurator */}
+        <div className="flex min-h-0 flex-1 overflow-hidden">
+          {/* Left: searchable item list */}
+          <div className="flex w-[440px] shrink-0 flex-col border-r border-border">
+            <div className="border-b border-border px-4 py-3">
+              <div className="relative">
+                <svg
+                  className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-faint"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m20 20-3.5-3.5" />
+                </svg>
+                <input
+                  autoFocus
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder="Search items by name, type, or rarity…"
+                  className="w-full rounded-[3px] border border-border-2 px-3 py-2 pl-9 text-text placeholder:text-faint focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
+                  style={{
+                    background:
+                      'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+                    boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                  }}
+                />
+              </div>
             </div>
-          )}
-          {rows.map((it) => (
-            <ItemRow
-              key={it.id}
-              item={it}
-              selected={pending === it.id}
-              equipped={currentBaseId === it.id}
-              onSelect={() => setPending(it.id)}
-              onCommit={() => {
-                onSelect(it.id)
-                onClose()
-              }}
-            />
-          ))}
+
+            <div className="min-h-0 flex-1 overflow-y-auto py-1">
+              {rows.length === 0 && (
+                <div className="p-8 text-center text-sm text-muted">
+                  {all.length === 0 ? 'No items for this slot' : 'No matches'}
+                </div>
+              )}
+              {rows.map((it) => (
+                <ItemRow
+                  key={it.id}
+                  item={it}
+                  equipped={currentBaseId === it.id}
+                  onPick={() => onSelect(it.id)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Right: configurator for the equipped item */}
+          <div className="flex min-w-0 flex-1 flex-col">
+            <ItemConfigurator slot={slotKey} />
+          </div>
         </div>
 
         {/* Footer */}
         <footer className="flex items-center justify-between border-t border-border bg-black/30 px-4 py-3">
           <div
             className={`flex items-center gap-2 font-mono text-[11px] tracking-[0.06em] ${
-              pendingBase ? 'text-accent-hot' : 'text-faint'
+              equippedBase ? 'text-accent-hot' : 'text-faint'
             }`}
           >
             <span
               className="h-1.5 w-1.5 rounded-full"
               style={{
-                background: pendingBase
+                background: equippedBase
                   ? 'var(--color-accent-hot)'
                   : 'var(--color-faint)',
-                boxShadow: pendingBase
+                boxShadow: equippedBase
                   ? '0 0 8px rgba(224,184,100,0.6)'
                   : '0 0 6px var(--color-faint)',
               }}
             />
-            <span className="truncate max-w-[360px]">{statusText}</span>
+            <span className="truncate max-w-[700px]">{statusText}</span>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={onClose}
-              className="rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-            >
-              Cancel
-            </button>
-            <button
-              disabled={!dirty || !pending}
-              onClick={() => {
-                if (!pending) return
-                onSelect(pending)
-                onClose()
-              }}
-              className="rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-all enabled:hover:border-accent-hot enabled:hover:shadow-[0_0_14px_rgba(224,184,100,0.3)] disabled:cursor-not-allowed disabled:border-border-2 disabled:text-faint"
-              style={
-                !dirty || !pending
-                  ? undefined
-                  : {
-                      background:
-                        'linear-gradient(180deg, #3a2f1a, #2a2418)',
-                    }
-              }
-            >
-              Equip
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot hover:shadow-[0_0_14px_rgba(224,184,100,0.3)]"
+            style={{
+              background: 'linear-gradient(180deg, #3a2f1a, #2a2418)',
+            }}
+          >
+            Done
+          </button>
         </footer>
       </div>
     </div>,
@@ -287,16 +272,12 @@ export default function GearItemModal({
 
 function ItemRow({
   item,
-  selected,
   equipped,
-  onSelect,
-  onCommit,
+  onPick,
 }: {
   item: ItemBase
-  selected: boolean
   equipped: boolean
-  onSelect: () => void
-  onCommit: () => void
+  onPick: () => void
 }) {
   const url = getItemImage(item.id)
   const rarityText = RARITY_TEXT[item.rarity] ?? 'text-text'
@@ -312,36 +293,32 @@ function ItemRow({
     >
       <button
         type="button"
-        onClick={onSelect}
-        onDoubleClick={onCommit}
-        className={`group relative grid w-full cursor-pointer items-center gap-3.5 border-b border-dashed border-border px-4 py-2 text-left transition-colors last:border-b-0 hover:bg-accent-hot/5 ${
-          selected
-            ? 'bg-gradient-to-r from-accent-hot/10 to-transparent'
-            : ''
+        onClick={onPick}
+        className={`group relative grid w-full cursor-pointer items-center gap-3 border-b border-dashed border-border px-3 py-2 text-left transition-colors last:border-b-0 hover:bg-accent-hot/5 ${
+          equipped ? 'bg-gradient-to-r from-accent-hot/10 to-transparent' : ''
         }`}
         style={{
-          gridTemplateColumns: '36px 76px 1fr auto',
+          gridTemplateColumns: '32px 1fr auto',
         }}
       >
         <span
           className={`pointer-events-none absolute left-0 top-0 bottom-0 w-[2px] bg-accent-hot transition-opacity ${
-            selected ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
+            equipped ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
           }`}
           style={
-            selected
+            equipped
               ? { boxShadow: '0 0 12px rgba(224,184,100,0.4)' }
               : undefined
           }
         />
 
-        {/* Icon */}
         <span className="flex items-center justify-center">
           {url ? (
             <img
               src={url}
               alt=""
-              width={28}
-              height={28}
+              width={26}
+              height={26}
               style={{ imageRendering: 'pixelated', objectFit: 'contain' }}
             />
           ) : (
@@ -349,20 +326,9 @@ function ItemRow({
           )}
         </span>
 
-        {/* Rarity chip */}
-        <span
-          className={`w-max rounded-[2px] border px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] ${rarityText} ${rarityBorder}`}
-          style={{
-            background: 'linear-gradient(180deg, #1a1610, #0d0b07)',
-          }}
-        >
-          {RARITY_LABEL[item.rarity]}
-        </span>
-
-        {/* Name + base type */}
         <span className="min-w-0">
           <span
-            className={`block truncate text-[13px] font-medium ${rarityText}`}
+            className={`block truncate text-[12px] font-medium ${rarityText}`}
           >
             {item.name}
             {equipped && (
@@ -372,19 +338,25 @@ function ItemRow({
             )}
           </span>
           <span className="block truncate font-mono text-[10px] text-muted">
-            {item.baseType}
-            {item.grade ? ` · Grade ${item.grade}` : ''}
+            <span className={`mr-1 ${rarityText}`}>
+              {RARITY_LABEL[item.rarity]}
+            </span>
+            · {item.baseType}
+            {item.grade ? ` · ${item.grade}` : ''}
             {item.twoHanded ? ' · 2H' : ''}
           </span>
         </span>
 
-        {/* Stats */}
         <span
-          className={`shrink-0 truncate font-mono text-[10px] tracking-[0.02em] ${
+          className={`shrink-0 text-right font-mono text-[10px] tracking-[0.02em] ${
             stats === '' ? 'italic text-faint' : 'text-muted'
           }`}
+          style={{ display: 'inline-block', maxWidth: 140 }}
         >
-          {stats || '—'}
+          <span className={`block truncate ${stats === '' ? '' : ''}`}>
+            {stats || '—'}
+          </span>
+          <span className="sr-only">{rarityBorder}</span>
         </span>
       </button>
     </Tooltip>
