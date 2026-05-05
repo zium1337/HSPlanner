@@ -2,6 +2,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import AffixPickerModal from './AffixPickerModal'
 import AugmentPickerModal from './AugmentPickerModal'
 import CrystalModPickerModal from './CrystalModPickerModal'
+import ItemEditModal from './ItemEditModal'
 import SocketPickerModal from './SocketPickerModal'
 import {
   detectRuneword,
@@ -103,6 +104,8 @@ export default function ItemConfigurator({ slot }: Props) {
   const removeForgedMod = useBuild((s) => s.removeForgedMod)
   const applyRuneword = useBuild((s) => s.applyRuneword)
 
+  const [editOpen, setEditOpen] = useState(false)
+
   const equipped = inventory[slot]
   const base = equipped ? getItem(equipped.baseId) : undefined
   const maxSockets = equipped
@@ -135,12 +138,21 @@ export default function ItemConfigurator({ slot }: Props) {
         <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
           Configure · {base.name}
         </span>
-        <button
-          onClick={() => unequipItem(slot)}
-          className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-border text-muted hover:text-red-400 hover:border-red-400"
-        >
-          Remove
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setEditOpen(true)}
+            className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-border text-muted hover:text-accent-hot hover:border-accent-deep"
+            title="Edit item as text"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => unequipItem(slot)}
+            className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-border text-muted hover:text-red-400 hover:border-red-400"
+          >
+            Remove
+          </button>
+        </div>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-4 space-y-3">
@@ -194,6 +206,15 @@ export default function ItemConfigurator({ slot }: Props) {
 
         {slot === 'armor' && <AugmentSection equipped={equipped} />}
       </div>
+
+      {editOpen && (
+        <ItemEditModal
+          slot={slot}
+          equipped={equipped}
+          base={base}
+          onClose={() => setEditOpen(false)}
+        />
+      )}
     </div>
   )
 }
