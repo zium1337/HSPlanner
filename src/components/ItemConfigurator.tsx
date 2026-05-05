@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import AffixPickerModal from './AffixPickerModal'
 import AugmentPickerModal from './AugmentPickerModal'
 import CrystalModPickerModal from './CrystalModPickerModal'
@@ -28,6 +28,61 @@ import type {
   SlotKey,
   SocketType,
 } from '../types'
+
+type SectionTone =
+  | 'default'
+  | 'satanic'
+  | 'angelic'
+  | 'green'
+  | 'amber'
+  | 'pink'
+
+const TONE_CARD: Record<SectionTone, string> = {
+  default: 'border-border-2 bg-panel-2/30',
+  satanic: 'border-red-500/30 bg-red-500/[0.06]',
+  angelic: 'border-yellow-200/30 bg-yellow-200/[0.05]',
+  green: 'border-green-500/30 bg-green-500/[0.05]',
+  amber: 'border-amber-400/30 bg-amber-500/[0.04]',
+  pink: 'border-pink-400/30 bg-pink-400/[0.05]',
+}
+
+const TONE_TITLE: Record<SectionTone, string> = {
+  default: 'text-muted',
+  satanic: 'text-red-300',
+  angelic: 'text-yellow-200',
+  green: 'text-green-400',
+  amber: 'text-amber-300',
+  pink: 'text-pink-300',
+}
+
+function ConfigSection({
+  title,
+  tone = 'default',
+  trailing,
+  children,
+}: {
+  title: ReactNode
+  tone?: SectionTone
+  trailing?: ReactNode
+  children?: ReactNode
+}) {
+  // Shared visual frame for every block inside ItemConfigurator (sockets, stars, affixes, forge, augment, runeword presets, set summary). Uses a uniform card with a tonal title accent so the panel feels consistent regardless of which sections are visible for the equipped item.
+  return (
+    <section
+      className={`rounded-[3px] border ${TONE_CARD[tone]} px-3 py-2.5`}
+    >
+      <header className="mb-2 flex items-baseline justify-between gap-2 text-[10px] font-semibold uppercase tracking-[0.14em]">
+        <span className={TONE_TITLE[tone]}>{title}</span>
+        {trailing != null && (
+          <span className="font-mono normal-case tracking-normal text-faint">
+            {trailing}
+          </span>
+        )}
+      </header>
+      {children}
+    </section>
+  )
+}
 
 interface Props {
   slot: SlotKey
@@ -151,13 +206,11 @@ function SetSummary({
   count: number
 }) {
   return (
-    <div className="rounded border border-green-500/30 bg-green-500/5 p-2">
-      <div className="flex items-baseline justify-between text-[10px] uppercase tracking-[0.12em] mb-1">
-        <span className="text-green-400 font-semibold">{set.name}</span>
-        <span className="text-muted">
-          {count}/{set.items.length} pieces
-        </span>
-      </div>
+    <ConfigSection
+      tone="green"
+      title={set.name}
+      trailing={`${count}/${set.items.length} pieces`}
+    >
       <ul className="space-y-0.5">
         {set.bonuses.map((bonus, idx) => {
           const active = count >= bonus.pieces
@@ -178,7 +231,7 @@ function SetSummary({
           )
         })}
       </ul>
-    </div>
+    </ConfigSection>
   )
 }
 
@@ -200,38 +253,36 @@ function SocketsSection({
   const [pickerIndex, setPickerIndex] = useState<number | null>(null)
   if (maxSockets === 0) return null
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] uppercase tracking-[0.12em] text-muted">
-          Sockets
-        </span>
-        <div className="flex items-center gap-1">
+    <ConfigSection
+      title="Sockets"
+      trailing={
+        <span className="flex items-center gap-1">
           <button
             onClick={() => onSocketCount(equipped.socketCount - 1)}
             disabled={equipped.socketCount === 0}
-            className="w-6 h-6 rounded bg-panel-2 border border-border text-muted hover:text-text hover:border-accent disabled:opacity-40 disabled:cursor-not-allowed text-xs"
+            className="w-5 h-5 rounded bg-panel-2 border border-border text-muted hover:text-text hover:border-accent disabled:opacity-40 disabled:cursor-not-allowed text-xs leading-none"
           >
             −
           </button>
-          <span className="min-w-12 text-center tabular-nums text-xs">
+          <span className="min-w-10 text-center tabular-nums text-[11px]">
             {equipped.socketCount} / {maxSockets}
           </span>
           <button
             onClick={() => onSocketCount(equipped.socketCount + 1)}
             disabled={equipped.socketCount >= maxSockets}
-            className="w-6 h-6 rounded bg-panel-2 border border-border text-muted hover:text-text hover:border-accent disabled:opacity-40 disabled:cursor-not-allowed text-xs"
+            className="w-5 h-5 rounded bg-panel-2 border border-border text-muted hover:text-text hover:border-accent disabled:opacity-40 disabled:cursor-not-allowed text-xs leading-none"
           >
             +
           </button>
-        </div>
-        {base.sockets !== undefined &&
-          base.sockets !== equipped.socketCount && (
-            <span className="text-[10px] text-muted">
-              base: {base.sockets}
-            </span>
-          )}
-      </div>
-
+          {base.sockets !== undefined &&
+            base.sockets !== equipped.socketCount && (
+              <span className="ml-1 text-[10px] text-faint">
+                base {base.sockets}
+              </span>
+            )}
+        </span>
+      }
+    >
       {equipped.socketCount > 0 && (
         <div className="space-y-1.5">
           {Array.from({ length: equipped.socketCount }).map((_, i) => {
@@ -271,7 +322,7 @@ function SocketsSection({
           onSelect={(id) => onSocketed(pickerIndex, id)}
         />
       )}
-    </div>
+    </ConfigSection>
   )
 }
 
@@ -330,15 +381,15 @@ function StarsSection({
 }) {
   const bonusPct = stars * 8
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] uppercase tracking-[0.12em] text-muted">
-          Stars
-        </span>
-        <span className="text-[10px] text-muted tabular-nums">
+    <ConfigSection
+      tone={stars > 0 ? 'amber' : 'default'}
+      title="Stars"
+      trailing={
+        <span className="tabular-nums">
           {stars > 0 ? `+${bonusPct}% to affixes` : 'no bonus'}
         </span>
-      </div>
+      }
+    >
       <div className="flex items-center gap-1">
         {Array.from({ length: MAX_STARS }).map((_, i) => {
           const target = i + 1
@@ -369,10 +420,10 @@ function StarsSection({
           </button>
         )}
       </div>
-      <p className="text-[10px] text-faint italic leading-tight">
+      <p className="mt-1.5 text-[10px] text-faint italic leading-tight">
         Each star adds +8% to user-added affixes. "+X to all skills" and runeword mods are not affected.
       </p>
-    </div>
+    </ConfigSection>
   )
 }
 
@@ -451,16 +502,22 @@ function AffixesSection({
   const atCap =
     maxAffixes !== undefined && equipped.affixes.length >= maxAffixes
   const randomGroupId = base?.randomAffixGroupId ?? null
-  const sectionTitle =
-    randomGroupId === 'random_unholy' ? 'Unholy Affixes' : 'Affixes'
+  const isUnholy = randomGroupId === 'random_unholy'
+  const sectionTitle = isUnholy ? 'Unholy Affixes' : 'Affixes'
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] uppercase tracking-[0.12em] text-muted">
-          {sectionTitle} ({equipped.affixes.length}
-          {maxAffixes !== undefined ? `/${maxAffixes}` : ''})
-        </span>
+    <ConfigSection
+      tone={isUnholy ? 'pink' : 'default'}
+      title={
+        <>
+          {sectionTitle}
+          <span className="ml-1 normal-case tracking-normal text-faint">
+            {equipped.affixes.length}
+            {maxAffixes !== undefined ? `/${maxAffixes}` : ''}
+          </span>
+        </>
+      }
+      trailing={
         <button
           onClick={() => setPickerOpen(true)}
           disabled={atCap}
@@ -468,9 +525,11 @@ function AffixesSection({
         >
           + Add
         </button>
-      </div>
-
-      {equipped.affixes.length > 0 && (
+      }
+    >
+      {equipped.affixes.length === 0 ? (
+        <p className="text-[11px] text-faint italic">No affixes yet.</p>
+      ) : (
         <ul className="space-y-1">
           {equipped.affixes.map((eq, idx) => {
             const affix = getAffix(eq.affixId)
@@ -486,7 +545,11 @@ function AffixesSection({
               >
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="truncate">
-                    <span className="text-yellow-300 font-medium tabular-nums">
+                    <span
+                      className={`font-medium tabular-nums ${
+                        isUnholy ? 'text-pink-300' : 'text-yellow-300'
+                      }`}
+                    >
                       {formatAffixValue(affix, eq.roll, equipped.stars)}
                     </span>{' '}
                     <span className="text-text/80">{affix.name}</span>{' '}
@@ -530,7 +593,7 @@ function AffixesSection({
           onSelect={(a) => onAdd(a.id, a.tier)}
         />
       )}
-    </div>
+    </ConfigSection>
   )
 }
 
@@ -553,22 +616,23 @@ function ForgedModsSection({
   const canAdd = mods.length === 0
 
   return (
-    <div className="space-y-2 rounded border border-red-500/30 bg-red-500/5 p-2">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] uppercase tracking-[0.12em] text-red-300">
-          {sourceLabel} · Forged
-        </span>
-        {canAdd && (
+    <ConfigSection
+      tone="satanic"
+      title={`${sourceLabel} · Forged`}
+      trailing={
+        canAdd && (
           <button
             onClick={() => setPickerOpen(true)}
             className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-red-500/30 hover:border-red-400 text-red-300 hover:text-red-200"
           >
             + Add
           </button>
-        )}
-      </div>
-
-      {mods.length > 0 && (
+        )
+      }
+    >
+      {mods.length === 0 ? (
+        <p className="text-[11px] text-faint italic">No mod forged.</p>
+      ) : (
         <ul className="space-y-1">
           {mods.map((eq, idx) => {
             const mod = getCrystalMod(eq.affixId)
@@ -604,7 +668,7 @@ function ForgedModsSection({
           onSelect={(m) => onAdd(m.id, m.tier)}
         />
       )}
-    </div>
+    </ConfigSection>
   )
 }
 
@@ -637,25 +701,35 @@ function RunewordPresets({
     : undefined
 
   return (
-    <div className="space-y-1.5">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between gap-2 text-[10px] uppercase tracking-[0.12em] text-muted hover:text-text"
-      >
-        <span className="flex items-center gap-1.5">
-          <span className={`inline-block transition-transform ${open ? 'rotate-90' : ''}`}>
+    <ConfigSection
+      tone={activeRw ? 'amber' : 'default'}
+      title={
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="flex items-center gap-1.5 hover:text-text"
+        >
+          <span
+            className={`inline-block transition-transform ${
+              open ? 'rotate-90' : ''
+            }`}
+          >
             ▸
           </span>
           Runeword Presets
-          <span className="text-faint">({compatible.length})</span>
-        </span>
-        {activeRw && !open && (
+          <span className="font-mono normal-case tracking-normal text-faint">
+            ({compatible.length})
+          </span>
+        </button>
+      }
+      trailing={
+        activeRw && !open ? (
           <span className="text-amber-300 normal-case tracking-normal text-[11px] font-semibold truncate">
             {activeRw.name}
           </span>
-        )}
-      </button>
+        ) : undefined
+      }
+    >
       {open && (
         <ul className="space-y-1">
           {compatible.map((rw) => {
@@ -689,7 +763,7 @@ function RunewordPresets({
           })}
         </ul>
       )}
-    </div>
+    </ConfigSection>
   )
 }
 
@@ -702,120 +776,129 @@ function AugmentSection({ equipped }: { equipped: EquippedItem }) {
   const tier = aug?.levels[Math.max(0, Math.min(aug.levels.length - 1, level - 1))]
 
   return (
-    <div className="rounded border border-yellow-200/30 bg-yellow-200/5 p-2 space-y-2">
-      <div className="flex items-baseline justify-between text-[10px] uppercase tracking-[0.12em]">
-        <span className="text-yellow-200 font-semibold">Angelic Augment</span>
-        {aug && (
+    <ConfigSection
+      tone="angelic"
+      title="Angelic Augment"
+      trailing={
+        aug && (
           <button
             onClick={() => setAugment(null)}
-            className="text-faint hover:text-red-300 normal-case tracking-normal"
+            className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-yellow-200/30 hover:border-red-400 text-yellow-200/70 hover:text-red-300"
             aria-label="Remove augment"
           >
             Remove
           </button>
+        )
+      }
+    >
+      <div className="space-y-2">
+        <button
+          type="button"
+          className="hs-dd-trigger"
+          onClick={() => setPickerOpen(true)}
+        >
+          <span
+            className={[
+              'hs-dd-trigger-label',
+              aug ? 'text-yellow-200' : 'is-empty',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {aug ? aug.name : 'Choose augment…'}
+          </span>
+          <span className="hs-dd-chev" />
+        </button>
+
+        {pickerOpen && (
+          <AugmentPickerModal
+            currentId={equipped.augment?.id ?? null}
+            onClose={() => setPickerOpen(false)}
+            onSelect={(id) => setAugment(id)}
+          />
+        )}
+
+        {aug && tier && (
+          <>
+            <div className="flex items-center gap-2 text-[11px]">
+              <span className="text-muted uppercase tracking-wider">
+                Level
+              </span>
+              <input
+                type="range"
+                min={1}
+                max={AUGMENT_MAX_LEVEL}
+                value={level}
+                onChange={(e) => setAugmentLevel(Number(e.target.value))}
+                className="flex-1"
+                style={{
+                  ['--sl-pct' as never]:
+                    ((level - 1) / Math.max(1, AUGMENT_MAX_LEVEL - 1)) * 100 +
+                    '%',
+                }}
+              />
+              <span className="font-mono text-yellow-200 w-6 text-center">
+                {level}
+              </span>
+              <span className="text-faint">/ {AUGMENT_MAX_LEVEL}</span>
+            </div>
+
+            <div className="text-[11px] text-text/85 leading-snug">
+              {aug.description}
+            </div>
+
+            <div className="text-[10px] text-faint italic">
+              {aug.triggerNote}
+              {tier.procChance !== undefined && tier.procChance !== null && (
+                <> · proc {tier.procChance}%</>
+              )}
+              {tier.procDurationSec !== undefined &&
+                tier.procDurationSec !== null && (
+                  <> · {tier.procDurationSec}s</>
+                )}
+              {tier.cost !== undefined && <> · cost {tier.cost} keys</>}
+            </div>
+
+            {Object.keys(tier.stats).length > 0 && (
+              <ul className="space-y-0.5 text-[11px]">
+                {Object.entries(tier.stats).map(([key, val]) => {
+                  const def = gameConfig.stats.find((s) => s.key === key)
+                  const label = def?.name ?? key
+                  const sign = (val as number) >= 0 ? '+' : ''
+                  const suffix = def?.format === 'percent' ? '%' : ''
+                  return (
+                    <li key={key} className="flex justify-between">
+                      <span className="text-text/80">{label}</span>
+                      <span className="text-yellow-200 font-mono tabular-nums">
+                        {sign}
+                        {val as number}
+                        {suffix}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+
+            {tier.meta && Object.keys(tier.meta).length > 0 && (
+              <ul className="space-y-0.5 text-[10px] text-faint">
+                {Object.entries(tier.meta).map(([key, val]) => (
+                  <li key={key} className="flex justify-between">
+                    <span>{key.replace(/_/g, ' ')}</span>
+                    <span className="font-mono">{val as number}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {aug.rangedOnly && (
+              <div className="text-[10px] text-orange-300 italic">
+                Effect only applies with a ranged weapon equipped.
+              </div>
+            )}
+          </>
         )}
       </div>
-
-      <button
-        type="button"
-        className="hs-dd-trigger"
-        onClick={() => setPickerOpen(true)}
-      >
-        <span
-          className={['hs-dd-trigger-label', aug ? 'text-yellow-200' : 'is-empty']
-            .filter(Boolean)
-            .join(' ')}
-        >
-          {aug ? aug.name : 'Choose augment…'}
-        </span>
-        <span className="hs-dd-chev" />
-      </button>
-
-      {pickerOpen && (
-        <AugmentPickerModal
-          currentId={equipped.augment?.id ?? null}
-          onClose={() => setPickerOpen(false)}
-          onSelect={(id) => setAugment(id)}
-        />
-      )}
-
-      {aug && tier && (
-        <>
-          <div className="flex items-center gap-2 text-[11px]">
-            <span className="text-muted uppercase tracking-wider">Level</span>
-            <input
-              type="range"
-              min={1}
-              max={AUGMENT_MAX_LEVEL}
-              value={level}
-              onChange={(e) => setAugmentLevel(Number(e.target.value))}
-              className="flex-1"
-              style={{
-                ['--sl-pct' as never]:
-                  ((level - 1) / Math.max(1, AUGMENT_MAX_LEVEL - 1)) * 100 +
-                  '%',
-              }}
-            />
-            <span className="font-mono text-yellow-200 w-6 text-center">
-              {level}
-            </span>
-            <span className="text-faint">/ {AUGMENT_MAX_LEVEL}</span>
-          </div>
-
-          <div className="text-[11px] text-text/85 leading-snug">
-            {aug.description}
-          </div>
-
-          <div className="text-[10px] text-faint italic">
-            {aug.triggerNote}
-            {tier.procChance !== undefined && tier.procChance !== null && (
-              <> · proc {tier.procChance}%</>
-            )}
-            {tier.procDurationSec !== undefined && tier.procDurationSec !== null && (
-              <> · {tier.procDurationSec}s</>
-            )}
-            {tier.cost !== undefined && <> · cost {tier.cost} keys</>}
-          </div>
-
-          {Object.keys(tier.stats).length > 0 && (
-            <ul className="space-y-0.5 text-[11px]">
-              {Object.entries(tier.stats).map(([key, val]) => {
-                const def = gameConfig.stats.find((s) => s.key === key)
-                const label = def?.name ?? key
-                const sign = (val as number) >= 0 ? '+' : ''
-                const suffix = def?.format === 'percent' ? '%' : ''
-                return (
-                  <li key={key} className="flex justify-between">
-                    <span className="text-text/80">{label}</span>
-                    <span className="text-yellow-200 font-mono tabular-nums">
-                      {sign}
-                      {val as number}
-                      {suffix}
-                    </span>
-                  </li>
-                )
-              })}
-            </ul>
-          )}
-
-          {tier.meta && Object.keys(tier.meta).length > 0 && (
-            <ul className="space-y-0.5 text-[10px] text-faint">
-              {Object.entries(tier.meta).map(([key, val]) => (
-                <li key={key} className="flex justify-between">
-                  <span>{key.replace(/_/g, ' ')}</span>
-                  <span className="font-mono">{val as number}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {aug.rangedOnly && (
-            <div className="text-[10px] text-orange-300 italic">
-              Effect only applies with a ranged weapon equipped.
-            </div>
-          )}
-        </>
-      )}
-    </div>
+    </ConfigSection>
   )
 }
