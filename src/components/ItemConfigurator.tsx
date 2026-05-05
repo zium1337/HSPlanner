@@ -780,7 +780,7 @@ function AugmentSection({ equipped }: { equipped: EquippedItem }) {
       tone="angelic"
       title="Angelic Augment"
       trailing={
-        aug && (
+        aug ? (
           <button
             onClick={() => setAugment(null)}
             className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-yellow-200/30 hover:border-red-400 text-yellow-200/70 hover:text-red-300"
@@ -788,117 +788,117 @@ function AugmentSection({ equipped }: { equipped: EquippedItem }) {
           >
             Remove
           </button>
+        ) : (
+          <button
+            onClick={() => setPickerOpen(true)}
+            className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-yellow-200/30 hover:border-yellow-200/60 text-yellow-200 hover:text-yellow-100"
+          >
+            + Add
+          </button>
         )
       }
     >
-      <div className="space-y-2">
-        <button
-          type="button"
-          className="hs-dd-trigger"
-          onClick={() => setPickerOpen(true)}
-        >
-          <span
-            className={[
-              'hs-dd-trigger-label',
-              aug ? 'text-yellow-200' : 'is-empty',
-            ]
-              .filter(Boolean)
-              .join(' ')}
-          >
-            {aug ? aug.name : 'Choose augment…'}
-          </span>
-          <span className="hs-dd-chev" />
-        </button>
+      {aug && tier ? (
+        <div className="space-y-2">
+          <div className="flex items-baseline justify-between gap-2 text-[12px]">
+            <span className="font-semibold text-yellow-200 truncate">
+              {aug.name}
+            </span>
+            <button
+              type="button"
+              onClick={() => setPickerOpen(true)}
+              className="font-mono text-[10px] uppercase tracking-[0.12em] text-faint hover:text-yellow-200"
+            >
+              swap
+            </button>
+          </div>
 
-        {pickerOpen && (
-          <AugmentPickerModal
-            currentId={equipped.augment?.id ?? null}
-            onClose={() => setPickerOpen(false)}
-            onSelect={(id) => setAugment(id)}
-          />
-        )}
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="text-muted uppercase tracking-wider">Level</span>
+            <input
+              type="range"
+              min={1}
+              max={AUGMENT_MAX_LEVEL}
+              value={level}
+              onChange={(e) => setAugmentLevel(Number(e.target.value))}
+              className="flex-1"
+              style={{
+                ['--sl-pct' as never]:
+                  ((level - 1) / Math.max(1, AUGMENT_MAX_LEVEL - 1)) * 100 +
+                  '%',
+              }}
+            />
+            <span className="font-mono text-yellow-200 w-6 text-center">
+              {level}
+            </span>
+            <span className="text-faint">/ {AUGMENT_MAX_LEVEL}</span>
+          </div>
 
-        {aug && tier && (
-          <>
-            <div className="flex items-center gap-2 text-[11px]">
-              <span className="text-muted uppercase tracking-wider">
-                Level
-              </span>
-              <input
-                type="range"
-                min={1}
-                max={AUGMENT_MAX_LEVEL}
-                value={level}
-                onChange={(e) => setAugmentLevel(Number(e.target.value))}
-                className="flex-1"
-                style={{
-                  ['--sl-pct' as never]:
-                    ((level - 1) / Math.max(1, AUGMENT_MAX_LEVEL - 1)) * 100 +
-                    '%',
-                }}
-              />
-              <span className="font-mono text-yellow-200 w-6 text-center">
-                {level}
-              </span>
-              <span className="text-faint">/ {AUGMENT_MAX_LEVEL}</span>
-            </div>
+          <div className="text-[11px] text-text/85 leading-snug">
+            {aug.description}
+          </div>
 
-            <div className="text-[11px] text-text/85 leading-snug">
-              {aug.description}
-            </div>
-
-            <div className="text-[10px] text-faint italic">
-              {aug.triggerNote}
-              {tier.procChance !== undefined && tier.procChance !== null && (
-                <> · proc {tier.procChance}%</>
+          <div className="text-[10px] text-faint italic">
+            {aug.triggerNote}
+            {tier.procChance !== undefined && tier.procChance !== null && (
+              <> · proc {tier.procChance}%</>
+            )}
+            {tier.procDurationSec !== undefined &&
+              tier.procDurationSec !== null && (
+                <> · {tier.procDurationSec}s</>
               )}
-              {tier.procDurationSec !== undefined &&
-                tier.procDurationSec !== null && (
-                  <> · {tier.procDurationSec}s</>
-                )}
-              {tier.cost !== undefined && <> · cost {tier.cost} keys</>}
-            </div>
+            {tier.cost !== undefined && <> · cost {tier.cost} keys</>}
+          </div>
 
-            {Object.keys(tier.stats).length > 0 && (
-              <ul className="space-y-0.5 text-[11px]">
-                {Object.entries(tier.stats).map(([key, val]) => {
-                  const def = gameConfig.stats.find((s) => s.key === key)
-                  const label = def?.name ?? key
-                  const sign = (val as number) >= 0 ? '+' : ''
-                  const suffix = def?.format === 'percent' ? '%' : ''
-                  return (
-                    <li key={key} className="flex justify-between">
-                      <span className="text-text/80">{label}</span>
-                      <span className="text-yellow-200 font-mono tabular-nums">
-                        {sign}
-                        {val as number}
-                        {suffix}
-                      </span>
-                    </li>
-                  )
-                })}
-              </ul>
-            )}
-
-            {tier.meta && Object.keys(tier.meta).length > 0 && (
-              <ul className="space-y-0.5 text-[10px] text-faint">
-                {Object.entries(tier.meta).map(([key, val]) => (
+          {Object.keys(tier.stats).length > 0 && (
+            <ul className="space-y-0.5 text-[11px]">
+              {Object.entries(tier.stats).map(([key, val]) => {
+                const def = gameConfig.stats.find((s) => s.key === key)
+                const label = def?.name ?? key
+                const sign = (val as number) >= 0 ? '+' : ''
+                const suffix = def?.format === 'percent' ? '%' : ''
+                return (
                   <li key={key} className="flex justify-between">
-                    <span>{key.replace(/_/g, ' ')}</span>
-                    <span className="font-mono">{val as number}</span>
+                    <span className="text-text/80">{label}</span>
+                    <span className="text-yellow-200 font-mono tabular-nums">
+                      {sign}
+                      {val as number}
+                      {suffix}
+                    </span>
                   </li>
-                ))}
-              </ul>
-            )}
+                )
+              })}
+            </ul>
+          )}
 
-            {aug.rangedOnly && (
-              <div className="text-[10px] text-orange-300 italic">
-                Effect only applies with a ranged weapon equipped.
-              </div>
-            )}
-          </>
-        )}
-      </div>
+          {tier.meta && Object.keys(tier.meta).length > 0 && (
+            <ul className="space-y-0.5 text-[10px] text-faint">
+              {Object.entries(tier.meta).map(([key, val]) => (
+                <li key={key} className="flex justify-between">
+                  <span>{key.replace(/_/g, ' ')}</span>
+                  <span className="font-mono">{val as number}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {aug.rangedOnly && (
+            <div className="text-[10px] text-orange-300 italic">
+              Effect only applies with a ranged weapon equipped.
+            </div>
+          )}
+        </div>
+      ) : (
+        <p className="text-[11px] text-faint italic">No augment chosen.</p>
+      )}
+
+      {pickerOpen && (
+        <AugmentPickerModal
+          currentId={equipped.augment?.id ?? null}
+          onClose={() => setPickerOpen(false)}
+          onSelect={(id) => setAugment(id)}
+        />
+      )}
     </ConfigSection>
   )
 }
