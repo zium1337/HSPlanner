@@ -52,6 +52,7 @@ export interface PickerModalProps {
   allowClear?: boolean
   onClear?: () => void
   footerStatus?: ReactNode
+  footerActions?: ReactNode
 }
 
 export default function PickerModal({
@@ -71,6 +72,7 @@ export default function PickerModal({
   allowClear = false,
   onClear,
   footerStatus,
+  footerActions,
 }: PickerModalProps) {
   const [q, setQ] = useState('')
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -407,6 +409,7 @@ export default function PickerModal({
             </span>
           </div>
           <div className="flex shrink-0 gap-2">
+            {footerActions}
             {allowClear && selectedId && (
               <button
                 onClick={() => {
