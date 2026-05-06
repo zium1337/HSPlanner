@@ -26,12 +26,28 @@ const TAG_LABEL: Record<ChangelogTag, string> = {
 };
 
 const TAG_CLASS: Record<ChangelogTag, string> = {
-  new: "border-stat-green/40 text-stat-green bg-stat-green/10",
-  improved: "border-stat-blue/40 text-stat-blue bg-stat-blue/10",
-  balance: "border-stat-orange/40 text-stat-orange bg-stat-orange/10",
-  fixes: "border-stat-red/40 text-stat-red bg-stat-red/10",
-  other: "border-border-2 text-muted bg-panel-2",
+  new: "border-stat-green/50 text-stat-green",
+  improved: "border-stat-blue/50 text-stat-blue",
+  balance: "border-stat-orange/50 text-stat-orange",
+  fixes: "border-stat-red/50 text-stat-red",
+  other: "border-border-2 text-muted",
 };
+
+const TAG_BG: Record<ChangelogTag, string> = {
+  new: "linear-gradient(180deg, rgba(28,52,34,0.55), rgba(20,38,24,0.35))",
+  improved:
+    "linear-gradient(180deg, rgba(26,40,60,0.55), rgba(18,28,44,0.35))",
+  balance:
+    "linear-gradient(180deg, rgba(58,42,22,0.55), rgba(42,30,18,0.35))",
+  fixes: "linear-gradient(180deg, rgba(60,30,28,0.55), rgba(44,22,20,0.35))",
+  other: "var(--color-panel-2)",
+};
+
+const FOOTER_BTN_CLASS =
+  "rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-40";
+
+const FOOTER_BTN_PRIMARY_CLASS =
+  "rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4] disabled:cursor-not-allowed disabled:opacity-60";
 
 interface Props {
   info: UpdateInfo;
@@ -110,39 +126,58 @@ export default function UpdateModal({
     ? formatReleaseDate(info.publishedAt)
     : null;
 
+  const channelLabel = BUILD_CHANNEL === "dev" ? "DEV" : "STABLE";
+  const channelTone =
+    BUILD_CHANNEL === "dev"
+      ? {
+          color: "text-accent-hot border-accent-deep/50",
+          bg: "linear-gradient(180deg, rgba(58,46,24,0.6), rgba(42,36,24,0.4))",
+        }
+      : {
+          color: "text-stat-green border-stat-green/50",
+          bg: "linear-gradient(180deg, rgba(28,52,34,0.6), rgba(20,38,24,0.4))",
+        };
+
   return (
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm"
       role="presentation"
       onMouseDown={safeClose}
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)",
+      }}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="update-modal-title"
         onMouseDown={(e) => e.stopPropagation()}
-        className="flex max-h-[88vh] w-160 max-w-[92vw] flex-col rounded-[5px] border border-accent-deep bg-panel shadow-[0_24px_64px_rgba(0,0,0,0.7)]"
+        className="relative flex max-h-[88vh] w-160 max-w-[92vw] flex-col overflow-hidden rounded-[6px] border border-border"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))",
+          boxShadow:
+            "inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)",
+        }}
       >
-        <header className="flex items-center gap-3 border-b border-border px-5 py-4">
-          <div
-            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-base ${
-              isChangelog
-                ? "border-accent-deep/40 bg-accent-deep/10 text-accent-hot"
-                : "border-stat-green/40 bg-stat-green/10 text-stat-green"
-            }`}
-          >
-            {isChangelog ? "★" : "↑"}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div
-              id="update-modal-title"
-              className="brand-display text-[15px] text-text flex items-center gap-2"
-            >
-              <span>
-                {isChangelog
-                  ? `HSPlanner v${info.current}`
-                  : "Update Available"}
-              </span>
+        <CornerMarks />
+
+        <header
+          className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(201,165,90,0.05), transparent)",
+          }}
+        >
+          <div className="min-w-0">
+            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+              <span
+                aria-hidden
+                className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
+                style={{ boxShadow: "0 0 8px rgba(224,184,100,0.6)" }}
+              />
+              {isChangelog ? "Changelog" : "Update"}
               {isChangelog && (
                 <span
                   title={
@@ -150,17 +185,23 @@ export default function UpdateModal({
                       ? "Development build"
                       : "Stable build"
                   }
-                  className={`rounded-[3px] border px-1.5 py-px font-mono text-[9px] tracking-[0.14em] ${
-                    BUILD_CHANNEL === "dev"
-                      ? "border-accent-deep/40 bg-accent-deep/10 text-accent-hot"
-                      : "border-stat-green/40 bg-stat-green/10 text-stat-green"
-                  }`}
+                  className={`ml-1 rounded-[3px] border px-1.5 py-px font-mono text-[9px] uppercase tracking-[0.18em] ${channelTone.color}`}
+                  style={{ background: channelTone.bg }}
                 >
-                  {BUILD_CHANNEL === "dev" ? "DEV" : "STABLE"}
+                  {channelLabel}
                 </span>
               )}
             </div>
-            <div className="text-[10px] uppercase tracking-[0.14em] text-muted">
+            <h2
+              id="update-modal-title"
+              className="m-0 truncate text-[18px] font-semibold tracking-[0.02em] text-accent-hot"
+              style={{ textShadow: "0 0 16px rgba(224,184,100,0.15)" }}
+            >
+              {isChangelog
+                ? `HSPlanner v${info.current}`
+                : "Update Available"}
+            </h2>
+            <div className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
               {isChangelog
                 ? "What's new in this version"
                 : "A newer version of HSPlanner is ready"}
@@ -171,47 +212,56 @@ export default function UpdateModal({
             onClick={safeClose}
             disabled={isBusy}
             aria-label="Close"
-            className="h-8 w-8 shrink-0 rounded-[3px] text-muted transition-colors hover:bg-panel-2 hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
+            className="shrink-0 rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-40"
           >
-            ×
+            Close
           </button>
         </header>
 
         {!isChangelog && (
-          <section className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-border px-5 py-4">
-            <div>
-              <div className="text-[10px] uppercase tracking-[0.14em] text-faint">
-                Installed
-              </div>
-              <div className="font-mono text-[20px] text-text">
-                v{info.current}
-              </div>
-            </div>
-            <div className="text-2xl text-accent-deep">→</div>
-            <div className="text-right">
-              <div className="text-[10px] uppercase tracking-[0.14em] text-faint">
-                Available
-              </div>
-              <div className="font-mono text-[20px] text-accent-hot">
-                v{info.latest}
-              </div>
-            </div>
+          <section
+            className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-border px-5 py-4"
+            style={{ background: "rgba(0,0,0,0.2)" }}
+          >
+            <VersionCell label="Installed" version={info.current} tone="muted" />
+            <span
+              aria-hidden
+              className="font-mono text-[18px] tracking-[0.18em] text-accent-deep"
+            >
+              ▸
+            </span>
+            <VersionCell
+              label="Available"
+              version={info.latest}
+              tone="hot"
+              align="right"
+            />
           </section>
         )}
 
         <section className="flex-1 overflow-y-auto px-5 py-4">
-          <div className="text-[10px] uppercase tracking-[0.14em] text-muted mb-3">
-            Changelog
+          <div className="mb-3 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5">
+            <span
+              aria-hidden
+              className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+            />
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+              Changelog
+            </span>
             {releaseDateText && (
               <>
-                <span className="mx-1.5 text-faint">·</span>
-                {releaseDateText}
+                <span aria-hidden className="text-faint">
+                  ·
+                </span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                  {releaseDateText}
+                </span>
               </>
             )}
           </div>
 
           {sections.length === 0 ? (
-            <p className="text-[12px] italic text-muted">
+            <p className="font-mono text-[12px] tracking-[0.04em] text-muted italic">
               {info.body
                 ? "No structured changelog detected."
                 : "No release notes available."}
@@ -226,52 +276,51 @@ export default function UpdateModal({
         </section>
 
         {!isChangelog && (
-          <section className="flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-border bg-panel-2/40 px-5 py-2.5 text-[11px] text-muted">
+          <section
+            className="flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-border px-5 py-2.5 text-[11px] text-muted"
+            style={{ background: "rgba(0,0,0,0.25)" }}
+          >
             {info.assetSize !== undefined && (
-              <span>
-                <span className="text-faint">Size</span>{" "}
-                <span className="font-mono text-text">
-                  {formatBytes(info.assetSize)}
-                </span>
-              </span>
+              <MetaCell label="Size" value={formatBytes(info.assetSize)} />
             )}
             {info.assetSha && (
-              <span>
-                <span className="text-faint">SHA-256</span>{" "}
-                <span className="font-mono text-text" title={info.assetSha}>
-                  {shortSha(info.assetSha)}
-                </span>
-              </span>
+              <MetaCell
+                label="SHA-256"
+                value={shortSha(info.assetSha)}
+                title={info.assetSha}
+              />
             )}
-            <span className="ml-auto">
-              <span className="text-faint">Channel</span>{" "}
-              <span className="text-text">stable</span>
+            <span className="ml-auto inline-flex items-center gap-1.5">
+              <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-faint">
+                Channel
+              </span>
+              <span className="font-mono text-[11px] text-text">stable</span>
             </span>
           </section>
         )}
 
-        {!isChangelog && progress && (
-          <ProgressBlock progress={progress} />
-        )}
+        {!isChangelog && progress && <ProgressBlock progress={progress} />}
 
-        <footer className="flex flex-wrap items-center gap-3 border-t border-border px-5 py-3.5">
+        <footer
+          className="flex flex-wrap items-center gap-3 border-t border-border px-5 py-3"
+          style={{ background: "rgba(0,0,0,0.3)" }}
+        >
           {isChangelog ? (
             <button
               type="button"
               onClick={safeClose}
-              className="ml-auto rounded-[3px] border border-border bg-panel-2 px-3.5 py-1.5 text-[12px] text-text transition-colors hover:border-border-2"
+              className={`ml-auto ${FOOTER_BTN_CLASS}`}
             >
               Close
             </button>
           ) : (
             <>
-              <label className="flex items-center gap-2 text-[12px] text-muted cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
                 <input
                   type="checkbox"
                   checked={autoInstall}
                   onChange={(e) => onAutoInstallChange(e.target.checked)}
                   disabled={isBusy}
-                  className="accent-accent"
                 />
                 Auto-install on quit
               </label>
@@ -280,7 +329,7 @@ export default function UpdateModal({
                   type="button"
                   onClick={onRemindLater}
                   disabled={isBusy}
-                  className="rounded-[3px] border border-border bg-panel-2 px-3 py-1.5 text-[12px] text-text transition-colors hover:border-border-2 disabled:cursor-not-allowed disabled:opacity-40"
+                  className={FOOTER_BTN_CLASS}
                 >
                   Remind Me Later
                 </button>
@@ -288,7 +337,7 @@ export default function UpdateModal({
                   type="button"
                   onClick={onSkip}
                   disabled={isBusy}
-                  className="rounded-[3px] border border-border bg-panel-2 px-3 py-1.5 text-[12px] text-text transition-colors hover:border-border-2 disabled:cursor-not-allowed disabled:opacity-40"
+                  className={FOOTER_BTN_CLASS}
                 >
                   Skip This Version
                 </button>
@@ -296,7 +345,11 @@ export default function UpdateModal({
                   type="button"
                   onClick={onDownload}
                   disabled={isBusy}
-                  className="btn-primary-gold rounded-[3px] px-3.5 py-1.5 text-[12px] font-medium disabled:cursor-not-allowed disabled:opacity-60"
+                  className={FOOTER_BTN_PRIMARY_CLASS}
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #3a2f1a, #2a2418)",
+                  }}
                 >
                   {progressLabel(progress)}
                 </button>
@@ -309,21 +362,77 @@ export default function UpdateModal({
   );
 }
 
+function VersionCell({
+  label,
+  version,
+  tone,
+  align = "left",
+}: {
+  label: string;
+  version: string;
+  tone: "muted" | "hot";
+  align?: "left" | "right";
+}) {
+  // Renders one side of the "Installed → Available" version compare in the update modal: a small mono label above a large version number, tinted gold-hot for the new version and neutral for the installed one.
+  return (
+    <div className={align === "right" ? "text-right" : "text-left"}>
+      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+        {label}
+      </div>
+      <div
+        className={`font-mono text-[20px] tabular-nums ${tone === "hot" ? "text-accent-hot" : "text-text"}`}
+        style={
+          tone === "hot"
+            ? { textShadow: "0 0 12px rgba(224,184,100,0.25)" }
+            : undefined
+        }
+      >
+        v{version}
+      </div>
+    </div>
+  );
+}
+
+function MetaCell({
+  label,
+  value,
+  title,
+}: {
+  label: string;
+  value: string;
+  title?: string;
+}) {
+  // Renders one label/value pair inside the asset-metadata strip. Used by the update modal for size and short SHA.
+  return (
+    <span className="inline-flex items-center gap-1.5" title={title}>
+      <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-faint">
+        {label}
+      </span>
+      <span className="font-mono text-[11px] text-text">{value}</span>
+    </span>
+  );
+}
+
 function ChangelogBlock({ section }: { section: ChangelogSection }) {
   // Renders one parsed changelog section as a tag-coloured pill plus a bullet list with minimal inline markdown rendering. Used by UpdateModal to display each `## Heading` group inside a release body.
   const label = TAG_LABEL[section.tag];
   const cls = TAG_CLASS[section.tag];
+  const bg = TAG_BG[section.tag];
   return (
     <div>
       <div
-        className={`inline-block rounded-[3px] border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] mb-2 ${cls}`}
+        className={`mb-2 inline-block rounded-[3px] border px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] ${cls}`}
+        style={{ background: bg }}
       >
         {label}
       </div>
       <ul className="space-y-1.5 text-[13px] text-text">
         {section.items.map((it, i) => (
           <li key={i} className="flex gap-2.5 leading-relaxed">
-            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent-deep" />
+            <span
+              aria-hidden
+              className="mt-2 inline-block h-1 w-1 shrink-0 rotate-45 bg-accent-deep"
+            />
             <span dangerouslySetInnerHTML={{ __html: renderInline(it) }} />
           </li>
         ))}
@@ -398,26 +507,49 @@ function ProgressBlock({ progress }: { progress: InstallProgress }) {
     progress.bytesDownloaded !== undefined && progress.bytesTotal
       ? `${formatBytes(progress.bytesDownloaded)} / ${formatBytes(progress.bytesTotal)}`
       : null;
+  const isError = progress.phase === "error";
   return (
-    <section className="border-t border-border bg-panel-2/40 px-5 py-3 text-[11px]">
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="uppercase tracking-[0.14em] text-muted">
-          {progress.phase === "error" ? "Error" : phaseLabel(progress.phase)}
+    <section
+      className="border-t border-border px-5 py-3 text-[11px]"
+      style={{ background: "rgba(0,0,0,0.3)" }}
+    >
+      <div className="mb-1.5 flex items-center justify-between">
+        <span
+          className={`inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] ${isError ? "text-stat-red" : "text-accent-hot/80"}`}
+        >
+          <span
+            aria-hidden
+            className={`inline-block h-1 w-1 rotate-45 ${isError ? "bg-stat-red" : "bg-accent-hot animate-pulse"}`}
+            style={
+              isError
+                ? { boxShadow: "0 0 6px rgba(217,107,90,0.6)" }
+                : { boxShadow: "0 0 6px rgba(224,184,100,0.6)" }
+            }
+          />
+          {isError ? "Error" : phaseLabel(progress.phase)}
         </span>
         {bytes && (
-          <span className="font-mono text-faint">{bytes}</span>
+          <span className="font-mono text-[11px] tabular-nums text-faint">
+            {bytes}
+          </span>
         )}
       </div>
-      {progress.phase === "error" ? (
-        <p className="font-mono text-stat-red text-[11px]">
+      {isError ? (
+        <p className="font-mono text-[11px] text-stat-red">
           {progress.error ?? "Install failed"}
         </p>
       ) : (
-        <div className="h-1.5 w-full rounded-full bg-panel border border-border overflow-hidden">
+        <div
+          className="h-1.5 w-full overflow-hidden rounded-full border border-border"
+          style={{ background: "var(--color-panel)" }}
+        >
           <div
-            className="h-full bg-accent-hot transition-all"
+            className="h-full transition-all"
             style={{
               width: pct !== null ? `${pct}%` : "30%",
+              background:
+                "linear-gradient(90deg, var(--color-accent-deep), var(--color-accent-hot))",
+              boxShadow: "0 0 8px rgba(224,184,100,0.45)",
               animation:
                 pct === null
                   ? "pulse 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite"
@@ -444,4 +576,56 @@ function phaseLabel(phase: InstallProgress["phase"]): string {
     default:
       return "";
   }
+}
+
+function CornerMarks() {
+  // Renders the four small accent-deep L-marks at the dialog's corners, matching PickerModal's chrome. Used by UpdateModal so its frame is consistent with the rest of the panel system.
+  const base: React.CSSProperties = {
+    position: "absolute",
+    width: 10,
+    height: 10,
+    border: "1px solid var(--color-accent-deep)",
+    opacity: 0.55,
+    pointerEvents: "none",
+  };
+  return (
+    <>
+      <span
+        style={{
+          ...base,
+          top: -1,
+          left: -1,
+          borderRight: "none",
+          borderBottom: "none",
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          top: -1,
+          right: -1,
+          borderLeft: "none",
+          borderBottom: "none",
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          left: -1,
+          borderRight: "none",
+          borderTop: "none",
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          right: -1,
+          borderLeft: "none",
+          borderTop: "none",
+        }}
+      />
+    </>
+  );
 }
