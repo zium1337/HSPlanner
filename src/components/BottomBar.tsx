@@ -78,29 +78,28 @@ export default function BottomBar() {
       if (cancelled) return
       const win = getCurrentWindow()
       unlisten = await win.onCloseRequested(async (event) => {
-        if (quitting) {
-          const { exit } = await import('@tauri-apps/plugin-process')
-          await exit(0)
-          return
-        }
+        if (quitting) return
+        quitting = true
+        event.preventDefault()
+
         const auto = readStorage(AUTO_INSTALL_KEY) === '1'
         const cur = checkRef.current
-        if (!auto || cur.kind !== 'available') return
-        event.preventDefault()
-        quitting = true
-        try {
-          await Promise.race([
-            installUpdateOnQuit(),
-            new Promise((_, reject) =>
-              window.setTimeout(
-                () => reject(new Error('install-on-quit timeout')),
-                QUIT_INSTALL_TIMEOUT_MS,
+        if (auto && cur.kind === 'available') {
+          try {
+            await Promise.race([
+              installUpdateOnQuit(),
+              new Promise((_, reject) =>
+                window.setTimeout(
+                  () => reject(new Error('install-on-quit timeout')),
+                  QUIT_INSTALL_TIMEOUT_MS,
+                ),
               ),
-            ),
-          ])
-        } catch {
-          void 0
+            ])
+          } catch {
+            void 0
+          }
         }
+
         const { exit } = await import('@tauri-apps/plugin-process')
         await exit(0)
       })
