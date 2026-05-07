@@ -284,9 +284,7 @@ export default function LeftStatsPanel() {
     for (const procSkill of procSkills) {
       if (!procToggles[procSkill.id] || !procSkill.proc) continue;
       const targetName = normalizeSkillName(procSkill.proc.target);
-      const target = allClassSkills.find(
-        (s) => normalizeSkillName(s.name) === targetName,
-      );
+      const target = skillsByNormalizedName[targetName];
       if (!target) continue;
       const targetRank = skillRanks[target.id] ?? 0;
       if (targetRank === 0) continue;
@@ -311,7 +309,6 @@ export default function LeftStatsPanel() {
   }, [
     procSkills,
     procToggles,
-    allClassSkills,
     skillRanks,
     attributes,
     stats,
@@ -406,9 +403,7 @@ export default function LeftStatsPanel() {
           </div>
           {procSkills.map((p) => {
             const targetName = normalizeSkillName(p.proc!.target);
-            const target = allClassSkills.find(
-              (s) => normalizeSkillName(s.name) === targetName,
-            );
+            const target = skillsByNormalizedName[targetName];
             const targetRank = target ? (skillRanks[target.id] ?? 0) : 0;
             const ready = !!target && targetRank > 0;
             return (

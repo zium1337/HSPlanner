@@ -1322,7 +1322,6 @@ function computeBuildSummary(
   slot: SlotKey,
   deps: BuildSummaryDeps,
 ): BuildSummary {
-  // Aggregates a single inventory + build state into a flat snapshot used by the compare column. Re-runs the whole stats pipeline (computeBuildStats → active-skill damage → effective cast rate → DPS) so the same inputs produce the exact numbers the LeftStatsPanel shows. Called twice per render of the compare column — once for the baseline (inventory frozen at modal open) and once for the live state — and the diff between them powers the verdict badge plus the Item Affixes / Build Stats sections.
   const computed = computeBuildStats(
     deps.classId,
     deps.level,
@@ -1387,7 +1386,6 @@ function computeBuildSummary(
   const avgHitDpsMax =
     damage && effCastMax !== undefined ? damage.avgMax * effCastMax : undefined
 
-  // Proc DPS — sum of every active proc's expected DPS contribution. Mirrors LeftStatsPanel: filter to skills that have a `proc` block AND are toggled on AND have rank > 0, look up the proc target by normalised name, compute its damage breakdown, and weight by proc chance × (killsPerSec for on-kill procs, 1 otherwise).
   let procDpsMin = 0
   let procDpsMax = 0
   for (const procSkill of allClassSkills) {
@@ -1396,9 +1394,7 @@ function computeBuildSummary(
     const procRank = deps.skillRanks[procSkill.id] ?? 0
     if (procRank === 0) continue
     const targetName = normalizeSkillName(procSkill.proc.target)
-    const target = allClassSkills.find(
-      (s) => normalizeSkillName(s.name) === targetName,
-    )
+    const target = skillsByNormalizedName[targetName]
     if (!target) continue
     const targetRank = deps.skillRanks[target.id] ?? 0
     if (targetRank === 0) continue
@@ -1459,21 +1455,21 @@ type DiffKind = 'up' | 'down' | 'same' | 'new' | 'lost'
 interface StatDiff {
   key: string
   label: string
-  before: number
-  after: number
+  beforeMin: number
+  beforeMax: number
+  afterMin: number
+  afterMax: number
   delta: number
   kind: DiffKind
   unit?: 'pct' | 'flat'
 }
 
-function avgRanged(v: RangedValue | undefined): number {
-  // Reduces a `RangedValue` (number or [min,max]) to a single average so the compare column can show one number per row instead of a range. Used by every diff helper that pulls values out of `ComputedStats.stats`.
-  if (v === undefined) return 0
-  return (rangedMin(v) + rangedMax(v)) / 2
+function rangedBounds(v: RangedValue | undefined): { min: number; max: number } {
+  if (v === undefined) return { min: 0, max: 0 }
+  return { min: rangedMin(v), max: rangedMax(v) }
 }
 
 function classifyDiff(before: number, after: number): DiffKind {
-  // Picks the visual "lane" for a stat diff: brand-new (was 0, now non-zero), lost (was non-zero, now 0), up/down (significant change), or same (delta below epsilon). Used by the diff renderers to choose colour and word ("new", "lost", "+12", etc.) without each call site re-implementing the logic.
   const eps = 0.001
   const beforeZero = Math.abs(before) < eps
   const afterZero = Math.abs(after) < eps
@@ -1509,19 +1505,22 @@ function pickStatDiffsByKeys(
   after: BuildSummary,
   keys: ReadonlyArray<{ key: string; label: string; unit?: 'pct' | 'flat' }>,
 ): StatDiff[] {
-  // Walks the supplied (key, label, unit) table and emits one `StatDiff` per key that actually changed between the two summaries. Keys with no change are dropped so the compare body stays compact. Used to drive both the "Item Affixes" and "Build Stats" sections; just hand it the right key table.
   const out: StatDiff[] = []
   for (const { key, label, unit } of keys) {
-    const beforeVal = avgRanged(before.stats[key])
-    const afterVal = avgRanged(after.stats[key])
-    const kind = classifyDiff(beforeVal, afterVal)
+    const b = rangedBounds(before.stats[key])
+    const a = rangedBounds(after.stats[key])
+    const beforeAvg = (b.min + b.max) / 2
+    const afterAvg = (a.min + a.max) / 2
+    const kind = classifyDiff(beforeAvg, afterAvg)
     if (kind === 'same') continue
     out.push({
       key,
       label,
-      before: beforeVal,
-      after: afterVal,
-      delta: afterVal - beforeVal,
+      beforeMin: b.min,
+      beforeMax: b.max,
+      afterMin: a.min,
+      afterMax: a.max,
+      delta: afterAvg - beforeAvg,
       kind,
       unit,
     })
@@ -1530,19 +1529,22 @@ function pickStatDiffsByKeys(
 }
 
 function attrDiffs(before: BuildSummary, after: BuildSummary): StatDiff[] {
-  // Diffs primary attributes (str/dex/vit/energy/etc.) between baseline and live by walking gameConfig — these live on `BuildSummary.attributes`, not `.stats`, so they need their own helper. Empty on builds where attributes haven't moved.
   const out: StatDiff[] = []
   for (const attr of gameConfig.attributes) {
-    const beforeVal = avgRanged(before.attributes[attr.key])
-    const afterVal = avgRanged(after.attributes[attr.key])
-    const kind = classifyDiff(beforeVal, afterVal)
+    const b = rangedBounds(before.attributes[attr.key])
+    const a = rangedBounds(after.attributes[attr.key])
+    const beforeAvg = (b.min + b.max) / 2
+    const afterAvg = (a.min + a.max) / 2
+    const kind = classifyDiff(beforeAvg, afterAvg)
     if (kind === 'same') continue
     out.push({
       key: attr.key,
       label: attr.name,
-      before: beforeVal,
-      after: afterVal,
-      delta: afterVal - beforeVal,
+      beforeMin: b.min,
+      beforeMax: b.max,
+      afterMin: a.min,
+      afterMax: a.max,
+      delta: afterAvg - beforeAvg,
       kind,
     })
   }
@@ -1550,29 +1552,27 @@ function attrDiffs(before: BuildSummary, after: BuildSummary): StatDiff[] {
 }
 
 function socketDiff(before: BuildSummary, after: BuildSummary): StatDiff | null {
-  // Surfaces socket-count change as its own diff row. Item swaps that change socket count are common (e.g. swapping a 2-socket helm for a 3-socket helm) and the user wants to see it called out separately from base stats.
   const kind = classifyDiff(before.itemSockets, after.itemSockets)
   if (kind === 'same') return null
   return {
     key: 'sockets',
     label: 'Sockets',
-    before: before.itemSockets,
-    after: after.itemSockets,
+    beforeMin: before.itemSockets,
+    beforeMax: before.itemSockets,
+    afterMin: after.itemSockets,
+    afterMax: after.itemSockets,
     delta: after.itemSockets - before.itemSockets,
     kind,
   }
 }
 
 function hitDpsDiff(before: BuildSummary, after: BuildSummary): StatDiff | null {
-  // Hit-DPS diff for the active skill — `damage.finalMin/Max * effCast` averaged. Represents the per-cast damage spread (non-crit min ↔ crit max) sustained over time at the effective cast rate, but excludes proc damage. Returns null when neither summary has the metric (no main skill or rank=0).
-  const beforeAvg =
-    before.hitDpsMin !== undefined && before.hitDpsMax !== undefined
-      ? (before.hitDpsMin + before.hitDpsMax) / 2
-      : 0
-  const afterAvg =
-    after.hitDpsMin !== undefined && after.hitDpsMax !== undefined
-      ? (after.hitDpsMin + after.hitDpsMax) / 2
-      : 0
+  const beforeMin = before.hitDpsMin ?? 0
+  const beforeMax = before.hitDpsMax ?? 0
+  const afterMin = after.hitDpsMin ?? 0
+  const afterMax = after.hitDpsMax ?? 0
+  const beforeAvg = (beforeMin + beforeMax) / 2
+  const afterAvg = (afterMin + afterMax) / 2
   const kind = classifyDiff(beforeAvg, afterAvg)
   if (
     kind === 'same' &&
@@ -1584,8 +1584,10 @@ function hitDpsDiff(before: BuildSummary, after: BuildSummary): StatDiff | null 
   return {
     key: 'hit_dps',
     label: 'Hit DPS',
-    before: beforeAvg,
-    after: afterAvg,
+    beforeMin,
+    beforeMax,
+    afterMin,
+    afterMax,
     delta: afterAvg - beforeAvg,
     kind,
   }
@@ -1595,15 +1597,12 @@ function combinedDpsDiff(
   before: BuildSummary,
   after: BuildSummary,
 ): StatDiff | null {
-  // Combined-DPS diff — average hit DPS (with crit chance averaged in) plus the summed expected proc DPS. This is the closest single-number to "what the build actually does in combat" because it folds in every active proc and the realistic crit distribution. Returns null when both sides lack the metric.
-  const beforeAvg =
-    before.combinedDpsMin !== undefined && before.combinedDpsMax !== undefined
-      ? (before.combinedDpsMin + before.combinedDpsMax) / 2
-      : 0
-  const afterAvg =
-    after.combinedDpsMin !== undefined && after.combinedDpsMax !== undefined
-      ? (after.combinedDpsMin + after.combinedDpsMax) / 2
-      : 0
+  const beforeMin = before.combinedDpsMin ?? 0
+  const beforeMax = before.combinedDpsMax ?? 0
+  const afterMin = after.combinedDpsMin ?? 0
+  const afterMax = after.combinedDpsMax ?? 0
+  const beforeAvg = (beforeMin + beforeMax) / 2
+  const afterAvg = (afterMin + afterMax) / 2
   const kind = classifyDiff(beforeAvg, afterAvg)
   if (
     kind === 'same' &&
@@ -1615,23 +1614,22 @@ function combinedDpsDiff(
   return {
     key: 'combined_dps',
     label: 'Combined DPS',
-    before: beforeAvg,
-    after: afterAvg,
+    beforeMin,
+    beforeMax,
+    afterMin,
+    afterMax,
     delta: afterAvg - beforeAvg,
     kind,
   }
 }
 
 function avgHitDiff(before: BuildSummary, after: BuildSummary): StatDiff | null {
-  // Average-hit (per-cast) diff for the active skill. Same shape as `dpsDiff` but skips the cast-rate multiplier so the user can see raw hit power vs sustained DPS side-by-side.
-  const beforeAvg =
-    before.damage !== null
-      ? (before.damage.avgMin + before.damage.avgMax) / 2
-      : 0
-  const afterAvg =
-    after.damage !== null
-      ? (after.damage.avgMin + after.damage.avgMax) / 2
-      : 0
+  const beforeMin = before.damage !== null ? before.damage.avgMin : 0
+  const beforeMax = before.damage !== null ? before.damage.avgMax : 0
+  const afterMin = after.damage !== null ? after.damage.avgMin : 0
+  const afterMax = after.damage !== null ? after.damage.avgMax : 0
+  const beforeAvg = (beforeMin + beforeMax) / 2
+  const afterAvg = (afterMin + afterMax) / 2
   const kind = classifyDiff(beforeAvg, afterAvg)
   if (kind === 'same' && before.damage === null && after.damage === null) {
     return null
@@ -1639,8 +1637,10 @@ function avgHitDiff(before: BuildSummary, after: BuildSummary): StatDiff | null 
   return {
     key: 'avg_hit',
     label: 'Average Hit',
-    before: beforeAvg,
-    after: afterAvg,
+    beforeMin,
+    beforeMax,
+    afterMin,
+    afterMax,
     delta: afterAvg - beforeAvg,
     kind,
   }
@@ -1652,7 +1652,6 @@ function computeVerdict(
   before: BuildSummary,
   after: BuildSummary,
 ): Verdict {
-  // Quick gut-check verdict for the badge atop the compare panel. Prefers DPS direction when both summaries have it (>=2% swing wins), otherwise falls back to net stat-diff sign across the displayed key tables. Returns 'sidegrade' when nothing tips the scale either way.
   if (
     before.hitDpsMin !== undefined &&
     after.hitDpsMin !== undefined &&
@@ -1685,19 +1684,23 @@ function computeVerdict(
   return 'sidegrade'
 }
 
-function formatStatNum(n: number, unit?: 'pct' | 'flat'): string {
-  // Picks a compact display format for a single diff cell — percentage suffix when the stat is %-keyed, big-number compaction (12.4k) when the value crosses 1000, otherwise a tidy one-decimal rounded number. Used by every cell in `DiffRow` so the column stays narrow.
+function formatScalar(n: number, unit?: 'pct' | 'flat'): string {
   const abs = Math.abs(n)
-  const rounded = Math.abs(n - Math.round(n)) < 0.05 ? Math.round(n) : Math.round(n * 10) / 10
-  if (unit === 'pct') return `${rounded > 0 ? '' : ''}${rounded}%`
+  const rounded =
+    Math.abs(n - Math.round(n)) < 0.05 ? Math.round(n) : Math.round(n * 10) / 10
+  if (unit === 'pct') return `${rounded}%`
   if (abs >= 1000) {
-    return `${(n / 1000).toFixed(n >= 10000 ? 1 : 2)}k`
+    return `${(n / 1000).toFixed(abs >= 10000 ? 1 : 2)}k`
   }
   return `${rounded}`
 }
 
+function formatStatNum(min: number, max: number, unit?: 'pct' | 'flat'): string {
+  if (Math.abs(max - min) < 0.001) return formatScalar(min, unit)
+  return `${formatScalar(min, unit)}-${formatScalar(max, unit)}`
+}
+
 function formatDeltaNum(n: number, unit?: 'pct' | 'flat', kind?: DiffKind): string {
-  // Same number-shortener as `formatStatNum` but adds an explicit sign and special-cases the brand-new / lost lanes. Used by the rightmost "delta pill" in `DiffRow`.
   if (kind === 'new') return 'new'
   if (kind === 'lost') return 'lost'
   if (kind === 'same') return '='
@@ -1712,7 +1715,6 @@ function formatDeltaNum(n: number, unit?: 'pct' | 'flat', kind?: DiffKind): stri
 }
 
 function VerdictBadge({ verdict }: { verdict: Verdict }) {
-  // Top-right pill in the compare-column header that summarises the swap at a glance — green ▲ for upgrade, red ▼ for downgrade, grey ≈ for sidegrade. Colour and glow are derived from the verdict so the pill always matches the diff rows below.
   const config: Record<
     Verdict,
     { label: string; arrow: string; cls: string }
@@ -1736,7 +1738,7 @@ function VerdictBadge({ verdict }: { verdict: Verdict }) {
   const c = config[verdict]
   return (
     <div
-      className={`inline-flex items-center gap-2 rounded-[2px] border px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] ${c.cls}`}
+      className={`inline-flex items-center gap-2 rounded-xs border px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] ${c.cls}`}
     >
       <span className="text-[14px] leading-none">{c.arrow}</span>
       <span>{c.label}</span>
@@ -1745,15 +1747,14 @@ function VerdictBadge({ verdict }: { verdict: Verdict }) {
 }
 
 function DiffRow({ diff }: { diff: StatDiff }) {
-  // One line in the compare body: stat name, before → after, signed delta pill. Background and text colour follow `diff.kind` (up/down/same/new/lost) so the user can scan the column and spot upgrades/downgrades at a glance without reading numbers.
   const beforeText =
     diff.kind === 'new'
       ? 'none'
-      : formatStatNum(diff.before, diff.unit)
+      : formatStatNum(diff.beforeMin, diff.beforeMax, diff.unit)
   const afterText =
     diff.kind === 'lost'
       ? '—'
-      : formatStatNum(diff.after, diff.unit)
+      : formatStatNum(diff.afterMin, diff.afterMax, diff.unit)
 
   const tone =
     diff.kind === 'up' || diff.kind === 'new'
@@ -1779,17 +1780,17 @@ function DiffRow({ diff }: { diff: StatDiff }) {
       style={{ gridTemplateColumns: '1fr auto auto auto auto' }}
     >
       <span className="font-sans text-[12px] text-text/85">{diff.label}</span>
-      <span className={`min-w-[54px] text-right tabular-nums ${beforeStyle}`}>
+      <span className={`min-w-13.5 text-right tabular-nums ${beforeStyle}`}>
         {beforeText}
       </span>
       <span className="text-faint">→</span>
       <span
-        className={`min-w-[54px] text-right font-semibold tabular-nums ${afterStyle}`}
+        className={`min-w-13.5 text-right font-semibold tabular-nums ${afterStyle}`}
       >
         {afterText}
       </span>
       <span
-        className={`min-w-[62px] rounded-[2px] border px-1.5 py-0.5 text-right text-[10px] font-semibold tabular-nums ${tone}`}
+        className={`min-w-15.5 rounded-xs border px-1.5 py-0.5 text-right text-[10px] font-semibold tabular-nums ${tone}`}
       >
         {formatDeltaNum(diff.delta, diff.unit, diff.kind)}
       </span>
@@ -1806,7 +1807,6 @@ function DiffSection({
   diffs: StatDiff[]
   emptyHint?: string
 }) {
-  // Group of diff rows under a uppercase section heading with change-count badge, e.g. "Item Affixes · 3 changes". Hides itself when the diff list is empty (unless an `emptyHint` is supplied) so the panel doesn't show empty headers.
   if (diffs.length === 0 && !emptyHint) return null
   return (
     <div className="mt-4 first:mt-0">
@@ -1828,19 +1828,6 @@ function DiffSection({
   )
 }
 
-const RARITY_COMPARE_COLOR: Record<ItemRarity, string> = {
-  common: 'text-white',
-  uncommon: 'text-sky-400',
-  rare: 'text-accent-hot',
-  mythic: 'text-purple-400',
-  satanic: 'text-red-500',
-  heroic: 'text-lime-400',
-  angelic: 'text-yellow-200',
-  satanic_set: 'text-green-400',
-  unholy: 'text-pink-400',
-  relic: 'text-orange-300',
-}
-
 function CompareSummary({
   before,
   after,
@@ -1848,12 +1835,11 @@ function CompareSummary({
   before: BuildSummary
   after: BuildSummary
 }) {
-  // Two-cell band under the verdict badge: shows "Currently Equipped" vs "Selected" item names, each in their rarity colour. Empty slot states render as "Empty slot" italics so the compare panel stays usable even when the user starts from an unequipped slot.
   const beforeColor = before.itemRarity
-    ? RARITY_COMPARE_COLOR[before.itemRarity]
+    ? RARITY_TEXT[before.itemRarity]
     : 'text-faint'
   const afterColor = after.itemRarity
-    ? RARITY_COMPARE_COLOR[after.itemRarity]
+    ? RARITY_TEXT[after.itemRarity]
     : 'text-faint'
   return (
     <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-[3px] border border-border bg-border">
@@ -1877,6 +1863,50 @@ function CompareSummary({
   )
 }
 
+function isSameEquipped(a: EquippedItem, b: EquippedItem): boolean {
+  if (a.baseId !== b.baseId) return false
+  if ((a.stars ?? 0) !== (b.stars ?? 0)) return false
+  if (a.socketCount !== b.socketCount) return false
+  const aSocketed = a.socketed ?? []
+  const bSocketed = b.socketed ?? []
+  if (aSocketed.length !== bSocketed.length) return false
+  for (let i = 0; i < aSocketed.length; i++) {
+    if (aSocketed[i] !== bSocketed[i]) return false
+  }
+  const aTypes = a.socketTypes ?? []
+  const bTypes = b.socketTypes ?? []
+  if (aTypes.length !== bTypes.length) return false
+  for (let i = 0; i < aTypes.length; i++) {
+    if (aTypes[i] !== bTypes[i]) return false
+  }
+  const aAffixes = a.affixes ?? []
+  const bAffixes = b.affixes ?? []
+  if (aAffixes.length !== bAffixes.length) return false
+  for (let i = 0; i < aAffixes.length; i++) {
+    if (
+      aAffixes[i]?.affixId !== bAffixes[i]?.affixId ||
+      aAffixes[i]?.tier !== bAffixes[i]?.tier ||
+      aAffixes[i]?.roll !== bAffixes[i]?.roll
+    ) {
+      return false
+    }
+  }
+  const aMods = a.forgedMods ?? []
+  const bMods = b.forgedMods ?? []
+  if (aMods.length !== bMods.length) return false
+  for (let i = 0; i < aMods.length; i++) {
+    if (
+      aMods[i]?.affixId !== bMods[i]?.affixId ||
+      aMods[i]?.tier !== bMods[i]?.tier
+    ) {
+      return false
+    }
+  }
+  return (
+    a.augment?.id === b.augment?.id && a.augment?.level === b.augment?.level
+  )
+}
+
 function CompareItemCards({
   baselineEquipped,
   currentEquipped,
@@ -1884,7 +1914,6 @@ function CompareItemCards({
   baselineEquipped: EquippedItem | null
   currentEquipped: EquippedItem | null
 }) {
-  // Renders the two side-by-side item tooltips at the top of the compare column — frozen baseline ("Currently Equipped" — what was in the slot when the modal opened) and live state ("Selected" — whatever the user is configuring right now). Each card uses the existing `ItemCard` so the user sees the same rich tooltip body (header, stats, affixes, set bonuses, sockets, runeword, procs) they'd see anywhere else; the right-hand card additionally passes `compareWith={baselineEquipped}` so its own internal Net-Change block highlights affix-level swaps. Hidden when both sides are empty (nothing to compare). When both sides reference the exact same equipped object (no edits made yet) we collapse to one card so the user isn't shown duplicate identical info.
   const baselineBase = baselineEquipped ? getItem(baselineEquipped.baseId) : null
   const currentBase = currentEquipped ? getItem(currentEquipped.baseId) : null
   if (!baselineBase && !currentBase) return null
@@ -1892,8 +1921,7 @@ function CompareItemCards({
   const sameItem =
     baselineEquipped &&
     currentEquipped &&
-    baselineEquipped.baseId === currentEquipped.baseId &&
-    JSON.stringify(baselineEquipped) === JSON.stringify(currentEquipped)
+    isSameEquipped(baselineEquipped, currentEquipped)
 
   if (sameItem && currentBase && currentEquipped) {
     return (
@@ -1949,7 +1977,6 @@ function CompareColumn({
   slot: SlotKey
   deps: BuildSummaryDeps
 }) {
-  // The right-hand "Compare" column rendered alongside GearSlotModal. Computes a baseline summary (inventory frozen when the modal opened) and a live summary (current store state), then drives a verdict badge, the equipped-vs-selected name pair, and three diff sections — DPS+avg-hit (from the active skill), Item Affixes, and Build Stats. Hidden via the header toggle when the user wants the configure panel full-width.
   const beforeSummary = useMemo(
     () => computeBuildSummary(baselineInventory, slot, deps),
     [baselineInventory, slot, deps],
@@ -2102,7 +2129,7 @@ function GearSlotModal({
   const procToggles = useBuild((s) => s.procToggles)
   const killsPerSec = useBuild((s) => s.killsPerSec)
 
-  // Snapshot the slot's equipped item the moment the modal opens. The compare column diffs every live state change against this frozen baseline so the user can see the cumulative impact of swaps + sockets + stars + affixes + augments at a glance, without losing track of what they started with.
+  // Frozen at modal open so the compare column diffs live edits against the original equipped state.
   const [baselineEquipped] = useState<EquippedItem | null>(() =>
     equipped ? structuredClone(equipped) : null,
   )
@@ -2216,7 +2243,7 @@ function GearSlotModal({
         role="dialog"
         aria-modal="true"
         onMouseDown={(e) => e.stopPropagation()}
-        className={`relative flex h-[88vh] ${showCompareCol && !isOffhandLocked ? 'w-[1560px]' : 'w-295'} max-w-[96vw] flex-col overflow-hidden rounded-md border border-border`}
+        className={`relative flex h-[88vh] ${showCompareCol && !isOffhandLocked ? 'w-390' : 'w-295'} max-w-[96vw] flex-col overflow-hidden rounded-md border border-border`}
         style={{
           background:
             'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
@@ -2937,7 +2964,6 @@ function SocketPickerTrigger({
     return buildSocketableTooltip(src, kind, { multiplier })
   }, [socketed, multiplier])
 
-  // Renders the side panel shown alongside the socket PickerModal: the currently socketed gem/rune's full tooltip plus a Net Change block diffing against whatever row the user is hovering. Lets the user compare the candidate against what's already inserted without having to scroll back to the trigger button.
   const renderSelectedPanel = (state: PickerPanelState): ReactNode => {
     if (!triggerTooltip || !state.selectedId) return null
     let hoveredScaled: Record<string, number> | undefined
@@ -3637,7 +3663,6 @@ function RunewordPresets({
     ? activeRw.runes.map((r) => r.replace(/^rune_/, '')).join(' → ')
     : null
 
-  // Renders the side panel shown alongside the runeword PickerModal: the active runeword's tooltip plus a Net Change block diffing its granted stats against whatever runeword the user is hovering. Lets the user weigh swapping the equipped runeword without leaving the picker.
   const renderSelectedPanel = (state: PickerPanelState): ReactNode => {
     if (!state.selectedId) return null
     const sel = compatible.find((rw) => rw.id === state.selectedId)
@@ -3733,7 +3758,6 @@ function AugmentSection({ equipped }: { equipped: EquippedItem }) {
   const level = equipped.augment?.level ?? 1
   const tier = aug?.levels[Math.max(0, Math.min(aug.levels.length - 1, level - 1))]
 
-  // Renders the side panel shown alongside the augment PickerModal: the active augment's tooltip plus a Net Change block diffing the active augment at its currently-selected level against the hovered candidate at the same level (clamped to that candidate's max). Lets the user weigh swapping the augment without leaving the picker.
   const renderSelectedPanel = (state: PickerPanelState): ReactNode => {
     if (!state.selectedId) return null
     const sel = getAugment(state.selectedId)
