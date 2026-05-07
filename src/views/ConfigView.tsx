@@ -241,26 +241,6 @@ export default function ConfigView() {
                         >
                           {s.name}
                         </div>
-                        <div className="truncate font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-                          {ready
-                            ? (() => {
-                                const eff = buffEffectiveRanks.get(s.id)
-                                if (!eff) return `rank ${rank}`
-                                const [min, max] = eff
-                                if (min === rank && max === rank)
-                                  return `rank ${rank}`
-                                return min === max
-                                  ? `rank ${rank} (eff ${min})`
-                                  : `rank ${rank} (eff ${min}-${max})`
-                              })()
-                            : 'not learned'}
-                          {s.tags && s.tags.length > 0 && (
-                            <>
-                              {' · '}
-                              {s.tags.join(', ')}
-                            </>
-                          )}
-                        </div>
                       </span>
                     </span>
                     {s.effectDuration !== undefined && (
@@ -477,9 +457,6 @@ export default function ConfigView() {
                           className={`truncate text-sm font-medium ${value > 1 ? 'text-accent-hot' : 'text-text'}`}
                         >
                           {s.name}
-                        </div>
-                        <div className="truncate font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-                          {learned ? `rank ${rank}` : 'not learned'}
                         </div>
                       </span>
                     </span>
