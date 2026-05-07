@@ -198,5 +198,25 @@
     },
     "maxAffixes": 3,
     "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "charm_heroic_sobek_s_fall",
+    "name": "Sobek's Fall",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "light_radius": 8
+    },
+    "uniqueEffects": [
+      "Chance When Casting: Shade of Sobek",
+      "Random Skill Element",
+      "Summon Dmg",
+      "Poison Length Reduced"
+    ],
+    "width": 3,
+    "height": 1
   }
 ]

@@ -164,26 +164,6 @@
     "height": 2
   },
   {
-    "id": "charm_unholy_sobek_s_fall",
-    "name": "Sobek's Fall",
-    "baseType": "Charm",
-    "slot": "charm_1",
-    "rarity": "unholy",
-    "grade": "SS",
-    "requiresLevel": 100,
-    "implicit": {
-      "light_radius": 8
-    },
-    "uniqueEffects": [
-      "Chance When Casting: Shade of Sobek",
-      "Random Skill Element",
-      "Summon Dmg",
-      "Poison Length Reduced"
-    ],
-    "width": 3,
-    "height": 1
-  },
-  {
     "id": "charm_unholy_soul_collector",
     "name": "Soul Collector",
     "baseType": "Charm",
@@ -218,5 +198,23 @@
     ],
     "width": 1,
     "height": 5
+  },
+  {
+    "id": "charm_unholy_overloaded_dice",
+    "name": "Overloaded Dice",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": 2,
+      "all_attributes": 10
+    },
+    "uniqueEffects": [
+      "Grant Subskills: Random Skill"
+    ],
+    "width": 2,
+    "height": 2
   }
 ]
