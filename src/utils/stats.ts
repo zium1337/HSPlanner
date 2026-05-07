@@ -1058,6 +1058,25 @@ export function aggregateItemSkillBonuses(
   return out
 }
 
+export function effectiveRankRangeFor(
+  skill: Skill,
+  baseRank: number,
+  stats: RangedStatMap,
+  itemSkillBonuses: Record<string, [number, number]>,
+): [number, number] {
+  // Computes the effective rank range [min, max] for a skill given its base allocation, factoring in +to-all-skills, +to-element-skills, and item-granted skill rank bonuses. Used to evaluate synergy contributions against the source skill's true effective level rather than its base allocation.
+  if (baseRank <= 0) return [0, 0]
+  const all = stats.all_skills ?? 0
+  const elem = skill.damageType
+    ? (stats[`${skill.damageType}_skills`] ?? 0)
+    : 0
+  const item = itemSkillBonuses[normalizeSkillName(skill.name)] ?? [0, 0]
+  return [
+    baseRank + rangedMin(all) + rangedMin(elem) + item[0],
+    baseRank + rangedMax(all) + rangedMax(elem) + item[1],
+  ]
+}
+
 export function computeSkillDamage(
   skill: Skill,
   allocatedRank: number,
@@ -1067,6 +1086,7 @@ export function computeSkillDamage(
   itemSkillBonuses: Record<string, [number, number]>,
   enemyConditions?: Record<string, boolean>,
   enemyResistances?: Record<string, number>,
+  skillsByNormalizedName?: Record<string, Skill>,
 ): SkillDamageBreakdown | null {
   // Computes the per-hit / crit / average / final damage breakdown for a single skill, factoring in effective rank (including +to-all-skills, element-skills, and item-granted bonuses), additive and Total skill damage, synergies, flat damage, ailment-conditional bonuses, spell vs melee crit pools, and enemy resistance / ignore-resistance. Returns null when the skill has neither a damage formula nor a per-rank table or has not been allocated. Used by SkillsView and the stat panel to render damage tooltips.
   if (allocatedRank === 0) return null
@@ -1134,9 +1154,23 @@ export function computeSkillDamage(
         synergyMaxPct += rangedMax(attr) * b.value
       }
     } else if (b.per === 'skill_level') {
-      const rank = skillRanksByName[sourceKey] ?? 0
-      synergyMinPct += rank * b.value
-      synergyMaxPct += rank * b.value
+      const baseRank = skillRanksByName[sourceKey] ?? 0
+      if (baseRank > 0) {
+        const srcSkill = skillsByNormalizedName?.[sourceKey]
+        if (srcSkill) {
+          const [effMin, effMax] = effectiveRankRangeFor(
+            srcSkill,
+            baseRank,
+            stats,
+            itemSkillBonuses,
+          )
+          synergyMinPct += effMin * b.value
+          synergyMaxPct += effMax * b.value
+        } else {
+          synergyMinPct += baseRank * b.value
+          synergyMaxPct += baseRank * b.value
+        }
+      }
     }
   }
 

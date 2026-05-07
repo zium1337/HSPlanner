@@ -243,26 +243,56 @@ export default function GearView() {
   const offhandLocked = !!weaponBase?.twoHanded
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <header className="flex items-end justify-between mb-4">
-        <h2 className="text-2xl font-semibold">Gear</h2>
-        <p className="text-muted text-sm">
-          {items.length} items · {gems.length} gems · {runes.length} runes
-        </p>
+    <div className="mx-auto max-w-5xl">
+      <header className="mb-4">
+        <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
+            style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
+          />
+          Config
+        </div>
+        <div className="flex items-end justify-between gap-3">
+          <h2
+            className="m-0 text-[22px] font-semibold tracking-[0.02em] text-accent-hot"
+            style={{ textShadow: '0 0 16px rgba(224,184,100,0.18)' }}
+          >
+            Gear
+          </h2>
+          <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+            <span>
+              <span className="text-text">{items.length}</span> items
+            </span>
+            <span aria-hidden className="h-3 w-px bg-border" />
+            <span>
+              <span className="text-text">{gems.length}</span> gems
+            </span>
+            <span aria-hidden className="h-3 w-px bg-border" />
+            <span>
+              <span className="text-text">{runes.length}</span> runes
+            </span>
+          </div>
+        </div>
       </header>
 
       <div className="space-y-4">
-        <section className="bg-panel border border-border rounded-[4px] p-3">
-          <div className="flex items-baseline justify-between mb-2">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
-              Equipment
-            </h3>
-            <span className="text-[10px] text-faint">
-              {gearSlots.filter((s) => inventory[s.key]).length}/
-              {gearSlots.length} equipped
+        <GearPanel
+          title="Equipment"
+          trailing={
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+              <span className="text-accent-hot">
+                {gearSlots.filter((s) => inventory[s.key]).length}
+              </span>
+              <span className="text-faint">
+                {' '}
+                / {gearSlots.length}
+              </span>{' '}
+              equipped
             </span>
-          </div>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          }
+        >
+          <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
             {gearSlots.map((slot) => (
               <li key={slot.key}>
                 <SlotRow
@@ -275,7 +305,7 @@ export default function GearView() {
               </li>
             ))}
           </ul>
-        </section>
+        </GearPanel>
 
         <CharmSection
           charmSlots={charmSlots}
@@ -377,13 +407,13 @@ function SlotRow({
     <button
       type="button"
       onClick={onSelect}
-      className={`group w-full h-full min-h-[44px] flex items-center gap-2 rounded border px-2 py-1.5 text-left transition-colors ${rarityBorder} ${
+      className={`group flex h-full min-h-11 w-full items-center gap-2 rounded-[3px] border px-2 py-1.5 text-left transition-colors ${rarityBorder} ${
         active
-          ? 'bg-accent/10 border-accent ring-1 ring-accent'
-          : `${rarityBg} hover:border-accent/60`
+          ? 'border-accent-hot bg-accent-hot/10 ring-1 ring-accent-hot/40'
+          : `${rarityBg} hover:border-accent-deep`
       }`}
     >
-      <span className="w-16 shrink-0 text-[9px] font-semibold uppercase tracking-[0.12em] text-faint">
+      <span className="w-20 shrink-0 truncate font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-faint">
         {slot.name}
       </span>
       <span className="flex-1 min-w-0">
@@ -407,7 +437,7 @@ function SlotRow({
         )}
       </span>
       {badges.length > 0 && (
-        <span className="shrink-0 text-[9px] text-muted tabular-nums uppercase tracking-wider">
+        <span className="shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] tabular-nums text-faint">
           {badges.join(' · ')}
         </span>
       )}
@@ -419,6 +449,97 @@ function SlotRow({
     <ItemTooltip equipped={equipped} placement="right">
       {button}
     </ItemTooltip>
+  )
+}
+
+function GearPanel({
+  title,
+  trailing,
+  children,
+}: {
+  title: string
+  trailing?: React.ReactNode
+  children: React.ReactNode
+}) {
+  // Renders the panel-system frame (gradient, accent corners, sectionLabel header) shared by Equipment and Charm Inventory in GearView.
+  return (
+    <section
+      className="relative overflow-hidden rounded-md border border-border p-4"
+      style={{
+        background:
+          'linear-gradient(180deg, var(--color-panel), color-mix(in srgb, var(--color-bg) 70%, transparent))',
+        boxShadow:
+          'inset 0 1px 0 rgba(255,255,255,0.02), 0 8px 24px rgba(0,0,0,0.35)',
+      }}
+    >
+      <GearPanelCornerMarks />
+      <div className="mb-3 flex items-center justify-between gap-3 border-b border-accent-deep/20 pb-2">
+        <div className="flex items-center gap-2">
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
+            style={{ boxShadow: '0 0 6px rgba(224,184,100,0.5)' }}
+          />
+          <h3 className="m-0 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-accent-hot/70">
+            {title}
+          </h3>
+        </div>
+        {trailing}
+      </div>
+      {children}
+    </section>
+  )
+}
+
+function GearPanelCornerMarks() {
+  // Renders the four small accent-deep L-marks at the panel's corners, matching PickerModal's chrome.
+  const base: React.CSSProperties = {
+    position: 'absolute',
+    width: 8,
+    height: 8,
+    border: '1px solid var(--color-accent-deep)',
+    opacity: 0.45,
+    pointerEvents: 'none',
+  }
+  return (
+    <>
+      <span
+        style={{
+          ...base,
+          top: -1,
+          left: -1,
+          borderRight: 'none',
+          borderBottom: 'none',
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          top: -1,
+          right: -1,
+          borderLeft: 'none',
+          borderBottom: 'none',
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          left: -1,
+          borderRight: 'none',
+          borderTop: 'none',
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          right: -1,
+          borderLeft: 'none',
+          borderTop: 'none',
+        }}
+      />
+    </>
   )
 }
 
@@ -646,24 +767,25 @@ function CharmSection({
   }
 
   return (
-    <section className="bg-panel border border-border rounded-[4px] p-3">
-      <div className="flex items-baseline justify-between mb-2">
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
-          Charm Inventory
-        </h3>
-        <span className="text-[10px] text-faint">
-          {occupiedCells}/{totalUsable}
+    <GearPanel
+      title="Charm Inventory"
+      trailing={
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+          <span className="text-accent-hot">{occupiedCells}</span>
+          <span className="text-faint"> / {totalUsable}</span>
           {overflow.length > 0 && (
-            <span className="ml-2 text-red-400">
+            <span className="ml-2 text-stat-red">
               · {overflow.length} won't fit
             </span>
           )}
         </span>
-      </div>
-
+      }
+    >
       <div
-        className="grid gap-1 p-3 rounded border border-border bg-[#0c0804] w-fit mx-auto"
+        className="mx-auto grid w-fit gap-1 rounded-[3px] border border-border-2 p-3"
         style={{
+          background: 'linear-gradient(180deg, #0c0804, #070302)',
+          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.7)',
           gridTemplateColumns: `repeat(${CHARM_GRID_COLS}, 4rem)`,
           gridTemplateRows: `repeat(${CHARM_GRID_ROWS}, 4rem)`,
         }}
@@ -750,17 +872,29 @@ function CharmSection({
       </div>
 
       {overflow.length > 0 && (
-        <div className="mt-2 px-2 py-1 text-[10px] text-red-400 border border-red-500/30 bg-red-500/5 rounded">
+        <div
+          className="mt-2 rounded-[3px] border border-stat-red/40 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-red"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(60,30,28,0.4), rgba(44,22,20,0.25))',
+          }}
+        >
           {overflow.length} charm{overflow.length === 1 ? '' : 's'} could not be
           placed — remove some to free space.
         </div>
       )}
       {fitError && (
-        <div className="mt-2 px-2 py-1 text-[10px] text-red-400 border border-red-500/30 bg-red-500/5 rounded">
+        <div
+          className="mt-2 rounded-[3px] border border-stat-red/40 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-red"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(60,30,28,0.4), rgba(44,22,20,0.25))',
+          }}
+        >
           {fitError}
         </div>
       )}
-    </section>
+    </GearPanel>
   )
 }
 
@@ -786,7 +920,7 @@ function ItemCompareOverlay({
         base={prospectBase}
         state="equipped"
         arcLabel="Currently Equipped"
-        className="w-[260px] pointer-events-auto text-[12px]"
+        className="w-65 pointer-events-auto text-[12px]"
       />
     )
   }
@@ -794,7 +928,7 @@ function ItemCompareOverlay({
   if (!prospectBase && equipped && equippedBase) {
     return (
       <div className="flex items-start gap-3 pointer-events-auto">
-        <div className="w-[260px] shrink-0">
+        <div className="w-65 shrink-0">
           <ItemCard
             equipped={equipped}
             base={equippedBase}
@@ -803,7 +937,7 @@ function ItemCompareOverlay({
             className="text-[12px]"
           />
         </div>
-        <div className="text-[10px] uppercase tracking-[0.14em] text-faint italic max-w-[110px] leading-tight pt-6">
+        <div className="text-[10px] uppercase tracking-[0.14em] text-faint italic max-w-27.5 leading-tight pt-6">
           Hover an item to compare
         </div>
       </div>
@@ -815,7 +949,7 @@ function ItemCompareOverlay({
   return (
     <div className="flex items-start gap-3 pointer-events-auto">
       {equipped && equippedBase && (
-        <div className="w-[260px] shrink-0">
+        <div className="w-65 shrink-0">
           <ItemCard
             equipped={equipped}
             base={equippedBase}
@@ -825,7 +959,7 @@ function ItemCompareOverlay({
           />
         </div>
       )}
-      <div className="w-[260px] shrink-0">
+      <div className="w-65 shrink-0">
         <ItemCard
           base={prospectBase}
           state="selected"
@@ -923,7 +1057,7 @@ function NetChangeBlock({
               key={key}
               className="flex items-baseline justify-between gap-2"
             >
-              <span className="min-w-0 break-words leading-tight text-muted">
+              <span className="min-w-0 wrap-break-words leading-tight text-muted">
                 {statName(key)}
               </span>
               <span
@@ -1256,8 +1390,7 @@ function GearSlotModal({
         return true
       if (r.kindLabel?.toLowerCase().includes(filter)) return true
       if (r.group?.toLowerCase().includes(filter)) return true
-      if (r.searchTerms?.includes(filter)) return true
-      return false
+      return r.searchTerms?.includes(filter) ?? false
     })
   }, [rows, filter])
 
@@ -1312,7 +1445,7 @@ function GearSlotModal({
         role="dialog"
         aria-modal="true"
         onMouseDown={(e) => e.stopPropagation()}
-        className="relative flex h-[88vh] w-[1180px] max-w-[96vw] flex-col overflow-hidden rounded-[6px] border border-border"
+        className="relative flex h-[88vh] w-295 max-w-[96vw] flex-col overflow-hidden rounded-md border border-border"
         style={{
           background:
             'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
@@ -1369,7 +1502,7 @@ function GearSlotModal({
         </header>
 
         <div className="flex min-h-0 flex-1 flex-row">
-          <div className="flex w-[560px] min-w-0 shrink-0 flex-col border-r border-border">
+          <div className="flex w-140 min-w-0 shrink-0 flex-col border-r border-border">
             <div className="border-b border-border px-4 py-3">
               <div className="relative">
                 <svg
@@ -1415,7 +1548,7 @@ function GearSlotModal({
                   <div key={g.group ?? `__${gi}`}>
                     {hasGroupHeaders && g.group && (
                       <div
-                        className="sticky top-0 z-[1] flex items-center gap-2 border-b border-accent-deep/30 px-4 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70"
+                        className="sticky top-0 z-1 flex items-center gap-2 border-b border-accent-deep/30 px-4 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70"
                         style={{
                           background: 'var(--color-panel-2)',
                         }}
@@ -1603,12 +1736,12 @@ function GearItemRow({
       onClick={onSelect}
       onMouseEnter={onHover}
       className={`group relative grid w-full cursor-pointer items-center gap-3 border-b border-dashed border-border px-4 py-2 text-left transition-colors last:border-b-0 hover:bg-accent-hot/5 ${
-        selected ? 'bg-gradient-to-r from-accent-hot/10 to-transparent' : ''
+        selected ? 'bg-linear-to-r from-accent-hot/10 to-transparent' : ''
       }`}
       style={{ gridTemplateColumns: '40px 1fr auto' }}
     >
       <span
-        className={`pointer-events-none absolute left-0 top-0 bottom-0 w-[2px] bg-accent-hot transition-opacity ${
+        className={`pointer-events-none absolute left-0 top-0 bottom-0 w-0.5 bg-accent-hot transition-opacity ${
           selected ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
         }`}
         style={
@@ -1625,7 +1758,7 @@ function GearItemRow({
           />
         ) : (
           <span
-            className="block h-7 w-7 rotate-45 rounded-[2px]"
+            className="block h-7 w-7 rotate-45 rounded-xs"
             style={{
               background: `linear-gradient(135deg, ${gemTintForRarity(rarity)}, #0d0b07)`,
               border: `1px solid color-mix(in srgb, ${gemTintForRarity(rarity)} 60%, #000)`,
@@ -1637,7 +1770,7 @@ function GearItemRow({
       <span className={`truncate text-[12px] font-medium ${nameColor}`}>
         {row.name}
       </span>
-      <span className="truncate font-mono text-[9px] tracking-[0.04em] text-muted/80 max-w-[180px]">
+      <span className="truncate font-mono text-[9px] tracking-[0.04em] text-muted/80 max-w-45">
         {typeof row.meta === 'string' ? row.meta : ''}
       </span>
     </button>
@@ -1782,7 +1915,7 @@ function SectionCard({
   const t = SECTION_TONE[tone]
   return (
     <div
-      className={`relative overflow-hidden rounded-[4px] border ${t.border}`}
+      className={`relative overflow-hidden rounded-sm border ${t.border}`}
       style={{ background: t.bg }}
     >
       <header
@@ -1820,7 +1953,7 @@ function ConfigSectionHeader({
   // Sticky header that sits at the top of the GearSlotModal right column, mirroring the small-caps "GEAR SLOT · X" treatment used by the modal's main header but scoped to whatever the right pane is currently showing (item configuration / compare view).
   return (
     <div
-      className="sticky top-0 z-[1] flex items-center gap-2 border-b border-accent-deep/30 px-4 py-2"
+      className="sticky top-0 z-1 flex items-center gap-2 border-b border-accent-deep/30 px-4 py-2"
       style={{ background: 'var(--color-panel-2)' }}
     >
       <span
@@ -1863,7 +1996,7 @@ function ConfigEmptyState({
     <div className="flex flex-1 items-center justify-center p-8 text-center text-faint">
       <div className="flex flex-col items-center">
         <div
-          className={`mb-4 flex h-[58px] w-[58px] items-center justify-center rounded-full border border-dashed ${ring}`}
+          className={`mb-4 flex h-14.5 w-14.5 items-center justify-center rounded-full border border-dashed ${ring}`}
           style={{
             background: `radial-gradient(circle, ${glow}, transparent 70%)`,
           }}
@@ -2018,7 +2151,7 @@ function SocketPickerTrigger({
     <button
       type="button"
       onClick={() => setOpen(true)}
-      className="group flex w-full items-center justify-between gap-2 rounded-[2px] border border-accent-deep/25 bg-panel-2/40 px-2 py-1 text-left transition-colors hover:border-accent-hot/50"
+      className="group flex w-full items-center justify-between gap-2 rounded-xs border border-accent-deep/25 bg-panel-2/40 px-2 py-1 text-left transition-colors hover:border-accent-hot/50"
     >
       <span className="flex min-w-0 items-center gap-1.5">
         {current?.iconUrl ? (
@@ -2058,7 +2191,7 @@ function SocketPickerTrigger({
           {current ? current.name : 'Empty socket'}
         </span>
         {current?.tier !== undefined && (
-          <span className="ml-1 rounded-[2px] border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
+          <span className="ml-1 rounded-xs border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
             T{current.tier}
           </span>
         )}
@@ -2125,18 +2258,18 @@ function SocketsSection({
           <button
             onClick={() => onSocketCount(equipped.socketCount - 1)}
             disabled={equipped.socketCount === 0}
-            className="flex h-5 w-5 items-center justify-center rounded-[2px] border border-accent-deep/40 bg-bg/60 font-mono text-[12px] leading-none text-muted transition-colors hover:border-accent-hot hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-5 w-5 items-center justify-center rounded-xs border border-accent-deep/40 bg-bg/60 font-mono text-[12px] leading-none text-muted transition-colors hover:border-accent-hot hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-30"
             aria-label="Decrease sockets"
           >
             −
           </button>
-          <span className="min-w-[42px] text-center font-mono text-[11px] tabular-nums text-accent-hot">
+          <span className="min-w-10.5 text-center font-mono text-[11px] tabular-nums text-accent-hot">
             {equipped.socketCount}/{maxSockets}
           </span>
           <button
             onClick={() => onSocketCount(equipped.socketCount + 1)}
             disabled={equipped.socketCount >= maxSockets}
-            className="flex h-5 w-5 items-center justify-center rounded-[2px] border border-accent-deep/40 bg-bg/60 font-mono text-[12px] leading-none text-muted transition-colors hover:border-accent-hot hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-5 w-5 items-center justify-center rounded-xs border border-accent-deep/40 bg-bg/60 font-mono text-[12px] leading-none text-muted transition-colors hover:border-accent-hot hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-30"
             aria-label="Increase sockets"
           >
             +
@@ -2155,7 +2288,7 @@ function SocketsSection({
                 key={i}
                 className="flex items-center gap-1.5 rounded-[3px] border border-accent-deep/15 bg-bg/40 p-1.5"
               >
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[2px] border border-accent-deep/30 bg-panel-2/60 font-mono text-[10px] tabular-nums text-accent-hot/80">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-accent-deep/30 bg-panel-2/60 font-mono text-[10px] tabular-nums text-accent-hot/80">
                   {i + 1}
                 </span>
                 <SocketTypeToggle
@@ -2244,7 +2377,7 @@ function StarsSection({
           <button
             type="button"
             onClick={() => onChange(0)}
-            className="ml-2 rounded-[2px] border border-border-2 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint transition-colors hover:border-stat-red hover:text-stat-red"
+            className="ml-2 rounded-xs border border-border-2 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint transition-colors hover:border-stat-red hover:text-stat-red"
           >
             Clear
           </button>
@@ -2267,7 +2400,7 @@ function SocketTypeToggle({
 }) {
   // Renders the small N/R toggle next to a socket dropdown that lets the user mark a socket as Rainbow (+50% effect on the socketed gem/rune). Used inside SocketsSection. Styled to match the modal's accent-deep border + mono typography language.
   return (
-    <div className="flex shrink-0 overflow-hidden rounded-[2px] border border-accent-deep/30 font-mono text-[10px] font-semibold tracking-[0.06em]">
+    <div className="flex shrink-0 overflow-hidden rounded-xs border border-accent-deep/30 font-mono text-[10px] font-semibold tracking-[0.06em]">
       <button
         type="button"
         onClick={() => onChange('normal')}
@@ -2285,7 +2418,7 @@ function SocketTypeToggle({
         title="Rainbow socket: +50% effect"
         className={`px-2 py-0.5 transition-colors ${
           value === 'rainbow'
-            ? 'bg-gradient-to-r from-rose-500 via-amber-400 to-sky-400 text-bg'
+            ? 'bg-linear-to-r from-rose-500 via-amber-400 to-sky-400 text-bg'
             : 'bg-bg/40 text-faint hover:text-muted'
         }`}
       >
@@ -2391,9 +2524,7 @@ function AffixesSection({
   const [open, setOpen] = useState(false)
   const atCap =
     maxAffixes !== undefined && equipped.affixes.length >= maxAffixes
-  useEffect(() => {
-    if (atCap && open) setOpen(false)
-  }, [atCap, open])
+  const modalOpen = open && !atCap
 
   const randomGroupId = base?.randomAffixGroupId ?? null
   const isUnholy = randomGroupId === 'random_unholy'
@@ -2428,7 +2559,7 @@ function AffixesSection({
           <button
             onClick={() => setOpen(true)}
             disabled={atCap}
-            className="rounded-[2px] border border-accent-deep px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot hover:shadow-[0_0_10px_rgba(224,184,100,0.25)] disabled:cursor-not-allowed disabled:border-border-2 disabled:text-faint disabled:shadow-none"
+            className="rounded-xs border border-accent-deep px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot hover:shadow-[0_0_10px_rgba(224,184,100,0.25)] disabled:cursor-not-allowed disabled:border-border-2 disabled:text-faint disabled:shadow-none"
             style={{
               background: atCap
                 ? 'transparent'
@@ -2456,7 +2587,7 @@ function AffixesSection({
               key={idx}
               className="flex items-center gap-1.5 rounded-[3px] border border-accent-deep/15 bg-bg/40 p-1.5"
             >
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[2px] border border-accent-deep/30 bg-panel-2/60 font-mono text-[10px] tabular-nums text-accent-hot/80">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-accent-deep/30 bg-panel-2/60 font-mono text-[10px] tabular-nums text-accent-hot/80">
                 {idx + 1}
               </span>
               <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">
@@ -2464,13 +2595,13 @@ function AffixesSection({
                   {formatAffixRange(affix, equipped.stars)}
                 </span>
                 <span className="truncate text-text/85">{affix.name}</span>
-                <span className="rounded-[2px] border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
+                <span className="rounded-xs border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
                   T{affix.tier}
                 </span>
               </span>
               <button
                 onClick={() => onRemove(idx)}
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[2px] border border-border-2 font-mono text-[12px] leading-none text-faint transition-colors hover:border-stat-red hover:text-stat-red"
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-border-2 font-mono text-[12px] leading-none text-faint transition-colors hover:border-stat-red hover:text-stat-red"
                 aria-label="Remove affix"
               >
                 ×
@@ -2480,7 +2611,7 @@ function AffixesSection({
         })
       )}
 
-      {open && (
+      {modalOpen && (
         <PickerModal
           title={modalTitle}
           sectionLabel="Affix"
@@ -2513,7 +2644,10 @@ function ForgedModsSection({
 }) {
   // Editor for the (single) crystal-forge mod on a gear item, exposing a "+ Add" button that opens the satanic-crystal PickerModal and a per-mod remove control. The picker's row tooltips include a NetChangeBlock that diffs each candidate's averaged stats against whatever crystal is currently forged on the item, so users see the build delta without leaving the picker. Used inside the GearSlotModal right column for satanic-tier and above items.
   const [open, setOpen] = useState(false)
-  const mods = equipped.forgedMods ?? []
+  const mods = useMemo(
+    () => equipped.forgedMods ?? [],
+    [equipped.forgedMods],
+  )
   const sourceLabel = FORGE_KIND_LABEL[forgeKind]
 
   const previousStats = useMemo<Record<string, number>>(() => {
@@ -2555,7 +2689,7 @@ function ForgedModsSection({
         canAdd ? (
           <button
             onClick={() => setOpen(true)}
-            className="rounded-[2px] border border-red-500/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-red-300 transition-all hover:border-red-400 hover:text-red-200 hover:shadow-[0_0_10px_rgba(239,68,68,0.25)]"
+            className="rounded-xs border border-red-500/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-red-300 transition-all hover:border-red-400 hover:text-red-200 hover:shadow-[0_0_10px_rgba(239,68,68,0.25)]"
             style={{
               background: 'linear-gradient(180deg, #3a1a1a, #2a1818)',
             }}
@@ -2579,7 +2713,7 @@ function ForgedModsSection({
               key={idx}
               className="flex items-center gap-1.5 rounded-[3px] border border-accent-deep/15 bg-bg/40 p-1.5"
             >
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[2px] border border-accent-deep/30 bg-panel-2/60 font-mono text-[10px] tabular-nums text-accent-hot/80">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-accent-deep/30 bg-panel-2/60 font-mono text-[10px] tabular-nums text-accent-hot/80">
                 {idx + 1}
               </span>
               <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">
@@ -2587,13 +2721,13 @@ function ForgedModsSection({
                   {formatAffixRange(mod)}
                 </span>
                 <span className="truncate text-text/85">{mod.name}</span>
-                <span className="rounded-[2px] border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
+                <span className="rounded-xs border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
                   T{mod.tier}
                 </span>
               </span>
               <button
                 onClick={() => onRemove(idx)}
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[2px] border border-border-2 font-mono text-[12px] leading-none text-faint transition-colors hover:border-stat-red hover:text-stat-red"
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-border-2 font-mono text-[12px] leading-none text-faint transition-colors hover:border-stat-red hover:text-stat-red"
                 aria-label="Remove forged mod"
               >
                 ×
@@ -2768,7 +2902,7 @@ function AugmentSection({ equipped }: { equipped: EquippedItem }) {
         aug ? (
           <button
             onClick={() => setAugment(null)}
-            className="rounded-[2px] border border-border-2 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint transition-colors hover:border-stat-red hover:text-stat-red"
+            className="rounded-xs border border-border-2 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint transition-colors hover:border-stat-red hover:text-stat-red"
             aria-label="Remove augment"
           >
             Remove
@@ -2848,22 +2982,22 @@ function AugmentSection({ equipped }: { equipped: EquippedItem }) {
           </p>
 
           <div className="flex flex-wrap gap-1.5">
-            <span className="rounded-[2px] border border-yellow-200/25 bg-bg/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-yellow-200/80">
+            <span className="rounded-xs border border-yellow-200/25 bg-bg/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-yellow-200/80">
               {aug.triggerNote}
             </span>
             {tier.procChance !== undefined && tier.procChance !== null && (
-              <span className="rounded-[2px] border border-yellow-200/25 bg-bg/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-yellow-200/80">
+              <span className="rounded-xs border border-yellow-200/25 bg-bg/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-yellow-200/80">
                 proc {tier.procChance}%
               </span>
             )}
             {tier.procDurationSec !== undefined &&
               tier.procDurationSec !== null && (
-                <span className="rounded-[2px] border border-yellow-200/25 bg-bg/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-yellow-200/80">
+                <span className="rounded-xs border border-yellow-200/25 bg-bg/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-yellow-200/80">
                   {tier.procDurationSec}s
                 </span>
               )}
             {tier.cost !== undefined && (
-              <span className="rounded-[2px] border border-yellow-200/25 bg-bg/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-yellow-200/80">
+              <span className="rounded-xs border border-yellow-200/25 bg-bg/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-yellow-200/80">
                 cost {tier.cost} keys
               </span>
             )}
@@ -2907,7 +3041,7 @@ function AugmentSection({ equipped }: { equipped: EquippedItem }) {
           )}
 
           {aug.rangedOnly && (
-            <div className="rounded-[2px] border border-orange-300/40 bg-orange-300/5 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.14em] text-orange-300/85">
+            <div className="rounded-xs border border-orange-300/40 bg-orange-300/5 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.14em] text-orange-300/85">
               Ranged weapon required
             </div>
           )}

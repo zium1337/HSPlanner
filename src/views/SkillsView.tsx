@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { SkillIconImage } from '../components/SkillIconImage'
 import SubtreeOverlay from '../components/SubtreeOverlay'
 import { classes, getClass, skills } from '../data'
@@ -15,8 +15,13 @@ import {
   statName,
 } from '../utils/stats'
 import { aggregateSubskillStats } from '../utils/subtree'
-import type { AttributeKey, DamageType, RangedValue, Skill } from '../types'
-import type { SubskillNode } from '../types/skill'
+import type {
+  AttributeKey,
+  DamageType,
+  RangedValue,
+  Skill,
+  SubskillNode,
+} from '../types'
 
 const DAMAGE_BORDER: Record<DamageType, string> = {
   physical: 'border-white/60',
@@ -40,8 +45,8 @@ const DAMAGE_GLOW: Record<DamageType, string> = {
   magic: 'shadow-[0_0_12px_rgba(244,114,182,0.45)]',
 }
 
-const CELL = 72
-const GAP = 16
+const CELL = 84
+const GAP = 18
 
 export default function SkillsView() {
   // Top-level Skills view: lays out the active class's skill tree as a clickable grid, lets the user spend skill points (with prerequisite cascades), and renders a per-skill details side panel showing the current/next-rank stats, damage breakdown, mana cost, subtree bonuses, and the "Open subtree" entry point. Used as one of the main app tabs.
@@ -147,30 +152,59 @@ export default function SkillsView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex items-center justify-between border-b border-border bg-panel px-4 py-2">
-        <div className="flex items-center gap-4 text-sm">
-          <span className="text-text font-semibold">{cls?.name}</span>
-          <span className="text-muted">·</span>
-          <span className="text-muted">
-            Points used <span className="text-text">{spent}</span>
-            <span className="text-muted">/{totalPoints}</span>
+      <header
+        className="flex items-center justify-between gap-3 border-b border-border px-5 py-3"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(201,165,90,0.05), transparent)',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
+            style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
+          />
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+            Skills
           </span>
-          <span className={`${remaining > 0 ? 'text-accent' : 'text-muted'}`}>
-            {remaining} available
+          <span
+            className="text-[15px] font-semibold tracking-[0.02em] text-accent-hot"
+            style={{ textShadow: '0 0 14px rgba(224,184,100,0.18)' }}
+          >
+            {cls?.name}
           </span>
         </div>
-        <button
-          onClick={resetSkillRanks}
-          disabled={spent === 0}
-          className="rounded border border-border bg-panel-2 px-3 py-1 text-xs text-muted hover:text-text disabled:opacity-40"
-        >
-          Reset
-        </button>
+        <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em]">
+          <span className="text-faint">Points</span>
+          <span
+            className={`tabular-nums ${remaining > 0 ? 'text-accent-hot' : 'text-muted'}`}
+            style={
+              remaining > 0
+                ? { textShadow: '0 0 8px rgba(224,184,100,0.25)' }
+                : undefined
+            }
+          >
+            {spent}
+          </span>
+          <span className="text-faint">/ {totalPoints}</span>
+          <span aria-hidden className="h-3 w-px bg-border" />
+          <span className={remaining > 0 ? 'text-accent-hot' : 'text-faint'}>
+            {remaining} available
+          </span>
+          <button
+            onClick={resetSkillRanks}
+            disabled={spent === 0}
+            className="rounded-[3px] border border-border-2 bg-transparent px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-stat-red hover:text-stat-red disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Reset
+          </button>
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-auto p-6">
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap content-start justify-center gap-6">
             {trees.map((tree) => (
               <SkillTree
                 key={tree.name}
@@ -214,6 +248,8 @@ export default function SkillsView() {
           attributes={attributes}
           subskillRanks={subskillRanks}
           enemyConditions={enemyConditions}
+          stats={stats}
+          itemSkillBonuses={itemSkillBonuses}
         />
       </div>
       {openSubtreeSkill && (
@@ -263,12 +299,26 @@ function SkillTree({
 
   return (
     <section
-      className="rounded-lg border border-border bg-panel/40 p-4"
-      style={{ width: width + 32 }}
+      className="relative overflow-hidden rounded-md border border-border p-4"
+      style={{
+        width: width + 32,
+        background:
+          'linear-gradient(180deg, var(--color-panel), color-mix(in srgb, var(--color-bg) 70%, transparent))',
+        boxShadow:
+          'inset 0 1px 0 rgba(255,255,255,0.02), 0 8px 24px rgba(0,0,0,0.35)',
+      }}
     >
-      <h3 className="mb-3 border-b border-border pb-2 text-center text-lg font-semibold tracking-wide text-text">
-        {name}
-      </h3>
+      <SkillTreeCornerMarks />
+      <div className="mb-3 flex items-center justify-center gap-2 border-b border-accent-deep/20 pb-2">
+        <span
+          aria-hidden
+          className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
+          style={{ boxShadow: '0 0 6px rgba(224,184,100,0.5)' }}
+        />
+        <h3 className="m-0 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-hot/80">
+          {name}
+        </h3>
+      </div>
       <div className="relative" style={{ width, height }}>
         <svg
           className="pointer-events-none absolute inset-0"
@@ -374,34 +424,42 @@ function SkillIcon({
         e.preventDefault()
         if (rank > 0) onDec()
       }}
-      className={`group relative flex items-center justify-center rounded-md border-2 transition-all ${
+      className={`group relative flex items-center justify-center rounded-[3px] border-2 transition-all ${
         locked
-          ? 'border-red-900/50 bg-panel-2/30'
+          ? 'border-stat-red/40 bg-panel-2/30'
           : allocated
             ? `${border} bg-panel-2 ${glow}`
             : hovered
-              ? 'border-accent/60 bg-panel-2'
-              : 'border-border bg-panel-2/50'
+              ? 'border-accent-deep bg-panel-2'
+              : 'border-border-2 bg-panel-2/50'
       }`}
       title={locked ? `Requires ${skill.requiresSkill}` : undefined}
     >
       <button
         onClick={canInc ? onInc : undefined}
         disabled={!canInc}
-        className={`flex items-center justify-center text-3xl transition-transform ${
-          canInc ? 'hover:scale-110 cursor-pointer' : ''
-        } ${locked ? 'grayscale opacity-30' : allocated ? '' : 'opacity-50'}`}
+        className={`flex items-center justify-center transition-transform ${
+          canInc ? 'cursor-pointer hover:scale-110' : ''
+        } ${locked ? 'opacity-30 grayscale' : allocated ? '' : 'opacity-50'}`}
         style={{ width: CELL, height: CELL }}
       >
         <SkillIconImage icon={skill.icon} size={CELL} />
       </button>
 
       <div
-        className={`absolute bottom-0.5 left-0.5 flex h-5 min-w-[18px] items-center justify-center rounded border px-1 text-[11px] font-semibold tabular-nums ${
+        className={`absolute bottom-0.5 left-0.5 flex h-5 min-w-5 items-center justify-center rounded-xs border px-1 font-mono text-[11px] font-semibold tabular-nums ${
           allocated
-            ? 'border-accent bg-black/70 text-accent'
-            : 'border-border bg-black/60 text-muted'
+            ? 'border-accent-deep text-accent-hot'
+            : 'border-border text-faint'
         }`}
+        style={{
+          background: allocated
+            ? 'linear-gradient(180deg, rgba(58,46,24,0.85), rgba(20,16,10,0.85))'
+            : 'rgba(0,0,0,0.7)',
+          boxShadow: allocated
+            ? '0 0 6px rgba(224,184,100,0.25)'
+            : undefined,
+        }}
       >
         {rank}
       </div>
@@ -409,7 +467,11 @@ function SkillIcon({
       {canInc && (
         <button
           onClick={onInc}
-          className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-sm border border-orange-500 bg-orange-600 text-xs font-bold text-white shadow-md hover:bg-orange-500"
+          className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-xs border border-accent-deep font-mono text-[12px] font-bold text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+          style={{
+            background: 'linear-gradient(180deg, #3a2f1a, #2a2418)',
+            boxShadow: '0 0 8px rgba(224,184,100,0.35)',
+          }}
           aria-label={`Add point to ${skill.name}`}
         >
           +
@@ -421,7 +483,8 @@ function SkillIcon({
             e.stopPropagation()
             onOpenSubtree()
           }}
-          className="absolute -bottom-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-sm border border-accent bg-panel text-[10px] text-accent shadow-md hover:bg-panel-2"
+          className="absolute -bottom-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-xs border border-border-2 bg-panel text-[10px] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+          style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
           aria-label={`Open ${skill.name} subtree`}
           title="Open subtree"
         >
@@ -429,6 +492,58 @@ function SkillIcon({
         </button>
       )}
     </div>
+  )
+}
+
+function SkillTreeCornerMarks() {
+  // Renders the four small accent-deep L-marks at the skill-tree panel's corners, matching PickerModal's chrome at a smaller scale.
+  const base: React.CSSProperties = {
+    position: 'absolute',
+    width: 8,
+    height: 8,
+    border: '1px solid var(--color-accent-deep)',
+    opacity: 0.45,
+    pointerEvents: 'none',
+  }
+  return (
+    <>
+      <span
+        style={{
+          ...base,
+          top: -1,
+          left: -1,
+          borderRight: 'none',
+          borderBottom: 'none',
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          top: -1,
+          right: -1,
+          borderLeft: 'none',
+          borderBottom: 'none',
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          left: -1,
+          borderRight: 'none',
+          borderTop: 'none',
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          right: -1,
+          borderLeft: 'none',
+          borderTop: 'none',
+        }}
+      />
+    </>
   )
 }
 
@@ -443,6 +558,8 @@ function SkillDetailsPanel({
   attributes,
   subskillRanks,
   enemyConditions,
+  stats,
+  itemSkillBonuses,
 }: {
   skill: Skill | null
   currentRank: number
@@ -454,12 +571,70 @@ function SkillDetailsPanel({
   attributes: Record<AttributeKey, RangedValue>
   subskillRanks: Record<string, number>
   enemyConditions: Record<string, boolean>
+  stats: Record<string, RangedValue>
+  itemSkillBonuses: Record<string, [number, number]>
 }) {
   // Renders the right-hand details panel for the hovered/selected skill: header, current vs next rank, mana cost, cooldown, damage breakdown (with synergies, total multipliers, crit, resistance), passive stats, subskill bonuses, and the "Open subtree" CTA. Falls back to a help message when no skill is selected.
   if (!skill) {
     return (
-      <aside className="h-full min-h-0 w-80 shrink-0 overflow-y-auto border-l border-border bg-panel p-4 text-sm text-muted">
-        Hover a skill to see details. Left-click to add a point, right-click to remove.
+      <aside
+        className="flex h-full min-h-0 w-96 shrink-0 flex-col gap-4 overflow-y-auto border-l border-border p-5"
+        style={{
+          background:
+            'linear-gradient(180deg, var(--color-panel-2), var(--color-panel) 40%, var(--color-bg))',
+          boxShadow: 'inset 1px 0 0 rgba(201,165,90,0.05)',
+        }}
+      >
+        <div>
+          <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+            <span
+              aria-hidden
+              className="inline-block h-1 w-1 rotate-45 bg-accent-hot"
+              style={{ boxShadow: '0 0 6px rgba(224,184,100,0.5)' }}
+            />
+            Details
+          </div>
+          <p className="font-mono text-[11px] leading-relaxed tracking-[0.04em] text-muted">
+            Hover a skill to inspect its damage, mana cost, synergies, and
+            subtree bonuses.
+          </p>
+        </div>
+
+        <div>
+          <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+            <span
+              aria-hidden
+              className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+            />
+            Controls
+          </div>
+          <ul className="space-y-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
+            <ControlsRow keys="L-CLICK" label="Add a point" />
+            <ControlsRow keys="R-CLICK" label="Remove a point" />
+            <ControlsRow keys="HOVER" label="Pin details panel" />
+            <ControlsRow keys="⚙" label="Open subtree" />
+          </ul>
+        </div>
+
+        <div>
+          <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+            <span
+              aria-hidden
+              className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+            />
+            Damage Types
+          </div>
+          <ul className="grid grid-cols-2 gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
+            <DamageLegend type="physical" />
+            <DamageLegend type="lightning" />
+            <DamageLegend type="cold" />
+            <DamageLegend type="fire" />
+            <DamageLegend type="poison" />
+            <DamageLegend type="arcane" />
+            <DamageLegend type="explosion" />
+            <DamageLegend type="magic" />
+          </ul>
+        </div>
       </aside>
     )
   }
@@ -477,24 +652,46 @@ function SkillDetailsPanel({
     effMin === effMax ? String(effMin) : `${effMin}-${effMax}`
   const hasBonus = totalBonusMin !== 0 || totalBonusMax !== 0
   return (
-    <aside className="h-full min-h-0 w-80 shrink-0 overflow-y-auto border-l border-border bg-panel p-4">
-      <div className="mb-1 flex items-center gap-2">
-        <SkillIconImage icon={skill.icon} size={48} className="text-3xl" />
-        <div>
-          <div className="text-base font-semibold text-text">{skill.name}</div>
-          <div className="text-[10px] uppercase tracking-wider text-muted">
+    <aside
+      className="h-full min-h-0 w-96 shrink-0 overflow-y-auto border-l border-border p-4"
+      style={{
+        background:
+          'linear-gradient(180deg, var(--color-panel-2), var(--color-panel) 40%, var(--color-bg))',
+        boxShadow: 'inset 1px 0 0 rgba(201,165,90,0.05)',
+      }}
+    >
+      <div className="mb-1 flex items-center gap-2.5">
+        <div
+          className="flex shrink-0 items-center justify-center rounded-[3px] border border-border-2 p-1"
+          style={{
+            background: 'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+          }}
+        >
+          <SkillIconImage icon={skill.icon} size={48} className="text-3xl" />
+        </div>
+        <div className="min-w-0">
+          <div
+            className="truncate text-[15px] font-semibold tracking-[0.02em] text-accent-hot"
+            style={{ textShadow: '0 0 12px rgba(224,184,100,0.18)' }}
+          >
+            {skill.name}
+          </div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
             {skill.damageType ?? '—'} · {skill.kind}
           </div>
         </div>
       </div>
-      <div className="mb-3 text-xs tabular-nums">
-        <span className="text-accent">
-          Rank {hasBonus ? effLabel : currentRank}
+      <div className="mb-3 flex items-center gap-2 font-mono text-[11px] tabular-nums">
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+          Rank
         </span>
-        <span className="text-muted"> / {skill.maxRank}</span>
+        <span className="text-accent-hot">
+          {hasBonus ? effLabel : currentRank}
+        </span>
+        <span className="text-faint">/ {skill.maxRank}</span>
         {hasBonus && (
           <span className="text-muted">
-            {' '}
             ({currentRank}
             {totalBonusMin === totalBonusMax
               ? totalBonusMin >= 0
@@ -506,37 +703,36 @@ function SkillDetailsPanel({
         )}
       </div>
       {hasBonus && (
-        <div className="mb-3 space-y-0.5 rounded border border-border bg-panel-2 p-2 text-xs tabular-nums">
-          <div className="mb-1 text-[10px] uppercase tracking-wider text-muted">
-            Skill bonuses
-          </div>
-          {(allSkillsBonus[0] !== 0 || allSkillsBonus[1] !== 0) && (
-            <div className="flex justify-between">
-              <span className="text-text/80">+ to All Skills</span>
-              <span className="text-accent">
-                +{formatPair(allSkillsBonus)}
-              </span>
-            </div>
-          )}
-          {(elementSkillsBonus[0] !== 0 || elementSkillsBonus[1] !== 0) &&
-            skill.damageType && (
+        <DetailBlock title="Skill bonuses">
+          <div className="space-y-0.5 text-xs tabular-nums">
+            {(allSkillsBonus[0] !== 0 || allSkillsBonus[1] !== 0) && (
               <div className="flex justify-between">
-                <span className="text-text/80">
-                  + to {skill.damageType[0]!.toUpperCase()}
-                  {skill.damageType.slice(1)} Skills
-                </span>
-                <span className="text-accent">
-                  +{formatPair(elementSkillsBonus)}
+                <span className="text-muted">+ to All Skills</span>
+                <span className="text-accent-hot">
+                  +{formatPair(allSkillsBonus)}
                 </span>
               </div>
             )}
-          {(itemBonus[0] !== 0 || itemBonus[1] !== 0) && (
-            <div className="flex justify-between">
-              <span className="text-text/80">+ to {skill.name}</span>
-              <span className="text-accent">+{formatPair(itemBonus)}</span>
-            </div>
-          )}
-        </div>
+            {(elementSkillsBonus[0] !== 0 || elementSkillsBonus[1] !== 0) &&
+              skill.damageType && (
+                <div className="flex justify-between">
+                  <span className="text-muted">
+                    + to {skill.damageType[0]!.toUpperCase()}
+                    {skill.damageType.slice(1)} Skills
+                  </span>
+                  <span className="text-accent-hot">
+                    +{formatPair(elementSkillsBonus)}
+                  </span>
+                </div>
+              )}
+            {(itemBonus[0] !== 0 || itemBonus[1] !== 0) && (
+              <div className="flex justify-between">
+                <span className="text-muted">+ to {skill.name}</span>
+                <span className="text-accent-hot">+{formatPair(itemBonus)}</span>
+              </div>
+            )}
+          </div>
+        </DetailBlock>
       )}
       <SkillEffectsBlock
         skill={skill}
@@ -546,6 +742,8 @@ function SkillDetailsPanel({
         allClassSkills={allClassSkills}
         skillRanks={skillRanks}
         attributes={attributes}
+        stats={stats}
+        itemSkillBonuses={itemSkillBonuses}
       />
       <SubtreeBonusBlock
         skill={skill}
@@ -553,68 +751,79 @@ function SkillDetailsPanel({
         enemyConditions={enemyConditions}
       />
       {skill.description && (
-        <p className="mb-3 text-sm text-text/85 leading-relaxed">
+        <p className="mb-3 text-[13px] leading-relaxed text-muted">
           {skill.description}
         </p>
       )}
-      <div className="space-y-1 text-xs text-muted">
-        {baseMana !== undefined && (
-          <div>
-            <span className="text-sky-300 tabular-nums">{baseMana}</span> mana
-          </div>
-        )}
-        {skill.baseCastRate !== undefined && (
-          <div>
-            Base cast rate{' '}
-            <span className="text-text tabular-nums">{skill.baseCastRate}</span>/s
-          </div>
-        )}
-        {skill.movementDuringUse !== undefined && (
-          <div>
-            Movement during use{' '}
-            <span className="text-text tabular-nums">
-              {skill.movementDuringUse}%
-            </span>
-          </div>
-        )}
-        {skill.range !== undefined && (
-          <div>
-            Range{' '}
-            <span className="text-text tabular-nums">{skill.range}</span>
-          </div>
-        )}
-        {skill.baseCooldown !== undefined && (
-          <div>
-            Cooldown{' '}
-            <span className="text-text tabular-nums">
-              {skill.baseCooldown}s
-            </span>
-          </div>
-        )}
-        {skill.effectDuration !== undefined && (
-          <div>
-            Effect duration{' '}
-            <span className="text-text tabular-nums">
-              {skill.effectDuration}s
-            </span>
-          </div>
-        )}
-        {skill.requiresLevel && (
-          <div>
-            Requires level{' '}
-            <span className="text-text tabular-nums">{skill.requiresLevel}</span>
-          </div>
-        )}
-        {skill.requiresSkill && (
-          <div>Requires skill «{skill.requiresSkill}»</div>
-        )}
-      </div>
+      {(baseMana !== undefined ||
+        skill.baseCastRate !== undefined ||
+        skill.movementDuringUse !== undefined ||
+        skill.range !== undefined ||
+        skill.baseCooldown !== undefined ||
+        skill.effectDuration !== undefined ||
+        skill.requiresLevel !== undefined ||
+        skill.requiresSkill !== undefined) && (
+        <div className="mb-3 space-y-0.75">
+          {baseMana !== undefined && (
+            <PropertyRow label="Mana" value={baseMana} valueClass="text-stat-blue" />
+          )}
+          {skill.baseCastRate !== undefined && (
+            <PropertyRow
+              label="Base cast rate"
+              value={skill.baseCastRate}
+              suffix="/s"
+            />
+          )}
+          {skill.movementDuringUse !== undefined && (
+            <PropertyRow
+              label="Movement during use"
+              value={skill.movementDuringUse}
+              suffix="%"
+            />
+          )}
+          {skill.range !== undefined && (
+            <PropertyRow label="Range" value={skill.range} />
+          )}
+          {skill.baseCooldown !== undefined && (
+            <PropertyRow
+              label="Cooldown"
+              value={skill.baseCooldown}
+              suffix="s"
+            />
+          )}
+          {skill.effectDuration !== undefined && (
+            <PropertyRow
+              label="Effect duration"
+              value={skill.effectDuration}
+              suffix="s"
+            />
+          )}
+          {skill.requiresLevel && (
+            <PropertyRow
+              label="Requires level"
+              value={skill.requiresLevel}
+            />
+          )}
+          {skill.requiresSkill && (
+            <div className="flex items-baseline justify-between gap-2 py-0.75 text-xs">
+              <span className="text-muted">Requires skill</span>
+              <span className="font-mono text-faint">
+                «{skill.requiresSkill}»
+              </span>
+            </div>
+          )}
+        </div>
+      )}
       {skill.tags && skill.tags.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1">
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {skill.tags.map((t) => (
             <span
               key={t}
-              className="rounded border border-border bg-panel-2 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted"
+              className="rounded-[3px] border border-accent-deep/40 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/80"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(58,46,24,0.5), rgba(42,36,24,0.3))',
+              }}
             >
               {t}
             </span>
@@ -622,6 +831,91 @@ function SkillDetailsPanel({
         </div>
       )}
     </aside>
+  )
+}
+
+function PropertyRow({
+  label,
+  value,
+  suffix,
+  valueClass,
+}: {
+  label: string
+  value: string | number
+  suffix?: string
+  valueClass?: string
+}) {
+  // Renders a single label/value row inside the skill properties section. Used by SkillDetailsPanel for cast rate, range, cooldown, etc.
+  return (
+    <div className="flex items-baseline justify-between gap-2 py-0.75 text-xs">
+      <span className="text-muted">{label}</span>
+      <span className="font-mono tabular-nums">
+        <span className={valueClass ?? 'text-text'}>{value}</span>
+        {suffix && <span className="text-faint">{suffix}</span>}
+      </span>
+    </div>
+  )
+}
+
+function DetailBlock({
+  title,
+  trailing,
+  children,
+}: {
+  title: string
+  trailing?: ReactNode
+  children: ReactNode
+}) {
+  // Wraps a labelled section inside SkillDetailsPanel with the panel-system gradient frame, an accent-hot section header (with optional trailing slot for rank/aux info), and a divider. Used by Skill bonuses, Effects/Preview, and Subtree bonuses.
+  return (
+    <div
+      className="mb-3 rounded-[3px] border border-border-2 p-2.5"
+      style={{
+        background:
+          'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 70%, transparent))',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)',
+      }}
+    >
+      <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-accent-deep/20 pb-1">
+        <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+          <span
+            aria-hidden
+            className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+          />
+          {title}
+        </div>
+        {trailing}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function ControlsRow({ keys, label }: { keys: string; label: string }) {
+  // Renders a single keyboard/mouse-shortcut row inside the empty SkillDetailsPanel: a small mono-cap key chip on the left, label on the right.
+  return (
+    <li className="flex items-center justify-between gap-2">
+      <span
+        className="rounded-xs border border-border-2 px-1.5 py-0.5 font-mono text-[9px] tracking-[0.14em] text-muted"
+        style={{ background: 'var(--color-panel-2)' }}
+      >
+        {keys}
+      </span>
+      <span>{label}</span>
+    </li>
+  )
+}
+
+function DamageLegend({ type }: { type: DamageType }) {
+  // Renders one cell of the damage-type legend inside the empty SkillDetailsPanel: a coloured dot in the type's accent + the uppercase name.
+  return (
+    <li className="flex items-center gap-1.5">
+      <span
+        aria-hidden
+        className={`inline-block h-1.5 w-1.5 shrink-0 rotate-45 border ${DAMAGE_BORDER[type]}`}
+      />
+      {type}
+    </li>
   )
 }
 
@@ -662,23 +956,20 @@ function SubtreeBonusBlock({
   if (statEntries.length === 0 && activeProcs.length === 0) return null
 
   return (
-    <div className="mb-3 rounded border border-border bg-panel-2 p-2 text-xs tabular-nums">
-      <div className="mb-1 text-[10px] uppercase tracking-wider text-muted">
-        Subtree bonuses
-      </div>
+    <DetailBlock title="Subtree bonuses">
       {statEntries.length > 0 && (
-        <div className="space-y-0.5">
+        <div className="space-y-0.5 text-xs tabular-nums">
           {statEntries.map(([k, v]) => (
             <div key={k} className="flex justify-between">
-              <span className="text-text/80">{statName(k)}</span>
-              <span className="text-accent">{formatValue(v, k)}</span>
+              <span className="text-muted">{statName(k)}</span>
+              <span className="text-accent-hot">{formatValue(v, k)}</span>
             </div>
           ))}
         </div>
       )}
       {activeProcs.length > 0 && (
         <div
-          className={`space-y-1.5 ${statEntries.length > 0 ? 'mt-2 border-t border-border pt-2' : ''}`}
+          className={`space-y-1.5 ${statEntries.length > 0 ? 'mt-2.5 border-t border-dashed border-accent-deep/30 pt-2' : ''}`}
         >
           {activeProcs.map(({ sub, rank }) => {
             const proc = sub.proc!
@@ -713,17 +1004,17 @@ function SubtreeBonusBlock({
               }
             }
             return (
-              <div key={sub.id}>
+              <div key={sub.id} className="text-xs">
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-text/85">{sub.name}</span>
+                  <span className="text-text">{sub.name}</span>
                   <span className="tabular-nums">
-                    <span className="text-accent">{chance}%</span>{' '}
-                    <span className="text-muted">
+                    <span className="text-accent-hot">{chance}%</span>{' '}
+                    <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
                       {proc.trigger.replace('_', ' ')}
                     </span>
                   </span>
                 </div>
-                <div className="text-text/60 leading-snug">
+                <div className="text-muted leading-snug">
                   {effectParts.join(', ')}
                 </div>
               </div>
@@ -731,7 +1022,7 @@ function SubtreeBonusBlock({
           })}
         </div>
       )}
-    </div>
+    </DetailBlock>
   )
 }
 
@@ -744,6 +1035,8 @@ function SkillEffectsBlock({
   allClassSkills,
   skillRanks,
   attributes,
+  stats,
+  itemSkillBonuses,
 }: {
   skill: Skill
   currentRank: number
@@ -752,6 +1045,8 @@ function SkillEffectsBlock({
   allClassSkills: Skill[]
   skillRanks: Record<string, number>
   attributes: Record<AttributeKey, RangedValue>
+  stats: Record<string, RangedValue>
+  itemSkillBonuses: Record<string, [number, number]>
 }) {
   // Renders the per-skill numeric breakdown inside SkillDetailsPanel: damage tables / formulas, mana cost, area of effect, cast time, applied states, and the synergy contributions from other skills + attributes that scale this skill. Used by SkillDetailsPanel.
   const allocated = currentRank > 0
@@ -810,15 +1105,32 @@ function SkillEffectsBlock({
           (s) => normalizeSkillName(s.name) === srcKey,
         )
         if (!srcSkill) continue
-        const rank = skillRanks[srcSkill.id] ?? 0
-        if (rank === 0) continue
+        const baseRank = skillRanks[srcSkill.id] ?? 0
+        if (baseRank === 0) continue
+        const allBonus: [number, number] = [
+          rangedMin(stats.all_skills ?? 0),
+          rangedMax(stats.all_skills ?? 0),
+        ]
+        const elemBonus: [number, number] = srcSkill.damageType
+          ? [
+              rangedMin(stats[`${srcSkill.damageType}_skills`] ?? 0),
+              rangedMax(stats[`${srcSkill.damageType}_skills`] ?? 0),
+            ]
+          : [0, 0]
+        const itemB: [number, number] = itemSkillBonuses[srcKey] ?? [0, 0]
+        const effMin =
+          baseRank + allBonus[0] + elemBonus[0] + itemB[0]
+        const effMax =
+          baseRank + allBonus[1] + elemBonus[1] + itemB[1]
+        const perLabel =
+          effMin === effMax ? `rank ${effMin}` : `rank ${effMin}-${effMax}`
         synergiesReceived.push({
           source: bs.source,
-          perLabel: `rank ${rank}`,
-          sourceMin: rank,
-          sourceMax: rank,
-          pctMin: rank * bs.value,
-          pctMax: rank * bs.value,
+          perLabel,
+          sourceMin: effMin,
+          sourceMax: effMax,
+          pctMin: effMin * bs.value,
+          pctMax: effMax * bs.value,
           stat: bs.stat,
         })
       } else if (bs.per === 'attribute_point') {
@@ -893,17 +1205,21 @@ function SkillEffectsBlock({
         : `${nextMin}-${nextMax}`
 
   return (
-    <div className="mb-3 rounded border border-border bg-panel-2 p-2 text-xs">
-      <div className="mb-1.5 flex items-baseline justify-between">
-        <span className="text-[10px] uppercase tracking-wider text-muted">
-          {allocated ? 'Effects' : 'Preview (not learned)'}
-        </span>
-        <span className="text-[10px] tabular-nums text-muted">
+    <DetailBlock
+      title={allocated ? 'Effects' : 'Preview (not learned)'}
+      trailing={
+        <span className="font-mono text-[10px] tabular-nums tracking-[0.06em] text-faint">
           rank {rankLabel}
-          {nextRankLabel && ` → ${nextRankLabel}`}
+          {nextRankLabel && (
+            <>
+              {' '}
+              <span className="text-accent-deep">→</span> {nextRankLabel}
+            </>
+          )}
         </span>
-      </div>
-      <div className="space-y-0.5 tabular-nums">
+      }
+    >
+      <div className="space-y-0.5 text-xs tabular-nums">
         {baseDmgCurMin && baseDmgCurMax && (
           <EffRow
             label="Base damage"
@@ -913,7 +1229,7 @@ function SkillEffectsBlock({
                 ? formatDmgRange(baseDmgNextMin, baseDmgNextMax)
                 : undefined
             }
-            color={allocated ? 'text-accent' : 'text-muted'}
+            color={allocated ? 'text-accent-hot' : 'text-muted'}
           />
         )}
         {manaCurMin !== undefined && manaCurMax !== undefined && (
@@ -925,7 +1241,7 @@ function SkillEffectsBlock({
                 ? formatPair([manaNextMin, manaNextMax])
                 : undefined
             }
-            color={allocated ? 'text-sky-300' : 'text-muted'}
+            color={allocated ? 'text-stat-blue' : 'text-muted'}
           />
         )}
         {[...passiveKeys].map((key) => {
@@ -943,7 +1259,7 @@ function SkillEffectsBlock({
                   ? formatStatPair(key, nMin, nMax)
                   : undefined
               }
-              color={allocated ? 'text-accent' : 'text-muted'}
+              color={allocated ? 'text-accent-hot' : 'text-muted'}
             />
           )
         })}
@@ -957,46 +1273,50 @@ function SkillEffectsBlock({
                 ? formatStatPair(s.stat, s.pctNextMin, s.pctNextMax)
                 : undefined
             }
-            color={allocated ? 'text-yellow-300' : 'text-muted'}
+            color={allocated ? 'text-stat-orange' : 'text-muted'}
           />
         ))}
       </div>
       {(skill.bonusSources?.length ?? 0) > 0 && (
-        <div className="mt-2 border-t border-border pt-1.5">
-          <div className="mb-1 text-[10px] uppercase tracking-wider text-muted">
+        <div className="mt-2.5 border-t border-dashed border-accent-deep/30 pt-2">
+          <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+            <span
+              aria-hidden
+              className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+            />
             Receives synergy from
           </div>
-          {(skill.bonusSources ?? []).map((bs, i) => {
-            const matched = synergiesReceived.find(
-              (sr) => sr.source === bs.source && sr.stat === bs.stat,
-            )
-            return (
-              <div
-                key={i}
-                className="flex items-baseline justify-between gap-2 tabular-nums"
-              >
-                <span className="text-text/80 truncate">
-                  {bs.source}{' '}
-                  <span className="text-muted text-[10px]">
-                    ({bs.value}% per{' '}
-                    {bs.per === 'skill_level' ? 'rank' : 'point'})
-                  </span>
-                </span>
-                <span
-                  className={
-                    matched ? 'text-yellow-300' : 'text-muted'
-                  }
+          <div className="space-y-0.5 text-xs">
+            {(skill.bonusSources ?? []).map((bs, i) => {
+              const matched = synergiesReceived.find(
+                (sr) => sr.source === bs.source && sr.stat === bs.stat,
+              )
+              return (
+                <div
+                  key={i}
+                  className="flex items-baseline justify-between gap-2 tabular-nums"
                 >
-                  {matched
-                    ? formatStatPair(bs.stat, matched.pctMin, matched.pctMax)
-                    : '—'}
-                </span>
-              </div>
-            )
-          })}
+                  <span className="truncate text-muted">
+                    {bs.source}{' '}
+                    <span className="text-faint text-[10px]">
+                      ({bs.value}% per{' '}
+                      {bs.per === 'skill_level' ? 'rank' : 'point'})
+                    </span>
+                  </span>
+                  <span
+                    className={matched ? 'text-stat-orange' : 'text-faint'}
+                  >
+                    {matched
+                      ? formatStatPair(bs.stat, matched.pctMin, matched.pctMax)
+                      : '—'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
-    </div>
+    </DetailBlock>
   )
 }
 

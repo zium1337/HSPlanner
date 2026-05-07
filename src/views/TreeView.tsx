@@ -474,71 +474,107 @@ export default function TreeView() {
         }}
       />
 
-      <div className="pointer-events-none absolute inset-x-3.5 top-2.5 z-10 flex items-start justify-between gap-3">
-        <div className="pointer-events-auto inline-flex items-center gap-4 rounded-[3px] border border-border bg-panel/85 px-3 py-1.5 text-[11px] text-muted backdrop-blur-sm">
-          <span>
-            Nodes:{' '}
-            <span className="font-mono font-medium text-text">{NODES.length}</span>
-          </span>
-          <span>
-            Allocated:{' '}
-            <span className="font-mono font-medium text-accent-hot">
-              {allocated.size}
-            </span>
-          </span>
-          {hoverNode && (
-            <span>
-              Hover:{' '}
-              <span className="font-mono font-medium text-text">
-                #{hoverNode.id}
-              </span>{' '}
-              <span className="text-faint">({hoverNode.tier})</span>
-            </span>
+      <div className="pointer-events-none absolute right-3.5 top-3 z-10 flex items-start gap-1.5">
+        <div className="pointer-events-auto relative">
+          <svg
+            aria-hidden
+            className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-faint"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search nodes or #id…"
+            data-search-input
+            className="w-64 rounded-[3px] border border-border-2 px-3 py-1.5 pl-9 pr-14 font-mono text-[11px] text-text placeholder:text-faint transition-colors focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
+            style={{
+              background:
+                'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+              boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(4px)',
+            }}
+          />
+          {searchQuery && (
+            <>
+              <span className="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot">
+                {searchMatches?.size ?? 0}
+              </span>
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-[2px] px-1 font-mono text-[12px] text-faint transition-colors hover:text-accent-hot"
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            </>
           )}
         </div>
-
-        <div className="pointer-events-auto flex items-center gap-1.5">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search nodes or #id..."
-              data-search-input
-              className="w-56 rounded-[3px] border border-border bg-panel/85 backdrop-blur-sm px-3 py-1.5 pr-14 text-xs text-text placeholder:text-faint transition-colors focus:border-accent-deep focus:outline-none"
-            />
-            {searchQuery && (
-              <>
-                <span className="pointer-events-none absolute right-7 top-1/2 -translate-y-1/2 font-mono text-[10px] text-accent-hot">
-                  {searchMatches?.size ?? 0}
-                </span>
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[2px] px-1.5 text-xs text-faint hover:text-accent-hot"
-                  aria-label="Clear search"
-                >
-                  ×
-                </button>
-              </>
-            )}
-          </div>
-          <button
-            onClick={resetTree}
-            className="rounded-[3px] border border-border bg-panel-2/85 backdrop-blur-sm px-3 py-1.5 text-xs text-text transition-colors hover:border-accent-deep hover:text-accent-hot"
-          >
-            Reset
-          </button>
-          <button
-            onClick={fitView}
-            className="rounded-[3px] border border-border bg-panel-2/85 backdrop-blur-sm px-3 py-1.5 text-xs text-text transition-colors hover:border-accent-deep hover:text-accent-hot"
-          >
-            Fit
-          </button>
-        </div>
+        <button
+          onClick={fitView}
+          className="pointer-events-auto rounded-[3px] border border-border-2 bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+        >
+          Fit
+        </button>
+        <button
+          onClick={resetTree}
+          className="pointer-events-auto rounded-[3px] border border-border-2 bg-transparent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-stat-red hover:text-stat-red"
+        >
+          Reset
+        </button>
       </div>
 
-      <div className="pointer-events-none absolute bottom-3.5 right-3.5 z-10 rounded-[3px] border border-border bg-panel/85 backdrop-blur-sm px-2.5 py-1 font-mono text-[11px] text-muted">
-        Zoom: <span className="text-text">{(scale * 100).toFixed(0)}%</span>
+      <div
+        className="pointer-events-none absolute bottom-3.5 left-3.5 z-10 inline-flex items-center gap-3 rounded-[3px] border border-border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-faint"
+        style={{
+          background:
+            'linear-gradient(180deg, color-mix(in srgb, var(--color-panel-2) 80%, transparent), color-mix(in srgb, var(--color-bg) 70%, transparent))',
+          backdropFilter: 'blur(6px)',
+          boxShadow:
+            'inset 0 1px 0 rgba(201,165,90,0.06), 0 4px 16px rgba(0,0,0,0.45)',
+        }}
+      >
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            aria-hidden
+            className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+          />
+          Nodes
+          <span className="text-text">{NODES.length}</span>
+        </span>
+        <span aria-hidden className="h-3 w-px bg-border" />
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            aria-hidden
+            className="inline-block h-1 w-1 rotate-45 bg-accent-hot"
+            style={{ boxShadow: '0 0 6px rgba(224,184,100,0.6)' }}
+          />
+          Allocated
+          <span className="text-accent-hot">{allocated.size}</span>
+        </span>
+        <span aria-hidden className="h-3 w-px bg-border" />
+        <span className="inline-flex items-center gap-1.5">
+          Zoom
+          <span className="text-accent-hot">
+            {(scale * 100).toFixed(0)}%
+          </span>
+        </span>
+        {hoverNode && (
+          <>
+            <span aria-hidden className="h-3 w-px bg-border" />
+            <span className="inline-flex items-center gap-1.5">
+              Hover
+              <span className="text-text">#{hoverNode.id}</span>
+              <span className="text-faint">· {hoverNode.tier}</span>
+            </span>
+          </>
+        )}
       </div>
 
       {hoverNode && hoverPos && !dragging &&

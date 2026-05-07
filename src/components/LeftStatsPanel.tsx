@@ -16,7 +16,7 @@ import {
   rangedMin,
   statDef,
 } from "../utils/stats";
-import type { RangedValue } from "../types";
+import type { RangedValue, Skill } from "../types";
 
 const ATTRIBUTE_ORDER: string[] = [
   "strength",
@@ -234,6 +234,14 @@ export default function LeftStatsPanel() {
     return out;
   }, [allClassSkills, skillRanks]);
 
+  const skillsByNormalizedName = useMemo(() => {
+    const out: Record<string, Skill> = {};
+    for (const s of allClassSkills) {
+      out[normalizeSkillName(s.name)] = s;
+    }
+    return out;
+  }, [allClassSkills]);
+
   const damage =
     activeSkill && activeRank > 0
       ? computeSkillDamage(
@@ -245,6 +253,7 @@ export default function LeftStatsPanel() {
           itemSkillBonuses,
           enemyConditions,
           enemyResistances,
+          skillsByNormalizedName,
         )
       : null;
   const hitDpsMin =
@@ -290,6 +299,7 @@ export default function LeftStatsPanel() {
         itemSkillBonuses,
         enemyConditions,
         enemyResistances,
+        skillsByNormalizedName,
       );
       if (!targetDmg) continue;
       const rate = procSkill.proc.trigger === "on_kill" ? killsPerSec : 1;
@@ -306,6 +316,7 @@ export default function LeftStatsPanel() {
     attributes,
     stats,
     skillRanksByName,
+    skillsByNormalizedName,
     itemSkillBonuses,
     enemyConditions,
     enemyResistances,
@@ -320,7 +331,7 @@ export default function LeftStatsPanel() {
 
   return (
     <aside
-      className="relative flex h-full w-64 shrink-0 flex-col overflow-y-auto border-r border-border text-[12px]"
+      className="relative flex h-full w-72 shrink-0 flex-col overflow-y-auto border-r border-border text-[12px]"
       style={{
         background:
           "linear-gradient(180deg, var(--color-panel-2), var(--color-panel) 40%, var(--color-bg))",
@@ -368,7 +379,7 @@ export default function LeftStatsPanel() {
               return (
                 <option key={s.id} value={s.id} disabled={rank === 0}>
                   {s.icon && !isImageUrl(s.icon) ? `${s.icon} ` : ""}
-                  {s.name} {rank > 0 ? `(rank ${rank})` : "(not learned)"}
+                  {s.name}
                 </option>
               );
             })}
@@ -597,31 +608,28 @@ export default function LeftStatsPanel() {
                     )
                   }
                 />
-                <div
-                  className="mt-2 flex items-center justify-between gap-2 rounded-[3px] border border-accent-deep px-2.5 py-1.5"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, #3a2f1a, #2a2418)",
-                  }}
-                >
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot">
-                    Combined DPS
-                  </span>
-                  <span
-                    className="font-mono text-[13px] font-semibold tabular-nums text-accent-hot"
-                    style={{
-                      textShadow: "0 0 10px rgba(224,184,100,0.3)",
-                    }}
-                  >
-                    {combinedDpsMin !== undefined &&
-                    combinedDpsMax !== undefined
-                      ? formatNumRange(
+                <Row
+                  label="Combined DPS"
+                  value={
+                    combinedDpsMin !== undefined &&
+                    combinedDpsMax !== undefined ? (
+                      <span
+                        className="font-semibold text-accent-hot"
+                        style={{
+                          textShadow:
+                            "0 0 10px rgba(224,184,100,0.25)",
+                        }}
+                      >
+                        {formatNumRange(
                           Math.round(combinedDpsMin),
                           Math.round(combinedDpsMax),
-                        )
-                      : "—"}
-                  </span>
-                </div>
+                        )}
+                      </span>
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )
+                  }
+                />
               </>
             )}
           </>
@@ -662,7 +670,7 @@ export default function LeftStatsPanel() {
           return (
             <div
               key={key}
-              className="flex items-baseline justify-between gap-2 py-[3px]"
+              className="flex items-baseline justify-between gap-2 py-0.75"
             >
               <span className={`${color} flex-1 min-w-0 leading-tight`}>
                 {attr.name}
@@ -715,7 +723,7 @@ export default function LeftStatsPanel() {
           return (
             <div
               key={r.key}
-              className="flex items-baseline justify-between gap-2 py-[3px]"
+              className="flex items-baseline justify-between gap-2 py-0.75"
             >
               <span className={`${r.className} flex-1 min-w-0 leading-tight`}>
                 {r.label}
@@ -768,7 +776,7 @@ function StatLine({
         ? "text-stat-blue"
         : "text-text";
   return (
-    <div className="flex items-baseline justify-between gap-2 py-[3px]">
+    <div className="flex items-baseline justify-between gap-2 py-0.75">
       <span className={`${labelClass} flex-1 min-w-0 leading-tight`}>
         {label}
       </span>
@@ -808,7 +816,7 @@ function Section({
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   // Renders a generic label/value row used by sections that show ad-hoc strings or React nodes (rather than RangedValues). Used by the LeftStatsPanel sub-sections that display custom-formatted values like attribute totals.
   return (
-    <div className="flex items-baseline justify-between gap-2 py-[3px]">
+    <div className="flex items-baseline justify-between gap-2 py-0.75">
       <span className="text-muted flex-1 min-w-0 leading-tight">{label}</span>
       <span className="font-mono tabular-nums shrink-0 whitespace-nowrap text-right">
         {value}
