@@ -830,30 +830,43 @@ function CharmSection({
           const isActive = activeSlot === p.slotKey
           const rarityColor = RARITY_TEXT[base.rarity] ?? 'text-text'
           const rarityBg = RARITY_BG[base.rarity] ?? 'bg-panel-2'
+          const sprite = getItemImage(base.id)
 
           const cell = (
             <button
               type="button"
               onClick={() => onSelect(p.slotKey)}
               aria-label={base.name}
-              className={`w-full h-full rounded text-[10px] p-1 flex flex-col items-center justify-center text-center transition-colors overflow-hidden ${
+              className={`relative w-full h-full rounded text-[10px] flex flex-col items-center justify-center text-center transition-colors overflow-hidden ${
                 isActive
                   ? 'border-2 border-accent bg-accent/10 ring-1 ring-accent'
                   : `border border-[#846339] ${rarityBg} hover:opacity-90 cursor-pointer`
               }`}
             >
-              <div className={`text-2xl leading-none ${rarityColor}`}>◆</div>
-              <div
-                className={`mt-0.5 px-1 leading-tight ${rarityColor} font-medium text-[9px] pointer-events-none`}
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                }}
-              >
-                {base.name}
-              </div>
+              {sprite ? (
+                <img
+                  src={sprite}
+                  alt=""
+                  draggable={false}
+                  className="pointer-events-none absolute inset-0 h-full w-full object-contain select-none"
+                  style={{ imageRendering: 'pixelated' }}
+                />
+              ) : (
+                <>
+                  <div className={`text-2xl leading-none ${rarityColor}`}>◆</div>
+                  <div
+                    className={`mt-0.5 px-1 leading-tight ${rarityColor} font-medium text-[9px] pointer-events-none`}
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {base.name}
+                  </div>
+                </>
+              )}
             </button>
           )
 
