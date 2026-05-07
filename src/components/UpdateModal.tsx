@@ -301,62 +301,51 @@ export default function UpdateModal({
 
         {!isChangelog && progress && <ProgressBlock progress={progress} />}
 
-        <footer
-          className="flex flex-wrap items-center gap-3 border-t border-border px-5 py-3"
-          style={{ background: "rgba(0,0,0,0.3)" }}
-        >
-          {isChangelog ? (
-            <button
-              type="button"
-              onClick={safeClose}
-              className={`ml-auto ${FOOTER_BTN_CLASS}`}
-            >
-              Close
-            </button>
-          ) : (
-            <>
-              <label className="flex cursor-pointer items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                <input
-                  type="checkbox"
-                  checked={autoInstall}
-                  onChange={(e) => onAutoInstallChange(e.target.checked)}
-                  disabled={isBusy}
-                />
-                Auto-install on quit
-              </label>
-              <div className="ml-auto flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={onRemindLater}
-                  disabled={isBusy}
-                  className={FOOTER_BTN_CLASS}
-                >
-                  Remind Me Later
-                </button>
-                <button
-                  type="button"
-                  onClick={onSkip}
-                  disabled={isBusy}
-                  className={FOOTER_BTN_CLASS}
-                >
-                  Skip This Version
-                </button>
-                <button
-                  type="button"
-                  onClick={onDownload}
-                  disabled={isBusy}
-                  className={FOOTER_BTN_PRIMARY_CLASS}
-                  style={{
-                    background:
-                      "linear-gradient(180deg, #3a2f1a, #2a2418)",
-                  }}
-                >
-                  {progressLabel(progress)}
-                </button>
-              </div>
-            </>
-          )}
-        </footer>
+        {!isChangelog && (
+          <footer
+            className="flex flex-wrap items-center gap-3 border-t border-border px-5 py-3"
+            style={{ background: "rgba(0,0,0,0.3)" }}
+          >
+            <label className="flex cursor-pointer items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+              <input
+                type="checkbox"
+                checked={autoInstall}
+                onChange={(e) => onAutoInstallChange(e.target.checked)}
+                disabled={isBusy}
+              />
+              Auto-install on quit
+            </label>
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onRemindLater}
+                disabled={isBusy}
+                className={FOOTER_BTN_CLASS}
+              >
+                Remind Me Later
+              </button>
+              <button
+                type="button"
+                onClick={onSkip}
+                disabled={isBusy}
+                className={FOOTER_BTN_CLASS}
+              >
+                Skip This Version
+              </button>
+              <button
+                type="button"
+                onClick={onDownload}
+                disabled={isBusy}
+                className={FOOTER_BTN_PRIMARY_CLASS}
+                style={{
+                  background: "linear-gradient(180deg, #3a2f1a, #2a2418)",
+                }}
+              >
+                {progressLabel(progress)}
+              </button>
+            </div>
+          </footer>
+        )}
       </div>
     </div>
   );
