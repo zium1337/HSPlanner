@@ -46,7 +46,6 @@ type AttrMap = Record<AttributeKey, number>
 export const RAINBOW_MULTIPLIER = 1.5
 
 export const MAX_STARS = 5
-export const STAR_AFFIX_BONUS = 0.08
 
 interface BuildState {
   classId: string | null

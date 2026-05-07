@@ -15,7 +15,13 @@ import {
   itemGrantedSkills,
 } from '../data'
 import type { ForgeKind } from '../data'
-import { RAINBOW_MULTIPLIER, STAR_AFFIX_BONUS } from '../store/build'
+import { RAINBOW_MULTIPLIER } from '../store/build'
+import {
+  itemGrantedSkillRankFlatBonus,
+  isStatStarImmune,
+  statStarFlatBonus,
+  statStarPercentMultiplier,
+} from './starScaling'
 import type {
   AttributeKey,
   CustomStat,
@@ -975,18 +981,16 @@ export function rolledAffixRange(affix: {
 }
 
 export function isAffixStarImmune(statKey: string | null): boolean {
-  // Returns true when an affix's stat key should never be scaled by item stars (currently only `all_skills`). Used by every star-scaling helper to skip those unique affixes.
-  return statKey === 'all_skills'
+  // Returns true when an affix's stat key should never be scaled by item stars. Delegates to the per-statKey config in starScaling.ts so any stat marked `none`/`unknown`/`glitch` is treated as immune.
+  return isStatStarImmune(statKey)
 }
 
 export function affixStarMultiplier(
   statKey: string | null,
   stars: number | undefined,
 ): number {
-  // Returns the multiplier (1 + stars × STAR_AFFIX_BONUS) that an affix should be scaled by, or 1 when stars are absent or the affix is star-immune. Used by every code path that needs to compute the post-star value of an affix.
-  if (!stars || stars <= 0) return 1
-  if (isAffixStarImmune(statKey)) return 1
-  return 1 + stars * STAR_AFFIX_BONUS
+  // Returns the percent multiplier that an affix should be scaled by under the per-statKey star scaling table, or 1 when stars are absent or the stat does not scale percentually (e.g. flat-skill staircase, none, unknown, glitch).
+  return statStarPercentMultiplier(statKey, stars)
 }
 
 export function rolledAffixValueWithStars(
@@ -1000,12 +1004,14 @@ export function rolledAffixValueWithStars(
   roll: number,
   stars: number | undefined,
 ): number {
-  // Combines `rolledAffixValue` with star scaling, rounding the result for flat affixes. Used by computeBuildStats when applying a rolled affix from inventory items.
+  // Combines `rolledAffixValue` with star scaling: applies the percent multiplier, then adds any flat staircase bonus (used by skill-rank affixes such as fire_skills). Rounds the final value for flat affixes. Used by computeBuildStats when applying a rolled affix from inventory items.
   const base = rolledAffixValue(affix, roll)
-  if (base === 0) return 0
   const mult = affixStarMultiplier(affix.statKey, stars)
-  if (mult === 1) return base
-  const scaled = base * mult
+  const flat = statStarFlatBonus(affix.statKey, stars)
+  if (base === 0 && flat === 0) return 0
+  // Sign of base tells us whether the affix is +X (positive) or -X (negative); apply flat in the same direction so a "-1 to skills" mod doesn't get healed by stars.
+  const direction = affix.sign === '-' ? -1 : 1
+  const scaled = base * mult + flat * direction
   return affix.format === 'flat' ? Math.round(scaled) : scaled
 }
 
@@ -1014,17 +1020,22 @@ export function applyStarsToRangedValue(
   statKey: string,
   stars: number | undefined,
 ): RangedValue {
-  // Scales a RangedValue by the star multiplier, preserving integer rounding when the original endpoints were integers and respecting the star-immune list. Used to scale implicit item stats and item-granted skill ranks by the equipped item's stars.
+  // Scales a RangedValue by the per-statKey star table: multiplicative for percent-scaling stats, additive for flat-skill / item-specific staircases. Preserves integer rounding when the original endpoints were integers. Used to scale implicit item stats and item-granted skill ranks by the equipped item's stars.
   if (!stars || stars <= 0) return value
-  if (isAffixStarImmune(statKey)) return value
-  const mult = 1 + stars * STAR_AFFIX_BONUS
+  // `item_granted_skill_rank` is the synthetic key used by skillBonuses; it follows the documented ITEM SPECIFIC staircase (2*=+1, 4*=+2, 5*=+3).
+  const flat =
+    statKey === 'item_granted_skill_rank'
+      ? itemGrantedSkillRankFlatBonus(stars)
+      : statStarFlatBonus(statKey, stars)
+  const mult = statStarPercentMultiplier(statKey, stars)
+  if (mult === 1 && flat === 0) return value
   if (typeof value === 'number') {
-    const scaled = value * mult
+    const scaled = value * mult + flat
     return Number.isInteger(value) ? Math.round(scaled) : scaled
   }
   const [min, max] = value
-  const sMin = min * mult
-  const sMax = max * mult
+  const sMin = min * mult + flat
+  const sMax = max * mult + flat
   return [
     Number.isInteger(min) ? Math.round(sMin) : sMin,
     Number.isInteger(max) ? Math.round(sMax) : sMax,

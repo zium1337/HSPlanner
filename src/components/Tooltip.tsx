@@ -128,6 +128,28 @@ export default function Tooltip({
   )
 }
 
+export function TooltipPanel({
+  children,
+  tone = 'neutral',
+  className,
+  width,
+}: {
+  children: ReactNode
+  tone?: TooltipTone
+  className?: string
+  width?: number | string
+}) {
+  // Static (non-portalled) tooltip-styled box used as an inline panel — same chrome as the hover Tooltip (border tone, glow, rounded corners, shadow) but rendered in flow so it can sit alongside a dialog. Used by PickerModal's `selectedPanel` slot to show the currently-selected item's tooltip with a Net Change diff.
+  return (
+    <div
+      className={`bg-panel border ${TONE_BORDER[tone]} ${TONE_GLOW[tone]} rounded-[4px] overflow-hidden select-none shadow-[0_8px_32px_rgba(0,0,0,0.8)] ${className ?? ''}`}
+      style={width !== undefined ? { width } : undefined}
+    >
+      {children}
+    </div>
+  )
+}
+
 export function TooltipHeader({
   title,
   subtitle,
