@@ -266,7 +266,7 @@ export default function GearView() {
   const offhandLocked = !!weaponBase?.twoHanded
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="w-full">
       <header className="mb-4">
         <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
           <span
