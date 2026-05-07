@@ -299,7 +299,7 @@ export default function GearView() {
         </div>
       </header>
 
-      <div className="space-y-4">
+      <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr]">
         <GearPanel
           title="Equipment"
           trailing={
