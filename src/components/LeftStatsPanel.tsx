@@ -78,6 +78,17 @@ const GOLD_OFFENSE = new Set(["enhanced_damage", "crit_chance", "crit_damage"]);
 const GOLD_DEFENSE = new Set(["life"]);
 const BLUE_DEFENSE = new Set(["mana", "mana_replenish"]);
 
+function effectiveStatValue(
+  stats: Record<string, RangedValue>,
+  key: string,
+): RangedValue {
+  // Returns the EFFECTIVE additive-equivalent value for a stat key by folding any `<key>_more` Total multiplier into the additive sum via combineAdditiveAndMore. For keys with no `_more` variant or for already-flat stats (life, mana, etc.) returns the additive value unchanged. Used by the Offense/Defense rows so the displayed percent matches what the engine actually applies (e.g. Faster Cast Rate shows the post-multiplier number, not just the additive sum).
+  const additive = stats[key];
+  const more = stats[`${key}_more`];
+  if (more === undefined) return additive ?? 0;
+  return combineAdditiveAndMore(additive, more);
+}
+
 export default function LeftStatsPanel() {
   // Persistent left sidebar that summarises the build at a glance: header, attribute totals, derived offense/defense/resistance stats, the main-skill damage breakdown, the active aura/buff selectors, the proc toggles, and the combined-DPS estimate. Used as the always-visible status panel in the app shell.
   const classId = useBuild((s) => s.classId);
@@ -692,7 +703,7 @@ export default function LeftStatsPanel() {
           <StatLine
             key={key}
             statKey={key}
-            value={stats[key] ?? 0}
+            value={effectiveStatValue(stats, key)}
             highlight={GOLD_OFFENSE.has(key) ? "gold" : undefined}
           />
         ))}
@@ -703,7 +714,7 @@ export default function LeftStatsPanel() {
           <StatLine
             key={key}
             statKey={key}
-            value={stats[key] ?? 0}
+            value={effectiveStatValue(stats, key)}
             highlight={
               GOLD_DEFENSE.has(key)
                 ? "gold"

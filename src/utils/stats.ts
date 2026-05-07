@@ -1229,7 +1229,7 @@ export function rolledAffixValueWithStars(
   roll: number,
   stars: number | undefined,
 ): number {
-  // Combines `rolledAffixValue` with star scaling: applies the percent multiplier, then adds any flat staircase bonus (used by skill-rank affixes such as fire_skills). Rounds the final value for flat affixes. Used by computeBuildStats when applying a rolled affix from inventory items.
+  // Combines `rolledAffixValue` with star scaling: applies the percent multiplier, then adds any flat staircase bonus (used by skill-rank affixes such as fire_skills). When stars actually scale the value, floors the result (Hero Siege rounds star-scaled stats DOWN, including percent values like `+300.56% FCR` → `+300%`). For unstarred items or stats that do not scale with stars, falls back to the original rounding (round-to-nearest for flat affixes, raw value for percent). Used by computeBuildStats when applying a rolled affix from inventory items.
   const base = rolledAffixValue(affix, roll)
   const mult = affixStarMultiplier(affix.statKey, stars)
   const flat = statStarFlatBonus(affix.statKey, stars)
@@ -1237,6 +1237,8 @@ export function rolledAffixValueWithStars(
   // Sign of base tells us whether the affix is +X (positive) or -X (negative); apply flat in the same direction so a "-1 to skills" mod doesn't get healed by stars.
   const direction = affix.sign === '-' ? -1 : 1
   const scaled = base * mult + flat * direction
+  const starsActive = (stars ?? 0) > 0 && (mult !== 1 || flat !== 0)
+  if (starsActive) return Math.floor(scaled)
   return affix.format === 'flat' ? Math.round(scaled) : scaled
 }
 
@@ -1245,7 +1247,7 @@ export function applyStarsToRangedValue(
   statKey: string,
   stars: number | undefined,
 ): RangedValue {
-  // Scales a RangedValue by the per-statKey star table: multiplicative for percent-scaling stats, additive for flat-skill / item-specific staircases. Preserves integer rounding when the original endpoints were integers. Used to scale implicit item stats and item-granted skill ranks by the equipped item's stars.
+  // Scales a RangedValue by the per-statKey star table: multiplicative for percent-scaling stats, additive for flat-skill / item-specific staircases. When stars actually change the value, the result is floored (Hero Siege rounds star-scaled stats DOWN). Used to scale implicit item stats and item-granted skill ranks by the equipped item's stars.
   if (!stars || stars <= 0) return value
   // `item_granted_skill_rank` is the synthetic key used by skillBonuses; it follows the documented ITEM SPECIFIC staircase (2*=+1, 4*=+2, 5*=+3).
   const flat =
@@ -1255,16 +1257,10 @@ export function applyStarsToRangedValue(
   const mult = statStarPercentMultiplier(statKey, stars)
   if (mult === 1 && flat === 0) return value
   if (typeof value === 'number') {
-    const scaled = value * mult + flat
-    return Number.isInteger(value) ? Math.round(scaled) : scaled
+    return Math.floor(value * mult + flat)
   }
   const [min, max] = value
-  const sMin = min * mult + flat
-  const sMax = max * mult + flat
-  return [
-    Number.isInteger(min) ? Math.round(sMin) : sMin,
-    Number.isInteger(max) ? Math.round(sMax) : sMax,
-  ]
+  return [Math.floor(min * mult + flat), Math.floor(max * mult + flat)]
 }
 
 export function shouldScaleImplicit(isRuneword: boolean): boolean {

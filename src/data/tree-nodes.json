@@ -4603,7 +4603,7 @@
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+25 to Maximum Mana"
+      "+1% Increased Maximum Mana"
     ]
   },
   "1232": {
@@ -4674,6 +4674,27 @@
     "n": "normal",
     "l": [
       "+25 to Maximum Life"
+    ]
+  },
+  "1252": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+1% Increased Maximum Mana"
+    ]
+  },
+  "1254": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+1% Increased Maximum Mana"
+    ]
+  },
+  "1256": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+1% Increased Maximum Mana"
     ]
   },
   "1258": {

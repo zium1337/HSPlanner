@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  applyStarsToRangedValue,
   combineAdditiveAndMore,
   computeBuildStats,
   computeSkillDamage,
   rangedMax,
   rangedMin,
+  rolledAffixValueWithStars,
 } from './stats'
 import { parseTreeNodeMod } from './treeStats'
 import type { Inventory, RangedValue, Skill } from '../types'
@@ -305,6 +307,72 @@ describe('computeBuildStats - tree self-conditions', () => {
       {},
     )
     expect(auto.stats.increased_attack_speed_more).toBe(30)
+  })
+})
+
+describe('Star scaling rounds DOWN (Math.floor)', () => {
+  it('percent affix with stars: floors the scaled value (e.g. 200 * 1.15 = 230, no decimals expected; 200.37 * 1.15 = 230.42 -> 230)', () => {
+    // increased_attack_speed = 3% per star, 5 stars -> mult 1.15.
+    const fcr = rolledAffixValueWithStars(
+      {
+        sign: '+',
+        format: 'percent',
+        valueMin: 200.37,
+        valueMax: 200.37,
+        statKey: 'increased_attack_speed',
+      },
+      0,
+      5,
+    )
+    expect(fcr).toBe(230) // Math.floor(230.42)
+  })
+
+  it('percent affix WITHOUT stars: keeps decimal (no floor applied)', () => {
+    const fcr = rolledAffixValueWithStars(
+      {
+        sign: '+',
+        format: 'percent',
+        valueMin: 200.37,
+        valueMax: 200.37,
+        statKey: 'increased_attack_speed',
+      },
+      0,
+      0,
+    )
+    expect(fcr).toBe(200.37)
+  })
+
+  it('flat affix with stars floors the result instead of round-to-nearest', () => {
+    // to_strength scales 5% per star. 5 stars -> mult 1.25.
+    // 10 * 1.25 = 12.5 → previously Math.round = 13, now floor = 12.
+    const str = rolledAffixValueWithStars(
+      {
+        sign: '+',
+        format: 'flat',
+        valueMin: 10,
+        valueMax: 10,
+        statKey: 'to_strength',
+      },
+      0,
+      5,
+    )
+    expect(str).toBe(12)
+  })
+
+  it('applyStarsToRangedValue floors both endpoints when stars apply', () => {
+    // increased_attack_speed scales 3% per star. 5 stars -> mult 1.15.
+    // [40,50] * 1.15 = [46, 57.5] → floor = [46, 57]
+    const out = applyStarsToRangedValue(
+      [40, 50],
+      'increased_attack_speed',
+      5,
+    )
+    expect(out).toEqual([46, 57])
+  })
+
+  it('applyStarsToRangedValue without stars returns the value unchanged', () => {
+    const out = applyStarsToRangedValue([40.5, 50.5], 'increased_attack_speed', 0)
+    expect(out).toEqual([40.5, 50.5])
   })
 })
 

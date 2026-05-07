@@ -4,15 +4,7 @@ import { SkillIconImage } from '../components/SkillIconImage'
 import { gameConfig, skills } from '../data'
 import { useBuild } from '../store/build'
 import { parseCustomStatValue } from '../utils/parseCustomStat'
-import {
-  aggregateItemSkillBonuses,
-  computeBuildStats,
-  formatValue,
-  normalizeSkillName,
-  rangedMax,
-  rangedMin,
-  statDef,
-} from '../utils/stats'
+import { formatValue, statDef } from '../utils/stats'
 import {
   SELF_CONDITION_KEYS,
   SELF_CONDITION_LABELS,
@@ -21,11 +13,12 @@ import {
 const ENEMY_CONDITIONS: { key: string; label: string }[] = [
   { key: 'burning', label: 'Enemy is Burning' },
   { key: 'poisoned', label: 'Enemy is Poisoned' },
-  { key: 'frozen', label: 'Enemy is Frozen' },
+  { key: 'frozenbite', label: 'Enemy is Frost Bitten' },
   { key: 'stunned', label: 'Enemy is Stunned' },
   { key: 'bleeding', label: 'Enemy is Bleeding' },
   { key: 'shocked', label: 'Enemy is Stasis' },
   { key: 'deep_frozen', label: 'Enemy is Deep Frozen' },
+  { key: 'shadow_burn', label: 'Enemy is Shadow Burned' },
   { key: 'is_boss', label: 'Target is Boss' },
 ]
 
@@ -76,63 +69,6 @@ export default function ConfigView() {
         (s.kind === 'buff' || (s.tags?.includes('Buff') ?? false)),
     )
   }, [classId])
-
-  const level = useBuild((s) => s.level)
-  const allocated = useBuild((s) => s.allocated)
-  const inventory = useBuild((s) => s.inventory)
-  const activeAuraId = useBuild((s) => s.activeAuraId)
-  const allocatedTreeNodes = useBuild((s) => s.allocatedTreeNodes)
-  const treeSocketed = useBuild((s) => s.treeSocketed)
-
-  // Computed effective skill ranks (base + +to-all-skills + +to-element-skills + item +to-this-skill) so the buff list can show what rank the planner actually uses for passive-stat scaling.
-  const buffEffectiveRanks = useMemo(() => {
-    if (buffSkills.length === 0) return new Map<string, [number, number]>()
-    const { stats } = computeBuildStats(
-      classId,
-      level,
-      allocated,
-      inventory,
-      skillRanks,
-      activeAuraId,
-      activeBuffs,
-      undefined,
-      allocatedTreeNodes,
-      treeSocketed,
-      playerConditions,
-    )
-    const itemBonuses = aggregateItemSkillBonuses(inventory)
-    const allSkillsMin = Math.floor(rangedMin(stats.all_skills ?? 0))
-    const allSkillsMax = Math.floor(rangedMax(stats.all_skills ?? 0))
-    const out = new Map<string, [number, number]>()
-    for (const s of buffSkills) {
-      const baseRank = skillRanks[s.id] ?? 0
-      if (baseRank <= 0) continue
-      const elemMin = s.damageType
-        ? Math.floor(rangedMin(stats[`${s.damageType}_skills`] ?? 0))
-        : 0
-      const elemMax = s.damageType
-        ? Math.floor(rangedMax(stats[`${s.damageType}_skills`] ?? 0))
-        : 0
-      const itemB = itemBonuses[normalizeSkillName(s.name)] ?? [0, 0]
-      out.set(s.id, [
-        Math.max(1, baseRank + allSkillsMin + elemMin + itemB[0]),
-        Math.max(1, baseRank + allSkillsMax + elemMax + itemB[1]),
-      ])
-    }
-    return out
-  }, [
-    buffSkills,
-    classId,
-    level,
-    allocated,
-    inventory,
-    skillRanks,
-    activeAuraId,
-    activeBuffs,
-    allocatedTreeNodes,
-    treeSocketed,
-    playerConditions,
-  ])
 
   const damageSkills = useMemo(() => {
     if (!classId) return []

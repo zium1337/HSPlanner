@@ -1275,25 +1275,25 @@
       "key": "arcane_absorption",
       "name": "Arcane Absorption",
       "category": "defense",
-      "format": "flat"
+      "format": "percent"
     },
     {
       "key": "cold_absorption",
       "name": "Cold Absorption",
       "category": "defense",
-      "format": "flat"
+      "format": "percent"
     },
     {
       "key": "fire_absorption",
       "name": "Fire Absorption",
       "category": "defense",
-      "format": "flat"
+      "format": "percent"
     },
     {
       "key": "poison_absorption",
       "name": "Poison Absorption",
       "category": "defense",
-      "format": "flat"
+      "format": "percent"
     },
     {
       "key": "lightning_absorption",
