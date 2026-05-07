@@ -73,30 +73,6 @@
     "height": 2
   },
   {
-    "id": "gem_satanic_aether_jewel",
-    "name": "Aether Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "C",
-    "requiresLevel": 15,
-    "implicit": {
-      "life_per_kill": 15
-    }
-  },
-  {
-    "id": "gem_satanic_agathetheum_jewel",
-    "name": "Agathetheum Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "B",
-    "requiresLevel": 30,
-    "implicit": {
-      "damage_return": 75
-    }
-  },
-  {
     "id": "charm_satanic_aimbot_exe",
     "name": "Aimbot.exe",
     "baseType": "Charm",
@@ -365,18 +341,6 @@
     "height": 2
   },
   {
-    "id": "gem_satanic_clean_cut_jewel",
-    "name": "Clean Cut Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "S",
-    "requiresLevel": 52,
-    "implicit": {
-      "defense_ignored": 4
-    }
-  },
-  {
     "id": "charm_satanic_cold_giant_s_charm",
     "name": "Cold Giant's Charm",
     "baseType": "Charm",
@@ -536,18 +500,6 @@
     "height": 2
   },
   {
-    "id": "gem_satanic_exan_jewel",
-    "name": "Exan Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "C",
-    "requiresLevel": 15,
-    "implicit": {
-      "increased_mana": 7
-    }
-  },
-  {
     "id": "charm_satanic_eye_of_skadi",
     "name": "Eye of Skadi",
     "baseType": "Charm",
@@ -564,18 +516,6 @@
     },
     "width": 2,
     "height": 2
-  },
-  {
-    "id": "gem_satanic_fieryzen_jewel",
-    "name": "Fieryzen Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "C",
-    "requiresLevel": 15,
-    "implicit": {
-      "fire_resistance": 30
-    }
   },
   {
     "id": "charm_satanic_flaming_coin",
@@ -681,18 +621,6 @@
     "height": 2
   },
   {
-    "id": "gem_satanic_helmon_jewel",
-    "name": "Helmon Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "C",
-    "requiresLevel": 15,
-    "implicit": {
-      "poison_resistance": 30
-    }
-  },
-  {
     "id": "charm_satanic_jack_s_pumpkin_spice",
     "name": "Jack's Pumpkin Spice",
     "baseType": "Charm",
@@ -715,42 +643,6 @@
     ],
     "width": 2,
     "height": 2
-  },
-  {
-    "id": "gem_satanic_lapis_lazuli_jewel",
-    "name": "Lapis-Lazuli Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "B",
-    "requiresLevel": 30,
-    "implicit": {
-      "crit_chance": 5
-    }
-  },
-  {
-    "id": "gem_satanic_lyrcon_jewel",
-    "name": "Lyrcon Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "C",
-    "requiresLevel": 15,
-    "implicit": {
-      "lightning_resistance": 30
-    }
-  },
-  {
-    "id": "gem_satanic_mariane_jewel",
-    "name": "Mariane Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "C",
-    "requiresLevel": 15,
-    "implicit": {
-      "cold_resistance": 30
-    }
   },
   {
     "id": "charm_satanic_mark_of_the_black_knight",
@@ -852,30 +744,6 @@
     ],
     "width": 2,
     "height": 2
-  },
-  {
-    "id": "gem_satanic_mythgonlion_jewel",
-    "name": "Mythgonlion Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "S",
-    "requiresLevel": 52,
-    "implicit": {
-      "faster_cast_rate": 8
-    }
-  },
-  {
-    "id": "gem_satanic_omnipearl_jewel",
-    "name": "Omnipearl Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "B",
-    "requiresLevel": 30,
-    "implicit": {
-      "jumping_power": 20
-    }
   },
   {
     "id": "charm_satanic_orange_grayon",
@@ -1270,20 +1138,6 @@
     "setId": "orbital_gravity"
   },
   {
-    "id": "gem_satanic_tramal_jewel",
-    "name": "Tramal Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "A",
-    "requiresLevel": 52,
-    "implicit": {
-      "magic_damage_reduction": 2,
-      "physical_damage_reduction": 2,
-      "all_resistances": 2
-    }
-  },
-  {
     "id": "charm_satanic_traveler_s_map_journal",
     "name": "Traveler's Map Journal",
     "baseType": "Charm",
@@ -1330,19 +1184,6 @@
     "height": 2
   },
   {
-    "id": "gem_satanic_volcon_jewel",
-    "name": "Volcon Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "C",
-    "requiresLevel": 15,
-    "implicit": {
-      "additive_physical_damage": 15,
-      "attack_rating_pct": 5
-    }
-  },
-  {
     "id": "charm_satanic_voodoo_doll",
     "name": "Voodoo Doll",
     "baseType": "Charm",
@@ -1358,18 +1199,6 @@
     ],
     "width": 1,
     "height": 2
-  },
-  {
-    "id": "gem_satanic_wildren_jewel",
-    "name": "Wildren Jewel",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "C",
-    "requiresLevel": 15,
-    "implicit": {
-      "increased_life": 6
-    }
   },
   {
     "id": "charm_satanic_wind_token",

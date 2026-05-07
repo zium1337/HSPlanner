@@ -1,42 +1,5 @@
 [
   {
-    "id": "gem_heroic_angelic_gem",
-    "name": "Angelic Gem",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "heroic",
-    "grade": "S",
-    "requiresLevel": 100,
-    "implicit": {
-      "all_skills": 1
-    }
-  },
-  {
-    "id": "gem_heroic_chaos_gem",
-    "name": "Chaos Gem",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "heroic",
-    "grade": "S",
-    "requiresLevel": 100,
-    "implicit": {
-      "to_intelligence": 10,
-      "magic_skill_damage": 10
-    }
-  },
-  {
-    "id": "gem_heroic_elemental_gem",
-    "name": "Elemental Gem",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "heroic",
-    "grade": "S",
-    "requiresLevel": 100,
-    "implicit": {
-      "all_attributes": 10
-    }
-  },
-  {
     "id": "charm_heroic_finger_of_despair",
     "name": "Finger of Despair",
     "baseType": "Charm",
@@ -137,20 +100,6 @@
     "uniqueEffects": ["Grant Spell: Random Skill"],
     "width": 2,
     "height": 2
-  },
-  {
-    "id": "gem_heroic_moonstone_gem",
-    "name": "Moonstone Gem",
-    "baseType": "Gem",
-    "slot": "charm_1",
-    "rarity": "heroic",
-    "grade": "S",
-    "requiresLevel": 100,
-    "implicit": {
-      "increased_attack_speed": 7,
-      "to_dexterity": 7,
-      "to_strength": 7
-    }
   },
   {
     "id": "charm_heroic_storm_in_a_vial",
