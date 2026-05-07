@@ -15,3 +15,5 @@
 - **Jewelry tree sockets** - Right-click on an allocated jewelry node opens the gem/rune picker. Left-click is now always allocate/deallocate so the keystone can be undone without going through the socket modal.
 - Pathing in incarnation tree respect starting nodes.
 - Fix `Overloaded Dice` rarity from satanic -> unholy
+- Fix `Left Panel` attack speed and cast speed calculation
+- Fix some notables in tree
