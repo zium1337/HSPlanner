@@ -1325,6 +1325,8 @@ interface BuildSummaryDeps {
   treeSocketed: Record<number, TreeSocketContent | null>
   mainSkillId: string | null
   enemyConditions: Record<string, boolean>
+  playerConditions: Record<string, boolean>
+  skillProjectiles: Record<string, number>
   enemyResistances: Record<string, number>
   procToggles: Record<string, boolean>
   killsPerSec: number
@@ -1346,6 +1348,7 @@ function computeBuildSummary(
     deps.customStats,
     deps.allocatedTreeNodes,
     deps.treeSocketed,
+    deps.playerConditions,
   )
 
   const allClassSkills = getSkillsByClass(deps.classId)
@@ -1375,6 +1378,7 @@ function computeBuildSummary(
           deps.enemyConditions,
           deps.enemyResistances,
           skillsByNormalizedName,
+          deps.skillProjectiles[activeSkill.id],
         )
       : null
 
@@ -1421,6 +1425,7 @@ function computeBuildSummary(
       deps.enemyConditions,
       deps.enemyResistances,
       skillsByNormalizedName,
+      deps.skillProjectiles[target.id],
     )
     if (!targetDmg) continue
     const rate = procSkill.proc.trigger === 'on_kill' ? deps.killsPerSec : 1
@@ -2138,6 +2143,8 @@ function GearSlotModal({
   const treeSocketed = useBuild((s) => s.treeSocketed)
   const mainSkillId = useBuild((s) => s.mainSkillId)
   const enemyConditions = useBuild((s) => s.enemyConditions)
+  const playerConditions = useBuild((s) => s.playerConditions)
+  const skillProjectiles = useBuild((s) => s.skillProjectiles)
   const enemyResistances = useBuild((s) => s.enemyResistances)
   const procToggles = useBuild((s) => s.procToggles)
   const killsPerSec = useBuild((s) => s.killsPerSec)
@@ -2163,6 +2170,8 @@ function GearSlotModal({
       treeSocketed,
       mainSkillId,
       enemyConditions,
+      playerConditions,
+      skillProjectiles,
       enemyResistances,
       procToggles,
       killsPerSec,
@@ -2179,6 +2188,8 @@ function GearSlotModal({
       treeSocketed,
       mainSkillId,
       enemyConditions,
+      playerConditions,
+      skillProjectiles,
       enemyResistances,
       procToggles,
       killsPerSec,

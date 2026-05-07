@@ -173,6 +173,8 @@ export default function StatsView() {
     activeAuraId,
     activeBuffs,
     enemyConditions,
+    playerConditions,
+    skillProjectiles,
     enemyResistances,
     customStats,
     allocatedTreeNodes,
@@ -198,6 +200,7 @@ export default function StatsView() {
         customStats,
         allocatedTreeNodes,
         treeSocketed,
+        playerConditions,
       ),
     [
       classId,
@@ -210,6 +213,7 @@ export default function StatsView() {
       customStats,
       allocatedTreeNodes,
       treeSocketed,
+      playerConditions,
     ],
   )
   const fcrRange = stats.faster_cast_rate ?? 0
@@ -481,6 +485,7 @@ export default function StatsView() {
           itemSkillBonuses={itemSkillBonuses}
           enemyConditions={enemyConditions}
           enemyResistances={enemyResistances}
+          skillProjectiles={skillProjectiles}
           fcrRange={fcrRange}
           mcrRange={mcrRange}
           weaponDamage={weaponDamage}
@@ -519,6 +524,7 @@ export default function StatsView() {
                     currentRank={skillRanks[skill.id] ?? 0}
                     enemyConditions={enemyConditions}
                     enemyResistances={enemyResistances}
+                    skillProjectiles={skillProjectiles}
                     isMain={skill.id === mainSkillId}
                   />
                 ))}
@@ -637,6 +643,7 @@ function MainSkillSection({
   itemSkillBonuses,
   enemyConditions,
   enemyResistances,
+  skillProjectiles,
   fcrRange,
   mcrRange,
   weaponDamage,
@@ -650,6 +657,7 @@ function MainSkillSection({
   itemSkillBonuses: Record<string, [number, number]>
   enemyConditions: Record<string, boolean>
   enemyResistances: Record<string, number>
+  skillProjectiles: Record<string, number>
   fcrRange: RangedValue
   mcrRange: RangedValue
   weaponDamage: WeaponDamageBreakdown
@@ -671,6 +679,7 @@ function MainSkillSection({
         enemyConditions,
         enemyResistances,
         skillsByNormalizedName,
+        skillProjectiles[mainSkill!.id],
       )
     : null
 
@@ -1088,6 +1097,7 @@ function SkillCard({
   currentRank,
   enemyConditions,
   enemyResistances,
+  skillProjectiles,
   isMain,
 }: {
   skill: Skill
@@ -1101,6 +1111,7 @@ function SkillCard({
   currentRank: number
   enemyConditions: Record<string, boolean>
   enemyResistances: Record<string, number>
+  skillProjectiles: Record<string, number>
   isMain: boolean
 }) {
   // Per-skill row: name + rank, computed damage range with damage-type colour, a tag strip (damage type + skill tags), mana / cast-rate meta, and the full DamageBreakdown when the skill has damage. The "main" skill (highest current rank) gets the gold border + left-bar treatment from the mockup.
@@ -1142,6 +1153,7 @@ function SkillCard({
           enemyConditions,
           enemyResistances,
           skillsByNormalizedName,
+          skillProjectiles[skill.id],
         )
       : null
   const typeLabel = skill.damageType
@@ -1499,7 +1511,10 @@ function DamageBreakdown({
       )}
       {((breakdown.skillDamageMinPct > 0 || breakdown.skillDamageMaxPct > 0) ||
         breakdown.enemyResistancePct !== 0 ||
-        breakdown.resistanceIgnoredPct !== 0) && (
+        breakdown.resistanceIgnoredPct !== 0 ||
+        breakdown.multicastChancePct > 0 ||
+        breakdown.elementalBreakPct > 0 ||
+        breakdown.projectileCount > 1) && (
         <BDSection title="Multipliers">
           {(breakdown.skillDamageMinPct > 0 ||
             breakdown.skillDamageMaxPct > 0) && (
@@ -1512,6 +1527,36 @@ function DamageBreakdown({
                     ? formatDecimal(breakdown.skillDamageMinPct)
                     : `${formatDecimal(breakdown.skillDamageMinPct)}-${formatDecimal(breakdown.skillDamageMaxPct)}`}
                   %
+                </span>
+              }
+            />
+          )}
+          {breakdown.multicastChancePct > 0 && (
+            <BDLine
+              label={`Multicast (${formatDecimal(breakdown.multicastChancePct)}%)`}
+              value={
+                <span className="text-accent-hot">
+                  ×{breakdown.multicastMultiplier.toFixed(2)}
+                </span>
+              }
+            />
+          )}
+          {breakdown.elementalBreakPct > 0 && (
+            <BDLine
+              label={`Elemental Break (${formatDecimal(breakdown.elementalBreakPct)}%)`}
+              value={
+                <span className="text-accent-hot">
+                  ×{breakdown.elementalBreakMultiplier.toFixed(2)}
+                </span>
+              }
+            />
+          )}
+          {breakdown.projectileCount > 1 && (
+            <BDLine
+              label={`Projectiles (${breakdown.projectileCount}×)`}
+              value={
+                <span className="text-accent-hot">
+                  ×{breakdown.projectileCount.toFixed(2)}
                 </span>
               }
             />
@@ -1556,10 +1601,16 @@ function DamageBreakdown({
       )}
       <div className="mt-1.5 flex items-baseline justify-between gap-3 border-t border-border pt-1.5">
         <span className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-muted">
-          {breakdown.critChance > 0 ? 'Average hit' : 'Hit damage'}
+          {breakdown.multicastChancePct > 0 || breakdown.projectileCount > 1
+            ? 'Average per cast'
+            : breakdown.critChance > 0
+              ? 'Average hit'
+              : 'Hit damage'}
         </span>
         <span className="font-mono text-[14px] font-semibold tabular-nums text-accent-hot">
-          {breakdown.critChance > 0
+          {breakdown.critChance > 0 ||
+          breakdown.multicastChancePct > 0 ||
+          breakdown.projectileCount > 1
             ? formatRangeInt(breakdown.avgMin, breakdown.avgMax)
             : formatRangeInt(breakdown.hitMin, breakdown.hitMax)}
         </span>

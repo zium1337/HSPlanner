@@ -646,6 +646,7 @@ function NetChangeSection({
   const activeAuraId = useBuild((s) => s.activeAuraId)
   const activeBuffs = useBuild((s) => s.activeBuffs)
   const enemyConditions = useBuild((s) => s.enemyConditions)
+  const playerConditions = useBuild((s) => s.playerConditions)
   const customStats = useBuild((s) => s.customStats)
   const allocatedTreeNodes = useBuild((s) => s.allocatedTreeNodes)
   const treeSocketed = useBuild((s) => s.treeSocketed)
@@ -679,6 +680,7 @@ function NetChangeSection({
         activeAuraId,
         activeBuffs,
         enemyConditions,
+        playerConditions,
         customStats,
         allocatedTreeNodes,
         treeSocketed,
@@ -697,6 +699,7 @@ function NetChangeSection({
     activeAuraId,
     activeBuffs,
     enemyConditions,
+    playerConditions,
     customStats,
     allocatedTreeNodes,
     treeSocketed,
@@ -790,6 +793,7 @@ function computeDpsDelta(
     activeAuraId: string | null
     activeBuffs: Record<string, boolean>
     enemyConditions: Record<string, boolean>
+    playerConditions: Record<string, boolean>
     customStats: CustomStat[]
     allocatedTreeNodes: Set<number>
     treeSocketed: Record<number, TreeSocketContent | null>
@@ -813,6 +817,7 @@ function computeDpsDelta(
       state.customStats,
       state.allocatedTreeNodes,
       state.treeSocketed,
+      state.playerConditions,
     )
     const dps = computeWeaponDamage(inv, built.stats, state.enemyConditions)
     return {

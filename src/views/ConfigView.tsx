@@ -4,7 +4,19 @@ import { SkillIconImage } from '../components/SkillIconImage'
 import { gameConfig, skills } from '../data'
 import { useBuild } from '../store/build'
 import { parseCustomStatValue } from '../utils/parseCustomStat'
-import { formatValue, statDef } from '../utils/stats'
+import {
+  aggregateItemSkillBonuses,
+  computeBuildStats,
+  formatValue,
+  normalizeSkillName,
+  rangedMax,
+  rangedMin,
+  statDef,
+} from '../utils/stats'
+import {
+  SELF_CONDITION_KEYS,
+  SELF_CONDITION_LABELS,
+} from '../utils/treeStats'
 
 const ENEMY_CONDITIONS: { key: string; label: string }[] = [
   { key: 'burning', label: 'Enemy is Burning' },
@@ -16,6 +28,9 @@ const ENEMY_CONDITIONS: { key: string; label: string }[] = [
   { key: 'deep_frozen', label: 'Enemy is Deep Frozen' },
   { key: 'is_boss', label: 'Target is Boss' },
 ]
+
+const PLAYER_CONDITIONS: { key: string; label: string }[] =
+  SELF_CONDITION_KEYS.map((k) => ({ key: k, label: SELF_CONDITION_LABELS[k] }))
 
 const ENEMY_RESISTANCE_TYPES: { key: string; label: string }[] = [
   { key: 'fire', label: 'Fire' },
@@ -41,6 +56,10 @@ export default function ConfigView() {
   const setBuffActive = useBuild((s) => s.setBuffActive)
   const enemyConditions = useBuild((s) => s.enemyConditions)
   const setEnemyCondition = useBuild((s) => s.setEnemyCondition)
+  const playerConditions = useBuild((s) => s.playerConditions)
+  const setPlayerCondition = useBuild((s) => s.setPlayerCondition)
+  const skillProjectiles = useBuild((s) => s.skillProjectiles)
+  const setSkillProjectiles = useBuild((s) => s.setSkillProjectiles)
   const enemyResistances = useBuild((s) => s.enemyResistances)
   const setEnemyResistance = useBuild((s) => s.setEnemyResistance)
   const customStats = useBuild((s) => s.customStats)
@@ -58,6 +77,78 @@ export default function ConfigView() {
     )
   }, [classId])
 
+  const level = useBuild((s) => s.level)
+  const allocated = useBuild((s) => s.allocated)
+  const inventory = useBuild((s) => s.inventory)
+  const activeAuraId = useBuild((s) => s.activeAuraId)
+  const allocatedTreeNodes = useBuild((s) => s.allocatedTreeNodes)
+  const treeSocketed = useBuild((s) => s.treeSocketed)
+
+  // Computed effective skill ranks (base + +to-all-skills + +to-element-skills + item +to-this-skill) so the buff list can show what rank the planner actually uses for passive-stat scaling.
+  const buffEffectiveRanks = useMemo(() => {
+    if (buffSkills.length === 0) return new Map<string, [number, number]>()
+    const { stats } = computeBuildStats(
+      classId,
+      level,
+      allocated,
+      inventory,
+      skillRanks,
+      activeAuraId,
+      activeBuffs,
+      undefined,
+      allocatedTreeNodes,
+      treeSocketed,
+      playerConditions,
+    )
+    const itemBonuses = aggregateItemSkillBonuses(inventory)
+    const allSkillsMin = Math.floor(rangedMin(stats.all_skills ?? 0))
+    const allSkillsMax = Math.floor(rangedMax(stats.all_skills ?? 0))
+    const out = new Map<string, [number, number]>()
+    for (const s of buffSkills) {
+      const baseRank = skillRanks[s.id] ?? 0
+      if (baseRank <= 0) continue
+      const elemMin = s.damageType
+        ? Math.floor(rangedMin(stats[`${s.damageType}_skills`] ?? 0))
+        : 0
+      const elemMax = s.damageType
+        ? Math.floor(rangedMax(stats[`${s.damageType}_skills`] ?? 0))
+        : 0
+      const itemB = itemBonuses[normalizeSkillName(s.name)] ?? [0, 0]
+      out.set(s.id, [
+        Math.max(1, baseRank + allSkillsMin + elemMin + itemB[0]),
+        Math.max(1, baseRank + allSkillsMax + elemMax + itemB[1]),
+      ])
+    }
+    return out
+  }, [
+    buffSkills,
+    classId,
+    level,
+    allocated,
+    inventory,
+    skillRanks,
+    activeAuraId,
+    activeBuffs,
+    allocatedTreeNodes,
+    treeSocketed,
+    playerConditions,
+  ])
+
+  const damageSkills = useMemo(() => {
+    if (!classId) return []
+    return skills.filter(
+      (s) =>
+        s.classId === classId &&
+        s.kind === 'active' &&
+        (!!s.damageFormula ||
+          (!!s.damagePerRank && s.damagePerRank.length > 0)),
+    )
+  }, [classId])
+
+  const skillProjectileCount = Object.values(skillProjectiles).filter(
+    (n) => n > 1,
+  ).length
+
   const statOptions = useMemo(
     () =>
       gameConfig.stats
@@ -73,6 +164,9 @@ export default function ConfigView() {
   const activeBuffCount = buffSkills.filter((s) => !!activeBuffs[s.id]).length
   const activeConditionCount = ENEMY_CONDITIONS.filter(
     (c) => !!enemyConditions[c.key],
+  ).length
+  const activePlayerConditionCount = PLAYER_CONDITIONS.filter(
+    (c) => !!playerConditions[c.key],
   ).length
   const activeResistanceCount = ENEMY_RESISTANCE_TYPES.filter(
     (r) => enemyResistances[r.key] !== undefined && enemyResistances[r.key] !== null,
@@ -148,7 +242,18 @@ export default function ConfigView() {
                           {s.name}
                         </div>
                         <div className="truncate font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-                          {ready ? `rank ${rank}` : 'not learned'}
+                          {ready
+                            ? (() => {
+                                const eff = buffEffectiveRanks.get(s.id)
+                                if (!eff) return `rank ${rank}`
+                                const [min, max] = eff
+                                if (min === rank && max === rank)
+                                  return `rank ${rank}`
+                                return min === max
+                                  ? `rank ${rank} (eff ${min})`
+                                  : `rank ${rank} (eff ${min}-${max})`
+                              })()
+                            : 'not learned'}
                           {s.tags && s.tags.length > 0 && (
                             <>
                               {' · '}
@@ -217,6 +322,47 @@ export default function ConfigView() {
       </Panel>
 
       <Panel
+        title="Player Conditions"
+        subtitle='Self-state flags — used by tree-node mods like "+15% Increased Total Attack Speed when Critical Strike Chance is below 40%". Toggle on when the threshold matches your build.'
+        trailing={
+          <CountBadge
+            value={activePlayerConditionCount}
+            total={PLAYER_CONDITIONS.length}
+            highlight={activePlayerConditionCount > 0}
+          />
+        }
+      >
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {PLAYER_CONDITIONS.map((c) => {
+            const checked = !!playerConditions[c.key]
+            return (
+              <label
+                key={c.key}
+                className={`flex cursor-pointer items-center gap-2 rounded-[3px] border px-3 py-2 text-sm transition-colors ${checked ? 'border-accent-deep' : 'border-border-2 hover:border-accent-deep'}`}
+                style={{
+                  background: checked
+                    ? 'linear-gradient(180deg, rgba(58,46,24,0.5), rgba(28,29,36,0.5))'
+                    : 'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 70%, transparent))',
+                  boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4)',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={(e) =>
+                    setPlayerCondition(c.key, e.target.checked)
+                  }
+                />
+                <span className={checked ? 'text-accent-hot' : 'text-text'}>
+                  {c.label}
+                </span>
+              </label>
+            )
+          })}
+        </div>
+      </Panel>
+
+      <Panel
         title="Enemy Resistances"
         subtitle="Per-element resistance % the target has. Damage modifier = 1 − (Enemy Res × (1 − Ignore)). 100% Ignore fully bypasses resistance; lower values help proportionally even against immune targets."
         trailing={
@@ -278,6 +424,100 @@ export default function ConfigView() {
             )
           })}
         </div>
+      </Panel>
+
+      <Panel
+        title="Skill Projectile Counts"
+        subtitle="Manual override of how many projectiles a skill fires per cast (e.g. Multi Shot = 5, Fan of Knives = 7). Multiplies that skill's per-cast damage and DPS. Leave empty / set to 1 for skills that fire a single projectile."
+        trailing={
+          <CountBadge
+            value={skillProjectileCount}
+            highlight={skillProjectileCount > 0}
+          />
+        }
+      >
+        {damageSkills.length === 0 ? (
+          <p className="font-mono text-[12px] tracking-[0.04em] text-muted italic">
+            {classId
+              ? 'No damage skills available for this class.'
+              : 'Pick a class first.'}
+          </p>
+        ) : (
+          <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {damageSkills.map((s) => {
+              const rank = skillRanks[s.id] ?? 0
+              const value = skillProjectiles[s.id] ?? 1
+              const learned = rank > 0
+              return (
+                <li key={s.id}>
+                  <label
+                    className={`flex items-center justify-between gap-2 rounded-[3px] border px-2.5 py-2 text-sm transition-colors ${
+                      value > 1
+                        ? 'border-accent-deep'
+                        : learned
+                          ? 'border-border-2 hover:border-accent-deep'
+                          : 'border-border opacity-60'
+                    }`}
+                    style={{
+                      background:
+                        value > 1
+                          ? 'linear-gradient(180deg, rgba(58,46,24,0.5), rgba(28,29,36,0.5))'
+                          : 'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 70%, transparent))',
+                      boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4)',
+                    }}
+                  >
+                    <span className="flex min-w-0 items-center gap-2">
+                      <SkillIconImage
+                        icon={s.icon}
+                        size={28}
+                        className="text-2xl"
+                      />
+                      <span className="min-w-0">
+                        <div
+                          className={`truncate text-sm font-medium ${value > 1 ? 'text-accent-hot' : 'text-text'}`}
+                        >
+                          {s.name}
+                        </div>
+                        <div className="truncate font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                          {learned ? `rank ${rank}` : 'not learned'}
+                        </div>
+                      </span>
+                    </span>
+                    <div
+                      className="inline-flex shrink-0 items-center rounded-[3px] border border-border-2 px-1.5 transition-colors focus-within:border-accent-hot"
+                      style={{
+                        background:
+                          'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+                        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                      }}
+                    >
+                      <input
+                        type="number"
+                        min={1}
+                        max={99}
+                        value={value}
+                        onChange={(e) => {
+                          const raw = e.target.value
+                          if (raw === '') {
+                            setSkillProjectiles(s.id, null)
+                            commitActiveProfile()
+                            return
+                          }
+                          const n = Number(raw)
+                          if (!Number.isFinite(n)) return
+                          setSkillProjectiles(s.id, n)
+                          commitActiveProfile()
+                        }}
+                        className="w-10 bg-transparent py-0.5 text-right font-mono text-[12px] tabular-nums text-accent-hot outline-none"
+                      />
+                      <span className="font-mono text-[10px] text-faint">×</span>
+                    </div>
+                  </label>
+                </li>
+              )
+            })}
+          </ul>
+        )}
       </Panel>
 
       <Panel

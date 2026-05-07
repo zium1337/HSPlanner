@@ -114,6 +114,8 @@ const shareableBuildSchema = z.object({
   u: z.string().max(MAX_KEY_LENGTH).nullable(),
   buf: recordOfBooleans,
   ec: recordOfBooleans,
+  pc: recordOfBooleans.optional(),
+  sp: recordOfNumbers.optional(),
   er: recordOfNumbers.optional(),
   pt: recordOfBooleans,
   kps: FINITE_NUMBER,
@@ -143,6 +145,8 @@ export interface ShareableBuild {
   u: string | null
   buf: Record<string, boolean>
   ec: Record<string, boolean>
+  pc?: Record<string, boolean>
+  sp?: Record<string, number>
   er?: Record<string, number>
   pt: Record<string, boolean>
   kps: number
@@ -163,6 +167,8 @@ export interface BuildSnapshot {
   activeAuraId: string | null
   activeBuffs: Record<string, boolean>
   enemyConditions: Record<string, boolean>
+  playerConditions: Record<string, boolean>
+  skillProjectiles: Record<string, number>
   enemyResistances: Record<string, number>
   procToggles: Record<string, boolean>
   killsPerSec: number
@@ -186,6 +192,12 @@ function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
     buf: snapshot.activeBuffs,
     ec: snapshot.enemyConditions,
     pt: snapshot.procToggles,
+    ...(Object.keys(snapshot.playerConditions ?? {}).length > 0
+      ? { pc: snapshot.playerConditions }
+      : {}),
+    ...(Object.keys(snapshot.skillProjectiles ?? {}).length > 0
+      ? { sp: snapshot.skillProjectiles }
+      : {}),
     ...(Object.keys(snapshot.enemyResistances ?? {}).length > 0
       ? { er: snapshot.enemyResistances }
       : {}),
@@ -239,6 +251,8 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
     activeAuraId: encoded.u ?? null,
     activeBuffs: encoded.buf ?? {},
     enemyConditions: encoded.ec ?? {},
+    playerConditions: encoded.pc ?? {},
+    skillProjectiles: encoded.sp ?? {},
     enemyResistances: encoded.er ?? defaultEnemyResistances(),
     procToggles: encoded.pt ?? {},
     killsPerSec: Number.isFinite(encoded.kps) ? encoded.kps : 1,

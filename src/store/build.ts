@@ -61,6 +61,8 @@ interface BuildState {
   killsPerSec: number
   activeBuffs: Record<string, boolean>
   enemyConditions: Record<string, boolean>
+  playerConditions: Record<string, boolean>
+  skillProjectiles: Record<string, number>
   enemyResistances: Record<string, number>
   subskillRanks: Record<string, number>
   activeBuildId: string | null
@@ -106,6 +108,8 @@ interface BuildActions {
   setKillsPerSec: (rate: number) => void
   setBuffActive: (skillId: string, enabled: boolean) => void
   setEnemyCondition: (key: string, enabled: boolean) => void
+  setPlayerCondition: (key: string, enabled: boolean) => void
+  setSkillProjectiles: (skillId: string, count: number | null) => void
   setEnemyResistance: (damageType: string, value: number | null) => void
   setSubskillRank: (
     skillId: string,
@@ -172,6 +176,8 @@ function snapshotPatch(snap: BuildSnapshot) {
     activeAuraId: snap.activeAuraId,
     activeBuffs: snap.activeBuffs,
     enemyConditions: snap.enemyConditions,
+    playerConditions: snap.playerConditions ?? {},
+    skillProjectiles: snap.skillProjectiles ?? {},
     enemyResistances: snap.enemyResistances ?? defaultEnemyResistances(),
     procToggles: snap.procToggles,
     killsPerSec: snap.killsPerSec,
@@ -215,6 +221,8 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   killsPerSec: 1,
   activeBuffs: {},
   enemyConditions: {},
+  playerConditions: {},
+  skillProjectiles: {},
   enemyResistances: defaultEnemyResistances(),
   subskillRanks: {},
   activeBuildId: null,
@@ -353,6 +361,31 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       if (enabled) next[key] = true
       else delete next[key]
       return { enemyConditions: next }
+    }),
+
+  setPlayerCondition: (key, enabled) =>
+    set((s) => {
+      // Toggles a single player self-condition flag (e.g. "crit_chance_below_40", "life_below_40"). Used by ConfigView to gate tree-node mods that only apply when the player is in a specific state.
+      const next = { ...s.playerConditions }
+      if (enabled) next[key] = true
+      else delete next[key]
+      return { playerConditions: next }
+    }),
+
+  setSkillProjectiles: (skillId, count) =>
+    set((s) => {
+      // Sets a manual projectile-count override for a specific skill (multiplies that skill's hit/avg/DPS by `count`). Pass `null` (or any non-positive / non-finite value) to clear the override and fall back to the default of 1. Used by ConfigView so the user can model multi-projectile skills like Multi Shot or Fan of Knives without skill metadata.
+      const next = { ...s.skillProjectiles }
+      if (
+        count === null ||
+        !Number.isFinite(count) ||
+        (count as number) <= 1
+      ) {
+        delete next[skillId]
+      } else {
+        next[skillId] = Math.max(1, Math.floor(count as number))
+      }
+      return { skillProjectiles: next }
     }),
 
   setEnemyResistance: (damageType, value) =>
@@ -559,6 +592,8 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       activeAuraId: s.activeAuraId,
       activeBuffs: s.activeBuffs,
       enemyConditions: s.enemyConditions,
+      playerConditions: s.playerConditions,
+      skillProjectiles: s.skillProjectiles,
       enemyResistances: s.enemyResistances,
       procToggles: s.procToggles,
       killsPerSec: s.killsPerSec,

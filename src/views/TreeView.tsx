@@ -218,6 +218,8 @@ interface TreeBuildDeps {
   treeSocketed: Record<number, TreeSocketContent | null>
   mainSkillId: string | null
   enemyConditions: Record<string, boolean>
+  playerConditions: Record<string, boolean>
+  skillProjectiles: Record<string, number>
   enemyResistances: Record<string, number>
   procToggles: Record<string, boolean>
   killsPerSec: number
@@ -238,6 +240,7 @@ function computeTreeBuildPerformance(
     deps.customStats,
     allocation,
     deps.treeSocketed,
+    deps.playerConditions,
   )
 
   const allClassSkills = getSkillsByClass(deps.classId)
@@ -267,6 +270,7 @@ function computeTreeBuildPerformance(
           deps.enemyConditions,
           deps.enemyResistances,
           skillsByNormalizedName,
+          deps.skillProjectiles[activeSkill.id],
         )
       : null
 
@@ -313,6 +317,7 @@ function computeTreeBuildPerformance(
       deps.enemyConditions,
       deps.enemyResistances,
       skillsByNormalizedName,
+      deps.skillProjectiles[target.id],
     )
     if (!targetDmg) continue
     const rate = procSkill.proc.trigger === 'on_kill' ? deps.killsPerSec : 1
@@ -495,6 +500,8 @@ export default function TreeView() {
   const customStats = useBuild((s) => s.customStats)
   const mainSkillId = useBuild((s) => s.mainSkillId)
   const enemyConditions = useBuild((s) => s.enemyConditions)
+  const playerConditions = useBuild((s) => s.playerConditions)
+  const skillProjectiles = useBuild((s) => s.skillProjectiles)
   const enemyResistances = useBuild((s) => s.enemyResistances)
   const procToggles = useBuild((s) => s.procToggles)
   const killsPerSec = useBuild((s) => s.killsPerSec)
@@ -513,6 +520,8 @@ export default function TreeView() {
       treeSocketed,
       mainSkillId,
       enemyConditions,
+      playerConditions,
+      skillProjectiles,
       enemyResistances,
       procToggles,
       killsPerSec,
@@ -529,6 +538,8 @@ export default function TreeView() {
       treeSocketed,
       mainSkillId,
       enemyConditions,
+      playerConditions,
+      skillProjectiles,
       enemyResistances,
       procToggles,
       killsPerSec,
@@ -772,11 +783,18 @@ export default function TreeView() {
                 didDragRef.current = false
                 return
               }
-              if (TREE_JEWELRY_IDS.has(n.id) && allocated.has(n.id)) {
-                setSocketModalNodeId(n.id)
+              toggleNode(n.id)
+            }}
+            onContextMenu={(e) => {
+              // Right-click on an allocated jewelry node opens the socket picker. Left-click stays as the universal allocate/deallocate so the user can always undo a jewelry allocation.
+              if (!TREE_JEWELRY_IDS.has(n.id) || !allocated.has(n.id)) return
+              e.preventDefault()
+              e.stopPropagation()
+              if (didDragRef.current) {
+                didDragRef.current = false
                 return
               }
-              toggleNode(n.id)
+              setSocketModalNodeId(n.id)
             }}
           />
         )
@@ -1438,7 +1456,7 @@ function JewelrySocketSection({
         <TooltipSectionHeader tone="gold">Socketed</TooltipSectionHeader>
         <TooltipText>
           <span className="text-faint italic">
-            Empty socket{isAllocated ? ' — click to insert' : ''}
+            Empty socket{isAllocated ? ' — right-click to insert' : ''}
           </span>
         </TooltipText>
       </TooltipSection>

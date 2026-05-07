@@ -97,6 +97,7 @@ export default function LeftStatsPanel() {
 
   const activeBuffs = useBuild((s) => s.activeBuffs);
   const enemyConditions = useBuild((s) => s.enemyConditions);
+  const playerConditions = useBuild((s) => s.playerConditions);
   const enemyResistances = useBuild((s) => s.enemyResistances);
   const customStats = useBuild((s) => s.customStats);
   const treeSocketed = useBuild((s) => s.treeSocketed);
@@ -113,6 +114,7 @@ export default function LeftStatsPanel() {
         customStats,
         treeAllocated,
         treeSocketed,
+        playerConditions,
       ),
     [
       classId,
@@ -125,6 +127,7 @@ export default function LeftStatsPanel() {
       customStats,
       treeAllocated,
       treeSocketed,
+      playerConditions,
     ],
   );
 
@@ -242,6 +245,7 @@ export default function LeftStatsPanel() {
     return out;
   }, [allClassSkills]);
 
+  const skillProjectiles = useBuild((s) => s.skillProjectiles);
   const damage =
     activeSkill && activeRank > 0
       ? computeSkillDamage(
@@ -254,6 +258,7 @@ export default function LeftStatsPanel() {
           enemyConditions,
           enemyResistances,
           skillsByNormalizedName,
+          skillProjectiles[activeSkill.id],
         )
       : null;
   const hitDpsMin =
@@ -298,6 +303,7 @@ export default function LeftStatsPanel() {
         enemyConditions,
         enemyResistances,
         skillsByNormalizedName,
+        skillProjectiles[target.id],
       );
       if (!targetDmg) continue;
       const rate = procSkill.proc.trigger === "on_kill" ? killsPerSec : 1;
@@ -318,6 +324,7 @@ export default function LeftStatsPanel() {
     enemyConditions,
     enemyResistances,
     killsPerSec,
+    skillProjectiles,
   ]);
   const { min: procDpsMin, max: procDpsMax } = procDps;
 

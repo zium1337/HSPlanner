@@ -34,7 +34,15 @@ import type {
   TreeSocketContent,
 } from '../types'
 import { parseCustomStatValue } from './parseCustomStat'
-import { parseTreeNodeMod, TREE_JEWELRY_IDS, TREE_NODE_INFO } from './treeStats'
+import {
+  ELEMENTS,
+  parseTreeNodeMeta,
+  parseTreeNodeMod,
+  TREE_JEWELRY_IDS,
+  TREE_NODE_INFO,
+  type DisableTarget,
+  type ParsedConversion,
+} from './treeStats'
 
 export type SourceType =
   | 'class'
@@ -121,6 +129,18 @@ function sumContributions(sources: SourceContribution[]): RangedValue {
   return min === max ? min : [min, max]
 }
 
+function sumRangedFromMap(
+  map: SourceMap,
+  key: string,
+): [number, number] {
+  // Returns the [min, max] sum of all current contributions for `key`, with both bounds floored to integers (used for skill-rank bonuses, which the game treats as whole-number ranks). Returns [0, 0] when the key has no entries yet. Used during the buff/aura passive pass so passive stats scale with the EFFECTIVE skill rank (base + +to-all-skills + +to-element-skills) rather than the bare allocated rank.
+  const list = map.get(key)
+  if (!list || list.length === 0) return [0, 0]
+  const v = sumContributions(list)
+  if (typeof v === 'number') return [Math.floor(v), Math.floor(v)]
+  return [Math.floor(v[0]), Math.floor(v[1])]
+}
+
 function applyContribution(
   attrSources: SourceMap,
   statSources: SourceMap,
@@ -174,6 +194,59 @@ export function computeBuildStats(
   customStats?: CustomStat[],
   allocatedTreeNodes?: Set<number>,
   treeSocketed?: Record<number, TreeSocketContent | null>,
+  playerConditions?: Record<string, boolean>,
+): ComputedStats {
+  // Two-pass auto-resolution for the `crit_chance_below_40` self-condition: when the user has not explicitly toggled it on, run a baseline pass to compute the final crit_chance, and if it falls below 40%, run a second pass with the condition activated so any tree-node mods gated on it apply automatically. Cheap because the second pass only happens when the user is actually below the threshold.
+  const baseline = computeBuildStatsCore(
+    classId,
+    level,
+    allocated,
+    inventory,
+    skillRanks,
+    activeAuraId,
+    activeBuffs,
+    customStats,
+    allocatedTreeNodes,
+    treeSocketed,
+    playerConditions,
+  )
+  if (
+    !playerConditions?.crit_chance_below_40 &&
+    allocatedTreeNodes &&
+    allocatedTreeNodes.size > 0
+  ) {
+    const crit = baseline.stats.crit_chance ?? 0
+    if (rangedMin(crit) < 40) {
+      return computeBuildStatsCore(
+        classId,
+        level,
+        allocated,
+        inventory,
+        skillRanks,
+        activeAuraId,
+        activeBuffs,
+        customStats,
+        allocatedTreeNodes,
+        treeSocketed,
+        { ...playerConditions, crit_chance_below_40: true },
+      )
+    }
+  }
+  return baseline
+}
+
+function computeBuildStatsCore(
+  classId: string | null,
+  level: number,
+  allocated: Record<AttributeKey, number>,
+  inventory: Inventory,
+  skillRanks?: Record<string, number>,
+  activeAuraId?: string | null,
+  activeBuffs?: Record<string, boolean>,
+  customStats?: CustomStat[],
+  allocatedTreeNodes?: Set<number>,
+  treeSocketed?: Record<number, TreeSocketContent | null>,
+  playerConditions?: Record<string, boolean>,
 ): ComputedStats {
   // Top-level aggregator that walks every input (class base, allocated attributes, inventory items, sockets/runewords, augments, allocated talent-tree nodes, set bonuses, default per-level stats, allocated active passive/aura/buff skills, custom stats, derived per-attribute stats and item-granted skill effects) and produces a single ComputedStats object containing both the summed values and the per-source breakdown. Used by the build store on every state change to refresh the stats panel and feed the damage calculators.
   const cls = classId ? getClass(classId) : undefined
@@ -355,6 +428,10 @@ export function computeBuildStats(
     }
   }
 
+  // Collected during the tree pass and applied after the main aggregation so they read FINAL stat/attribute values.
+  const treeConversions: Array<{ conv: ParsedConversion; sourceLabel: string }> = []
+  const treeDisables = new Set<DisableTarget>()
+
   if (allocatedTreeNodes && allocatedTreeNodes.size > 0) {
     for (const nodeId of allocatedTreeNodes) {
       const info = TREE_NODE_INFO[String(nodeId)]
@@ -362,18 +439,35 @@ export function computeBuildStats(
       // Jewelry sockets contribute via their socketed content, not via the
       // "+1 Socketable Slot" line.
       if (TREE_JEWELRY_IDS.has(nodeId)) continue
-      const label = `Tree: ${info.t}`
       for (const line of info.l) {
         const parsed = parseTreeNodeMod(line)
-        if (!parsed) continue
-        applyContribution(
-          attrSources,
-          statSources,
-          parsed.key,
-          parsed.value,
-          label,
-          'tree',
-        )
+        if (parsed) {
+          if (
+            parsed.selfCondition &&
+            !playerConditions?.[parsed.selfCondition]
+          ) {
+            continue
+          }
+          const label = parsed.selfCondition
+            ? `Tree: ${info.t} (conditional)`
+            : `Tree: ${info.t}`
+          applyContribution(
+            attrSources,
+            statSources,
+            parsed.key,
+            parsed.value,
+            label,
+            'tree',
+          )
+          continue
+        }
+        const meta = parseTreeNodeMeta(line)
+        if (!meta) continue
+        if (meta.kind === 'convert') {
+          treeConversions.push({ conv: meta, sourceLabel: `Tree: ${info.t}` })
+        } else if (meta.kind === 'disable') {
+          treeDisables.add(meta.target)
+        }
       }
     }
   }
@@ -482,28 +576,73 @@ export function computeBuildStats(
     }
   }
 
+  // Apply custom-stat overrides BEFORE the skill passive loop so user-supplied "+to all skills" / "+to <element> skills" customs can lift the EFFECTIVE skill rank that buffs/auras read for their per-rank passive scaling.
+  for (const cs of customStats ?? []) {
+    if (!cs.statKey) continue
+    const parsed = parseCustomStatValue(cs.value)
+    if (parsed === null) continue
+    applyContribution(
+      attrSources,
+      statSources,
+      cs.statKey,
+      parsed,
+      CUSTOM_SOURCE_LABEL,
+      'custom',
+    )
+  }
+
   if (skillRanks && classId) {
     const attrKeySet = new Set(gameConfig.attributes.map((a) => a.key))
     const classSkillList = getSkillsByClass(classId)
+    // Skill passives/auras/buffs scale with EFFECTIVE rank (base + +to-all-skills + +to-<element>-skills + item +to-this-skill), not just the points the user allocated. This matches what SkillsView's "+EFFECTS" preview shows and how the game itself stacks +skill items on top of allocated points.
+    const itemSkillRankBonuses = aggregateItemSkillBonuses(inventory)
+    const allSkillsBonus = sumRangedFromMap(statSources, 'all_skills')
     for (const skill of classSkillList) {
-      const rank = skillRanks[skill.id] ?? 0
-      if (rank <= 0 || !skill.passiveStats) continue
+      const baseRank = skillRanks[skill.id] ?? 0
+      if (baseRank <= 0 || !skill.passiveStats) continue
       if (skill.kind === 'aura' && activeAuraId !== skill.id) continue
       const isBuff =
         skill.kind === 'buff' || (skill.tags?.includes('Buff') ?? false)
       if (isBuff && !(activeBuffs?.[skill.id])) continue
+      const elemBonus = skill.damageType
+        ? sumRangedFromMap(statSources, `${skill.damageType}_skills`)
+        : ([0, 0] as [number, number])
+      const itemBonus =
+        itemSkillRankBonuses[normalizeSkillName(skill.name)] ?? [0, 0]
+      const effMin = Math.max(
+        1,
+        baseRank + allSkillsBonus[0] + elemBonus[0] + itemBonus[0],
+      )
+      const effMax = Math.max(
+        1,
+        baseRank + allSkillsBonus[1] + elemBonus[1] + itemBonus[1],
+      )
       const { base, perRank } = skill.passiveStats
-      const combined: Record<string, number> = {}
+      const combined: Record<string, RangedValue> = {}
       if (base) for (const [k, v] of Object.entries(base)) combined[k] = v
       if (perRank) {
         for (const [k, v] of Object.entries(perRank)) {
-          combined[k] = (combined[k] ?? 0) + v * (rank - 1)
+          const baseVal = combined[k] ?? 0
+          const min =
+            (typeof baseVal === 'number' ? baseVal : baseVal[0]) +
+            v * (effMin - 1)
+          const max =
+            (typeof baseVal === 'number' ? baseVal : baseVal[1]) +
+            v * (effMax - 1)
+          combined[k] = min === max ? min : [min, max]
         }
       }
+      const rankLabel = effMin === effMax ? `${effMin}` : `${effMin}-${effMax}`
       for (const [key, value] of Object.entries(combined)) {
-        if (value === 0) continue
-        const rounded = Math.round(value * 1000) / 1000
-        const label = `${skill.name} (rank ${rank})`
+        if (isZero(value)) continue
+        const rounded: RangedValue =
+          typeof value === 'number'
+            ? Math.round(value * 1000) / 1000
+            : [
+                Math.round(value[0] * 1000) / 1000,
+                Math.round(value[1] * 1000) / 1000,
+              ]
+        const label = `${skill.name} (rank ${rankLabel})`
         if (attrKeySet.has(key)) {
           pushSource(attrSources, key, {
             label,
@@ -519,20 +658,6 @@ export function computeBuildStats(
         }
       }
     }
-  }
-
-  for (const cs of customStats ?? []) {
-    if (!cs.statKey) continue
-    const parsed = parseCustomStatValue(cs.value)
-    if (parsed === null) continue
-    applyContribution(
-      attrSources,
-      statSources,
-      cs.statKey,
-      parsed,
-      CUSTOM_SOURCE_LABEL,
-      'custom',
-    )
   }
 
   const incrAttrSources = statSources.get('increased_all_attributes') ?? []
@@ -556,6 +681,44 @@ export function computeBuildStats(
         })
       }
     }
+  }
+
+  // Per-attribute percentage modifiers (e.g. "+3% Increased Intelligence"). Stack additively with the flat attribute sources, mirroring how `increased_all_attributes` is applied. The `_more` Total variant compounds multiplicatively on top of the additive sum.
+  for (const attr of gameConfig.attributes) {
+    const addList = statSources.get(`increased_${attr.key}`) ?? []
+    const moreList = statSources.get(`increased_${attr.key}_more`) ?? []
+    if (addList.length === 0 && moreList.length === 0) continue
+    const flatSum = sumContributions(attrSources.get(attr.key) ?? [])
+    const [fMin, fMax] =
+      typeof flatSum === 'number' ? [flatSum, flatSum] : flatSum
+    if (fMin === 0 && fMax === 0) continue
+    const addSum = sumContributions(addList)
+    const [aMin, aMax] =
+      typeof addSum === 'number' ? [addSum, addSum] : addSum
+    const moreSum = sumContributions(moreList)
+    const [mMin, mMax] =
+      typeof moreSum === 'number' ? [moreSum, moreSum] : moreSum
+    const finalMin = Math.floor(fMin * (1 + aMin / 100) * (1 + mMin / 100))
+    const finalMax = Math.floor(fMax * (1 + aMax / 100) * (1 + mMax / 100))
+    const bonusMin = finalMin - fMin
+    const bonusMax = finalMax - fMax
+    if (bonusMin === 0 && bonusMax === 0) continue
+    const labelParts: string[] = []
+    if (aMin !== 0 || aMax !== 0) {
+      labelParts.push(
+        aMin === aMax ? `+${aMin}%` : `+${aMin}-${aMax}%`,
+      )
+    }
+    if (mMin !== 0 || mMax !== 0) {
+      labelParts.push(
+        mMin === mMax ? `Total +${mMin}%` : `Total +${mMin}-${mMax}%`,
+      )
+    }
+    pushSource(attrSources, attr.key, {
+      label: `Increased ${attr.name} (${labelParts.join(', ')})`,
+      sourceType: 'tree',
+      value: bonusMin === bonusMax ? bonusMin : [bonusMin, bonusMax],
+    })
   }
 
   const attrContributionMaps: Array<Record<AttributeKey, StatMap>> = []
@@ -688,9 +851,13 @@ export function computeBuildStats(
     const [rankMin, rankMax] = itemGrantedRanks[key] ?? [0, 0]
     if (rankMax <= 0) continue
     for (const conv of granted.passiveConverts.perRank) {
-      const fromVal = stats[conv.from] ?? 0
-      const fromMin = rangedMin(fromVal)
-      const fromMax = rangedMax(fromVal)
+      // Read the *effective* source stat (additive folded with its `_more` Total multiplier) so conversions like Fallen God's Bloodlust apply to the final Attack Speed the player actually sees, matching in-game behaviour.
+      const effective = combineAdditiveAndMore(
+        stats[conv.from],
+        stats[`${conv.from}_more`],
+      )
+      const fromMin = rangedMin(effective)
+      const fromMax = rangedMax(effective)
       const addMin = ((conv.pct * rankMin) / 100) * fromMin
       const addMax = ((conv.pct * rankMax) / 100) * fromMax
       if (addMin === 0 && addMax === 0) continue
@@ -710,9 +877,55 @@ export function computeBuildStats(
       touchedConvertTargets.add(conv.to)
     }
   }
+  // Tree-node conversions (e.g. "+75% of your Increased Attack Speed is added as Magic Skill Damage" from Agile Wizard). Read the FINAL source value (combining additive with `_more` for stats, or the computed attribute value) and push the converted contribution into the target's source list. Mutates `stats` for the touched target keys via the `touchedConvertTargets` re-aggregation step below.
+  for (const { conv, sourceLabel } of treeConversions) {
+    const sourceValue: RangedValue =
+      conv.fromKind === 'attribute'
+        ? (attributes[conv.fromKey as AttributeKey] ?? 0)
+        : combineAdditiveAndMore(
+            stats[conv.fromKey],
+            stats[`${conv.fromKey}_more`],
+          )
+    const fromMin = rangedMin(sourceValue)
+    const fromMax = rangedMax(sourceValue)
+    const addMin = (conv.pct / 100) * fromMin
+    const addMax = (conv.pct / 100) * fromMax
+    if (addMin === 0 && addMax === 0) continue
+    const value: RangedValue =
+      addMin === addMax ? addMin : [addMin, addMax]
+    const label = `${sourceLabel}: ${conv.pct}% of ${statName(conv.fromKey)}`
+    if (conv.toKind === 'attribute') {
+      pushSource(attrSources, conv.toKey, {
+        label,
+        sourceType: 'tree',
+        value,
+      })
+      const list = attrSources.get(conv.toKey)
+      if (list) {
+        attributes[conv.toKey as AttributeKey] = sumContributions(list)
+        attributeSourcesOut[conv.toKey as AttributeKey] = list
+      }
+    } else {
+      pushSource(statSources, conv.toKey, {
+        label,
+        sourceType: 'tree',
+        value,
+      })
+      if (!statSourcesOut[conv.toKey]) {
+        statSourcesOut[conv.toKey] = statSources.get(conv.toKey)!
+      }
+      touchedConvertTargets.add(conv.toKey)
+    }
+  }
   for (const k of touchedConvertTargets) {
     const list = statSources.get(k)
     if (list) stats[k] = sumContributions(list)
+  }
+
+  // Tree-node disable flags (e.g. "You cannot regenerate life from life replenish anymore" from Agile Wizard). Zero out the affected stats so downstream displays and calculations reflect the tradeoff.
+  if (treeDisables.has('life_replenish')) {
+    stats.life_replenish = 0
+    stats.life_replenish_pct = 0
   }
 
   return {
@@ -768,8 +981,15 @@ export function combineAdditiveAndMore(
 }
 
 export function statName(key: string): string {
-  // Returns the human-readable display name for a stat key, falling back to the key itself when no definition exists. Used by tooltips, formatters and breakdown labels throughout the UI.
-  return STAT_DEFS_MAP.get(key)?.name ?? key
+  // Returns the human-readable display name for a stat key. For derived `_more` keys (multiplicative/Total variants) without a direct config entry, derives the label by prepending "Total " to the base key's name (e.g. `increased_attack_speed_more` → "Total Attack Speed"). Falls back to the key itself when nothing matches. Used by tooltips, formatters and breakdown labels throughout the UI.
+  const direct = STAT_DEFS_MAP.get(key)?.name
+  if (direct) return direct
+  if (key.endsWith('_more')) {
+    const base = key.slice(0, -'_more'.length)
+    const baseName = STAT_DEFS_MAP.get(base)?.name
+    if (baseName) return `Total ${baseName}`
+  }
+  return key
 }
 
 export function statDef(key: string): StatDef | undefined {
@@ -847,6 +1067,11 @@ export interface SkillDamageBreakdown {
   critChance: number
   critDamagePct: number
   critMultiplierAvg: number
+  multicastChancePct: number
+  multicastMultiplier: number
+  projectileCount: number
+  elementalBreakPct: number
+  elementalBreakMultiplier: number
   enemyResistancePct: number
   resistanceIgnoredPct: number
   effectiveResistancePct: number
@@ -1098,6 +1323,7 @@ export function computeSkillDamage(
   enemyConditions?: Record<string, boolean>,
   enemyResistances?: Record<string, number>,
   skillsByNormalizedName?: Record<string, Skill>,
+  projectileCount?: number,
 ): SkillDamageBreakdown | null {
   // Computes the per-hit / crit / average / final damage breakdown for a single skill, factoring in effective rank (including +to-all-skills, element-skills, and item-granted bonuses), additive and Total skill damage, synergies, flat damage, ailment-conditional bonuses, spell vs melee crit pools, and enemy resistance / ignore-resistance. Returns null when the skill has neither a damage formula nor a per-rank table or has not been allocated. Used by SkillsView and the stat panel to render damage tooltips.
   if (allocatedRank === 0) return null
@@ -1227,12 +1453,28 @@ export function computeSkillDamage(
   const effectiveResPct = enemyResPct * (1 - ignoreResPct / 100)
   const resistanceMult = 1 - effectiveResPct / 100
 
+  // Elemental Break multiplies elemental skill damage by `(1 + EB%/100)`. Source-specific keys (`_on_strike` / `_on_spell`) only count for their hit type, while the generic `elemental_break` key (e.g. the "+5% to Elemental Break" minor node) applies to every elemental skill regardless of hit type.
+  const isElementalSkill =
+    !!skill.damageType &&
+    (ELEMENTS as readonly string[]).includes(skill.damageType)
+  const elementalBreakPct = isElementalSkill
+    ? Math.max(
+        0,
+        rangedMax(stats.elemental_break ?? 0) +
+          (isSpell
+            ? rangedMax(stats.elemental_break_on_spell ?? 0)
+            : rangedMax(stats.elemental_break_on_strike ?? 0)),
+      )
+    : 0
+  const elementalBreakMultiplier = 1 + elementalBreakPct / 100
+
   const hitMin =
     (baseMin + flatMin) *
     (1 + synergyMinPct / 100) *
     (1 + skillDamageMinPct / 100) *
     skillMoreMultMin *
     extraMult *
+    elementalBreakMultiplier *
     resistanceMult
   const hitMax =
     (baseMax + flatMax) *
@@ -1240,12 +1482,20 @@ export function computeSkillDamage(
     (1 + skillDamageMaxPct / 100) *
     skillMoreMultMax *
     extraMult *
+    elementalBreakMultiplier *
     resistanceMult
 
   const critMin = hitMin * critMultOnCrit
   const critMax = hitMax * critMultOnCrit
-  const avgMin = hitMin * critMultAvg
-  const avgMax = hitMax * critMultAvg
+  // Multicast (Double Cast etc.) only applies to spells: each cast input has X% chance to fire an extra time, so the expected damage per cast input is multiplied by (1 + X/100). Affects only `avgMin/avgMax` (the per-cast expectation), leaving `hitMin/hitMax` and `critMin/critMax` as the underlying single-hit numbers for the breakdown UI.
+  const multicastChancePct = isSpell
+    ? Math.max(0, rangedMax(stats.multicast_chance ?? 0))
+    : 0
+  const multicastMultiplier = 1 + multicastChancePct / 100
+  // Per-skill projectile count override (manual config in ConfigView). Multiplies the per-cast expectation only — `hitMin/hitMax/critMin/critMax` stay as single-projectile numbers so the user still sees the underlying hit damage. Default 1 means no override.
+  const projectiles = Math.max(1, Math.floor(projectileCount ?? 1))
+  const avgMin = hitMin * critMultAvg * multicastMultiplier * projectiles
+  const avgMax = hitMax * critMultAvg * multicastMultiplier * projectiles
 
   const finalMin = Math.floor(hitMin)
   const finalMax = Math.floor(hitMax)
@@ -1266,6 +1516,11 @@ export function computeSkillDamage(
     critChance,
     critDamagePct,
     critMultiplierAvg: critMultAvg,
+    multicastChancePct,
+    multicastMultiplier,
+    projectileCount: projectiles,
+    elementalBreakPct,
+    elementalBreakMultiplier,
     enemyResistancePct: enemyResPct,
     resistanceIgnoredPct: ignoreResPct,
     effectiveResistancePct: effectiveResPct,

@@ -229,6 +229,42 @@
       "format": "percent"
     },
     {
+      "key": "increased_strength",
+      "name": "Increased Strength",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "increased_dexterity",
+      "name": "Increased Dexterity",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "increased_intelligence",
+      "name": "Increased Intelligence",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "increased_energy",
+      "name": "Increased Energy",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "increased_vitality",
+      "name": "Increased Vitality",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "increased_armor",
+      "name": "Increased Armor",
+      "category": "base",
+      "format": "percent"
+    },
+    {
       "key": "to_strength",
       "name": "to Strength",
       "category": "base",
@@ -976,6 +1012,12 @@
     {
       "key": "armor_break_on_strike",
       "name": "Armor Break Inflicted when Striking",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "elemental_break",
+      "name": "Elemental Break",
       "category": "offense",
       "format": "percent"
     },

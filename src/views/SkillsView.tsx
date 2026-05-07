@@ -81,6 +81,7 @@ export default function SkillsView() {
   const activeBuffs = useBuild((s) => s.activeBuffs)
   const subskillRanks = useBuild((s) => s.subskillRanks)
   const enemyConditions = useBuild((s) => s.enemyConditions)
+  const playerConditions = useBuild((s) => s.playerConditions)
   const customStats = useBuild((s) => s.customStats)
   const treeAllocated = useBuild((s) => s.allocatedTreeNodes)
   const treeSocketed = useBuild((s) => s.treeSocketed)
@@ -97,6 +98,7 @@ export default function SkillsView() {
         customStats,
         treeAllocated,
         treeSocketed,
+        playerConditions,
       ),
     [
       classId,
@@ -109,6 +111,7 @@ export default function SkillsView() {
       customStats,
       treeAllocated,
       treeSocketed,
+      playerConditions,
     ],
   )
   const itemSkillBonuses = useMemo(

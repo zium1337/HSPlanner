@@ -763,24 +763,6 @@
     "height": 3
   },
   {
-    "id": "charm_satanic_overloaded_dice",
-    "name": "Overloaded Dice",
-    "baseType": "Charm",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "SS",
-    "requiresLevel": 100,
-    "implicit": {
-      "all_skills": 2,
-      "all_attributes": 10
-    },
-    "uniqueEffects": [
-      "Grant Subskills: Random Skill"
-    ],
-    "width": 2,
-    "height": 2
-  },
-  {
     "id": "charm_satanic_pirate_captain_s_flag",
     "name": "Pirate Captain's Flag",
     "baseType": "Charm",
