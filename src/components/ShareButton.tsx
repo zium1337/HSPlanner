@@ -1,53 +1,61 @@
-import { useState } from 'react'
-import { useBuild } from '../store/build'
-import { encodeBuildToShare } from '../utils/shareBuild'
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { useBuild } from "../store/build";
+import { encodeBuildToShare } from "../utils/shareBuild";
 
-type Status = 'idle' | 'copied' | 'error'
+type Status = "idle" | "copied" | "error";
+
+const FOOTER_BTN_CLASS =
+  "rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot";
+
+const FOOTER_BTN_PRIMARY_CLASS =
+  "rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]";
 
 export default function ShareButton() {
-  // Top-bar button that generates a compact, lz-string-encoded share code from the current build (and its notes) on first open, exposes it in a popover, and offers a one-click copy-to-clipboard with a transient "Copied!" / "Copy failed" status. Used as the primary entry point for sharing builds outside the app.
-  const exportSnapshot = useBuild((s) => s.exportBuildSnapshot)
-  const [status, setStatus] = useState<Status>('idle')
-  const [code, setCode] = useState<string | null>(null)
-  const [open, setOpen] = useState(false)
+  // Top-bar primary action that opens a PickerModal-styled dialog with the encoded build code, copy-to-clipboard control, and a transient status hint. The code is generated lazily the first time the dialog opens.
+  const exportSnapshot = useBuild((s) => s.exportBuildSnapshot);
+  const [status, setStatus] = useState<Status>("idle");
+  const [code, setCode] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const generate = (): string => {
-    // Encodes the current build snapshot and notes into a fresh share code, stores it in component state, and opens the popover. Used by the toggle and copy actions to lazily produce a code only when needed.
-    const { notes } = useBuild.getState()
-    const next = encodeBuildToShare(exportSnapshot(), notes)
-    setCode(next)
-    setOpen(true)
-    setStatus('idle')
-    return next
-  }
+    // Encodes the current build snapshot + notes into a fresh share code, stashes it in component state, opens the dialog, and resets the copy status. Returns the code so callers (Open and Copy) can use it without an extra render round-trip.
+    const { notes } = useBuild.getState();
+    const next = encodeBuildToShare(exportSnapshot(), notes);
+    setCode(next);
+    setOpen(true);
+    setStatus("idle");
+    return next;
+  };
 
-  const onToggle = () => {
-    // Opens the popover (generating a code if one isn't ready) or closes it when already open. Used as the click handler for the Share button.
+  const onOpen = () => {
+    // Toggles the share dialog. Generates a code on first open, otherwise simply re-uses the cached code.
     if (open) {
-      setOpen(false)
-      return
+      setOpen(false);
+      return;
     }
-    generate()
-  }
+    generate();
+  };
 
   const onCopy = async () => {
-    // Copies the (possibly just-generated) build code to the clipboard and toggles a transient "Copied!" / "Copy failed" status for 2.5 seconds. Used as the click handler for the Copy button inside the popover.
-    const next = code ?? generate()
+    // Copies the code to the clipboard and toggles a transient "Copied!" / "Copy failed" status for 2.5 seconds. Used by the Copy button.
+    const next = code ?? generate();
     try {
-      await navigator.clipboard.writeText(next)
-      setStatus('copied')
-      setTimeout(() => setStatus('idle'), 2500)
+      await navigator.clipboard.writeText(next);
+      setStatus("copied");
+      setTimeout(() => setStatus("idle"), 2500);
     } catch {
-      setStatus('error')
-      setTimeout(() => setStatus('idle'), 2500)
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 2500);
     }
-  }
+  };
 
   return (
-    <div className="relative">
+    <>
       <button
-        onClick={onToggle}
-        className="btn-primary-gold inline-flex items-center gap-1.5 rounded-[3px] px-3 py-1.5 text-xs font-medium"
+        onClick={onOpen}
+        className="inline-flex items-center gap-1.5 rounded-[3px] border border-accent-deep px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+        style={{ background: "linear-gradient(180deg, #3a2f1a, #2a2418)" }}
         title="Generate shareable build code"
       >
         <svg
@@ -71,44 +79,226 @@ export default function ShareButton() {
       </button>
 
       {open && code && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[32rem] max-w-[90vw] rounded border border-border bg-panel p-3 text-xs shadow-lg">
-          <div className="mb-1.5 flex items-center justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-muted">
-              Build code ({code.length} chars)
-            </span>
-            <button
-              onClick={() => setOpen(false)}
-              className="text-muted hover:text-text px-1"
-              title="Close"
-              aria-label="Close"
+        <ShareDialog
+          code={code}
+          status={status}
+          onClose={() => setOpen(false)}
+          onCopy={onCopy}
+        />
+      )}
+    </>
+  );
+}
+
+function ShareDialog({
+  code,
+  status,
+  onClose,
+  onCopy,
+}: {
+  code: string;
+  status: Status;
+  onClose: () => void;
+  onCopy: () => void;
+}) {
+  // Modal-style dialog that mirrors PickerModal's chrome (corners, gradient, header, footer) and exposes the build code in a read-only textarea plus a Copy button. Used by ShareButton to replace the legacy popover.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const copyLabel =
+    status === "copied"
+      ? "Copied"
+      : status === "error"
+        ? "Copy failed"
+        : "Copy code";
+
+  const statusText =
+    status === "copied"
+      ? "Code copied to clipboard"
+      : status === "error"
+        ? "Clipboard write failed"
+        : `${code.length} characters`;
+
+  const statusColor =
+    status === "copied"
+      ? "text-accent-hot"
+      : status === "error"
+        ? "text-stat-red"
+        : "text-faint";
+
+  return createPortal(
+    <div
+      role="presentation"
+      className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm"
+      onMouseDown={onClose}
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)",
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        onMouseDown={(e) => e.stopPropagation()}
+        className="relative flex max-h-[88vh] w-[34rem] max-w-[94vw] flex-col overflow-hidden rounded-[6px] border border-border"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))",
+          boxShadow:
+            "inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)",
+        }}
+      >
+        <CornerMarks />
+        <header
+          className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(201,165,90,0.05), transparent)",
+          }}
+        >
+          <div>
+            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+              <span
+                aria-hidden
+                className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
+                style={{ boxShadow: "0 0 8px rgba(224,184,100,0.6)" }}
+              />
+              Share
+            </div>
+            <h2
+              className="m-0 text-[18px] font-semibold tracking-[0.02em] text-accent-hot"
+              style={{ textShadow: "0 0 16px rgba(224,184,100,0.15)" }}
             >
-              ×
-            </button>
+              Build Code
+            </h2>
           </div>
+          <button
+            onClick={onClose}
+            className="rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+          >
+            Close
+          </button>
+        </header>
+
+        <div className="flex flex-col gap-3 p-5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+            Read-only build payload
+          </span>
           <textarea
             value={code}
             readOnly
             onFocus={(e) => e.currentTarget.select()}
-            rows={5}
-            className="w-full rounded border border-border bg-panel-2 px-2 py-1 font-mono text-[11px] tabular-nums"
+            rows={6}
+            className="w-full rounded-[3px] border border-border-2 px-3 py-2 font-mono text-[11px] tabular-nums text-text focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
+            style={{
+              background:
+                "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
+              boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+            }}
           />
-          <div className="mt-2 flex items-center gap-2">
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+            Paste into Builds → Import to load on another device.
+          </p>
+        </div>
+
+        <footer className="flex items-center justify-between gap-3 border-t border-border bg-black/30 px-4 py-3">
+          <div
+            className={`flex min-w-0 flex-1 items-center gap-2 font-mono text-[11px] tracking-[0.06em] ${statusColor}`}
+          >
+            <span
+              aria-hidden
+              className="h-1.5 w-1.5 shrink-0 rounded-full"
+              style={{
+                background:
+                  status === "copied"
+                    ? "var(--color-accent-hot)"
+                    : status === "error"
+                      ? "var(--color-stat-red)"
+                      : "var(--color-faint)",
+                boxShadow:
+                  status === "copied"
+                    ? "0 0 8px rgba(224,184,100,0.6)"
+                    : status === "error"
+                      ? "0 0 8px rgba(217,107,90,0.6)"
+                      : "0 0 6px var(--color-faint)",
+              }}
+            />
+            <span className="truncate">{statusText}</span>
+          </div>
+          <div className="flex shrink-0 gap-2">
             <button
               onClick={onCopy}
-              className="rounded border border-accent/50 bg-accent/10 px-2 py-1 text-accent hover:bg-accent/20"
+              className={FOOTER_BTN_PRIMARY_CLASS}
+              style={{
+                background: "linear-gradient(180deg, #3a2f1a, #2a2418)",
+              }}
             >
-              {status === 'copied'
-                ? 'Copied!'
-                : status === 'error'
-                  ? 'Copy failed'
-                  : 'Copy code'}
+              {copyLabel}
             </button>
-            <span className="text-[10px] text-muted">
-              Paste into Builds → Import to load.
-            </span>
+            <button onClick={onClose} className={FOOTER_BTN_CLASS}>
+              Close
+            </button>
           </div>
-        </div>
-      )}
-    </div>
-  )
+        </footer>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+function CornerMarks() {
+  // Renders the four small accent-deep L-marks at the dialog's corners, matching PickerModal's chrome.
+  const base: React.CSSProperties = {
+    position: "absolute",
+    width: 10,
+    height: 10,
+    border: "1px solid var(--color-accent-deep)",
+    opacity: 0.55,
+    pointerEvents: "none",
+  };
+  return (
+    <>
+      <span
+        style={{
+          ...base,
+          top: -1,
+          left: -1,
+          borderRight: "none",
+          borderBottom: "none",
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          top: -1,
+          right: -1,
+          borderLeft: "none",
+          borderBottom: "none",
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          left: -1,
+          borderRight: "none",
+          borderTop: "none",
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          right: -1,
+          borderLeft: "none",
+          borderTop: "none",
+        }}
+      />
+    </>
+  );
 }

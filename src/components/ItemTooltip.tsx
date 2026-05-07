@@ -358,7 +358,6 @@ export function ItemTooltipBody({
           (x) => x.affix?.groupId !== 'random_unholy',
         )
         const renderItem = ({
-          eq,
           idx,
           affix,
         }: (typeof indexed)[number]) => {
@@ -376,12 +375,12 @@ export function ItemTooltipBody({
             )
           }
           const descNoValue = affix.description
-            .replace(/^[+-]?\[?[^\]]*\]?\s*/, '')
+            .replace(/^[+-]?\[?[^\]]*\]?%?\s*/, '')
             .replace(/\s+/g, ' ')
             .trim()
           return (
             <li key={idx} className={colorBase}>
-              {formatAffixValue(affix, eq.roll, equipped?.stars)} {descNoValue}
+              {formatAffixRange(affix, equipped?.stars)} {descNoValue}
             </li>
           )
         }
@@ -575,7 +574,11 @@ function aggregateItemStats(
   for (const eq of equipped.affixes) {
     const affix = getAffix(eq.affixId)
     if (!affix?.statKey) continue
-    add(affix.statKey, rolledAffixValueWithStars(affix, eq.roll, equipped.stars))
+    // Average over the affix range so Net Change shows a representative
+    // delta (the range mid-point) instead of locking to whatever roll was
+    // saved (the picker-modal default is `roll: 1`, which would otherwise
+    // bias every comparison toward the maximum end of the range).
+    add(affix.statKey, rolledAffixValueWithStars(affix, 0.5, equipped.stars))
   }
 
   if (runeword) {
@@ -965,7 +968,7 @@ function collectSocketStats(
   return Object.entries(stats).filter(([, v]) => v !== 0)
 }
 
-function formatAffixValue(
+function formatAffixRange(
   affix: {
     sign: '+' | '-'
     format: 'flat' | 'percent'
@@ -973,17 +976,23 @@ function formatAffixValue(
     valueMax: number | null
     statKey: string | null
   },
-  roll: number,
   stars?: number,
 ): string {
-  // Formats a single affix's rolled (and star-scaled) value as a signed string with a percent suffix when appropriate. Used by ItemTooltipBody to render each affix line in the standard / unholy lists.
+  // Formats a single affix's *full* roll window as a signed bracketed range string ("+[15-25]%", "+[12-18]", "+30") with the percent suffix when appropriate, applying the equipped item's star multiplier to both endpoints. Single-value affixes (min === max) drop the brackets and dash. Used by ItemTooltipBody to render each affix line as a min-max bracket instead of a single rolled value, matching the GearSlotModal's range display.
   if (affix.valueMin === null || affix.valueMax === null) return affix.sign
-  const signed = rolledAffixValueWithStars(affix, roll, stars)
-  const abs = Math.abs(signed)
-  const num = Number.isInteger(abs) ? abs : Math.round(abs * 100) / 100
-  const sign = signed < 0 ? '-' : '+'
+  const minSigned = rolledAffixValueWithStars(affix, 0, stars)
+  const maxSigned = rolledAffixValueWithStars(affix, 1, stars)
+  const fmtAbs = (v: number) => {
+    const abs = Math.abs(v)
+    return Number.isInteger(abs) ? abs : Math.round(abs * 100) / 100
+  }
+  const lo = fmtAbs(minSigned)
+  const hi = fmtAbs(maxSigned)
+  const sign =
+    affix.sign === '-' || minSigned < 0 || maxSigned < 0 ? '-' : '+'
   const suffix = affix.format === 'percent' ? '%' : ''
-  return `${sign}${num}${suffix}`
+  if (lo === hi) return `${sign}${hi}${suffix}`
+  return `${sign}[${lo}-${hi}]${suffix}`
 }
 
 export { RARITY_TONE, RARITY_LABEL }

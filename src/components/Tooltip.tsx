@@ -128,6 +128,27 @@ export default function Tooltip({
   )
 }
 
+export function TooltipPanel({
+  children,
+  tone = 'neutral',
+  className,
+  width,
+}: {
+  children: ReactNode
+  tone?: TooltipTone
+  className?: string
+  width?: number | string
+}) {
+  return (
+    <div
+      className={`bg-panel border ${TONE_BORDER[tone]} ${TONE_GLOW[tone]} rounded-[4px] overflow-hidden select-none shadow-[0_8px_32px_rgba(0,0,0,0.8)] ${className ?? ''}`}
+      style={width !== undefined ? { width } : undefined}
+    >
+      {children}
+    </div>
+  )
+}
+
 export function TooltipHeader({
   title,
   subtitle,

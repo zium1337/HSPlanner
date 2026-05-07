@@ -154,9 +154,15 @@ describe('Item-granted skills (passiveConverts)', () => {
     const { stats } = computeBuildStats(
       null, 1, zeroAttrs, inventory,
     )
+    // 5* applies the documented ITEM SPECIFIC staircase (+3 to skill ranks):
+    //   Fallen God's Bloodlust rank [1,10] -> [4,13]
+    // increased_attack_speed scales 3% per star and is rounded to int:
+    //   [40,50] * 1.15 -> [46,57] (floating-point edge: 57.499... rounds to 57)
+    // FCR = 10% × rank × IAS  =>  min 0.1 × 4 × 46 = 18.4,
+    //                              max 0.1 × 13 × 57 = 74.1
     const fcr = stats.faster_cast_rate
-    expect(rangedMin(fcr as RangedValue)).toBeCloseTo(5.6)
-    expect(rangedMax(fcr as RangedValue)).toBeCloseTo(98)
+    expect(rangedMin(fcr as RangedValue)).toBeCloseTo(18.4)
+    expect(rangedMax(fcr as RangedValue)).toBeCloseTo(74.1)
   })
 
   it('Convert reads final value of `from` (sees additive sum, not raw item contribution)', () => {

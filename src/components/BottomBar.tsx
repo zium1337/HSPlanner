@@ -35,6 +35,8 @@ export default function BottomBar() {
     if (!activeBuildId) return 'Unnamed'
     const b = getSavedBuild(activeBuildId)
     return b?.name ?? 'Unnamed'
+    // savedBuildsVersion is the store cache-buster: re-read on every store mutation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeBuildId, savedBuildsVersion])
 
   const [check, setCheck] = useState<CheckState>({ kind: 'idle' })
@@ -78,29 +80,28 @@ export default function BottomBar() {
       if (cancelled) return
       const win = getCurrentWindow()
       unlisten = await win.onCloseRequested(async (event) => {
-        if (quitting) {
-          const { exit } = await import('@tauri-apps/plugin-process')
-          await exit(0)
-          return
-        }
+        if (quitting) return
+        quitting = true
+        event.preventDefault()
+
         const auto = readStorage(AUTO_INSTALL_KEY) === '1'
         const cur = checkRef.current
-        if (!auto || cur.kind !== 'available') return
-        event.preventDefault()
-        quitting = true
-        try {
-          await Promise.race([
-            installUpdateOnQuit(),
-            new Promise((_, reject) =>
-              window.setTimeout(
-                () => reject(new Error('install-on-quit timeout')),
-                QUIT_INSTALL_TIMEOUT_MS,
+        if (auto && cur.kind === 'available') {
+          try {
+            await Promise.race([
+              installUpdateOnQuit(),
+              new Promise((_, reject) =>
+                window.setTimeout(
+                  () => reject(new Error('install-on-quit timeout')),
+                  QUIT_INSTALL_TIMEOUT_MS,
+                ),
               ),
-            ),
-          ])
-        } catch {
-          void 0
+            ])
+          } catch {
+            void 0
+          }
         }
+
         const { exit } = await import('@tauri-apps/plugin-process')
         await exit(0)
       })
@@ -157,19 +158,39 @@ export default function BottomBar() {
   const hasRepo = GITHUB_REPO.length > 0 || isMockEnabled()
 
   return (
-    <footer className="flex h-8 shrink-0 items-center gap-3 border-t border-border bg-panel px-3 text-[11px] text-muted">
-      <span className="font-mono tracking-[0.08em] text-accent-deep">
-        HSPLANNER
+    <footer
+      className="flex h-9 shrink-0 items-center gap-2.5 border-t border-border px-3 text-[11px] text-muted"
+      style={{
+        background:
+          'linear-gradient(180deg, var(--color-panel), var(--color-panel-2))',
+        boxShadow:
+          'inset 0 1px 0 rgba(201,165,90,0.08), 0 -1px 0 rgba(0,0,0,0.4)',
+      }}
+    >
+      <span className="flex select-none items-center gap-1.5">
+        <span
+          aria-hidden
+          className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+          style={{ boxShadow: '0 0 6px rgba(138,111,58,0.5)' }}
+        />
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-deep">
+          HSPlanner
+        </span>
+      </span>
+      <span aria-hidden className="text-faint">
+        ·
       </span>
       <button
         type="button"
         onClick={() => setChangelogOpen(true)}
         title="View changelog"
-        className="font-mono text-faint transition-colors hover:text-accent-hot cursor-pointer"
+        className="cursor-pointer font-mono text-[10px] uppercase tracking-[0.14em] text-faint transition-colors hover:text-accent-hot"
       >
         v{APP_VERSION}
       </button>
       <BuildChannelBadge channel={BUILD_CHANNEL} />
+
+      <span aria-hidden className="h-4 w-px bg-border" />
 
       <UpdateBadge
         state={check}
@@ -194,15 +215,22 @@ export default function BottomBar() {
         />
       )}
 
-      <span className="ml-auto flex items-center gap-1.5">
-        <span className="h-1.5 w-1.5 rounded-full bg-stat-green shadow-[0_0_6px_rgba(116,201,138,0.6)]" />
+      <span className="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-green">
+        <span
+          aria-hidden
+          className="h-1.5 w-1.5 rounded-full bg-stat-green"
+          style={{ boxShadow: '0 0 8px rgba(116,201,138,0.65)' }}
+        />
         Auto-saved
       </span>
-      <span className="hidden sm:flex items-center gap-1.5">
-        Build: <span className="font-mono text-text">{buildName}</span>
-      </span>
-      <span className="hidden lg:inline text-faint">
-        Pan: drag · Zoom: scroll · Allocate: click
+      <span aria-hidden className="hidden h-4 w-px bg-border sm:block" />
+      <span className="hidden items-center gap-1.5 sm:flex">
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+          Build
+        </span>
+        <span className="max-w-[12rem] truncate font-mono text-[11px] text-accent-hot">
+          {buildName}
+        </span>
       </span>
     </footer>
   )
@@ -226,7 +254,7 @@ function UpdateBadge({
         type="button"
         disabled
         title="Set GITHUB_REPO in src/utils/version.ts to enable update checks"
-        className="rounded-[3px] border border-border bg-panel-2/40 px-2 py-0.5 text-faint cursor-not-allowed"
+        className="cursor-not-allowed rounded-[3px] border border-border bg-panel-2/40 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-faint"
       >
         Check for updates
       </button>
@@ -234,13 +262,25 @@ function UpdateBadge({
   }
 
   if (state.kind === 'checking') {
-    return <span className="font-mono text-faint">Checking…</span>
+    return (
+      <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+        <span
+          aria-hidden
+          className="inline-block h-1 w-1 animate-pulse rotate-45 bg-faint"
+        />
+        Checking…
+      </span>
+    )
   }
 
   if (state.kind === 'ok') {
     return (
-      <span className="inline-flex items-center gap-1.5 text-stat-green">
-        <span aria-hidden>✓</span>
+      <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-green">
+        <span
+          aria-hidden
+          className="h-1.5 w-1.5 rounded-full bg-stat-green"
+          style={{ boxShadow: '0 0 6px rgba(116,201,138,0.6)' }}
+        />
         Up to date
       </span>
     )
@@ -253,9 +293,14 @@ function UpdateBadge({
         type="button"
         onClick={onOpenModal}
         title={state.info.releaseName ?? label}
-        className="btn-primary-gold inline-flex items-center gap-1 rounded-[3px] px-2 py-0.5 text-[11px] font-mono"
+        className="inline-flex items-center gap-1.5 rounded-[3px] border border-accent-deep px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+        style={{ background: 'linear-gradient(180deg, #3a2f1a, #2a2418)' }}
       >
-        <span aria-hidden>↑</span>
+        <span
+          aria-hidden
+          className="inline-block h-1 w-1 rotate-45 bg-accent-hot"
+          style={{ boxShadow: '0 0 6px rgba(224,184,100,0.65)' }}
+        />
         {label}
       </button>
     )
@@ -263,8 +308,16 @@ function UpdateBadge({
 
   if (state.kind === 'error') {
     return (
-      <span className="font-mono text-stat-red" title={state.message}>
-        × Check failed
+      <span
+        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-red"
+        title={state.message}
+      >
+        <span
+          aria-hidden
+          className="h-1.5 w-1.5 rounded-full bg-stat-red"
+          style={{ boxShadow: '0 0 6px rgba(217,107,90,0.6)' }}
+        />
+        Check failed
       </span>
     )
   }
@@ -273,7 +326,7 @@ function UpdateBadge({
     <button
       type="button"
       onClick={onCheck}
-      className="rounded-[3px] border border-border bg-panel-2 px-2 py-0.5 text-text transition-colors hover:border-accent-deep hover:text-accent-hot"
+      className="rounded-[3px] border border-border-2 bg-panel-2 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
     >
       Check
     </button>
@@ -285,12 +338,16 @@ function BuildChannelBadge({ channel }: { channel: 'dev' | 'stable' }) {
   const isDev = channel === 'dev'
   const label = isDev ? 'DEV' : 'STABLE'
   const className = isDev
-    ? 'border-accent-deep/40 bg-accent-deep/10 text-accent-hot'
-    : 'border-stat-green/40 bg-stat-green/10 text-stat-green'
+    ? 'border-accent-deep/50 text-accent-hot'
+    : 'border-stat-green/50 text-stat-green'
+  const bg = isDev
+    ? 'linear-gradient(180deg, rgba(58,46,24,0.6), rgba(42,36,24,0.4))'
+    : 'linear-gradient(180deg, rgba(28,52,34,0.6), rgba(20,38,24,0.4))'
   return (
     <span
       title={isDev ? 'Development build' : 'Stable build'}
-      className={`rounded-[3px] border px-1.5 py-px font-mono text-[9px] tracking-[0.14em] ${className}`}
+      className={`rounded-[3px] border px-1.5 py-px font-mono text-[9px] uppercase tracking-[0.18em] ${className}`}
+      style={{ background: bg }}
     >
       {label}
     </span>

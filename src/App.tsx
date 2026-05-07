@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import BottomBar from "./components/BottomBar";
 import BuildsMenu from "./components/BuildsMenu";
 import LeftStatsPanel from "./components/LeftStatsPanel";
-import ProfileSwitcher from "./components/ProfileSwitcher";
+import Logo from "./components/Logo";
 import ShareButton from "./components/ShareButton";
 import { classes, getClass } from "./data";
 import { useBuild } from "./store/build";
@@ -76,7 +76,25 @@ function App() {
 
   return (
     <div className="flex h-screen w-screen flex-col bg-bg text-text">
-      <header className="flex h-10 shrink-0 items-center gap-0 border-b border-border bg-panel pl-1 pr-2">
+      <header
+        className="relative flex h-11 shrink-0 items-center gap-0 border-b border-border pl-3 pr-3"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-panel-2), var(--color-panel))",
+          boxShadow:
+            "inset 0 -1px 0 rgba(201,165,90,0.08), 0 1px 0 rgba(0,0,0,0.4)",
+        }}
+      >
+        <div className="mr-3 flex items-center gap-2 border-r border-border pr-3">
+          <Logo size={22} glow title="HSPlanner" />
+          <span
+            className="select-none font-mono text-[11px] uppercase tracking-[0.18em] text-accent-hot"
+            style={{ textShadow: "0 0 10px rgba(224,184,100,0.25)" }}
+          >
+            HSPlanner
+          </span>
+        </div>
+
         <nav className="flex h-full items-stretch">
           {SECTIONS.map((s) => {
             const active = section === s.id;
@@ -84,30 +102,63 @@ function App() {
               <button
                 key={s.id}
                 onClick={() => setSection(s.id)}
-                className={`flex h-full items-center px-3.5 text-[13px] font-medium tracking-[0.02em] border-b-2 transition-colors ${
+                className={`group relative flex h-full items-center gap-2 px-3.5 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors ${
                   active
-                    ? "text-accent-hot border-accent"
-                    : "text-muted border-transparent hover:text-text"
+                    ? "text-accent-hot"
+                    : "text-muted hover:text-text"
                 }`}
               >
+                <span
+                  aria-hidden
+                  className={`inline-block h-1.5 w-1.5 rotate-45 transition-all ${
+                    active
+                      ? "bg-accent-hot"
+                      : "bg-faint group-hover:bg-muted"
+                  }`}
+                  style={
+                    active
+                      ? { boxShadow: "0 0 8px rgba(224,184,100,0.6)" }
+                      : undefined
+                  }
+                />
                 {s.label}
+                <span
+                  aria-hidden
+                  className={`pointer-events-none absolute bottom-0 left-2 right-2 h-[2px] transition-opacity ${
+                    active ? "opacity-100" : "opacity-0"
+                  }`}
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent, var(--color-accent-hot), transparent)",
+                    boxShadow: active
+                      ? "0 0 12px rgba(224,184,100,0.45)"
+                      : undefined,
+                  }}
+                />
               </button>
             );
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 text-xs">
+        <div className="ml-auto flex items-center gap-2.5">
           {classes.length > 0 && (
             <>
-              <label className="flex items-center gap-2 px-2 text-muted">
-                <span className="text-faint uppercase tracking-[0.08em] text-[11px]">
+              <label className="flex items-center gap-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
                   Class
                 </span>
-                <div className="inline-flex items-center gap-1.5 rounded-[3px] border border-border bg-panel-2 px-2 py-1 hover:border-border-2">
+                <div
+                  className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
+                    boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+                  }}
+                >
                   <select
                     value={classId ?? ""}
                     onChange={(e) => setClass(e.target.value)}
-                    className="bg-transparent text-[12px] text-text outline-none cursor-pointer min-w-20"
+                    className="min-w-20 cursor-pointer bg-transparent text-[12px] text-text outline-none"
                   >
                     {classes.map((c) => (
                       <option key={c.id} value={c.id} className="bg-panel">
@@ -117,28 +168,46 @@ function App() {
                   </select>
                 </div>
               </label>
-              <label className="flex items-center gap-2 px-1 text-muted">
-                <span className="text-faint uppercase tracking-[0.08em] text-[11px]">
+              <label className="flex items-center gap-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
                   Level
                 </span>
-                <div className="inline-flex items-center rounded-[3px] border border-border bg-panel-2 px-2 py-1 hover:border-border-2">
+                <div
+                  className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
+                    boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+                  }}
+                >
                   <input
                     type="number"
                     min={1}
                     value={level}
                     onChange={(e) => setLevel(Number(e.target.value))}
-                    className="w-10 bg-transparent text-center text-[12px] text-text tabular-nums outline-none"
+                    className="w-14 bg-transparent text-center font-mono text-[12px] text-accent-hot tabular-nums outline-none"
                   />
                 </div>
               </label>
             </>
           )}
           {cls?.primaryAttribute && (
-            <span className="hidden md:inline text-accent-deep text-[10px] uppercase tracking-[0.14em] px-1">
+            <span
+              className="hidden items-center gap-1.5 rounded-[3px] border border-accent-deep/40 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot md:inline-flex"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(58,46,24,0.6), rgba(42,36,24,0.4))",
+              }}
+            >
+              <span
+                aria-hidden
+                className="inline-block h-1 w-1 rotate-45 bg-accent-hot"
+                style={{ boxShadow: "0 0 6px rgba(224,184,100,0.6)" }}
+              />
               {cls.primaryAttribute}
             </span>
           )}
-          <ProfileSwitcher />
+          <span aria-hidden className="h-6 w-px bg-border" />
           <BuildsMenu />
           <ShareButton />
         </div>

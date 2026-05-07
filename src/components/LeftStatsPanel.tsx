@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import Logo from "./Logo";
 import { gameConfig, getClass, getSkillsByClass } from "../data";
 import { isImageUrl } from "../utils/icon";
 import { attrPointsFor, skillPointsFor, useBuild } from "../store/build";
@@ -17,7 +16,7 @@ import {
   rangedMin,
   statDef,
 } from "../utils/stats";
-import type { RangedValue } from "../types";
+import type { RangedValue, Skill } from "../types";
 
 const ATTRIBUTE_ORDER: string[] = [
   "strength",
@@ -235,6 +234,14 @@ export default function LeftStatsPanel() {
     return out;
   }, [allClassSkills, skillRanks]);
 
+  const skillsByNormalizedName = useMemo(() => {
+    const out: Record<string, Skill> = {};
+    for (const s of allClassSkills) {
+      out[normalizeSkillName(s.name)] = s;
+    }
+    return out;
+  }, [allClassSkills]);
+
   const damage =
     activeSkill && activeRank > 0
       ? computeSkillDamage(
@@ -246,6 +253,7 @@ export default function LeftStatsPanel() {
           itemSkillBonuses,
           enemyConditions,
           enemyResistances,
+          skillsByNormalizedName,
         )
       : null;
   const hitDpsMin =
@@ -276,9 +284,7 @@ export default function LeftStatsPanel() {
     for (const procSkill of procSkills) {
       if (!procToggles[procSkill.id] || !procSkill.proc) continue;
       const targetName = normalizeSkillName(procSkill.proc.target);
-      const target = allClassSkills.find(
-        (s) => normalizeSkillName(s.name) === targetName,
-      );
+      const target = skillsByNormalizedName[targetName];
       if (!target) continue;
       const targetRank = skillRanks[target.id] ?? 0;
       if (targetRank === 0) continue;
@@ -291,6 +297,7 @@ export default function LeftStatsPanel() {
         itemSkillBonuses,
         enemyConditions,
         enemyResistances,
+        skillsByNormalizedName,
       );
       if (!targetDmg) continue;
       const rate = procSkill.proc.trigger === "on_kill" ? killsPerSec : 1;
@@ -302,11 +309,11 @@ export default function LeftStatsPanel() {
   }, [
     procSkills,
     procToggles,
-    allClassSkills,
     skillRanks,
     attributes,
     stats,
     skillRanksByName,
+    skillsByNormalizedName,
     itemSkillBonuses,
     enemyConditions,
     enemyResistances,
@@ -320,27 +327,48 @@ export default function LeftStatsPanel() {
     avgHitDpsMax !== undefined ? avgHitDpsMax + procDpsMax : undefined;
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col overflow-y-auto border-r border-border bg-panel text-[12px]">
-      <div className="border-b border-border px-3.5 pt-3.5 pb-2.5">
-        <div className="flex items-center gap-2.5">
-          <Logo size={28} title="HSPlanner" />
-          <div className="flex flex-col">
-            <div className="brand-display text-[13px] leading-none">
-              HSPlanner
-            </div>
-            <div className="mt-1.5 text-[10px] text-faint uppercase tracking-[0.12em]">
-              {cls?.name ?? "No class"}
-            </div>
-          </div>
+    <aside
+      className="relative flex h-full w-72 shrink-0 flex-col overflow-y-auto border-r border-border text-[12px]"
+      style={{
+        background:
+          "linear-gradient(180deg, var(--color-panel-2), var(--color-panel) 40%, var(--color-bg))",
+        boxShadow: "inset -1px 0 0 rgba(201,165,90,0.05)",
+      }}
+    >
+      <div
+        className="border-b border-border px-4 py-3"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(201,165,90,0.05), transparent)",
+        }}
+      >
+        <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
+            style={{ boxShadow: "0 0 8px rgba(224,184,100,0.6)" }}
+          />
+          Character
+          <span className="ml-auto text-accent-hot">Lv {level}</span>
         </div>
+        <div
+          className="text-[15px] font-semibold tracking-[0.02em] text-accent-hot"
+          style={{ textShadow: "0 0 14px rgba(224,184,100,0.18)" }}
+        >
+          {cls?.name ?? "No class"}
+        </div>
+        {cls?.primaryAttribute && (
+          <div className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-accent-deep">
+            Primary · {cls.primaryAttribute}
+          </div>
+        )}
       </div>
 
       {classAuras.length > 0 && (
         <Section title="Active Aura">
-          <select
+          <PanelSelect
             value={activeAuraId ?? ""}
             onChange={(e) => setActiveAura(e.target.value || null)}
-            className="w-full rounded border border-border bg-panel-2 px-2 py-1 text-xs"
           >
             <option value="">— none —</option>
             {classAuras.map((s) => {
@@ -348,54 +376,57 @@ export default function LeftStatsPanel() {
               return (
                 <option key={s.id} value={s.id} disabled={rank === 0}>
                   {s.icon && !isImageUrl(s.icon) ? `${s.icon} ` : ""}
-                  {s.name} {rank > 0 ? `(rank ${rank})` : "(not learned)"}
+                  {s.name}
                 </option>
               );
             })}
-          </select>
+          </PanelSelect>
         </Section>
       )}
 
       {procSkills.length > 0 && (
         <Section title="Procs">
-          <div className="mb-1 flex items-center justify-between">
-            <span className="text-text/80">Kills / sec</span>
-            <input
-              type="number"
-              min={0}
-              step={0.5}
-              value={killsPerSec}
-              onChange={(e) => setKillsPerSec(Number(e.target.value))}
-              className="w-16 rounded border border-border bg-panel-2 px-1.5 py-0.5 text-right text-xs tabular-nums"
-            />
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+              Kills / sec
+            </span>
+            <PanelInputWrap>
+              <input
+                type="number"
+                min={0}
+                step={0.5}
+                value={killsPerSec}
+                onChange={(e) => setKillsPerSec(Number(e.target.value))}
+                className="w-14 bg-transparent text-right font-mono text-[11px] text-accent-hot tabular-nums outline-none"
+              />
+            </PanelInputWrap>
           </div>
           {procSkills.map((p) => {
             const targetName = normalizeSkillName(p.proc!.target);
-            const target = allClassSkills.find(
-              (s) => normalizeSkillName(s.name) === targetName,
-            );
+            const target = skillsByNormalizedName[targetName];
             const targetRank = target ? (skillRanks[target.id] ?? 0) : 0;
             const ready = !!target && targetRank > 0;
             return (
               <label
                 key={p.id}
-                className="flex items-center justify-between gap-2 py-0.5"
+                className="group flex items-center justify-between gap-2 py-1"
               >
-                <span className="flex items-center gap-1.5 truncate">
+                <span className="flex min-w-0 items-center gap-1.5 truncate">
                   <input
                     type="checkbox"
                     checked={!!procToggles[p.id]}
                     onChange={(e) => setProcToggle(p.id, e.target.checked)}
                     disabled={!ready}
-                    className="accent-accent"
                   />
-                  <span className={ready ? "text-text/85" : "text-muted"}>
+                  <span
+                    className={`truncate ${ready ? "text-text" : "text-muted"}`}
+                  >
                     {p.icon} {p.name}
                   </span>
                 </span>
-                <span className="text-[10px] text-muted">
-                  {p.proc!.chance}% on {p.proc!.trigger.replace("on_", "")}
-                  {!ready && " · target unlearned"}
+                <span className="shrink-0 font-mono text-[9px] uppercase tracking-[0.12em] text-faint">
+                  {p.proc!.chance}% · {p.proc!.trigger.replace("on_", "")}
+                  {!ready && " · ?"}
                 </span>
               </label>
             );
@@ -405,13 +436,15 @@ export default function LeftStatsPanel() {
 
       <Section title="Main Skill">
         {classSkills.length === 0 ? (
-          <div className="text-muted italic">No skills for this class</div>
+          <div className="font-mono text-[11px] tracking-[0.04em] text-muted italic">
+            No skills for this class
+          </div>
         ) : (
           <>
-            <select
+            <PanelSelect
               value={mainSkillId ?? ""}
               onChange={(e) => setMainSkill(e.target.value || null)}
-              className="mb-1 w-full rounded border border-border bg-panel-2 px-2 py-1 text-xs"
+              className="mb-2"
             >
               <option value="">— select —</option>
               {classSkills.map((s) => (
@@ -420,7 +453,7 @@ export default function LeftStatsPanel() {
                   {s.name}
                 </option>
               ))}
-            </select>
+            </PanelSelect>
             {activeSkill && (
               <>
                 <Row
@@ -542,7 +575,7 @@ export default function LeftStatsPanel() {
                     }
                   />
                 )}
-                <div className="my-1 border-t border-border" />
+                <div className="my-2 border-t border-dashed border-accent-deep/30" />
                 <Row
                   label="Hit damage"
                   value={
@@ -559,7 +592,7 @@ export default function LeftStatsPanel() {
                   label="Hit DPS"
                   value={
                     hitDpsMin !== undefined && hitDpsMax !== undefined ? (
-                      <span className="text-accent">
+                      <span className="text-accent-hot">
                         {formatNumRange(
                           Math.round(hitDpsMin),
                           Math.round(hitDpsMax),
@@ -575,7 +608,13 @@ export default function LeftStatsPanel() {
                   value={
                     combinedDpsMin !== undefined &&
                     combinedDpsMax !== undefined ? (
-                      <span className="text-green-400 font-semibold">
+                      <span
+                        className="font-semibold text-accent-hot"
+                        style={{
+                          textShadow:
+                            "0 0 10px rgba(224,184,100,0.25)",
+                        }}
+                      >
                         {formatNumRange(
                           Math.round(combinedDpsMin),
                           Math.round(combinedDpsMax),
@@ -626,7 +665,7 @@ export default function LeftStatsPanel() {
           return (
             <div
               key={key}
-              className="flex items-baseline justify-between gap-2 py-0.5"
+              className="flex items-baseline justify-between gap-2 py-0.75"
             >
               <span className={`${color} flex-1 min-w-0 leading-tight`}>
                 {attr.name}
@@ -679,7 +718,7 @@ export default function LeftStatsPanel() {
           return (
             <div
               key={r.key}
-              className="flex items-baseline justify-between gap-2 py-0.5"
+              className="flex items-baseline justify-between gap-2 py-0.75"
             >
               <span className={`${r.className} flex-1 min-w-0 leading-tight`}>
                 {r.label}
@@ -732,7 +771,7 @@ function StatLine({
         ? "text-stat-blue"
         : "text-text";
   return (
-    <div className="flex items-baseline justify-between gap-2 py-0.5">
+    <div className="flex items-baseline justify-between gap-2 py-0.75">
       <span className={`${labelClass} flex-1 min-w-0 leading-tight`}>
         {label}
       </span>
@@ -752,11 +791,17 @@ function Section({
   title: string;
   children: React.ReactNode;
 }) {
-  // Renders a titled section block inside the LeftStatsPanel with the standard uppercase heading and divider. Used to group related stat rows visually.
+  // Renders a titled section block inside the LeftStatsPanel with a PickerModal-style header (rotated diamond + uppercase mono label + accent rule) and a body with subtle dashed-row separators.
   return (
     <div className="border-b border-border/70 px-4 py-3">
-      <div className="mb-2 text-[10px] uppercase tracking-[0.14em] text-muted/90 font-medium">
-        {title}
+      <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5">
+        <span
+          aria-hidden
+          className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+        />
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+          {title}
+        </span>
       </div>
       <div className="space-y-px">{children}</div>
     </div>
@@ -766,11 +811,51 @@ function Section({
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   // Renders a generic label/value row used by sections that show ad-hoc strings or React nodes (rather than RangedValues). Used by the LeftStatsPanel sub-sections that display custom-formatted values like attribute totals.
   return (
-    <div className="flex items-baseline justify-between gap-2 py-0.5">
+    <div className="flex items-baseline justify-between gap-2 py-0.75">
       <span className="text-muted flex-1 min-w-0 leading-tight">{label}</span>
       <span className="font-mono tabular-nums shrink-0 whitespace-nowrap text-right">
         {value}
       </span>
+    </div>
+  );
+}
+
+function PanelSelect({
+  className,
+  children,
+  ...rest
+}: React.SelectHTMLAttributes<HTMLSelectElement>) {
+  // Wraps a native <select> in the panel's gold-bordered gradient frame so the dropdown matches the TopBar Class/Level selectors and PickerModal inputs.
+  return (
+    <div
+      className={`inline-flex w-full items-center rounded-[3px] border border-border-2 px-2 py-1.5 transition-colors hover:border-accent-deep focus-within:border-accent-hot ${className ?? ""}`}
+      style={{
+        background:
+          "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
+        boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+      }}
+    >
+      <select
+        {...rest}
+        className="w-full cursor-pointer bg-transparent text-[12px] text-text outline-none"
+      >
+        {children}
+      </select>
+    </div>
+  );
+}
+
+function PanelInputWrap({ children }: { children: React.ReactNode }) {
+  // Wraps a native input in the panel's gold-bordered gradient frame, mirroring the TopBar Level field. Used by single-line numeric inputs in LeftStatsPanel.
+  return (
+    <div
+      className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
+      style={{
+        background: "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
+        boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+      }}
+    >
+      {children}
     </div>
   );
 }
