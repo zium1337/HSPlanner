@@ -85,3 +85,44 @@ jobs:
           releaseBody: ${{ steps.changelog.outputs.body }}
           releaseDraft: false
           prerelease: ${{ inputs.prerelease }}
+
+      - name: Rename installers (remove version from filename)
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          cd dist/
+          # Rename Windows setup exe (remove version)
+          if ls HSPlanner-*_x64-setup.exe 1> /dev/null 2>&1; then
+            mv HSPlanner-*_x64-setup.exe HSPlanner-x64-setup.exe
+          fi
+          # Rename macOS dmg (remove version)
+          if ls HSPlanner-*_arch64.dmg 1> /dev/null 2>&1; then
+            mv HSPlanner-*_arch64.dmg HSPlanner-x64.dmg
+          fi
+          # Rename Linux deb (remove version)
+          if ls HSPlanner-*_amd64.deb 1> /dev/null 2>&1; then
+            mv HSPlanner-*_amd64.deb HSPlanner-amd64.deb
+          fi
+          # Rename Linux rpm (remove version)
+          if ls HSPlanner-*-1-x86_64.rpm 1> /dev/null 2>&1; then
+            mv HSPlanner-*-1-x86_64.rpm HSPlanner-x86_64.rpm
+          fi
+          # Rename Linux AppImage (remove version)
+          if ls HSPlanner-*_amd64.AppImage 1> /dev/null 2>&1; then
+            mv HSPlanner-*_amd64.AppImage HSPlanner-amd64.AppImage
+          fi
+
+      - name: Upload renamed installers to release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          cd dist/
+          gh release upload ${{ inputs.tag }} \
+            HSPlanner-x64-setup.exe \
+            HSPlanner-x64.dmg \
+            HSPlanner-amd64.deb \
+            HSPlanner-x86_64.rpm \
+            HSPlanner-amd64.AppImage \
+            --clobber 2>/dev/null || true
