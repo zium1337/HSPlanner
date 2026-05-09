@@ -59,6 +59,22 @@ for (const [path, url] of Object.entries(itemImageModules)) {
   if (id) itemImageIndex.set(id, url)
 }
 
+const skillImageModules = import.meta.glob<string>(
+  '../assets/skills/**/*.{png,webp,jpg,jpeg}',
+  { eager: true, query: '?url', import: 'default' },
+)
+
+const skillImageIndex = new Map<string, string>()
+for (const [path, url] of Object.entries(skillImageModules)) {
+  const parts = path.split('/')
+  const file = parts.pop() ?? ''
+  const classDir = parts.pop() ?? ''
+  const skillId = file.replace(/\.(png|webp|jpe?g)$/i, '')
+  if (classDir && skillId) {
+    skillImageIndex.set(`${classDir}/${skillId}`, url)
+  }
+}
+
 function collectScalar<T>(modules: Record<string, { default: T }>): T[] {
   // Pulls the `default` export out of every entry in a `import.meta.glob` module map and returns them as a flat array. Used to gather single-record JSON files such as classes and talent trees into runtime arrays.
   return Object.values(modules).map((m) => m.default)
@@ -174,6 +190,23 @@ export function getItem(id: string): ItemBase | undefined {
 export function getItemImage(id: string): string | undefined {
   // Returns the bundled asset URL for the item icon matching the supplied item id, or undefined when no icon ships in `src/assets/items`. Used by GearView and tooltips for icon rendering.
   return itemImageIndex.get(id)
+}
+
+export function getSkillImage(
+  classId: string,
+  skillId: string,
+): string | undefined {
+  // Returns the bundled asset URL for a skill icon matching `src/assets/skills/{classId}/{skillId}.{png,webp,jpg,jpeg}`, or undefined when no local sprite ships.
+  return skillImageIndex.get(`${classId}/${skillId}`)
+}
+
+export function resolveSkillIcon(skill: {
+  id: string
+  classId: string
+  icon?: string
+}): string | undefined {
+  // Returns the best available icon reference for a skill: prefers a bundled local sprite (src/assets/skills/{classId}/{id}.png), then falls back to the JSON-supplied `icon` (typically a wiki URL or an emoji glyph). Used by SkillsView and skill tooltips.
+  return getSkillImage(skill.classId, skill.id) ?? skill.icon
 }
 
 export function getGem(id: string): Gem | undefined {

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { resolveSkillIcon } from '../data'
 import { SUBTREE_TEMPLATE, getTemplateEdges } from '../data/subtree-template'
 import {
   subskillKey,
@@ -342,7 +343,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                     />
                     {has && (() => {
                       const iconUrl = isRoot
-                        ? resolveSubskillIconUrl(skill.icon)
+                        ? resolveSkillIcon(skill)
                         : resolveSubskillIconUrl(sub!.icon)
                       if (iconUrl) {
                         const imgR = r * 0.9

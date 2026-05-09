@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { SkillIconImage } from '../components/SkillIconImage'
 import SubtreeOverlay from '../components/SubtreeOverlay'
-import { classes, getClass, skills } from '../data'
+import { classes, getClass, resolveSkillIcon, skills } from '../data'
 import { skillPointsFor, subskillKey, useBuild } from '../store/build'
 import {
   aggregateItemSkillBonuses,
@@ -446,7 +446,7 @@ function SkillIcon({
         } ${locked ? 'opacity-30 grayscale' : allocated ? '' : 'opacity-50'}`}
         style={{ width: CELL, height: CELL }}
       >
-        <SkillIconImage icon={skill.icon} size={CELL} />
+        <SkillIconImage icon={resolveSkillIcon(skill)} size={CELL} />
       </button>
 
       <div
@@ -671,7 +671,7 @@ function SkillDetailsPanel({
             boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
           }}
         >
-          <SkillIconImage icon={skill.icon} size={48} className="text-3xl" />
+          <SkillIconImage icon={resolveSkillIcon(skill)} size={48} className="text-3xl" />
         </div>
         <div className="min-w-0">
           <div

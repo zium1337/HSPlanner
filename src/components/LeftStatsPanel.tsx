@@ -102,9 +102,7 @@ export default function LeftStatsPanel() {
   const activeAuraId = useBuild((s) => s.activeAuraId);
   const setActiveAura = useBuild((s) => s.setActiveAura);
   const procToggles = useBuild((s) => s.procToggles);
-  const setProcToggle = useBuild((s) => s.setProcToggle);
   const killsPerSec = useBuild((s) => s.killsPerSec);
-  const setKillsPerSec = useBuild((s) => s.setKillsPerSec);
 
   const activeBuffs = useBuild((s) => s.activeBuffs);
   const enemyConditions = useBuild((s) => s.enemyConditions);
@@ -399,56 +397,6 @@ export default function LeftStatsPanel() {
               );
             })}
           </PanelSelect>
-        </Section>
-      )}
-
-      {procSkills.length > 0 && (
-        <Section title="Procs">
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-              Kills / sec
-            </span>
-            <PanelInputWrap>
-              <input
-                type="number"
-                min={0}
-                step={0.5}
-                value={killsPerSec}
-                onChange={(e) => setKillsPerSec(Number(e.target.value))}
-                className="w-14 bg-transparent text-right font-mono text-[11px] text-accent-hot tabular-nums outline-none"
-              />
-            </PanelInputWrap>
-          </div>
-          {procSkills.map((p) => {
-            const targetName = normalizeSkillName(p.proc!.target);
-            const target = skillsByNormalizedName[targetName];
-            const targetRank = target ? (skillRanks[target.id] ?? 0) : 0;
-            const ready = !!target && targetRank > 0;
-            return (
-              <label
-                key={p.id}
-                className="group flex items-center justify-between gap-2 py-1"
-              >
-                <span className="flex min-w-0 items-center gap-1.5 truncate">
-                  <input
-                    type="checkbox"
-                    checked={!!procToggles[p.id]}
-                    onChange={(e) => setProcToggle(p.id, e.target.checked)}
-                    disabled={!ready}
-                  />
-                  <span
-                    className={`truncate ${ready ? "text-text" : "text-muted"}`}
-                  >
-                    {p.icon} {p.name}
-                  </span>
-                </span>
-                <span className="shrink-0 font-mono text-[9px] uppercase tracking-[0.12em] text-faint">
-                  {p.proc!.chance}% · {p.proc!.trigger.replace("on_", "")}
-                  {!ready && " · ?"}
-                </span>
-              </label>
-            );
-          })}
         </Section>
       )}
 

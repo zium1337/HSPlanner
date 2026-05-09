@@ -1,10 +1,12 @@
 import { useMemo, type ReactNode } from 'react'
 import SearchableSelect from '../components/SearchableSelect'
 import { SkillIconImage } from '../components/SkillIconImage'
+import { resolveSkillIcon } from '../data'
 import { gameConfig, skills } from '../data'
 import { useBuild } from '../store/build'
 import { parseCustomStatValue } from '../utils/parseCustomStat'
-import { formatValue, statDef } from '../utils/stats'
+import { formatValue, normalizeSkillName, statDef } from '../utils/stats'
+import type { Skill } from '../types'
 import {
   SELF_CONDITION_KEYS,
   SELF_CONDITION_LABELS,
@@ -59,6 +61,10 @@ export default function ConfigView() {
   const addCustomStat = useBuild((s) => s.addCustomStat)
   const updateCustomStat = useBuild((s) => s.updateCustomStat)
   const removeCustomStat = useBuild((s) => s.removeCustomStat)
+  const procToggles = useBuild((s) => s.procToggles)
+  const setProcToggle = useBuild((s) => s.setProcToggle)
+  const killsPerSec = useBuild((s) => s.killsPerSec)
+  const setKillsPerSec = useBuild((s) => s.setKillsPerSec)
   const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
 
   const buffSkills = useMemo(() => {
@@ -80,6 +86,25 @@ export default function ConfigView() {
           (!!s.damagePerRank && s.damagePerRank.length > 0)),
     )
   }, [classId])
+
+  const procSkills = useMemo(() => {
+    if (!classId) return []
+    return skills.filter(
+      (s) =>
+        s.classId === classId && !!s.proc && (skillRanks[s.id] ?? 0) > 0,
+    )
+  }, [classId, skillRanks])
+
+  const skillsByNormalizedName = useMemo(() => {
+    if (!classId) return {} as Record<string, Skill>
+    const out: Record<string, Skill> = {}
+    for (const s of skills) {
+      if (s.classId === classId) out[normalizeSkillName(s.name)] = s
+    }
+    return out
+  }, [classId])
+
+  const activeProcCount = procSkills.filter((p) => !!procToggles[p.id]).length
 
   const skillProjectileCount = Object.values(skillProjectiles).filter(
     (n) => n > 1,
@@ -109,7 +134,7 @@ export default function ConfigView() {
   ).length
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="space-y-6">
       <header>
         <h2
           className="m-0 text-[22px] font-semibold tracking-[0.02em] text-accent-hot"
@@ -167,7 +192,7 @@ export default function ConfigView() {
                         disabled={!ready}
                       />
                       <SkillIconImage
-                        icon={s.icon}
+                        icon={resolveSkillIcon(s)}
                         size={32}
                         className="text-2xl"
                       />
@@ -190,6 +215,115 @@ export default function ConfigView() {
               )
             })}
           </ul>
+        )}
+      </Panel>
+
+      <Panel
+        title="Procs"
+        subtitle="Skills that trigger another skill on hit / kill / cast. Toggle which procs are currently active and set your kill rate to factor on-kill procs into DPS."
+        trailing={
+          <CountBadge
+            value={activeProcCount}
+            total={procSkills.length}
+            highlight={activeProcCount > 0}
+          />
+        }
+      >
+        {procSkills.length === 0 ? (
+          <p className="font-mono text-[12px] tracking-[0.04em] text-muted italic">
+            {classId
+              ? 'No proc skills allocated for this class.'
+              : 'Pick a class first.'}
+          </p>
+        ) : (
+          <>
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                Kills / sec
+              </span>
+              <div
+                className="inline-flex w-20 shrink-0 items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors focus-within:border-accent-hot"
+                style={{
+                  background:
+                    'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+                  boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                }}
+              >
+                <input
+                  type="number"
+                  min={0}
+                  step={0.5}
+                  value={killsPerSec}
+                  onChange={(e) => {
+                    setKillsPerSec(Number(e.target.value))
+                    commitActiveProfile()
+                  }}
+                  className="w-full bg-transparent text-right font-mono text-[12px] tabular-nums text-accent-hot outline-none"
+                />
+              </div>
+            </div>
+            <ul className="space-y-2">
+              {procSkills.map((p) => {
+                const targetName = normalizeSkillName(p.proc!.target)
+                const target = skillsByNormalizedName[targetName]
+                const targetRank = target ? (skillRanks[target.id] ?? 0) : 0
+                const ready = !!target && targetRank > 0
+                const checked = !!procToggles[p.id]
+                return (
+                  <li key={p.id}>
+                    <label
+                      className={`flex items-center justify-between gap-3 rounded-[3px] border px-3 py-2 transition-colors ${
+                        ready
+                          ? checked
+                            ? 'cursor-pointer border-accent-deep'
+                            : 'cursor-pointer border-border-2 hover:border-accent-deep'
+                          : 'border-border opacity-60'
+                      }`}
+                      style={{
+                        background: checked
+                          ? 'linear-gradient(180deg, rgba(58,46,24,0.5), rgba(28,29,36,0.5))'
+                          : 'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 70%, transparent))',
+                        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4)',
+                      }}
+                    >
+                      <span className="flex min-w-0 items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) => {
+                            setProcToggle(p.id, e.target.checked)
+                            commitActiveProfile()
+                          }}
+                          disabled={!ready}
+                        />
+                        <SkillIconImage
+                          icon={resolveSkillIcon(p)}
+                          size={32}
+                          className="text-2xl"
+                        />
+                        <span className="min-w-0">
+                          <div
+                            className={`truncate text-sm font-medium ${checked ? 'text-accent-hot' : 'text-text'}`}
+                          >
+                            {p.name}
+                          </div>
+                          <div className="truncate font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                            → {p.proc!.target}
+                            {!ready && ' · target not allocated'}
+                          </div>
+                        </span>
+                      </span>
+                      <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-faint tabular-nums">
+                        <span className="text-text">{p.proc!.chance}%</span>
+                        {' · '}
+                        {p.proc!.trigger.replace('on_', '')}
+                      </span>
+                    </label>
+                  </li>
+                )
+              })}
+            </ul>
+          </>
         )}
       </Panel>
 
@@ -384,7 +518,7 @@ export default function ConfigView() {
                   >
                     <span className="flex min-w-0 items-center gap-2">
                       <SkillIconImage
-                        icon={s.icon}
+                        icon={resolveSkillIcon(s)}
                         size={28}
                         className="text-2xl"
                       />
