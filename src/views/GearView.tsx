@@ -134,16 +134,16 @@ const RARITY_BG: Record<ItemRarity, string> = {
 }
 
 const RARITY_ORDER: Record<ItemRarity, number> = {
-  relic: 0,
-  unholy: 1,
-  angelic: 2,
+  unholy: 0,
+  angelic: 1,
+  heroic: 2,
   satanic_set: 3,
   satanic: 4,
-  mythic: 5,
-  heroic: 6,
-  rare: 7,
-  uncommon: 8,
-  common: 9,
+  common: 5,
+  relic: 6,
+  mythic: 7,
+  rare: 8,
+  uncommon: 9,
 }
 
 const RARITY_BORDER: Record<ItemRarity, string> = {
