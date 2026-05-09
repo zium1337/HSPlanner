@@ -51,7 +51,7 @@
         "positionIndex": 0,
         "name": "Charged Bolts",
         "description": "Core of the Charged Bolts subtree.",
-        "icon": "⚡",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Big_spr_0",
         "maxRank": 1
       },
       {
@@ -59,7 +59,7 @@
         "positionIndex": 1,
         "name": "Bigger Outlet",
         "description": "Increases the amount of charged bolts.",
-        "icon": "➕",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_0",
         "maxRank": 3,
         "effects": {
           "base": { "projectile_count": 0 },
@@ -71,7 +71,7 @@
         "positionIndex": 2,
         "name": "Electric Vains",
         "description": "Increases the damage dealt by charged bolts.",
-        "icon": "💥",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_1",
         "maxRank": 3,
         "effects": {
           "base": { "lightning_skill_damage": 0 },
@@ -83,7 +83,7 @@
         "positionIndex": 3,
         "name": "Flash Bolt",
         "description": "Increases the projectile speed of charged bolts.",
-        "icon": "💨",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_2",
         "maxRank": 3,
         "effects": {
           "base": { "projectile_speed": 0 },
@@ -95,7 +95,7 @@
         "positionIndex": 4,
         "name": "Halting Storm",
         "description": "Chance to deal increased damage slowing targets on hit.",
-        "icon": "🌀",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_3",
         "maxRank": 5,
         "effects": {
           "base": { "extra_lightning_dmg_slow": 0 },
@@ -115,7 +115,7 @@
         "positionIndex": 5,
         "name": "Weakening Charge",
         "description": "Chance to inflict lightning break on hit.",
-        "icon": "🔻",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_4",
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
@@ -136,7 +136,7 @@
         "positionIndex": 6,
         "name": "Efficient Wiring",
         "description": "Decreases the mana cost of charged bolts.",
-        "icon": "💧",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_5",
         "maxRank": 5,
         "effects": {
           "base": { "mana_cost_reduction": 0 },
@@ -148,7 +148,7 @@
         "positionIndex": 7,
         "name": "Non-conductive Boots",
         "description": "Decreases movement diminish when using charged bolts.",
-        "icon": "👢",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_6",
         "maxRank": 5,
         "effects": {
           "base": { "reduced_movement_diminish": 0 },
@@ -160,7 +160,7 @@
         "positionIndex": 8,
         "name": "Static Buildup",
         "description": "Increases the size of charged bolts.",
-        "icon": "🔆",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_7",
         "maxRank": 5,
         "effects": {
           "base": { "projectile_size": 0 },
@@ -172,7 +172,7 @@
         "positionIndex": 9,
         "name": "Additive Voltage",
         "description": "Chance on cast to increase the amount of charged bolts.",
-        "icon": "⚡",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_8",
         "maxRank": 5,
         "proc": {
           "trigger": "on_cast",
@@ -191,7 +191,7 @@
         "positionIndex": 10,
         "name": "Electrocharged Therapy",
         "description": "Chance to inflict stasis on hit.",
-        "icon": "🧿",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Small_spr_9",
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
@@ -212,7 +212,7 @@
         "positionIndex": 11,
         "name": "Electric Field",
         "description": "Unleash charged bolts in a circle around you causing them to return after a short duration.",
-        "icon": "🌐",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Big_spr_1",
         "maxRank": 3,
         "effects": {
           "base": {
@@ -230,7 +230,7 @@
         "positionIndex": 12,
         "name": "World Ender",
         "description": "Conjure a single large charged bolt scaling from projectile amount and unleashing charged bolts into all directions after exploding.",
-        "icon": "💫",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Big_spr_2",
         "maxRank": 3,
         "effects": {
           "base": {
@@ -248,7 +248,7 @@
         "positionIndex": 13,
         "name": "Loaded Thunder",
         "description": "Chance to unleash a large pulsating thunder bolt on hit dealing increased damage.",
-        "icon": "🌩️",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Big_spr_3",
         "maxRank": 3,
         "proc": {
           "trigger": "on_hit",
@@ -273,7 +273,7 @@
         "positionIndex": 14,
         "name": "Railgun",
         "description": "Unleash charged bolts as a barrage dealing increased damage. Charged bolts now has a cooldown.",
-        "icon": "🎯",
+        "icon": "Sub_Stormweaver_Charged_Bolts_Big_spr_4",
         "maxRank": 3,
         "effects": {
           "base": {

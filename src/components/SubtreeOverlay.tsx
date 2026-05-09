@@ -10,14 +10,28 @@ import { statDef, statName } from '../utils/stats'
 
 const VIEWBOX = 600
 const NODE_R: Record<string, number> = {
-  minor: 16,
+  minor: 18,
   notable: 24,
   keystone: 32,
 }
-const ROLE_COLOR: Record<string, string> = {
-  minor: '#5a4528',
-  notable: '#c48a3a',
-  keystone: '#e94f37',
+
+const SUBSKILL_SPRITE_FILES = import.meta.glob<string>(
+  '../assets/subskills/**/*.png',
+  { eager: true, query: '?url', import: 'default' },
+)
+const SUBSKILL_SPRITE_BY_KEY: Record<string, string> = {}
+for (const [p, url] of Object.entries(SUBSKILL_SPRITE_FILES)) {
+  const file = p.split('/').pop() ?? ''
+  const key = file.replace(/\.png$/i, '')
+  SUBSKILL_SPRITE_BY_KEY[key] = url
+}
+
+function resolveSubskillIconUrl(icon?: string): string | undefined {
+  // Returns a usable URL when `icon` is either a remote http(s) link or a sprite key registered under src/assets/subskills/. Returns undefined for plain emoji/text icons so callers can render a glyph fallback.
+  if (!icon) return undefined
+  if (/^https?:\/\//i.test(icon)) return icon
+  if (SUBSKILL_SPRITE_BY_KEY[icon]) return SUBSKILL_SPRITE_BY_KEY[icon]
+  return undefined
 }
 
 interface Props {
@@ -59,60 +73,125 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
     sub: SubskillNode
     x: number
     y: number
+    isKeystone: boolean
   } | null>(null)
+
+  const skillIcon = !skill.icon || skill.icon.startsWith('http') ? '✦' : skill.icon
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6"
+      role="presentation"
+      className="fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm"
       onClick={onClose}
+      style={{
+        background:
+          'radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)',
+      }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-lg border border-border bg-panel"
+        className="relative flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-[4px] border border-border"
+        style={{
+          background:
+            'linear-gradient(180deg, var(--color-panel-2), var(--color-bg))',
+          boxShadow:
+            'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
+        }}
       >
-        <header className="flex items-center justify-between border-b border-border bg-panel-2 px-4 py-2">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">{!skill.icon || skill.icon.startsWith('http') ? '✦' : skill.icon}</span>
+        <CornerMarks />
+
+        <header
+          className="flex items-start justify-between gap-4 border-b border-border px-5 py-4"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(201,165,90,0.05), transparent)',
+          }}
+        >
+          <div className="flex items-start gap-3">
+            <span
+              className="mt-2 inline-block h-2 w-2 shrink-0 rotate-45 bg-accent-hot"
+              style={{ boxShadow: '0 0 8px rgba(224,184,100,0.5)' }}
+            />
             <div>
-              <div className="text-base font-semibold text-text">
-                {skill.name}{' '}
-                <span className="text-xs text-muted font-normal">subtree</span>
-              </div>
-              <div className="text-[10px] uppercase tracking-wider text-muted">
-                Specialize, boost and change how this skill works
+              <h2
+                className="m-0 text-[18px] font-semibold tracking-[0.04em] text-accent-hot"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  textShadow: '0 0 16px rgba(224,184,100,0.18)',
+                }}
+              >
+                {skill.name}
+                <span className="ml-2 align-[1px] font-mono text-[10px] font-normal uppercase tracking-[0.2em] text-faint">
+                  · Subtree
+                </span>
+              </h2>
+              <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+                Specialize · Boost · Change how this skill works
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3 text-xs">
-            <span className="text-muted">
-              Points <span className="text-text">{spent}</span>
-              <span className="text-muted">/{totalPoints}</span>
-              <span className={remaining > 0 ? ' text-accent' : ' text-muted'}>
-                {' '}
-                ({remaining} left)
+
+          <div className="flex items-center gap-3.5">
+            <div className="flex items-baseline gap-1.5 font-mono text-[11px] tracking-[0.08em] text-muted tabular-nums">
+              <span>Points</span>
+              <span className="text-[13px] font-semibold text-accent-hot">
+                {spent}
+                <span className="text-faint">/</span>
+                {totalPoints}
               </span>
-            </span>
+              {remaining > 0 ? (
+                <span className="text-[10px] uppercase tracking-[0.14em] text-accent-deep">
+                  {remaining} LEFT
+                </span>
+              ) : (
+                <span className="text-[10px] uppercase tracking-[0.14em] text-faint">
+                  ALL SPENT
+                </span>
+              )}
+            </div>
             <button
               onClick={() => resetSubskillsFor(skill.id)}
-              className="rounded border border-border bg-panel-2 px-2 py-1 text-muted hover:text-text"
+              className="rounded-[2px] border border-border-2 bg-transparent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
             >
               Reset
             </button>
             <button
               onClick={onClose}
-              className="rounded border border-border bg-panel-2 px-2 py-1 text-muted hover:text-text"
+              className="rounded-[2px] border border-accent-deep px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot"
+              style={{
+                background: 'linear-gradient(180deg, #3a2f1a, #2a2418)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow =
+                  '0 0 10px rgba(224,184,100,0.25)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none'
+              }}
             >
               Close
             </button>
           </div>
         </header>
-        <div className="flex-1 overflow-auto p-4">
+
+        <div className="flex-1 overflow-auto p-6">
           <svg
             viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}
             className="mx-auto block"
-            style={{ width: '100%', maxWidth: 560 }}
+            style={{ width: '100%', maxWidth: 580 }}
           >
-            <g stroke="#3a3f4a" strokeWidth={2}>
+            <defs>
+              <radialGradient id="hsplanner-core-fill" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stopColor="#5a1a14" />
+                <stop offset="100%" stopColor="#2a0d0a" />
+              </radialGradient>
+              <radialGradient id="hsplanner-node-fill" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stopColor="#1a1a22" />
+                <stop offset="100%" stopColor="#0a0a0e" />
+              </radialGradient>
+            </defs>
+
+            <g fill="none">
               {edges.map(([a, b], i) => {
                 const na = SUBTREE_TEMPLATE[a]!
                 const nb = SUBTREE_TEMPLATE[b]!
@@ -127,6 +206,20 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                     ? subskillRanks[subskillKey(skill.id, subB.id)] ?? 0
                     : 0
                 const both = rankA > 0 && rankB > 0
+                const touchesKeystone =
+                  na.role === 'keystone' || nb.role === 'keystone'
+                let stroke = '#8a6f3a'
+                let strokeOpacity = 0.55
+                let strokeWidth = 1.4
+                if (touchesKeystone) {
+                  stroke = '#d96b5a'
+                  strokeOpacity = both ? 0.85 : 0.55
+                  strokeWidth = 1.8
+                } else if (both) {
+                  stroke = '#e0b864'
+                  strokeOpacity = 0.9
+                  strokeWidth = 2
+                }
                 return (
                   <line
                     key={i}
@@ -134,12 +227,21 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                     y1={px(na.y)}
                     x2={px(nb.x)}
                     y2={px(nb.y)}
-                    stroke={both ? '#c48a3a' : '#3a3f4a'}
-                    strokeWidth={both ? 3 : 2}
+                    stroke={stroke}
+                    strokeOpacity={strokeOpacity}
+                    strokeWidth={strokeWidth}
+                    style={
+                      touchesKeystone
+                        ? { filter: 'drop-shadow(0 0 4px rgba(217,107,90,0.35))' }
+                        : both
+                          ? { filter: 'drop-shadow(0 0 3px rgba(224,184,100,0.4))' }
+                          : undefined
+                    }
                   />
                 )
               })}
             </g>
+
             <g>
               {SUBTREE_TEMPLATE.map((tn) => {
                 const sub = subskillsByPos[tn.index]
@@ -148,35 +250,73 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                 const cy = px(tn.y)
                 const has = !!sub
                 const isRoot = tn.role === 'keystone'
+                const isOuter = tn.role === 'notable'
                 const interactive = has && !isRoot
                 const rank = sub
                   ? subskillRanks[subskillKey(skill.id, sub.id)] ?? 0
                   : 0
                 const allocated = rank > 0
-                const fill = !has
-                  ? '#181c24'
-                  : isRoot
-                    ? ROLE_COLOR[tn.role]
-                    : allocated
-                      ? ROLE_COLOR[tn.role]
-                      : '#20252f'
-                const stroke = !has
-                  ? '#2a2f3a'
-                  : isRoot
-                    ? ROLE_COLOR[tn.role]!
-                    : allocated
-                      ? '#e6e8ee'
-                      : ROLE_COLOR[tn.role]!
+
+                let fill = 'url(#hsplanner-node-fill)'
+                let stroke = '#363742'
+                let strokeWidth = 1.5
+                let glow: string | undefined
+
+                if (isRoot) {
+                  fill = 'url(#hsplanner-core-fill)'
+                  stroke = '#d96b5a'
+                  strokeWidth = 2
+                  glow = '0 0 18px rgba(217,107,90,0.5)'
+                } else if (isOuter) {
+                  stroke = allocated ? '#e0b864' : '#8a6f3a'
+                  strokeWidth = allocated ? 2 : 1.5
+                  glow = allocated
+                    ? '0 0 14px rgba(224,184,100,0.45)'
+                    : '0 0 10px rgba(138,111,58,0.25)'
+                } else if (has) {
+                  stroke = allocated ? '#e0b864' : '#4a4854'
+                  strokeWidth = allocated ? 1.8 : 1.5
+                  if (allocated) glow = '0 0 10px rgba(224,184,100,0.35)'
+                } else {
+                  stroke = '#2a2b35'
+                  strokeWidth = 1
+                }
+
+                const iconColor = isRoot
+                  ? '#ffd86b'
+                  : isOuter
+                    ? '#fff0c4'
+                    : '#e0b864'
+
+                const labelColor = allocated ? '#e0b864' : '#8a8276'
+
                 return (
                   <g key={tn.index}>
+                    {/* outer subtle aura for outer/keystone */}
+                    {(isRoot || (isOuter && allocated)) && (
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={r + 6}
+                        fill="none"
+                        stroke={isRoot ? '#d96b5a' : '#e0b864'}
+                        strokeOpacity={isRoot ? 0.18 : 0.15}
+                        strokeWidth={1}
+                        pointerEvents="none"
+                      />
+                    )}
                     <circle
                       cx={cx}
                       cy={cy}
                       r={r}
                       fill={fill}
                       stroke={stroke}
-                      strokeWidth={2}
-                      style={interactive ? { cursor: 'pointer' } : undefined}
+                      strokeWidth={strokeWidth}
+                      style={{
+                        cursor: interactive ? 'pointer' : 'default',
+                        filter: glow ? `drop-shadow(${glow})` : undefined,
+                        transition: 'all 0.15s',
+                      }}
                       onClick={() => {
                         if (interactive && sub)
                           incSubskillRank(skill.id, sub.id, sub.maxRank)
@@ -194,33 +334,74 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                             sub,
                             x: rect.left + (cx / VIEWBOX) * rect.width,
                             y: rect.top + (cy / VIEWBOX) * rect.height,
+                            isKeystone: isRoot,
                           })
                         }
                       }}
                       onMouseLeave={() => setHover(null)}
                     />
-                    {has && sub.icon && !sub.icon.startsWith('http') && (
-                      <text
-                        x={cx}
-                        y={cy + 6}
-                        textAnchor="middle"
-                        fontSize={r * 0.9}
-                        pointerEvents="none"
-                      >
-                        {sub.icon}
-                      </text>
-                    )}
+                    {has && (() => {
+                      const iconUrl = isRoot
+                        ? resolveSubskillIconUrl(skill.icon)
+                        : resolveSubskillIconUrl(sub!.icon)
+                      if (iconUrl) {
+                        const imgR = r * 0.9
+                        return (
+                          <image
+                            href={iconUrl}
+                            x={cx - imgR}
+                            y={cy - imgR}
+                            width={imgR * 2}
+                            height={imgR * 2}
+                            pointerEvents="none"
+                            style={{
+                              imageRendering: 'pixelated',
+                              filter: isRoot
+                                ? 'drop-shadow(0 0 8px rgba(255,200,80,0.55))'
+                                : 'drop-shadow(0 0 4px rgba(0,0,0,0.6))',
+                            }}
+                          />
+                        )
+                      }
+                      const glyph = isRoot
+                        ? skillIcon
+                        : sub!.icon && !/^https?:\/\//i.test(sub!.icon)
+                          ? sub!.icon
+                          : '◆'
+                      return (
+                        <text
+                          x={cx}
+                          y={cy + r * 0.32}
+                          textAnchor="middle"
+                          fontSize={r * 0.95}
+                          fill={iconColor}
+                          pointerEvents="none"
+                          style={{
+                            filter: isRoot
+                              ? 'drop-shadow(0 0 6px rgba(255,200,80,0.6))'
+                              : 'drop-shadow(0 0 4px rgba(224,184,100,0.25))',
+                          }}
+                        >
+                          {glyph}
+                        </text>
+                      )
+                    })()}
                     {has && !isRoot && (
                       <text
                         x={cx}
-                        y={cy + r + 14}
+                        y={cy + r + 16}
                         textAnchor="middle"
-                        fontSize={11}
-                        fill={allocated ? '#c48a3a' : '#8a92a3'}
-                        fontFamily="ui-monospace,monospace"
+                        fontSize={10}
+                        fill={labelColor}
+                        fontFamily="var(--font-mono)"
+                        letterSpacing="0.08em"
                         pointerEvents="none"
                       >
-                        {rank}/{sub.maxRank}
+                        <tspan fill={allocated ? '#e0b864' : '#a39e8d'}>
+                          {rank}
+                        </tspan>
+                        <tspan fill="#5a5448">/</tspan>
+                        <tspan>{sub!.maxRank}</tspan>
                       </text>
                     )}
                   </g>
@@ -229,7 +410,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
             </g>
           </svg>
           {(skill.subskills?.length ?? 0) === 0 && (
-            <p className="mt-4 text-center text-sm text-muted italic">
+            <p className="mt-4 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
               No subskills defined for {skill.name} yet.
             </p>
           )}
@@ -241,9 +422,61 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
           rank={subskillRanks[subskillKey(skill.id, hover.sub.id)] ?? 0}
           x={hover.x}
           y={hover.y}
+          isKeystone={hover.isKeystone}
         />
       )}
     </div>
+  )
+}
+
+function CornerMarks() {
+  const base: React.CSSProperties = {
+    position: 'absolute',
+    width: 10,
+    height: 10,
+    border: '1px solid var(--color-accent-deep)',
+    opacity: 0.55,
+    pointerEvents: 'none',
+  }
+  return (
+    <>
+      <span
+        style={{
+          ...base,
+          top: -1,
+          left: -1,
+          borderRight: 'none',
+          borderBottom: 'none',
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          top: -1,
+          right: -1,
+          borderLeft: 'none',
+          borderBottom: 'none',
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          left: -1,
+          borderRight: 'none',
+          borderTop: 'none',
+        }}
+      />
+      <span
+        style={{
+          ...base,
+          bottom: -1,
+          right: -1,
+          borderLeft: 'none',
+          borderTop: 'none',
+        }}
+      />
+    </>
   )
 }
 
@@ -262,11 +495,13 @@ function SubskillTooltip({
   rank,
   x,
   y,
+  isKeystone,
 }: {
   sub: SubskillNode
   rank: number
   x: number
   y: number
+  isKeystone: boolean
 }) {
   // Renders the floating tooltip shown when hovering a subskill node, listing current and next-rank stat values, proc chance, proc effects, and any applied states. Used by SubtreeOverlay.
   const nextRank = Math.min(rank + 1, sub.maxRank)
@@ -312,40 +547,76 @@ function SubskillTooltip({
 
   return (
     <div
-      className="pointer-events-none fixed z-[60] w-72 overflow-hidden rounded-md border border-border bg-panel shadow-lg"
-      style={{ left: x + 18, top: y + 18 }}
+      className="pointer-events-none fixed z-[60] w-72 overflow-hidden rounded-[4px] border border-border"
+      style={{
+        left: x + 18,
+        top: y + 18,
+        background: 'linear-gradient(180deg, var(--color-panel-2), var(--color-bg))',
+        boxShadow:
+          'inset 0 1px 0 rgba(255,255,255,0.02), 0 12px 32px rgba(0,0,0,0.7)',
+      }}
     >
-      <div className="flex items-center gap-2 border-b border-border bg-panel-2 px-3 py-2">
-        {sub.icon && !sub.icon.startsWith('http') && (
-          <span className="text-lg">{sub.icon}</span>
-        )}
-        <div className="flex-1">
-          <div className="text-sm font-semibold text-text">{sub.name}</div>
-          <div className="text-[10px] uppercase tracking-wider text-muted">
-            Rank <span className="text-accent tabular-nums">{rank}</span>
-            <span className="text-muted"> / {sub.maxRank}</span>
+      <div
+        className="flex items-center gap-2 border-b border-border px-3 py-2.5"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(201,165,90,0.06), transparent)',
+        }}
+      >
+        <span
+          className="inline-block h-1.5 w-1.5 shrink-0 rotate-45 bg-accent-hot"
+          style={{ boxShadow: '0 0 6px rgba(224,184,100,0.5)' }}
+        />
+        {(() => {
+          const iconUrl = resolveSubskillIconUrl(sub.icon)
+          if (iconUrl) {
+            return (
+              <img
+                src={iconUrl}
+                alt=""
+                width={20}
+                height={20}
+                style={{ imageRendering: 'pixelated' }}
+              />
+            )
+          }
+          if (sub.icon && !/^https?:\/\//i.test(sub.icon)) {
+            return <span className="text-[15px] text-accent-hot">{sub.icon}</span>
+          }
+          return null
+        })()}
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-[13px] font-semibold tracking-[0.02em] text-accent-hot">
+            {sub.name}
           </div>
+          {!isKeystone && (
+            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
+              Rank{' '}
+              <span className="tabular-nums text-accent-hot">{rank}</span>
+              <span className="text-faint"> / {sub.maxRank}</span>
+            </div>
+          )}
         </div>
       </div>
-      <div className="px-3 py-2">
+      <div className="px-3 py-2.5">
         {sub.description && (
           <p className="mb-2 text-xs leading-relaxed text-text/85">
             {sub.description}
           </p>
         )}
         {statRows.length > 0 && (
-          <div className="space-y-0.5 rounded border border-border bg-panel-2 p-2 text-xs tabular-nums">
+          <div className="space-y-0.5 rounded-[3px] border border-border-2 bg-black/30 p-2 text-xs tabular-nums">
             {statRows.map(({ key, current, next }) => (
               <div key={key} className="flex items-center justify-between gap-2">
                 <span className="text-text/80">{statName(key)}</span>
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 font-mono">
                   <span className="text-muted">
                     {formatStatValue(key, current)}
                   </span>
                   {hasNext && current !== next && (
                     <>
-                      <span className="text-muted">›››</span>
-                      <span className="text-accent">
+                      <span className="text-faint">›</span>
+                      <span className="text-accent-hot">
                         {formatStatValue(key, next)}
                       </span>
                     </>
@@ -357,22 +628,22 @@ function SubskillTooltip({
         )}
         {proc && (
           <div
-            className={`${statRows.length > 0 ? 'mt-2' : ''} space-y-0.5 rounded border border-border bg-panel-2 p-2 text-xs tabular-nums`}
+            className={`${statRows.length > 0 ? 'mt-2' : ''} space-y-0.5 rounded-[3px] border border-border-2 bg-black/30 p-2 text-xs tabular-nums`}
           >
-            <div className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-wider text-muted">
+            <div className="mb-1 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
               <span>{proc.trigger.replace('_', ' ')} proc</span>
               {(proc.appliesStates?.length || proc.tags?.length) && (
                 <span className="flex gap-1">
                   {proc.appliesStates?.map((s, i) => {
                     const name = typeof s === 'string' ? s : s.state
                     return (
-                      <span key={`s-${name}-${i}`} className="text-accent/80">
+                      <span key={`s-${name}-${i}`} className="text-accent-hot/80">
                         applies {name.replace(/_/g, ' ')}
                       </span>
                     )
                   })}
                   {proc.tags?.map((t) => (
-                    <span key={`t-${t}`} className="text-accent/80">
+                    <span key={`t-${t}`} className="text-accent-hot/80">
                       {t}
                     </span>
                   ))}
@@ -381,12 +652,12 @@ function SubskillTooltip({
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-text/80">Proc Chance</span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 font-mono">
                 <span className="text-muted">{procChanceCurrent}%</span>
                 {hasNext && procChanceCurrent !== procChanceNext && (
                   <>
-                    <span className="text-muted">›››</span>
-                    <span className="text-accent">{procChanceNext}%</span>
+                    <span className="text-faint">›</span>
+                    <span className="text-accent-hot">{procChanceNext}%</span>
                   </>
                 )}
               </span>
@@ -399,20 +670,20 @@ function SubskillTooltip({
                   className="flex items-center justify-between gap-2"
                 >
                   <span className="text-text/80">{statName(key)}</span>
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 font-mono">
                     <span className="text-muted">
                       {formatStatValue(key, current)}
                     </span>
                     {hasNext && current !== next && (
                       <>
-                        <span className="text-muted">›››</span>
-                        <span className="text-accent">
+                        <span className="text-faint">›</span>
+                        <span className="text-accent-hot">
                           {formatStatValue(key, next)}
                         </span>
                       </>
                     )}
                     {avg > 0 && (
-                      <span className="ml-1 text-[10px] text-muted">
+                      <span className="ml-1 text-[10px] text-faint">
                         (avg {formatStatValue(key, avg)})
                       </span>
                     )}
@@ -434,12 +705,12 @@ function SubskillTooltip({
                   <span className="text-text/80 capitalize">
                     {s.state.replace(/_/g, ' ')}
                   </span>
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 font-mono">
                     <span className="text-muted">{cur}%</span>
                     {hasNext && cur !== nxt && (
                       <>
-                        <span className="text-muted">›››</span>
-                        <span className="text-accent">{nxt}%</span>
+                        <span className="text-faint">›</span>
+                        <span className="text-accent-hot">{nxt}%</span>
                       </>
                     )}
                   </span>
