@@ -101,7 +101,16 @@
     "requiresLevel": 100,
     "implicit": {
       "projectile_speed": 1,
-      "all_attributes": 15
+      "all_attributes": [
+        15,
+        30
+      ]
+    },
+    "skillBonuses": {
+      "Card Throw": [
+        1,
+        5
+      ]
     },
     "uniqueEffects": [
       "Grant Spell: Card Throw",

@@ -80,6 +80,9 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 1,
+    "skillBonuses": {
+      "Aimbot": 1
+    },
     "uniqueEffects": [
       "Grant Spell: Aimbot"
     ],
@@ -124,7 +127,7 @@
         15,
         35
       ],
-      "poison_resistance": -75
+      "poison_resistance": -35
     },
     "width": 2,
     "height": 2
@@ -194,11 +197,11 @@
       ],
       "magic_find": [
         35,
-        50
+        100
       ],
       "experience_gain": [
         1,
-        10
+        5
       ]
     },
     "uniqueEffects": [
@@ -232,8 +235,8 @@
     "requiresLevel": 60,
     "implicit": {
       "to_vitality": [
-        10,
-        15
+        20,
+        30
       ],
       "life_replenish_pct": 8,
       "life": [
@@ -241,12 +244,16 @@
         70
       ],
       "life_per_kill": [
-        5,
-        10
+        10,
+        20
       ],
       "increased_life": [
         5,
         10
+      ],
+      "damage_recouped_as_life": [
+        8,
+        12
       ]
     },
     "width": 2,
@@ -309,12 +316,12 @@
     "requiresLevel": 85,
     "implicit": {
       "flat_arcane_skill_damage": [
-        34,
-        45
+        25,
+        50
       ],
-      "ignore_arcane_res": [
-        15,
-        25
+      "arcane_skill_damage": [
+        22,
+        30
       ]
     },
     "uniqueEffects": [
@@ -512,7 +519,7 @@
         15,
         35
       ],
-      "cold_resistance": -75
+      "cold_resistance": -35
     },
     "width": 2,
     "height": 2
@@ -574,6 +581,10 @@
     "grade": "S",
     "requiresLevel": 81,
     "implicit": {
+      "damage_return": [
+        100,
+        250
+      ],
       "to_armor": [
         25,
         40
@@ -629,6 +640,10 @@
     "grade": "S",
     "requiresLevel": 75,
     "implicit": {
+      "explosion_skills": [
+        3,
+        5
+      ],
       "to_vitality": [
         15,
         30
@@ -653,19 +668,22 @@
     "grade": "S",
     "requiresLevel": 77,
     "implicit": {
-      "deadly_blow": [
-        8,
-        20
-      ],
       "crushing_blow_chance": [
-        8,
-        15
+        15,
+        25
+      ],
+      "deadly_blow": [
+        12,
+        20
       ],
       "life_steal": [
         4,
         8
       ]
     },
+    "uniqueEffects": [
+      "Target Defense Ignored"
+    ],
     "width": 2,
     "height": 2
   },
@@ -698,7 +716,7 @@
         15,
         35
       ],
-      "arcane_resistance": -75
+      "arcane_resistance": -35
     },
     "width": 2,
     "height": 2
@@ -777,20 +795,6 @@
     "setId": "black_beard_s_remains",
     "width": 2,
     "height": 2
-  },
-  {
-    "id": "charm_satanic_plague_shot",
-    "name": "Plague Shot",
-    "baseType": "Charm",
-    "slot": "charm_1",
-    "rarity": "satanic",
-    "grade": "SS",
-    "requiresLevel": 92,
-    "uniqueEffects": [
-      "Grant Spell: Booster Shot"
-    ],
-    "width": 2,
-    "height": 1
   },
   {
     "id": "charm_satanic_plunderer_s_gunpowder_bag",
@@ -885,6 +889,12 @@
         10
       ]
     },
+    "skillBonuses": {
+      "Poison Nova": [
+        10,
+        20
+      ]
+    },
     "uniqueEffects": [
       "Grant Spell: Poison Nova",
       "Poison Length Reduced"
@@ -948,11 +958,18 @@
     "grade": "S",
     "requiresLevel": 83,
     "implicit": {
+      "poison_skills": [
+        2,
+        4
+      ],
       "poison_skill_damage": [
         12,
         25
       ],
-      "ignore_poison_res": 10
+      "ignore_poison_res": [
+        7,
+        15
+      ]
     },
     "width": 2,
     "height": 2
@@ -979,11 +996,11 @@
     "grade": "SS",
     "requiresLevel": 67,
     "implicit": {
-      "ignore_lightning_res": [
+      "ignore_fire_res": [
         15,
         35
       ],
-      "fire_resistance": -75
+      "fire_resistance": -35
     },
     "width": 2,
     "height": 2
@@ -1003,8 +1020,8 @@
       ],
       "deadly_blow": 8,
       "attack_rating_pct": [
-        4,
-        8
+        15,
+        25
       ],
       "to_dexterity": [
         8,
@@ -1024,16 +1041,16 @@
     "requiresLevel": 91,
     "implicit": {
       "to_intelligence": [
-        20,
-        30
+        45,
+        60
       ],
       "arcane_skill_damage": [
         20,
         30
       ],
       "increased_mana": [
-        4,
-        8
+        6,
+        12
       ]
     },
     "uniqueEffects": [
@@ -1135,8 +1152,8 @@
       ],
       "all_attributes": 20,
       "all_resistances": [
-        8,
-        15
+        5,
+        20
       ]
     },
     "setId": "traveler",
@@ -1153,33 +1170,17 @@
     "requiresLevel": 60,
     "implicit": {
       "enhanced_damage": [
-        25,
-        50
+        125,
+        225
       ],
       "additive_physical_damage": [
-        50,
-        75
+        75,
+        100
       ],
-      "physical_damage_reduction": -30
+      "physical_damage_reduction": -20,
+      "all_resistances": -10
     },
     "width": 2,
-    "height": 2
-  },
-  {
-    "id": "charm_satanic_voodoo_doll",
-    "name": "Voodoo Doll",
-    "baseType": "Charm",
-    "slot": "charm_1",
-    "rarity": "satanic_set",
-    "grade": "SS",
-    "requiresLevel": 100,
-    "uniqueEffects": [
-      "Self Inflicted Chance When Casting",
-      "Self Inflicted Damage From Casting",
-      "Self Inflicted Chance When Attacking",
-      "Self Inflicted Damage From Attacking"
-    ],
-    "width": 1,
     "height": 2
   },
   {
@@ -1195,7 +1196,7 @@
         15,
         35
       ],
-      "lightning_resistance": -75
+      "lightning_resistance": -35
     },
     "width": 2,
     "height": 2

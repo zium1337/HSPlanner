@@ -18,8 +18,8 @@
         50
       ],
       "experience_gain": [
-        5,
-        10
+        3,
+        5
       ]
     },
     "width": 1,
@@ -66,14 +66,17 @@
     "requiresLevel": 100,
     "implicit": {
       "all_skills": [
-        2,
-        3
+        5,
+        7
       ],
-      "increased_life": -20
+      "life": -666,
+      "increased_life": -15,
+      "all_resistances": [
+        30,
+        40
+      ]
     },
     "uniqueEffects": [
-      "Vitality Converted To Magic Skill Dmg",
-      "Vitality Converted To Attack Dmg",
       "Monsters Rest In Peace"
     ],
     "width": 3,
@@ -88,7 +91,6 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "all_skills": 1,
       "movement_speed": [
         15,
         30
@@ -100,6 +102,9 @@
         1,
         5
       ]
+    },
+    "skillBonuses": {
+      "Goburin's Greed": 1
     },
     "uniqueEffects": [
       "Grant Spell: Goburin's Greed"
@@ -117,11 +122,11 @@
     "requiresLevel": 100,
     "implicit": {
       "extra_damage_burning": [
-        5,
-        10
+        20,
+        25
       ],
       "fire_skill_damage": [
-        15,
+        20,
         40
       ]
     },
@@ -173,10 +178,6 @@
     "requiresLevel": 100,
     "implicit": {
       "all_skills": [
-        3,
-        6
-      ],
-      "movement_speed": [
         3,
         6
       ],
