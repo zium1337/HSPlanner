@@ -4,6 +4,7 @@
 A desktop build planner for **Hero Siege** — a calculator for the talent tree, gear, stats, and skills, with optional read/write support for the game's save files.
 
 ![Python](https://img.shields.io/github/v/release/zium1337/HSPlanner)
+[![Download](https://img.shields.io/github/v/release/zium1337/HSPlanner?label=Download)](https://github.com/zium1337/HSPlanner/releases/latest)
 
 ---
 
@@ -22,6 +23,13 @@ A desktop build planner for **Hero Siege** — a calculator for the talent tree,
 - [x] **Update check** — opt-in update check via GitHub Releases
 
 <img width="1277" height="800" alt="{139CD596-7ABD-4699-B268-81E259A94519}" src="https://github.com/user-attachments/assets/d2f51f6e-0a1d-46a6-a26d-3214916ffb37" />
+
+---
+
+## How to install
+
+1. Go to [latest release](https://github.com/zium1337/HSPlanner/releases/latest)
+2. Scroll down and in **assets** section, pick the installer for your OS for example Windows installer is named HSPlanner_x.x.x_x64-setup.exe where "x" it is a version number
 
 ---
 
