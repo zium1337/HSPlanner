@@ -1414,7 +1414,1236 @@
       "category": "defense",
       "format": "percent"
     },
-
+    {
+      "key": "max_magic_damage_reduction",
+      "name": "to Maximum Magic Damage Reduction",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_physical_damage_reduction",
+      "name": "to Maximum Physical Damage Reduction",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "magic_damage_reduction_pct",
+      "name": "Magic Damage Reduction",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "elemental_suppression_chance",
+      "name": "Chance to Suppress Incoming Elemental Damage",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "elemental_suppression_effectiveness",
+      "name": "Increased Elemental Suppression Effectiveness",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "evade_chance",
+      "name": "Chance to Evade Incoming Damage",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "evade_projectile_chance",
+      "name": "Chance to Evade Projectiles",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "dodge_physical_damage_chance",
+      "name": "Chance to Dodge Physical Damage",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_taken_from_mana",
+      "name": "Mana Costs Paid from Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_all_resistances_cap",
+      "name": "Maximum All Resistances Capped",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "negative_resists_to_life",
+      "name": "Negative All Resistances Added as Maximum Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "negative_resists_to_damage",
+      "name": "Negative All Resistances Added as Increased Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "defense_to_life",
+      "name": "Defense Converted to Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "resists_over_cap_to_life",
+      "name": "Resistances over the Cap Converted to Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "mana_regen_per_second",
+      "name": "Maximum Mana Regenerated per Second",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "all_resistances_lost",
+      "name": "Lost Resistances",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "life_replenish_pct_more",
+      "name": "Total Life Replenish",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_returned_against_bosses",
+      "name": "Damage Returned Against Bosses",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "returned_damage_aoe_chance",
+      "name": "Chance for Returned Damage to be AoE",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "returned_damage_echo_chance",
+      "name": "Chance for Returned Damage to Echo Additional Time",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "returned_damage_echo_chance_boss",
+      "name": "Chance for Returned Damage Against Bosses to Echo",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "returned_damage_crit_chance",
+      "name": "Chance for Returned Damage to Critically Hit",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "returned_damage_to_burning",
+      "name": "Returned Damage Converted into Burning",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "returned_damage_to_lightning",
+      "name": "Returned Damage Dealt as Lightning",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "sentry_damage",
+      "name": "Increased Sentry Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "sentry_attack_speed",
+      "name": "Increased Sentry Attack Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "sentry_duration",
+      "name": "Increased Sentry Duration",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "sentry_extra_projectile_chance",
+      "name": "Chance for Sentries to Fire an Additional Projectile",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_damage",
+      "name": "Increased Summon Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_attack_speed",
+      "name": "Increased Summon Attack Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_life",
+      "name": "Increased Summon Life",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_melee_damage",
+      "name": "Increased Summon Melee Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_projectile_damage",
+      "name": "Increased Summon Projectile Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_projectile_size",
+      "name": "Increased Summon Projectile Size",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_attack_radius",
+      "name": "Increased Summon Attack Radius",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_splash_damage",
+      "name": "Increased Summon Splash Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_max_amount",
+      "name": "Maximum Summon Amount",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "summon_chain_chance",
+      "name": "Summon Projectiles Chain Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_fork_chance",
+      "name": "Summon Projectile Fork Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_knock_up_chance",
+      "name": "Summon Knock Up Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_knock_up_damage",
+      "name": "Knock Up Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "void_blast_damage",
+      "name": "Void Blast Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "guardian_damage",
+      "name": "Guardian Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "guardian_attack_speed",
+      "name": "Guardian Attack Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "guardian_duration",
+      "name": "Guardian Duration",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_guardian_chance",
+      "name": "Chance for Extra Guardian on Summon",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "max_summoned_guardians",
+      "name": "Maximum Summoned Guardians",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "sand_beam_damage",
+      "name": "Sand Beam Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damaging_aura_effectiveness",
+      "name": "Increased Damaging Aura Effectiveness",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damaging_aura_radius",
+      "name": "Increased Damaging Aura Radius",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "aura_skills",
+      "name": "to Aura Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "shield_skills",
+      "name": "to Shield Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "shield_skill_damage",
+      "name": "Increased Shield Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "shield_skill_radius",
+      "name": "Increased Shield Skill Radius",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "orbital_skill_speed",
+      "name": "Increased Orbiting Skill Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "orbital_skill_duration",
+      "name": "Increased Orbiting Skill Duration",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "orbital_skill_size",
+      "name": "Increased Orbiting Skill Size",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "orbital_skill_damage_more",
+      "name": "Total Orbital Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_aoe_damage",
+      "name": "Increased Area of Effect Spell Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_aoe_radius",
+      "name": "Spell Area of Effect Radius",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_projectile_damage",
+      "name": "Increased Spell Projectile Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_projectile_size",
+      "name": "Increased Spell Projectile Size",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "additional_spell_projectile",
+      "name": "Additional Spell Projectile",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "extra_spell_projectiles_pct",
+      "name": "Extra Spell Projectiles",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_ranged_projectile_chance",
+      "name": "Chance to Fire Additional Projectile on Ranged Attack",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "additional_projectile_fixed",
+      "name": "Additional Projectile Fired with Ranged Attacks",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "homing_missile_chance",
+      "name": "Chance to Fire a Homing Missile",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "homing_missile_damage",
+      "name": "Increased Homing Missile Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "additional_homing_missiles",
+      "name": "Additional Homing Missiles",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "homing_missile_explosion_radius",
+      "name": "Homing Missile Explosion AoE Radius",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "homing_missile_shockwave_chance",
+      "name": "Homing Missile Shockwave Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "knockback_force",
+      "name": "Increased Knockback Force",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "knockback_damage",
+      "name": "Increased Knockback Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "knockback_terrain_damage",
+      "name": "Increased Damage when Knocking Monsters into Terrain",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ailment_damage_all",
+      "name": "Increased Ailment Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ailment_damage_all_more",
+      "name": "Total Ailment Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "skill_damage_to_ailments",
+      "name": "Skill Damage Added to Ailments",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_poisoned_frequency",
+      "name": "Increased Poisoned Frequency",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "attack_speed_full_life",
+      "name": "Increased Attack Speed at Full Life",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_full_life_aux",
+      "name": "Damage Bonus while at Full Life (auxiliary)",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_close",
+      "name": "Increased Damage to Close Monsters",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_far",
+      "name": "Increased Damage to Far Monsters",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_dual_wield",
+      "name": "Increased Damage when Dual Wielding",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_dual_wield_more",
+      "name": "Total Damage when Dual Wielding",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_with_axe",
+      "name": "Increased Damage with Axe",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_with_bow",
+      "name": "Increased Damage with Bow",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_with_gun",
+      "name": "Increased Damage with Gun",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_with_throwing",
+      "name": "Increased Damage with Throwing Weapon",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_with_two_handed",
+      "name": "Increased Damage with Two Handed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_with_shield",
+      "name": "Increased Damage with Shield",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "attack_rating_with_axe_pct",
+      "name": "Increased Attack Rating with Axe",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "vitality_with_shield",
+      "name": "Increased Vitality with Shield",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "vitality_with_shield_flat",
+      "name": "Vitality when wielding a Shield",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "min_damage_with_shield",
+      "name": "Increased Minimum Damage when wielding a Shield",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "max_damage_with_shield",
+      "name": "Increased Maximum Damage when wielding a Shield",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_to_terrain_flat_with_axes",
+      "name": "Flat Physical Damage when Dual Wielding Axes",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "attack_radius_dual_axes",
+      "name": "Attack Radius when Dual Wielding Axes",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "attack_radius",
+      "name": "Increased Attack Radius",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "splash_damage_around_target",
+      "name": "Increased Splash Damage Around Target",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "two_handed_damage_reduction",
+      "name": "Damage Reduction with Two Handed",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "rest_in_peace_chance_more",
+      "name": "Total Chance for Monsters to Rest in Peace",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "additive_physical_per_500_mana",
+      "name": "Increased Physical Damage per 500 Mana",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ranged_physical_per_500_mana",
+      "name": "Increased Ranged Physical Damage per 500 Mana",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "magic_skill_damage_per_750_mana",
+      "name": "Increased Magic Skill Damage per 750 Mana",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "charging_damage_per_strength",
+      "name": "Increased Charging Damage per Strength",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "life_replenish_flat_strength",
+      "name": "Life per 5 Points in Strength",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "damage_per_rage_stack",
+      "name": "Increased Damage per Rage Stack",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ranged_damage_per_rage_stack",
+      "name": "Increased Ranged Damage per Rage Stack",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "magic_skill_damage_with_wand",
+      "name": "Increased Magic Skill Damage with Wand",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "two_handed_spell_projectile_damage",
+      "name": "Increased Spell Projectile Damage with Staff or Cane",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_block_chance_two_handed",
+      "name": "Chance to Block Physical Damage with Staff or Cane",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "colossus_damage",
+      "name": "Colossus Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "life_replenish_per_colossus_stack",
+      "name": "Life Replenish per Colossus Stack",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "death_explosion_damage",
+      "name": "Death Explosion Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "soul_ignition_explode_chance",
+      "name": "Soul Ignition Explosion Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "overflow_effectiveness",
+      "name": "Overflow Effectiveness",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "agitation_movement_speed",
+      "name": "Agitation Movement Speed",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "evasion_when_struck_chance",
+      "name": "Chance to Gain Evasion when Struck",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "evasion_amount_when_struck",
+      "name": "Evasion Amount when Struck",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "evasion_when_full_life_chance",
+      "name": "Chance to Gain Evasion at Full Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "evasion_duration",
+      "name": "Evasion Duration",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "life_steal_more",
+      "name": "Total Life Steal",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "life_steal_below_40_life",
+      "name": "Total Life Steal while below 40% Maximum Life",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "life_steal_suppressed",
+      "name": "Life Stolen Suppressed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "vampirism_instant_life_steal",
+      "name": "Life Steal is Instant (no other regen)",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "gas_cloud_when_struck_chance",
+      "name": "Chance to Leave Gas Cloud when Struck",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "gas_cloud_poisoned_damage",
+      "name": "Gas Cloud Poisoned Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_explode_on_low_life",
+      "name": "Summon Explodes at Low Life",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_max_life_as_explosion",
+      "name": "Summon Maximum Life as Explosion Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_instant_explode",
+      "name": "Summons Instantly Explode on Contact",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "weapon_throw_damage",
+      "name": "Weapon Throw Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "homing_missile_attack_chance",
+      "name": "Chance when Attacking to Fire Homing Missile",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "deadly_blow_effectiveness",
+      "name": "Increased Deadly Blow Effectiveness",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "deadly_blow_aoe_size",
+      "name": "Deadly Blow Area of Effect Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "monster_dot_immunity_shattered",
+      "name": "Monster Damage Over Time Immunity Shattered",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "total_damage_dealt_and_taken",
+      "name": "Total Damage Dealt and Damage Taken",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "spell_critical_chance_with_spells",
+      "name": "Chance to Critically Hit with Spells (Total)",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "time_surge_chance",
+      "name": "Spell Critical to Time Surge Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "mirror_of_odin_chance",
+      "name": "Mirror of Odin Cast Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "lightning_per_element",
+      "name": "Lightning Damage Scaling per Elemental Source",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "cooldown_recovery_after_kill_chance",
+      "name": "Chance to Recover Cooldowns after Kill",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "cooldown_recovered_flat",
+      "name": "Flat Cooldown Recovered",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "damage_dealt_and_taken_amp",
+      "name": "Total Damage Dealt and Damage Taken Amplified",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_damage_from_summon_life",
+      "name": "Extra Damage based on Summon Maximum Life",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "temporal_echo_damage",
+      "name": "Temporal Echo Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "branch_damage",
+      "name": "Branch Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "stampede_damage_per_physical",
+      "name": "Stampede Damage per Physical Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "life_replenish_more",
+      "name": "Total Life Replenish",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_mana_to_life_pct_added",
+      "name": "Maximum Life Added from Maximum Mana",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "max_life_to_mana_pct_added",
+      "name": "Maximum Mana Added from Maximum Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "cc_immunity_decrease_more",
+      "name": "Decreased Monster Crowd Control Immunity",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "sand_ripple_damage",
+      "name": "Desert Ripple Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "sand_ripple_chance",
+      "name": "Chance on Hit to Unleash Sand Ripple",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "wizardry_cast_rate",
+      "name": "Faster Cast Rate per Wizardry Stack",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "mage_guard_chance",
+      "name": "Chance to Gain Mage Guard Stack on Cast",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "mage_guard_damage_reduction",
+      "name": "Damage Reduction per Mage Guard Stack",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "stun_duration_increase",
+      "name": "Stun Duration",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "summon_chain_void_blast",
+      "name": "Summon Chain Hit Triggers Void Blast",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_projectile_flat",
+      "name": "Extra Projectile",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "ranged_projectile_damage",
+      "name": "Increased Ranged Projectile Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ranged_projectile_damage_more",
+      "name": "Total Ranged Projectile Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "enhanced_damage_melee_pct",
+      "name": "Melee Enhanced Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "enhanced_damage_melee_more",
+      "name": "Total Melee Enhanced Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "enhanced_damage_ranged_pct",
+      "name": "Ranged Enhanced Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "enhanced_damage_ranged_more",
+      "name": "Total Ranged Enhanced Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "crushing_blow_effectiveness",
+      "name": "Crushing Blow Effectiveness",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "fork_chance",
+      "name": "Chance for Projectiles to Fork",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "elemental_weakness",
+      "name": "Elemental Weakness",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "homing_missile_count",
+      "name": "Additional Homing Missile",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "extra_attack_or_projectile_chance",
+      "name": "Chance for Extra Attack or Projectile",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_ranged_attack_chance",
+      "name": "Chance for Extra Ranged Attack",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ranged_extra_attack_chance",
+      "name": "Chance for Ranged Extra Attack",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "block_chance_physical_two_handed",
+      "name": "Chance to Block Physical with Staff or Cane",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_jump_count",
+      "name": "Extra Mid-Air Jump",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "damage_ignored_flat",
+      "name": "Incoming Damage Ignored",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
+      "key": "damage_to_life_replenish_chance",
+      "name": "Damage Replenished as Life when Struck",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "life_replenish_when_evading",
+      "name": "Life Replenished when Evading",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "life_replenish_when_suppressing",
+      "name": "Life Replenished when Suppressing",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "life_replenish_mana_on_ranged_hit",
+      "name": "Chance to Replenish Life and Mana on Ranged Hit",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "life_regen_flask",
+      "name": "Increased Life Regeneration from Flasks",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "flask_damage_reduction",
+      "name": "Reduced Damage Taken with Flask Regeneration",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_mitigation_when_struck",
+      "name": "Damage Mitigation for a Short Time when Struck",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "explosion_aoe_to_damage",
+      "name": "Explosion AoE Radius Converted to Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "aoe_radius_to_damage",
+      "name": "Area of Effect Radius Converted to Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "aoe_pull_chance",
+      "name": "AoE Skill Pull Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "additional_explosion_chance",
+      "name": "Chance for Additional Explosion",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ramping_pulse_chance",
+      "name": "Ramping Pulse Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ramping_pulse_max_stacks",
+      "name": "Maximum Ramping Pulse Stacks",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "energy_added_ranged_physical",
+      "name": "Energy Added as Ranged Physical Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "movement_speed_to_attack_damage",
+      "name": "Movement Speed Converted to Attack Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_mana_to_magic_skill_damage",
+      "name": "Increased Maximum Mana Added as Magic Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "physical_to_arrow_damage",
+      "name": "Physical Damage Added as Arrow Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "physical_damage_below_40_life",
+      "name": "Increased Physical Damage below 40% Maximum Life",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ranged_damage_below_40_crit",
+      "name": "Increased Ranged Projectile Damage when Crit Below 40%",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "dual_wield_2h_melee",
+      "name": "Dual Wield Two-Handed Melee Weapons",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_manacost",
+      "name": "Increased Mana Cost",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "force_field_protection",
+      "name": "Immovable Object (no dodge, no stun/freeze)",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "light_radius_to_attributes",
+      "name": "Light Radius Added as All Attributes",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "attack_damage_to_increased_life",
+      "name": "Attack Damage Converted to Increased Life",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "bone_fragment_chance",
+      "name": "Bone Fragment Chance",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "bone_fragment_inherit",
+      "name": "Return Damage Inherited by Bone Fragment",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "bleed_aoe_damage",
+      "name": "Bleed AoE Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "void_chain_chance",
+      "name": "Summon Chain Triggers Void Blast",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "fork_chance_summon_projectile",
+      "name": "Summon Projectile Fork Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_damage_close_combat",
+      "name": "Damage Modifier from Close Combat",
+      "category": "offense",
+      "format": "percent"
+    },
     {
       "key": "enhanced_defense",
       "name": "Enhanced Defense",

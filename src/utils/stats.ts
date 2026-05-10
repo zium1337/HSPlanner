@@ -60,7 +60,6 @@ export type SourceType =
 export const CUSTOM_SOURCE_LABEL = 'Custom Config'
 
 export function normalizeSkillName(name: string): string {
-  // Lowercases and trims a skill name to produce a stable lookup key. Used everywhere a skill or item-granted-skill name needs to be matched without caring about whitespace or casing.
   return name.trim().toLowerCase()
 }
 
@@ -112,7 +111,6 @@ export interface ComputedStats {
 type SourceMap = Map<string, SourceContribution[]>
 
 function pushSource(map: SourceMap, key: string, source: SourceContribution) {
-  // Appends a SourceContribution to the list keyed by `key` in the source map, skipping zero values and lazily creating the list. Used by computeBuildStats to accumulate the per-stat or per-attribute breakdown that the UI later renders as a tooltip.
   if (isZero(source.value)) return
   const list = map.get(key)
   if (list) list.push(source)
@@ -120,7 +118,6 @@ function pushSource(map: SourceMap, key: string, source: SourceContribution) {
 }
 
 function sumContributions(sources: SourceContribution[]): RangedValue {
-  // Sums an array of SourceContributions into a single RangedValue, preserving min and max independently and collapsing identical bounds back to a number. Used to fold a per-stat source list into the final value displayed by the stats panel.
   let min = 0
   let max = 0
   for (const s of sources) {
@@ -135,7 +132,6 @@ function sumRangedFromMap(
   map: SourceMap,
   key: string,
 ): [number, number] {
-  // Returns the [min, max] sum of all current contributions for `key`, with both bounds floored to integers (used for skill-rank bonuses, which the game treats as whole-number ranks). Returns [0, 0] when the key has no entries yet. Used during the buff/aura passive pass so passive stats scale with the EFFECTIVE skill rank (base + +to-all-skills + +to-element-skills) rather than the bare allocated rank.
   const list = map.get(key)
   if (!list || list.length === 0) return [0, 0]
   const v = sumContributions(list)
@@ -152,7 +148,6 @@ function applyContribution(
   sourceType: SourceType,
   extra?: { forge?: SourceContribution['forge'] },
 ) {
-  // Routes a single contribution into either the attribute-source map or the stat-source map based on the StatDef's `modifiesAttribute` field, and skips item-only stats / zero values. Used as the workhorse helper inside computeBuildStats whenever a new value (item, skill, custom, etc.) needs to be added to the breakdown.
   if (isZero(value)) return
   const def = statDef(statKey)
   if (def?.itemOnly) return
@@ -175,7 +170,6 @@ function computeItemEffectiveDefense(
   base: { defenseMin?: number; defenseMax?: number },
   enhancedDefense: RangedValue | undefined,
 ): RangedValue | null {
-  // Computes an item's defense after applying any rolled `enhanced_defense` percentage, returning a RangedValue or null when the base item has no defense values. Used by computeBuildStats so the displayed defense reflects both the base roll and the multiplier.
   if (base.defenseMin === undefined || base.defenseMax === undefined) return null
   const ed = enhancedDefense
   const [edMin, edMax] =
@@ -202,7 +196,6 @@ export interface ComputeBuildStatsInput {
 }
 
 export function computeBuildStats(input: ComputeBuildStatsInput): ComputedStats {
-  // Two-pass auto-resolution for the `crit_chance_below_40` self-condition: when the user has not explicitly toggled it on, run a baseline pass to compute the final crit_chance, and if it falls below 40%, run a second pass with the condition activated so any tree-node mods gated on it apply automatically. Cheap because the second pass only happens when the user is actually below the threshold.
   const baseline = computeBuildStatsCore(input)
   if (
     !input.playerConditions?.crit_chance_below_40 &&
@@ -224,7 +217,6 @@ export function computeBuildStats(input: ComputeBuildStatsInput): ComputedStats 
 }
 
 function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
-  // Top-level aggregator that walks every input (class base, allocated attributes, inventory items, sockets/runewords, augments, allocated talent-tree nodes, set bonuses, default per-level stats, allocated active passive/aura/buff skills, custom stats, derived per-attribute stats and item-granted skill effects) and produces a single ComputedStats object containing both the summed values and the per-source breakdown. Used by the build store on every state change to refresh the stats panel and feed the damage calculators.
   const {
     classId,
     level,
@@ -419,7 +411,6 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
     }
   }
 
-  // Collected during the tree pass and applied after the main aggregation so they read FINAL stat/attribute values.
   const treeConversions: Array<{ conv: ParsedConversion; sourceLabel: string }> = []
   const treeDisables = new Set<DisableTarget>()
 
@@ -427,8 +418,6 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
     for (const nodeId of allocatedTreeNodes) {
       const info = TREE_NODE_INFO[String(nodeId)]
       if (!info?.l) continue
-      // Jewelry sockets contribute via their socketed content, not via the
-      // "+1 Socketable Slot" line.
       if (TREE_JEWELRY_IDS.has(nodeId)) continue
       for (const line of info.l) {
         const parsed = parseTreeNodeMod(line)
@@ -567,7 +556,6 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
     }
   }
 
-  // Apply custom-stat overrides BEFORE the skill passive loop so user-supplied "+to all skills" / "+to <element> skills" customs can lift the EFFECTIVE skill rank that buffs/auras read for their per-rank passive scaling.
   for (const cs of customStats ?? []) {
     if (!cs.statKey) continue
     const parsed = parseCustomStatValue(cs.value)
@@ -585,7 +573,6 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
   if (skillRanks && classId) {
     const attrKeySet = new Set(gameConfig.attributes.map((a) => a.key))
     const classSkillList = getSkillsByClass(classId)
-    // Skill passives/auras/buffs scale with EFFECTIVE rank (base + +to-all-skills + +to-<element>-skills + item +to-this-skill), not just the points the user allocated. This matches what SkillsView's "+EFFECTS" preview shows and how the game itself stacks +skill items on top of allocated points.
     const itemSkillRankBonuses = aggregateItemSkillBonuses(inventory)
     const allSkillsBonus = sumRangedFromMap(statSources, 'all_skills')
     for (const skill of classSkillList) {
@@ -674,7 +661,6 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
     }
   }
 
-  // Per-attribute percentage modifiers (e.g. "+3% Increased Intelligence"). Stack additively with the flat attribute sources, mirroring how `increased_all_attributes` is applied. The `_more` Total variant compounds multiplicatively on top of the additive sum.
   for (const attr of gameConfig.attributes) {
     const addList = statSources.get(`increased_${attr.key}`) ?? []
     const moreList = statSources.get(`increased_${attr.key}_more`) ?? []
@@ -859,6 +845,8 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
 
   applyMultiplier(stats, 'life', 'increased_life', 'increased_life_more')
   applyMultiplier(stats, 'mana', 'increased_mana', 'increased_mana_more')
+  applyMultiplier(stats, 'mana_replenish', undefined, 'mana_replenish_more', { floor: false })
+  applyMultiplier(stats, 'life_replenish', undefined, 'life_replenish_more', { floor: false })
 
   const touchedConvertTargets = new Set<string>()
   for (const granted of itemGrantedSkills) {
@@ -867,7 +855,6 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
     const [rankMin, rankMax] = itemGrantedRanks[key] ?? [0, 0]
     if (rankMax <= 0) continue
     for (const conv of granted.passiveConverts.perRank) {
-      // Read the *effective* source stat (additive folded with its `_more` Total multiplier) so conversions like Fallen God's Bloodlust apply to the final Attack Speed the player actually sees, matching in-game behaviour.
       const effective = combineAdditiveAndMore(
         stats[conv.from],
         stats[`${conv.from}_more`],
@@ -893,7 +880,6 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
       touchedConvertTargets.add(conv.to)
     }
   }
-  // Tree-node conversions (e.g. "+75% of your Increased Attack Speed is added as Magic Skill Damage" from Agile Wizard). Read the FINAL source value (combining additive with `_more` for stats, or the computed attribute value) and push the converted contribution into the target's source list. Mutates `stats` for the touched target keys via the `touchedConvertTargets` re-aggregation step below.
   for (const { conv, sourceLabel } of treeConversions) {
     const sourceValue: RangedValue =
       conv.fromKind === 'attribute'
@@ -938,7 +924,6 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
     if (list) stats[k] = sumContributions(list)
   }
 
-  // Tree-node disable flags (e.g. "You cannot regenerate life from life replenish anymore" from Agile Wizard). Zero out the affected stats so downstream displays and calculations reflect the tradeoff.
   if (treeDisables.has('life_replenish')) {
     stats.life_replenish = 0
     stats.life_replenish_pct = 0
@@ -955,21 +940,24 @@ function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
 function applyMultiplier(
   stats: RangedStatMap,
   flatKey: string,
-  pctKey: string,
+  pctKey: string | undefined,
   morePctKey?: string,
+  options?: { floor?: boolean },
 ): void {
-  // Mutates `stats[flatKey]` in place by multiplying it by `(1 + pct/100) × (1 + more/100)` from the supplied additive and Total percent stats. Used by computeBuildStats to fold life and mana percentages into their final flat values after every contributor has been counted.
   const flat = stats[flatKey]
   if (flat === undefined) return
-  const pct = stats[pctKey] ?? 0
+  const pct = pctKey ? (stats[pctKey] ?? 0) : 0
   const more = morePctKey ? (stats[morePctKey] ?? 0) : 0
   if (isZero(pct) && isZero(more)) return
   const [fmin, fmax] =
     typeof flat === 'number' ? [flat, flat] : flat
   const [pmin, pmax] = typeof pct === 'number' ? [pct, pct] : pct
   const [mmin, mmax] = typeof more === 'number' ? [more, more] : more
-  const min = Math.floor(fmin * (1 + pmin / 100) * (1 + mmin / 100))
-  const max = Math.floor(fmax * (1 + pmax / 100) * (1 + mmax / 100))
+  const rawMin = fmin * (1 + pmin / 100) * (1 + mmin / 100)
+  const rawMax = fmax * (1 + pmax / 100) * (1 + mmax / 100)
+  const floorIt = options?.floor !== false
+  const min = floorIt ? Math.floor(rawMin) : rawMin
+  const max = floorIt ? Math.floor(rawMax) : rawMax
   stats[flatKey] = min === max ? min : [min, max]
 }
 
@@ -977,7 +965,6 @@ export function combineAdditiveAndMore(
   additive: RangedValue | undefined,
   more: RangedValue | undefined,
 ): RangedValue {
-  // Combines an additive percentage with its `_more` (Total) multiplier into a single equivalent additive percentage using `((1 + add/100) × (1 + more/100) - 1) × 100`. Used by the stats panel to display a single "effective" number when both the additive and Total bonuses exist for the same stat.
   const [aMin, aMax] =
     additive === undefined
       ? [0, 0]
@@ -997,7 +984,6 @@ export function combineAdditiveAndMore(
 }
 
 export function statName(key: string): string {
-  // Returns the human-readable display name for a stat key. For derived `_more` keys (multiplicative/Total variants) without a direct config entry, derives the label by prepending "Total " to the base key's name (e.g. `increased_attack_speed_more` → "Total Attack Speed"). Falls back to the key itself when nothing matches. Used by tooltips, formatters and breakdown labels throughout the UI.
   const direct = STAT_DEFS_MAP.get(key)?.name
   if (direct) return direct
   if (key.endsWith('_more')) {
@@ -1009,15 +995,26 @@ export function statName(key: string): string {
 }
 
 export function statDef(key: string): StatDef | undefined {
-  // Looks up the StatDef metadata (category, format, cap, etc.) for a given stat key. Used internally by formatting and contribution helpers.
-  return STAT_DEFS_MAP.get(key)
+  const direct = STAT_DEFS_MAP.get(key)
+  if (direct) return direct
+  if (key.endsWith('_more')) {
+    const base = STAT_DEFS_MAP.get(key.slice(0, -'_more'.length))
+    if (base) {
+      return {
+        ...base,
+        key,
+        name: `Total ${base.name}`,
+        format: 'percent',
+      }
+    }
+  }
+  return undefined
 }
 
 export function effectiveCap(
   statKey: string,
   stats: RangedStatMap,
 ): number | undefined {
-  // Returns the effective cap for `statKey` after adding any `max_<statKey>` modifier present in the supplied stat map. Used by the stats panel to render correct max-resistance / max-block style caps.
   const baseCap = statDef(statKey)?.cap
   if (baseCap === undefined) return undefined
   const mod = stats[`max_${statKey}`]
@@ -1026,23 +1023,19 @@ export function effectiveCap(
 }
 
 export function isZero(v: RangedValue): boolean {
-  // Returns true when a RangedValue is zero (or [0, 0] for the tuple form). Used by helpers that need to short-circuit on no-op contributions.
   if (typeof v === 'number') return v === 0
   return v[0] === 0 && v[1] === 0
 }
 
 export function rangedMin(v: RangedValue): number {
-  // Returns the minimum endpoint of a RangedValue (the value itself for a plain number). Used wherever a single representative low value is needed.
   return typeof v === 'number' ? v : v[0]
 }
 
 export function rangedMax(v: RangedValue): number {
-  // Returns the maximum endpoint of a RangedValue (the value itself for a plain number). Used by formula code that wants the optimistic upper bound.
   return typeof v === 'number' ? v : v[1]
 }
 
 export function formatValue(value: RangedValue, key: string): string {
-  // Formats a RangedValue as a signed display string respecting the stat's percent/flat format and collapsing identical bounds. Used by tooltips and stat lists to render human-friendly values such as "+25%" or "+[12-18]".
   const def = statDef(key)
   const suffix = def?.format === 'percent' ? '%' : ''
   if (typeof value === 'number') {
@@ -1061,7 +1054,6 @@ export function formatValue(value: RangedValue, key: string): string {
 }
 
 export function fmtStats(stats: RangedStatMap): string {
-  // Renders an entire RangedStatMap as a comma-separated, human-readable string by formatting each entry through `formatValue` and `statName`. Used by tooltips and other places that want a single inline summary of a stat block.
   return Object.entries(stats)
     .map(([k, v]) => `${formatValue(v, k)} ${statName(k)}`)
     .join(', ')
@@ -1157,7 +1149,6 @@ function collectExtraDamage(
   stats: RangedStatMap,
   enemyConditions: Record<string, boolean> | undefined,
 ): { pct: number; sources: Array<{ label: string; pct: number }> } {
-  // Walks the EXTRA_DAMAGE_CONDITIONS table, sums every `extra_damage_<ailment>` whose enemy-condition flag is active, and additionally folds in `extra_damage_ailments` when at least one ailment is on. Used by computeSkillDamage and computeWeaponDamage to compute the conditional `+% extra damage` multiplier.
   const sources: Array<{ label: string; pct: number }> = []
   let total = 0
   if (!enemyConditions) return { pct: 0, sources }
@@ -1194,7 +1185,6 @@ export function rolledAffixValue(
   },
   roll: number,
 ): number {
-  // Interpolates a single affix's value at the given 0-1 roll, applying the sign and rounding flat (integer) values. Used wherever the system needs the deterministic value of a rolled affix at a known roll fraction.
   if (affix.valueMin === null || affix.valueMax === null) return 0
   const raw =
     affix.valueMin === affix.valueMax
@@ -1210,7 +1200,6 @@ export function rolledAffixRange(affix: {
   valueMin: number | null
   valueMax: number | null
 }): RangedValue {
-  // Returns the full [min, max] RangedValue an affix can produce, applying sign and integer rounding for flat affixes. Used when the UI wants to show the possible roll window rather than a single committed roll.
   if (affix.valueMin === null || affix.valueMax === null) return 0
   const round = (n: number) => (affix.format === 'flat' ? Math.round(n) : n)
   const min = round(affix.valueMin)
@@ -1222,7 +1211,6 @@ export function rolledAffixRange(affix: {
 }
 
 export function isAffixStarImmune(statKey: string | null): boolean {
-  // Returns true when an affix's stat key should never be scaled by item stars. Delegates to the per-statKey config in starScaling.ts so any stat marked `none`/`unknown`/`glitch` is treated as immune.
   return isStatStarImmune(statKey)
 }
 
@@ -1230,7 +1218,6 @@ export function affixStarMultiplier(
   statKey: string | null,
   stars: number | undefined,
 ): number {
-  // Returns the percent multiplier that an affix should be scaled by under the per-statKey star scaling table, or 1 when stars are absent or the stat does not scale percentually (e.g. flat-skill staircase, none, unknown, glitch).
   return statStarPercentMultiplier(statKey, stars)
 }
 
@@ -1245,12 +1232,10 @@ export function rolledAffixValueWithStars(
   roll: number,
   stars: number | undefined,
 ): number {
-  // Combines `rolledAffixValue` with star scaling: applies the percent multiplier, then adds any flat staircase bonus (used by skill-rank affixes such as fire_skills). When stars actually scale the value, floors the result (Hero Siege rounds star-scaled stats DOWN, including percent values like `+300.56% FCR` → `+300%`). For unstarred items or stats that do not scale with stars, falls back to the original rounding (round-to-nearest for flat affixes, raw value for percent). Used by computeBuildStats when applying a rolled affix from inventory items.
   const base = rolledAffixValue(affix, roll)
   const mult = affixStarMultiplier(affix.statKey, stars)
   const flat = statStarFlatBonus(affix.statKey, stars)
   if (base === 0 && flat === 0) return 0
-  // Sign of base tells us whether the affix is +X (positive) or -X (negative); apply flat in the same direction so a "-1 to skills" mod doesn't get healed by stars.
   const direction = affix.sign === '-' ? -1 : 1
   const scaled = base * mult + flat * direction
   const starsActive = (stars ?? 0) > 0 && (mult !== 1 || flat !== 0)
@@ -1263,9 +1248,7 @@ export function applyStarsToRangedValue(
   statKey: string,
   stars: number | undefined,
 ): RangedValue {
-  // Scales a RangedValue by the per-statKey star table: multiplicative for percent-scaling stats, additive for flat-skill / item-specific staircases. When stars actually change the value, the result is floored (Hero Siege rounds star-scaled stats DOWN). Used to scale implicit item stats and item-granted skill ranks by the equipped item's stars.
   if (!stars || stars <= 0) return value
-  // `item_granted_skill_rank` is the synthetic key used by skillBonuses; it follows the documented ITEM SPECIFIC staircase (2*=+1, 4*=+2, 5*=+3).
   const flat =
     statKey === 'item_granted_skill_rank'
       ? itemGrantedSkillRankFlatBonus(stars)
@@ -1280,14 +1263,12 @@ export function applyStarsToRangedValue(
 }
 
 export function shouldScaleImplicit(isRuneword: boolean): boolean {
-  // Returns true when an item's implicit stats should be scaled by stars (i.e. it is not a runeword). Used by computeBuildStats to suppress double-scaling on runewords.
   return !isRuneword
 }
 
 export function aggregateItemSkillBonuses(
   inventory: Inventory,
 ): Record<string, [number, number]> {
-  // Walks every equipped item and sums the rolled (and star-scaled) `+rank` skill bonuses by normalised skill name, returning a `[minRank, maxRank]` tuple per skill. Used by computeBuildStats and computeSkillDamage to know how much rank each skill gets from gear.
   const out: Record<string, [number, number]> = {}
   for (const [slotKey, item] of Object.entries(inventory)) {
     if (!item) continue
@@ -1312,7 +1293,6 @@ export function effectiveRankRangeFor(
   stats: RangedStatMap,
   itemSkillBonuses: Record<string, [number, number]>,
 ): [number, number] {
-  // Computes the effective rank range [min, max] for a skill given its base allocation, factoring in +to-all-skills, +to-element-skills, and item-granted skill rank bonuses. Used to evaluate synergy contributions against the source skill's true effective level rather than its base allocation.
   if (baseRank <= 0) return [0, 0]
   const all = stats.all_skills ?? 0
   const elem = skill.damageType
@@ -1337,7 +1317,6 @@ export function computeSkillDamage(
   skillsByNormalizedName?: Record<string, Skill>,
   projectileCount?: number,
 ): SkillDamageBreakdown | null {
-  // Computes the per-hit / crit / average / final damage breakdown for a single skill, factoring in effective rank (including +to-all-skills, element-skills, and item-granted bonuses), additive and Total skill damage, synergies, flat damage, ailment-conditional bonuses, spell vs melee crit pools, and enemy resistance / ignore-resistance. Returns null when the skill has neither a damage formula nor a per-rank table or has not been allocated. Used by SkillsView and the stat panel to render damage tooltips.
   if (allocatedRank === 0) return null
   const hasFormula = !!skill.damageFormula
   const hasTable =
@@ -1465,7 +1444,6 @@ export function computeSkillDamage(
   const effectiveResPct = enemyResPct * (1 - ignoreResPct / 100)
   const resistanceMult = 1 - effectiveResPct / 100
 
-  // Elemental Break multiplies elemental skill damage by `(1 + EB%/100)`. Source-specific keys (`_on_strike` / `_on_spell`) only count for their hit type, while the generic `elemental_break` key (e.g. the "+5% to Elemental Break" minor node) applies to every elemental skill regardless of hit type.
   const isElementalSkill =
     !!skill.damageType &&
     (ELEMENTS as readonly string[]).includes(skill.damageType)
@@ -1480,7 +1458,6 @@ export function computeSkillDamage(
     : 0
   const elementalBreakMultiplier = 1 + elementalBreakPct / 100
 
-  // Lightning Break is a damage multiplier on lightning skills when the target has the lightning_break enemy condition active. The player's accumulated lightning_break stat (from passives, items, subtree) is the multiplier %; without the condition flagged it contributes nothing.
   const lightningBreakPct =
     skill.damageType === 'lightning' && enemyConditions?.lightning_break
       ? Math.max(0, rangedMax(stats.lightning_break ?? 0))
@@ -1508,12 +1485,10 @@ export function computeSkillDamage(
 
   const critMin = hitMin * critMultOnCrit
   const critMax = hitMax * critMultOnCrit
-  // Multicast (Double Cast etc.) only applies to spells: each cast input has X% chance to fire an extra time, so the expected damage per cast input is multiplied by (1 + X/100). Affects only `avgMin/avgMax` (the per-cast expectation), leaving `hitMin/hitMax` and `critMin/critMax` as the underlying single-hit numbers for the breakdown UI.
   const multicastChancePct = isSpell
     ? Math.max(0, rangedMax(stats.multicast_chance ?? 0))
     : 0
   const multicastMultiplier = 1 + multicastChancePct / 100
-  // Per-skill projectile count override (manual config in ConfigView). Multiplies the per-cast expectation only — `hitMin/hitMax/critMin/critMax` stay as single-projectile numbers so the user still sees the underlying hit damage. Default 1 means no override.
   const projectiles = Math.max(1, Math.floor(projectileCount ?? 1))
   const avgMin = hitMin * critMultAvg * multicastMultiplier * projectiles
   const avgMax = hitMax * critMultAvg * multicastMultiplier * projectiles
@@ -1562,7 +1537,6 @@ export function computeWeaponDamage(
   stats: RangedStatMap,
   enemyConditions?: Record<string, boolean>,
 ): WeaponDamageBreakdown {
-  // Computes the equipped weapon's hit / crit / average / DPS breakdown by combining base weapon damage, enhanced damage (additive + Total), additive physical damage, attack damage, ailment-conditional bonuses, crit chance/damage, and attack speed. Used by the stats panel and weapon tooltip to render the live weapon DPS.
   const weapon = inventory.weapon
   const base = weapon ? getItem(weapon.baseId) : undefined
   const hasWeapon =
@@ -1661,7 +1635,6 @@ export function passiveStatsAtRank(
   skill: Skill,
   rank: number,
 ): Record<string, number> {
-  // Returns the merged base+perRank passive stats a skill provides at a given rank, rounded to three decimals. Used by skill tooltips that display per-rank stat contributions.
   if (!skill.passiveStats || rank <= 0) return {}
   const { base, perRank } = skill.passiveStats
   const out: Record<string, number> = {}
@@ -1678,7 +1651,6 @@ export function passiveStatsAtRank(
 }
 
 export function manaCostAtRank(skill: Skill, rank: number): number | undefined {
-  // Returns the mana cost of casting a skill at the specified rank, preferring the explicit `manaCostFormula` and falling back to per-rank table entries. Used by SkillsView to display the cost next to each skill rank.
   if (rank <= 0) rank = 1
   if (skill.manaCostFormula) {
     return Math.floor(
