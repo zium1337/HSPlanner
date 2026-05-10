@@ -58,6 +58,20 @@ export interface BuildPerformanceDeps {
   killsPerSec: number
 }
 
+const skillsByNameCache = new Map<string, Record<string, Skill>>()
+
+function skillsByNameFor(classId: string | null): Record<string, Skill> {
+  const key = classId ?? ''
+  let cached = skillsByNameCache.get(key)
+  if (cached) return cached
+  cached = {}
+  for (const s of getSkillsByClass(classId)) {
+    cached[normalizeSkillName(s.name)] = s
+  }
+  skillsByNameCache.set(key, cached)
+  return cached
+}
+
 export function computeBuildPerformance(
   deps: BuildPerformanceDeps,
 ): BuildPerformance {
@@ -85,11 +99,10 @@ export function computeBuildPerformance(
   const activeRank = activeSkill ? (deps.skillRanks[activeSkill.id] ?? 0) : 0
 
   const itemSkillBonuses = aggregateItemSkillBonuses(deps.inventory)
+  const skillsByNormalizedName = skillsByNameFor(deps.classId)
   const skillRanksByName: Record<string, number> = {}
-  const skillsByNormalizedName: Record<string, Skill> = {}
   for (const s of allClassSkills) {
     skillRanksByName[normalizeSkillName(s.name)] = deps.skillRanks[s.id] ?? 0
-    skillsByNormalizedName[normalizeSkillName(s.name)] = s
   }
 
   const activeSubAgg = activeSkill

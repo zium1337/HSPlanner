@@ -41,13 +41,14 @@ export function findPath(
 
   const parent = new Map<number, number>()
   const queue: number[] = []
+  let head = 0
   for (const s of srcSet) {
     parent.set(s, -1)
     queue.push(s)
   }
 
-  while (queue.length) {
-    const cur = queue.shift()!
+  while (head < queue.length) {
+    const cur = queue[head++]!
     const nbrs = ADJ.get(cur)
     if (!nbrs) continue
     for (const nb of nbrs) {
@@ -77,14 +78,15 @@ export function reachableFromAny(
   // BFS-style search that returns the set of nodes reachable from any starting node while only stepping through nodes that appear in `allowed`. Used by the TreeView to detect "orphaned" allocated nodes when the player removes a connecting node.
   const seen = new Set<number>()
   const queue: number[] = []
+  let head = 0
   for (const s of starts) {
     if (allowed.has(s) && !seen.has(s)) {
       seen.add(s)
       queue.push(s)
     }
   }
-  while (queue.length) {
-    const cur = queue.shift()!
+  while (head < queue.length) {
+    const cur = queue[head++]!
     const nbrs = ADJ.get(cur)
     if (!nbrs) continue
     for (const nb of nbrs) {
