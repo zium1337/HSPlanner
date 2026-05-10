@@ -3,10 +3,10 @@ import SearchableSelect from '../components/SearchableSelect'
 import { SkillIconImage } from '../components/SkillIconImage'
 import { resolveSkillIcon } from '../data'
 import { gameConfig, skills } from '../data'
-import { useBuild } from '../store/build'
+import { subskillKey, useBuild } from '../store/build'
 import { parseCustomStatValue } from '../utils/parseCustomStat'
 import { formatValue, normalizeSkillName, statDef } from '../utils/stats'
-import type { Skill } from '../types'
+import type { Skill, SubskillNode } from '../types'
 import {
   SELF_CONDITION_KEYS,
   SELF_CONDITION_LABELS,
@@ -65,6 +65,7 @@ export default function ConfigView() {
   const setProcToggle = useBuild((s) => s.setProcToggle)
   const killsPerSec = useBuild((s) => s.killsPerSec)
   const setKillsPerSec = useBuild((s) => s.setKillsPerSec)
+  const subskillRanks = useBuild((s) => s.subskillRanks)
   const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
 
   const buffSkills = useMemo(() => {
@@ -104,7 +105,52 @@ export default function ConfigView() {
     return out
   }, [classId])
 
-  const activeProcCount = procSkills.filter((p) => !!procToggles[p.id]).length
+  const subskillProcs = useMemo(() => {
+    if (!classId) return [] as Array<{
+      ownerSkill: Skill
+      sub: SubskillNode
+      toggleKey: string
+      rank: number
+      chance: number
+      trigger: string
+      target: string
+    }>
+    const out: Array<{
+      ownerSkill: Skill
+      sub: SubskillNode
+      toggleKey: string
+      rank: number
+      chance: number
+      trigger: string
+      target: string
+    }> = []
+    for (const ownerSkill of skills) {
+      if (ownerSkill.classId !== classId) continue
+      for (const sub of ownerSkill.subskills ?? []) {
+        if (!sub.proc?.target) continue
+        const toggleKey = subskillKey(ownerSkill.id, sub.id)
+        const rank = subskillRanks[toggleKey] ?? 0
+        if (rank === 0) continue
+        const chance =
+          (sub.proc.chance.base ?? 0) + (sub.proc.chance.perRank ?? 0) * rank
+        out.push({
+          ownerSkill,
+          sub,
+          toggleKey,
+          rank,
+          chance,
+          trigger: sub.proc.trigger,
+          target: sub.proc.target,
+        })
+      }
+    }
+    return out
+  }, [classId, subskillRanks])
+
+  const activeProcCount =
+    procSkills.filter((p) => !!procToggles[p.id]).length +
+    subskillProcs.filter((s) => !!procToggles[s.toggleKey]).length
+  const totalProcCount = procSkills.length + subskillProcs.length
 
   const skillProjectileCount = Object.values(skillProjectiles).filter(
     (n) => n > 1,
@@ -220,19 +266,19 @@ export default function ConfigView() {
 
       <Panel
         title="Procs"
-        subtitle="Skills that trigger another skill on hit / kill / cast. Toggle which procs are currently active and set your kill rate to factor on-kill procs into DPS."
+        subtitle="Skills (and subtree nodes) that trigger another skill on hit / kill / cast. Toggle which procs are currently active and set your kill rate to factor on-kill procs into DPS."
         trailing={
           <CountBadge
             value={activeProcCount}
-            total={procSkills.length}
+            total={totalProcCount}
             highlight={activeProcCount > 0}
           />
         }
       >
-        {procSkills.length === 0 ? (
+        {totalProcCount === 0 ? (
           <p className="font-mono text-[12px] tracking-[0.04em] text-muted italic">
             {classId
-              ? 'No proc skills allocated for this class.'
+              ? 'No proc skills or subtree nodes allocated for this class.'
               : 'Pick a class first.'}
           </p>
         ) : (
@@ -323,6 +369,82 @@ export default function ConfigView() {
                 )
               })}
             </ul>
+            {subskillProcs.length > 0 && (
+              <>
+                <div className="mt-4 mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+                  From Subtree Nodes
+                </div>
+                <ul className="space-y-2">
+                  {subskillProcs.map((entry) => {
+                    const targetName = normalizeSkillName(entry.target)
+                    const target = skillsByNormalizedName[targetName]
+                    const targetRank = target
+                      ? (skillRanks[target.id] ?? 0)
+                      : 0
+                    const ready = !!target && targetRank > 0
+                    const checked = !!procToggles[entry.toggleKey]
+                    return (
+                      <li key={entry.toggleKey}>
+                        <label
+                          className={`flex items-center justify-between gap-3 rounded-[3px] border px-3 py-2 transition-colors ${
+                            ready
+                              ? checked
+                                ? 'cursor-pointer border-accent-deep'
+                                : 'cursor-pointer border-border-2 hover:border-accent-deep'
+                              : 'border-border opacity-60'
+                          }`}
+                          style={{
+                            background: checked
+                              ? 'linear-gradient(180deg, rgba(58,46,24,0.5), rgba(28,29,36,0.5))'
+                              : 'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 70%, transparent))',
+                            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4)',
+                          }}
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={(e) => {
+                                setProcToggle(
+                                  entry.toggleKey,
+                                  e.target.checked,
+                                )
+                                commitActiveProfile()
+                              }}
+                              disabled={!ready}
+                            />
+                            <SkillIconImage
+                              icon={resolveSkillIcon(entry.ownerSkill)}
+                              size={32}
+                              className="text-2xl"
+                            />
+                            <span className="min-w-0">
+                              <div
+                                className={`truncate text-sm font-medium ${checked ? 'text-accent-hot' : 'text-text'}`}
+                              >
+                                {entry.sub.name}
+                                <span className="ml-1 text-[10px] font-normal uppercase tracking-[0.14em] text-faint">
+                                  · {entry.ownerSkill.name}
+                                </span>
+                              </div>
+                              <div className="truncate font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                                → {entry.target}
+                                {!ready && ' · target not allocated'}
+                              </div>
+                            </span>
+                          </span>
+                          <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-faint tabular-nums">
+                            <span className="text-text">{entry.chance}%</span>
+                            {' · '}
+                            {entry.trigger.replace('on_', '')}
+                          </span>
+                        </label>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </>
+            )}
           </>
         )}
       </Panel>

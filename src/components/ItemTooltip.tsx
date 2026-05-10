@@ -643,6 +643,7 @@ function NetChangeSection({
   const allocated = useBuild((s) => s.allocated)
   const inventory = useBuild((s) => s.inventory)
   const skillRanks = useBuild((s) => s.skillRanks)
+  const subskillRanks = useBuild((s) => s.subskillRanks)
   const activeAuraId = useBuild((s) => s.activeAuraId)
   const activeBuffs = useBuild((s) => s.activeBuffs)
   const enemyConditions = useBuild((s) => s.enemyConditions)
@@ -677,6 +678,7 @@ function NetChangeSection({
         allocated,
         inventory,
         skillRanks,
+        subskillRanks,
         activeAuraId,
         activeBuffs,
         enemyConditions,
@@ -696,6 +698,7 @@ function NetChangeSection({
     allocated,
     inventory,
     skillRanks,
+    subskillRanks,
     activeAuraId,
     activeBuffs,
     enemyConditions,
@@ -790,6 +793,7 @@ function computeDpsDelta(
     allocated: Record<string, number>
     inventory: Inventory
     skillRanks: Record<string, number>
+    subskillRanks: Record<string, number>
     activeAuraId: string | null
     activeBuffs: Record<string, boolean>
     enemyConditions: Record<string, boolean>
@@ -805,20 +809,21 @@ function computeDpsDelta(
   const computeForInventory = (
     inv: Inventory,
   ): { avg: number; hasWeapon: boolean } => {
-    // Local helper that runs the stats + weapon-damage pipeline for a single Inventory and reduces the result to `avg DPS` and a hasWeapon flag. Used twice inside computeDpsDelta (once for the current inventory, once for the swapped one).
-    const built = computeBuildStats(
-      state.classId,
-      state.level,
-      state.allocated,
-      inv,
-      state.skillRanks,
-      state.activeAuraId,
-      state.activeBuffs,
-      state.customStats,
-      state.allocatedTreeNodes,
-      state.treeSocketed,
-      state.playerConditions,
-    )
+    const built = computeBuildStats({
+      classId: state.classId,
+      level: state.level,
+      allocated: state.allocated,
+      inventory: inv,
+      skillRanks: state.skillRanks,
+      activeAuraId: state.activeAuraId,
+      activeBuffs: state.activeBuffs,
+      customStats: state.customStats,
+      allocatedTreeNodes: state.allocatedTreeNodes,
+      treeSocketed: state.treeSocketed,
+      playerConditions: state.playerConditions,
+      subskillRanks: state.subskillRanks,
+      enemyConditions: state.enemyConditions,
+    })
     const dps = computeWeaponDamage(inv, built.stats, state.enemyConditions)
     return {
       avg: (dps.dpsMin + dps.dpsMax) / 2,

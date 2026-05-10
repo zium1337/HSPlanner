@@ -87,7 +87,7 @@ export default function SkillsView() {
   const treeSocketed = useBuild((s) => s.treeSocketed)
   const { stats, attributes } = useMemo(
     () =>
-      computeBuildStats(
+      computeBuildStats({
         classId,
         level,
         allocated,
@@ -96,10 +96,12 @@ export default function SkillsView() {
         activeAuraId,
         activeBuffs,
         customStats,
-        treeAllocated,
+        allocatedTreeNodes: treeAllocated,
         treeSocketed,
         playerConditions,
-      ),
+        subskillRanks,
+        enemyConditions,
+      }),
     [
       classId,
       level,
@@ -112,6 +114,8 @@ export default function SkillsView() {
       treeAllocated,
       treeSocketed,
       playerConditions,
+      subskillRanks,
+      enemyConditions,
     ],
   )
   const itemSkillBonuses = useMemo(

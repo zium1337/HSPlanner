@@ -170,6 +170,7 @@ export default function StatsView() {
     allocated,
     inventory,
     skillRanks,
+    subskillRanks,
     activeAuraId,
     activeBuffs,
     enemyConditions,
@@ -189,7 +190,7 @@ export default function StatsView() {
     label.toLowerCase().includes(normalizedQuery)
   const { attributes, stats, attributeSources, statSources } = useMemo(
     () =>
-      computeBuildStats(
+      computeBuildStats({
         classId,
         level,
         allocated,
@@ -201,7 +202,9 @@ export default function StatsView() {
         allocatedTreeNodes,
         treeSocketed,
         playerConditions,
-      ),
+        subskillRanks,
+        enemyConditions,
+      }),
     [
       classId,
       level,
@@ -214,6 +217,8 @@ export default function StatsView() {
       allocatedTreeNodes,
       treeSocketed,
       playerConditions,
+      subskillRanks,
+      enemyConditions,
     ],
   )
   const fcrRange = stats.faster_cast_rate ?? 0

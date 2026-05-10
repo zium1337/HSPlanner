@@ -34,7 +34,6 @@ import {
   getItemImage,
   getItemSet,
   getRune,
-  getSkillsByClass,
   isGearSlot,
   items,
   runes,
@@ -45,38 +44,30 @@ import {
   MAX_STARS,
   RAINBOW_MULTIPLIER,
   maxSocketsFor,
-  subskillKey,
   useBuild,
 } from '../store/build'
-import { aggregateSubskillStats } from '../utils/subtree'
 import {
-  aggregateItemSkillBonuses,
-  combineAdditiveAndMore,
-  computeBuildStats,
-  computeSkillDamage,
+  computeBuildPerformance,
+  rangedBounds,
+  type BuildPerformance,
+  type BuildPerformanceDeps,
+} from '../utils/buildPerformance'
+import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import {
   fmtStats,
   formatValue,
-  normalizeSkillName,
-  rangedMax,
-  rangedMin,
   rolledAffixValueWithStars,
   statName,
 } from '../utils/stats'
-import type { SkillDamageBreakdown } from '../utils/stats'
 import { AUGMENT_MAX_LEVEL } from '../types'
 import type {
   Affix,
-  AttributeKey,
-  CustomStat,
   EquippedItem,
   Inventory,
   ItemBase,
   ItemRarity,
-  RangedValue,
-  Skill,
   SlotKey,
   SocketType,
-  TreeSocketContent,
 } from '../types'
 
 const SOCKETABLE_ICONS = import.meta.glob<string>(
@@ -1293,229 +1284,33 @@ function pickerItemsForSlot(slotKey: SlotKey): PickerRow[] {
 
 // ===== Compare Column (3-Panel "Net Change" preview) =====
 
-interface BuildSummary {
-  attributes: Record<AttributeKey, RangedValue>
-  stats: Record<string, RangedValue>
+interface BuildSummary extends BuildPerformance {
   itemBaseId: string | null
   itemName: string | null
   itemRarity: ItemRarity | null
   itemSockets: number
   itemSocketsMax: number
-  damage: SkillDamageBreakdown | null
-  effCastMin: number | undefined
-  effCastMax: number | undefined
-  hitDpsMin: number | undefined
-  hitDpsMax: number | undefined
-  avgHitDpsMin: number | undefined
-  avgHitDpsMax: number | undefined
-  procDpsMin: number
-  procDpsMax: number
-  combinedDpsMin: number | undefined
-  combinedDpsMax: number | undefined
-  activeSkillName: string | null
 }
 
-interface BuildSummaryDeps {
-  classId: string | null
-  level: number
-  allocated: Record<AttributeKey, number>
-  skillRanks: Record<string, number>
-  subskillRanks: Record<string, number>
-  activeAuraId: string | null
-  activeBuffs: Record<string, boolean>
-  customStats: CustomStat[]
-  allocatedTreeNodes: Set<number>
-  treeSocketed: Record<number, TreeSocketContent | null>
-  mainSkillId: string | null
-  enemyConditions: Record<string, boolean>
-  playerConditions: Record<string, boolean>
-  skillProjectiles: Record<string, number>
-  enemyResistances: Record<string, number>
-  procToggles: Record<string, boolean>
-  killsPerSec: number
-}
+type BuildSummaryDeps = Omit<BuildPerformanceDeps, 'inventory'>
 
 function computeBuildSummary(
   inventory: Inventory,
   slot: SlotKey,
   deps: BuildSummaryDeps,
 ): BuildSummary {
-  const computed = computeBuildStats(
-    deps.classId,
-    deps.level,
-    deps.allocated,
-    inventory,
-    deps.skillRanks,
-    deps.activeAuraId,
-    deps.activeBuffs,
-    deps.customStats,
-    deps.allocatedTreeNodes,
-    deps.treeSocketed,
-    deps.playerConditions,
-    deps.subskillRanks,
-    deps.enemyConditions,
-  )
-
-  const allClassSkills = getSkillsByClass(deps.classId)
-  const classSkills = allClassSkills.filter((s) => s.kind === 'active')
-  const activeSkill = deps.mainSkillId
-    ? classSkills.find((s) => s.id === deps.mainSkillId)
-    : null
-  const activeRank = activeSkill ? (deps.skillRanks[activeSkill.id] ?? 0) : 0
-
-  const itemSkillBonuses = aggregateItemSkillBonuses(inventory)
-  const skillRanksByName: Record<string, number> = {}
-  const skillsByNormalizedName: Record<string, Skill> = {}
-  for (const s of allClassSkills) {
-    skillRanksByName[normalizeSkillName(s.name)] = deps.skillRanks[s.id] ?? 0
-    skillsByNormalizedName[normalizeSkillName(s.name)] = s
-  }
-
-  const activeSubAgg = activeSkill
-    ? aggregateSubskillStats(
-        activeSkill,
-        deps.subskillRanks,
-        deps.enemyConditions,
-      )
-    : null
-  const activeProjectileBoost = activeSubAgg?.stats.projectile_count ?? 0
-  const effectiveProjectiles = activeSkill
-    ? (deps.skillProjectiles[activeSkill.id] ?? 1) + activeProjectileBoost
-    : undefined
-
-  const damage =
-    activeSkill && activeRank > 0
-      ? computeSkillDamage(
-          activeSkill,
-          activeRank,
-          computed.attributes,
-          computed.stats,
-          skillRanksByName,
-          itemSkillBonuses,
-          deps.enemyConditions,
-          deps.enemyResistances,
-          skillsByNormalizedName,
-          effectiveProjectiles,
-        )
-      : null
-
-  const fcrCombined = combineAdditiveAndMore(
-    computed.stats.faster_cast_rate,
-    computed.stats.faster_cast_rate_more,
-  )
-  const fcrMin = rangedMin(fcrCombined)
-  const fcrMax = rangedMax(fcrCombined)
-  const effCastMin = activeSkill?.baseCastRate
-    ? activeSkill.baseCastRate * (1 + fcrMin / 100)
-    : undefined
-  const effCastMax = activeSkill?.baseCastRate
-    ? activeSkill.baseCastRate * (1 + fcrMax / 100)
-    : undefined
-  const hitDpsMin =
-    damage && effCastMin !== undefined ? damage.finalMin * effCastMin : undefined
-  const hitDpsMax =
-    damage && effCastMax !== undefined ? damage.finalMax * effCastMax : undefined
-  const avgHitDpsMin =
-    damage && effCastMin !== undefined ? damage.avgMin * effCastMin : undefined
-  const avgHitDpsMax =
-    damage && effCastMax !== undefined ? damage.avgMax * effCastMax : undefined
-
-  let procDpsMin = 0
-  let procDpsMax = 0
-  for (const procSkill of allClassSkills) {
-    if (!procSkill.proc) continue
-    if (!deps.procToggles[procSkill.id]) continue
-    const procRank = deps.skillRanks[procSkill.id] ?? 0
-    if (procRank === 0) continue
-    const targetName = normalizeSkillName(procSkill.proc.target)
-    const target = skillsByNormalizedName[targetName]
-    if (!target) continue
-    const targetRank = deps.skillRanks[target.id] ?? 0
-    if (targetRank === 0) continue
-    const targetDmg = computeSkillDamage(
-      target,
-      targetRank,
-      computed.attributes,
-      computed.stats,
-      skillRanksByName,
-      itemSkillBonuses,
-      deps.enemyConditions,
-      deps.enemyResistances,
-      skillsByNormalizedName,
-      deps.skillProjectiles[target.id],
-    )
-    if (!targetDmg) continue
-    const rate = procSkill.proc.trigger === 'on_kill' ? deps.killsPerSec : 1
-    const factor = rate * (procSkill.proc.chance / 100)
-    procDpsMin += factor * targetDmg.avgMin
-    procDpsMax += factor * targetDmg.avgMax
-  }
-
-  for (const ownerSkill of allClassSkills) {
-    for (const sub of ownerSkill.subskills ?? []) {
-      if (!sub.proc?.target) continue
-      const subRank =
-        deps.subskillRanks[subskillKey(ownerSkill.id, sub.id)] ?? 0
-      if (subRank === 0) continue
-      const targetName = normalizeSkillName(sub.proc.target)
-      const target = skillsByNormalizedName[targetName]
-      if (!target) continue
-      const targetRank = deps.skillRanks[target.id] ?? 0
-      if (targetRank === 0) continue
-      const targetDmg = computeSkillDamage(
-        target,
-        targetRank,
-        computed.attributes,
-        computed.stats,
-        skillRanksByName,
-        itemSkillBonuses,
-        deps.enemyConditions,
-        deps.enemyResistances,
-        skillsByNormalizedName,
-        deps.skillProjectiles[target.id],
-      )
-      if (!targetDmg) continue
-      const chance =
-        (sub.proc.chance.base ?? 0) +
-        (sub.proc.chance.perRank ?? 0) * subRank
-      const rate = sub.proc.trigger === 'on_kill' ? deps.killsPerSec : 1
-      const factor = rate * (chance / 100)
-      procDpsMin += factor * targetDmg.avgMin
-      procDpsMax += factor * targetDmg.avgMax
-    }
-  }
-
-  const combinedDpsMin =
-    avgHitDpsMin !== undefined ? avgHitDpsMin + procDpsMin : undefined
-  const combinedDpsMax =
-    avgHitDpsMax !== undefined ? avgHitDpsMax + procDpsMax : undefined
-
+  const performance = computeBuildPerformance({ ...deps, inventory })
   const equipped = inventory[slot]
   const base = equipped ? getItem(equipped.baseId) : null
   const baseSockets = base?.sockets ?? 0
   const baseSocketsMax = base?.maxSockets ?? baseSockets
-  const itemSockets = equipped?.socketCount ?? baseSockets
-
   return {
-    attributes: computed.attributes,
-    stats: computed.stats,
+    ...performance,
     itemBaseId: equipped?.baseId ?? null,
     itemName: base?.name ?? null,
     itemRarity: base?.rarity ?? null,
-    itemSockets,
+    itemSockets: equipped?.socketCount ?? baseSockets,
     itemSocketsMax: baseSocketsMax,
-    damage,
-    effCastMin,
-    effCastMax,
-    hitDpsMin,
-    hitDpsMax,
-    avgHitDpsMin,
-    avgHitDpsMax,
-    procDpsMin,
-    procDpsMax,
-    combinedDpsMin,
-    combinedDpsMax,
-    activeSkillName: activeSkill?.name ?? null,
   }
 }
 
@@ -1531,11 +1326,6 @@ interface StatDiff {
   delta: number
   kind: DiffKind
   unit?: 'pct' | 'flat'
-}
-
-function rangedBounds(v: RangedValue | undefined): { min: number; max: number } {
-  if (v === undefined) return { min: 0, max: 0 }
-  return { min: rangedMin(v), max: rangedMax(v) }
 }
 
 function classifyDiff(before: number, after: number): DiffKind {
@@ -2183,23 +1973,6 @@ function GearSlotModal({
   const [showCompareCol, setShowCompareCol] = useState(true)
   const rows = useMemo(() => pickerItemsForSlot(slot), [slot])
   const inv = useBuild((s) => s.inventory)
-  const classId = useBuild((s) => s.classId)
-  const level = useBuild((s) => s.level)
-  const allocated = useBuild((s) => s.allocated)
-  const skillRanks = useBuild((s) => s.skillRanks)
-  const subskillRanks = useBuild((s) => s.subskillRanks)
-  const activeAuraId = useBuild((s) => s.activeAuraId)
-  const activeBuffs = useBuild((s) => s.activeBuffs)
-  const customStats = useBuild((s) => s.customStats)
-  const allocatedTreeNodes = useBuild((s) => s.allocatedTreeNodes)
-  const treeSocketed = useBuild((s) => s.treeSocketed)
-  const mainSkillId = useBuild((s) => s.mainSkillId)
-  const enemyConditions = useBuild((s) => s.enemyConditions)
-  const playerConditions = useBuild((s) => s.playerConditions)
-  const skillProjectiles = useBuild((s) => s.skillProjectiles)
-  const enemyResistances = useBuild((s) => s.enemyResistances)
-  const procToggles = useBuild((s) => s.procToggles)
-  const killsPerSec = useBuild((s) => s.killsPerSec)
 
   // Frozen at modal open so the compare column diffs live edits against the original equipped state.
   const [baselineEquipped] = useState<EquippedItem | null>(() =>
@@ -2209,45 +1982,13 @@ function GearSlotModal({
     () => ({ ...inv, [slot]: baselineEquipped ?? undefined }),
     [inv, baselineEquipped, slot],
   )
+  const fullDeps = useBuildPerformanceDeps()
   const compareDeps = useMemo<BuildSummaryDeps>(
-    () => ({
-      classId,
-      level,
-      allocated,
-      skillRanks,
-      subskillRanks,
-      activeAuraId,
-      activeBuffs,
-      customStats,
-      allocatedTreeNodes,
-      treeSocketed,
-      mainSkillId,
-      enemyConditions,
-      playerConditions,
-      skillProjectiles,
-      enemyResistances,
-      procToggles,
-      killsPerSec,
-    }),
-    [
-      classId,
-      level,
-      allocated,
-      skillRanks,
-      subskillRanks,
-      activeAuraId,
-      activeBuffs,
-      customStats,
-      allocatedTreeNodes,
-      treeSocketed,
-      mainSkillId,
-      enemyConditions,
-      playerConditions,
-      skillProjectiles,
-      enemyResistances,
-      procToggles,
-      killsPerSec,
-    ],
+    () => {
+      const { inventory: _, ...rest } = fullDeps
+      return rest
+    },
+    [fullDeps],
   )
 
   useEffect(() => {

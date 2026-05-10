@@ -185,23 +185,47 @@ function computeItemEffectiveDefense(
   return min === max ? min : [min, max]
 }
 
-export function computeBuildStats(
-  classId: string | null,
-  level: number,
-  allocated: Record<AttributeKey, number>,
-  inventory: Inventory,
-  skillRanks?: Record<string, number>,
-  activeAuraId?: string | null,
-  activeBuffs?: Record<string, boolean>,
-  customStats?: CustomStat[],
-  allocatedTreeNodes?: Set<number>,
-  treeSocketed?: Record<number, TreeSocketContent | null>,
-  playerConditions?: Record<string, boolean>,
-  subskillRanks?: Record<string, number>,
-  enemyConditions?: Record<string, boolean>,
-): ComputedStats {
+export interface ComputeBuildStatsInput {
+  classId: string | null
+  level: number
+  allocated: Record<AttributeKey, number>
+  inventory: Inventory
+  skillRanks?: Record<string, number>
+  activeAuraId?: string | null
+  activeBuffs?: Record<string, boolean>
+  customStats?: CustomStat[]
+  allocatedTreeNodes?: Set<number>
+  treeSocketed?: Record<number, TreeSocketContent | null>
+  playerConditions?: Record<string, boolean>
+  subskillRanks?: Record<string, number>
+  enemyConditions?: Record<string, boolean>
+}
+
+export function computeBuildStats(input: ComputeBuildStatsInput): ComputedStats {
   // Two-pass auto-resolution for the `crit_chance_below_40` self-condition: when the user has not explicitly toggled it on, run a baseline pass to compute the final crit_chance, and if it falls below 40%, run a second pass with the condition activated so any tree-node mods gated on it apply automatically. Cheap because the second pass only happens when the user is actually below the threshold.
-  const baseline = computeBuildStatsCore(
+  const baseline = computeBuildStatsCore(input)
+  if (
+    !input.playerConditions?.crit_chance_below_40 &&
+    input.allocatedTreeNodes &&
+    input.allocatedTreeNodes.size > 0
+  ) {
+    const crit = baseline.stats.crit_chance ?? 0
+    if (rangedMin(crit) < 40) {
+      return computeBuildStatsCore({
+        ...input,
+        playerConditions: {
+          ...input.playerConditions,
+          crit_chance_below_40: true,
+        },
+      })
+    }
+  }
+  return baseline
+}
+
+function computeBuildStatsCore(input: ComputeBuildStatsInput): ComputedStats {
+  // Top-level aggregator that walks every input (class base, allocated attributes, inventory items, sockets/runewords, augments, allocated talent-tree nodes, set bonuses, default per-level stats, allocated active passive/aura/buff skills, custom stats, derived per-attribute stats and item-granted skill effects) and produces a single ComputedStats object containing both the summed values and the per-source breakdown. Used by the build store on every state change to refresh the stats panel and feed the damage calculators.
+  const {
     classId,
     level,
     allocated,
@@ -215,50 +239,7 @@ export function computeBuildStats(
     playerConditions,
     subskillRanks,
     enemyConditions,
-  )
-  if (
-    !playerConditions?.crit_chance_below_40 &&
-    allocatedTreeNodes &&
-    allocatedTreeNodes.size > 0
-  ) {
-    const crit = baseline.stats.crit_chance ?? 0
-    if (rangedMin(crit) < 40) {
-      return computeBuildStatsCore(
-        classId,
-        level,
-        allocated,
-        inventory,
-        skillRanks,
-        activeAuraId,
-        activeBuffs,
-        customStats,
-        allocatedTreeNodes,
-        treeSocketed,
-        { ...playerConditions, crit_chance_below_40: true },
-        subskillRanks,
-        enemyConditions,
-      )
-    }
-  }
-  return baseline
-}
-
-function computeBuildStatsCore(
-  classId: string | null,
-  level: number,
-  allocated: Record<AttributeKey, number>,
-  inventory: Inventory,
-  skillRanks?: Record<string, number>,
-  activeAuraId?: string | null,
-  activeBuffs?: Record<string, boolean>,
-  customStats?: CustomStat[],
-  allocatedTreeNodes?: Set<number>,
-  treeSocketed?: Record<number, TreeSocketContent | null>,
-  playerConditions?: Record<string, boolean>,
-  subskillRanks?: Record<string, number>,
-  enemyConditions?: Record<string, boolean>,
-): ComputedStats {
-  // Top-level aggregator that walks every input (class base, allocated attributes, inventory items, sockets/runewords, augments, allocated talent-tree nodes, set bonuses, default per-level stats, allocated active passive/aura/buff skills, custom stats, derived per-attribute stats and item-granted skill effects) and produces a single ComputedStats object containing both the summed values and the per-source breakdown. Used by the build store on every state change to refresh the stats panel and feed the damage calculators.
+  } = input
   const cls = classId ? getClass(classId) : undefined
   const attrSources: SourceMap = new Map()
   const statSources: SourceMap = new Map()
@@ -1499,6 +1480,13 @@ export function computeSkillDamage(
     : 0
   const elementalBreakMultiplier = 1 + elementalBreakPct / 100
 
+  // Lightning Break is a damage multiplier on lightning skills when the target has the lightning_break enemy condition active. The player's accumulated lightning_break stat (from passives, items, subtree) is the multiplier %; without the condition flagged it contributes nothing.
+  const lightningBreakPct =
+    skill.damageType === 'lightning' && enemyConditions?.lightning_break
+      ? Math.max(0, rangedMax(stats.lightning_break ?? 0))
+      : 0
+  const lightningBreakMultiplier = 1 + lightningBreakPct / 100
+
   const hitMin =
     (baseMin + flatMin) *
     (1 + synergyMinPct / 100) *
@@ -1506,6 +1494,7 @@ export function computeSkillDamage(
     skillMoreMultMin *
     extraMult *
     elementalBreakMultiplier *
+    lightningBreakMultiplier *
     resistanceMult
   const hitMax =
     (baseMax + flatMax) *
@@ -1514,6 +1503,7 @@ export function computeSkillDamage(
     skillMoreMultMax *
     extraMult *
     elementalBreakMultiplier *
+    lightningBreakMultiplier *
     resistanceMult
 
   const critMin = hitMin * critMultOnCrit

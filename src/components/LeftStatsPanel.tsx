@@ -4,14 +4,11 @@ import { isImageUrl } from "../utils/icon";
 import {
   attrPointsFor,
   skillPointsFor,
-  subskillKey,
   useBuild,
 } from "../store/build";
 import {
   aggregateItemSkillBonuses,
   combineAdditiveAndMore,
-  computeBuildStats,
-  computeSkillDamage,
   effectiveCap,
   formatValue,
   isZero,
@@ -21,8 +18,9 @@ import {
   rangedMin,
   statDef,
 } from "../utils/stats";
-import { aggregateSubskillStats } from "../utils/subtree";
-import type { RangedValue, Skill } from "../types";
+import { computeBuildPerformance } from "../utils/buildPerformance";
+import { useBuildPerformanceDeps } from "../hooks/useBuildPerformanceDeps";
+import type { RangedValue } from "../types";
 
 const ATTRIBUTE_ORDER: string[] = [
   "strength",
@@ -101,55 +99,26 @@ export default function LeftStatsPanel() {
   const level = useBuild((s) => s.level);
   const allocated = useBuild((s) => s.allocated);
   const inventory = useBuild((s) => s.inventory);
-  const treeAllocated = useBuild((s) => s.allocatedTreeNodes);
   const skillRanks = useBuild((s) => s.skillRanks);
-  const subskillRanks = useBuild((s) => s.subskillRanks);
   const mainSkillId = useBuild((s) => s.mainSkillId);
   const setMainSkill = useBuild((s) => s.setMainSkill);
   const activeAuraId = useBuild((s) => s.activeAuraId);
   const setActiveAura = useBuild((s) => s.setActiveAura);
-  const procToggles = useBuild((s) => s.procToggles);
-  const killsPerSec = useBuild((s) => s.killsPerSec);
 
-  const activeBuffs = useBuild((s) => s.activeBuffs);
-  const enemyConditions = useBuild((s) => s.enemyConditions);
-  const playerConditions = useBuild((s) => s.playerConditions);
-  const enemyResistances = useBuild((s) => s.enemyResistances);
-  const customStats = useBuild((s) => s.customStats);
-  const treeSocketed = useBuild((s) => s.treeSocketed);
-  const { attributes, stats } = useMemo(
-    () =>
-      computeBuildStats(
-        classId,
-        level,
-        allocated,
-        inventory,
-        skillRanks,
-        activeAuraId,
-        activeBuffs,
-        customStats,
-        treeAllocated,
-        treeSocketed,
-        playerConditions,
-        subskillRanks,
-        enemyConditions,
-      ),
-    [
-      classId,
-      level,
-      allocated,
-      inventory,
-      skillRanks,
-      activeAuraId,
-      activeBuffs,
-      customStats,
-      treeAllocated,
-      treeSocketed,
-      playerConditions,
-      subskillRanks,
-      enemyConditions,
-    ],
+  const buildDeps = useBuildPerformanceDeps();
+  const performance = useMemo(
+    () => computeBuildPerformance(buildDeps),
+    [buildDeps],
   );
+  const {
+    attributes,
+    stats,
+    damage,
+    hitDpsMin,
+    hitDpsMax,
+    combinedDpsMin,
+    combinedDpsMax,
+  } = performance;
 
   const cls = classId ? getClass(classId) : undefined;
   const attrSpent = Object.values(allocated).reduce((s, v) => s + v, 0);
@@ -248,157 +217,6 @@ export default function LeftStatsPanel() {
         ? 100
         : Math.min(100, (manaRegenMax / manaPerSecMin) * 100)
       : undefined;
-
-  const skillRanksByName = useMemo(() => {
-    const out: Record<string, number> = {};
-    for (const s of allClassSkills) {
-      out[normalizeSkillName(s.name)] = skillRanks[s.id] ?? 0;
-    }
-    return out;
-  }, [allClassSkills, skillRanks]);
-
-  const skillsByNormalizedName = useMemo(() => {
-    const out: Record<string, Skill> = {};
-    for (const s of allClassSkills) {
-      out[normalizeSkillName(s.name)] = s;
-    }
-    return out;
-  }, [allClassSkills]);
-
-  const skillProjectiles = useBuild((s) => s.skillProjectiles);
-  const activeSubAgg = useMemo(
-    () =>
-      activeSkill
-        ? aggregateSubskillStats(activeSkill, subskillRanks, enemyConditions)
-        : null,
-    [activeSkill, subskillRanks, enemyConditions],
-  );
-  const activeProjectileBoost =
-    activeSubAgg?.stats.projectile_count ?? 0;
-  const effectiveProjectiles = activeSkill
-    ? (skillProjectiles[activeSkill.id] ?? 1) + activeProjectileBoost
-    : undefined;
-  const damage =
-    activeSkill && activeRank > 0
-      ? computeSkillDamage(
-          activeSkill,
-          activeRank,
-          attributes,
-          stats,
-          skillRanksByName,
-          itemSkillBonuses,
-          enemyConditions,
-          enemyResistances,
-          skillsByNormalizedName,
-          effectiveProjectiles,
-        )
-      : null;
-  const hitDpsMin =
-    damage && effCastMin !== undefined
-      ? damage.finalMin * effCastMin
-      : undefined;
-  const hitDpsMax =
-    damage && effCastMax !== undefined
-      ? damage.finalMax * effCastMax
-      : undefined;
-  const avgHitDpsMin =
-    damage && effCastMin !== undefined
-      ? damage.avgMin * effCastMin
-      : undefined;
-  const avgHitDpsMax =
-    damage && effCastMax !== undefined
-      ? damage.avgMax * effCastMax
-      : undefined;
-
-  const procSkills = useMemo(
-    () => allClassSkills.filter((s) => s.proc && (skillRanks[s.id] ?? 0) > 0),
-    [allClassSkills, skillRanks],
-  );
-
-  const procDps = useMemo(() => {
-    let min = 0;
-    let max = 0;
-    for (const procSkill of procSkills) {
-      if (!procToggles[procSkill.id] || !procSkill.proc) continue;
-      const targetName = normalizeSkillName(procSkill.proc.target);
-      const target = skillsByNormalizedName[targetName];
-      if (!target) continue;
-      const targetRank = skillRanks[target.id] ?? 0;
-      if (targetRank === 0) continue;
-      const targetDmg = computeSkillDamage(
-        target,
-        targetRank,
-        attributes,
-        stats,
-        skillRanksByName,
-        itemSkillBonuses,
-        enemyConditions,
-        enemyResistances,
-        skillsByNormalizedName,
-        skillProjectiles[target.id],
-      );
-      if (!targetDmg) continue;
-      const rate = procSkill.proc.trigger === "on_kill" ? killsPerSec : 1;
-      const factor = rate * (procSkill.proc.chance / 100);
-      min += factor * targetDmg.avgMin;
-      max += factor * targetDmg.avgMax;
-    }
-    for (const ownerSkill of allClassSkills) {
-      for (const sub of ownerSkill.subskills ?? []) {
-        if (!sub.proc?.target) continue;
-        const subRank =
-          subskillRanks[subskillKey(ownerSkill.id, sub.id)] ?? 0;
-        if (subRank === 0) continue;
-        const targetName = normalizeSkillName(sub.proc.target);
-        const target = skillsByNormalizedName[targetName];
-        if (!target) continue;
-        const targetRank = skillRanks[target.id] ?? 0;
-        if (targetRank === 0) continue;
-        const targetDmg = computeSkillDamage(
-          target,
-          targetRank,
-          attributes,
-          stats,
-          skillRanksByName,
-          itemSkillBonuses,
-          enemyConditions,
-          enemyResistances,
-          skillsByNormalizedName,
-          skillProjectiles[target.id],
-        );
-        if (!targetDmg) continue;
-        const chance =
-          (sub.proc.chance.base ?? 0) +
-          (sub.proc.chance.perRank ?? 0) * subRank;
-        const rate = sub.proc.trigger === "on_kill" ? killsPerSec : 1;
-        const factor = rate * (chance / 100);
-        min += factor * targetDmg.avgMin;
-        max += factor * targetDmg.avgMax;
-      }
-    }
-    return { min, max };
-  }, [
-    procSkills,
-    procToggles,
-    skillRanks,
-    subskillRanks,
-    allClassSkills,
-    attributes,
-    stats,
-    skillRanksByName,
-    skillsByNormalizedName,
-    itemSkillBonuses,
-    enemyConditions,
-    enemyResistances,
-    killsPerSec,
-    skillProjectiles,
-  ]);
-  const { min: procDpsMin, max: procDpsMax } = procDps;
-
-  const combinedDpsMin =
-    avgHitDpsMin !== undefined ? avgHitDpsMin + procDpsMin : undefined;
-  const combinedDpsMax =
-    avgHitDpsMax !== undefined ? avgHitDpsMax + procDpsMax : undefined;
 
   return (
     <aside
@@ -676,7 +494,7 @@ export default function LeftStatsPanel() {
         />
         <Row
           label="Tree nodes"
-          value={<span className="text-text">{treeAllocated.size}</span>}
+          value={<span className="text-text">{buildDeps.allocatedTreeNodes.size}</span>}
         />
       </Section>
 
@@ -865,21 +683,6 @@ function PanelSelect({
       >
         {children}
       </select>
-    </div>
-  );
-}
-
-function PanelInputWrap({ children }: { children: React.ReactNode }) {
-  // Wraps a native input in the panel's gold-bordered gradient frame, mirroring the TopBar Level field. Used by single-line numeric inputs in LeftStatsPanel.
-  return (
-    <div
-      className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
-      style={{
-        background: "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
-        boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
-      }}
-    >
-      {children}
     </div>
   );
 }

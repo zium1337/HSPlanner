@@ -8,6 +8,14 @@ import {
 } from '../store/build'
 import type { Skill, SubskillNode } from '../types'
 import { statDef, statName } from '../utils/stats'
+import {
+  computeBuildPerformance,
+  diffPerformanceDps,
+  diffPerformanceStats,
+  type BuildPerformance,
+} from '../utils/buildPerformance'
+import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import NetChangeRow from './NetChangeRow'
 
 const VIEWBOX = 600
 const NODE_R: Record<string, number> = {
@@ -48,6 +56,13 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
   const decSubskillRank = useBuild((s) => s.decSubskillRank)
   const resetSubskillsFor = useBuild((s) => s.resetSubskillsFor)
 
+  const buildDeps = useBuildPerformanceDeps()
+
+  const currentPerformance = useMemo<BuildPerformance>(
+    () => computeBuildPerformance(buildDeps),
+    [buildDeps],
+  )
+
   const totalPoints = subskillPointsFor(level)
   const spent = useMemo(
     () =>
@@ -76,6 +91,18 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
     y: number
     isKeystone: boolean
   } | null>(null)
+
+  const previewPerformance = useMemo<BuildPerformance | null>(() => {
+    if (!hover) return null
+    const key = subskillKey(skill.id, hover.sub.id)
+    const currentRank = subskillRanks[key] ?? 0
+    if (currentRank >= hover.sub.maxRank) return null
+    const previewRanks = { ...subskillRanks, [key]: currentRank + 1 }
+    return computeBuildPerformance({
+      ...buildDeps,
+      subskillRanks: previewRanks,
+    })
+  }, [hover, skill.id, subskillRanks, buildDeps])
 
   const skillIcon = !skill.icon || skill.icon.startsWith('http') ? '✦' : skill.icon
 
@@ -424,6 +451,8 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
           x={hover.x}
           y={hover.y}
           isKeystone={hover.isKeystone}
+          currentPerformance={currentPerformance}
+          previewPerformance={previewPerformance}
         />
       )}
     </div>
@@ -497,16 +526,28 @@ function SubskillTooltip({
   x,
   y,
   isKeystone,
+  currentPerformance,
+  previewPerformance,
 }: {
   sub: SubskillNode
   rank: number
   x: number
   y: number
   isKeystone: boolean
+  currentPerformance: BuildPerformance
+  previewPerformance: BuildPerformance | null
 }) {
   // Renders the floating tooltip shown when hovering a subskill node, listing current and next-rank stat values, proc chance, proc effects, and any applied states. Used by SubtreeOverlay.
   const nextRank = Math.min(rank + 1, sub.maxRank)
   const hasNext = nextRank > rank
+
+  const dpsDiffs = previewPerformance
+    ? diffPerformanceDps(currentPerformance, previewPerformance)
+    : []
+  const statDiffs = previewPerformance
+    ? diffPerformanceStats(currentPerformance, previewPerformance)
+    : []
+  const netChangeVisible = !isKeystone && (dpsDiffs.length > 0 || statDiffs.length > 0)
 
   const statKeys = new Set<string>([
     ...Object.keys(sub.effects?.base ?? {}),
@@ -548,7 +589,7 @@ function SubskillTooltip({
 
   return (
     <div
-      className="pointer-events-none fixed z-[60] w-72 overflow-hidden rounded-[4px] border border-border"
+      className={`pointer-events-none fixed z-[60] ${netChangeVisible ? 'w-96' : 'w-72'} overflow-hidden rounded-[4px] border border-border`}
       style={{
         left: x + 18,
         top: y + 18,
@@ -718,6 +759,48 @@ function SubskillTooltip({
                 </div>
               )
             })}
+          </div>
+        )}
+        {netChangeVisible && (
+          <div className="mt-2 rounded-[3px] border border-border-2 bg-black/30 p-2">
+            <div className="mb-1.5 flex items-center gap-2 font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-muted">
+              <span>Net Change</span>
+              <span className="h-px flex-1 bg-border" />
+              <span className="font-normal tracking-[0.14em] text-faint">
+                +1 rank
+              </span>
+            </div>
+            {dpsDiffs.length > 0 && (
+              <div className={statDiffs.length > 0 ? 'mb-1.5' : ''}>
+                <div className="mb-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted/70">
+                  Active Skill
+                  {currentPerformance.activeSkillName ? (
+                    <span className="ml-1 text-faint">
+                      · {currentPerformance.activeSkillName}
+                    </span>
+                  ) : null}
+                </div>
+                <div className="space-y-0.5">
+                  {dpsDiffs.map((d) => (
+                    <NetChangeRow key={d.key} diff={d} />
+                  ))}
+                </div>
+              </div>
+            )}
+            {statDiffs.length > 0 && (
+              <div>
+                {dpsDiffs.length > 0 && (
+                  <div className="mb-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted/70">
+                    Stats
+                  </div>
+                )}
+                <div className="space-y-0.5">
+                  {statDiffs.map((d) => (
+                    <NetChangeRow key={d.key} diff={d} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

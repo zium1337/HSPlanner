@@ -10,15 +10,16 @@ import { createPortal } from 'react-dom'
 import treeBackground from '../assets/atlas/Incarnation_Background.png'
 import nodeIconsMap from '../data/node-icons.json'
 import treeData from '../data/hero-siege-tree.json'
+import { getAffix, getGem, getRune } from '../data'
+import { useBuild } from '../store/build'
 import {
-  gameConfig,
-  getAffix,
-  getGem,
-  getRune,
-  getSkillsByClass,
-} from '../data'
-import { subskillKey, useBuild } from '../store/build'
-import { aggregateSubskillStats } from '../utils/subtree'
+  computeBuildPerformance,
+  diffPerformanceDps,
+  diffPerformanceStats,
+  type BuildPerformance,
+} from '../utils/buildPerformance'
+import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import NetChangeRow from '../components/NetChangeRow'
 import {
   ADJ,
   findPath,
@@ -27,27 +28,11 @@ import {
   START_SET,
 } from '../utils/treeGraph'
 import {
-  aggregateItemSkillBonuses,
-  combineAdditiveAndMore,
-  computeBuildStats,
-  computeSkillDamage,
   formatValue,
-  normalizeSkillName,
-  rangedMax,
-  rangedMin,
   rolledAffixValue,
-  statDef,
   statName,
 } from '../utils/stats'
-import type { SkillDamageBreakdown } from '../utils/stats'
-import type {
-  AttributeKey,
-  CustomStat,
-  Inventory,
-  RangedValue,
-  Skill,
-  TreeSocketContent,
-} from '../types'
+import type { TreeSocketContent } from '../types'
 import JewelSocketModal from '../components/JewelSocketModal'
 import {
   TooltipHeader,
@@ -190,349 +175,6 @@ function nodeStroke({
   return '#3a3528'
 }
 
-// ===== Tree-context Build Performance helpers (used by NodeTooltip Net Change) =====
-
-interface TreeBuildPerformance {
-  attributes: Record<AttributeKey, RangedValue>
-  stats: Record<string, RangedValue>
-  damage: SkillDamageBreakdown | null
-  hitDpsMin: number | undefined
-  hitDpsMax: number | undefined
-  avgHitDpsMin: number | undefined
-  avgHitDpsMax: number | undefined
-  procDpsMin: number
-  procDpsMax: number
-  combinedDpsMin: number | undefined
-  combinedDpsMax: number | undefined
-  activeSkillName: string | null
-}
-
-interface TreeBuildDeps {
-  classId: string | null
-  level: number
-  allocatedAttrs: Record<AttributeKey, number>
-  inventory: Inventory
-  skillRanks: Record<string, number>
-  subskillRanks: Record<string, number>
-  activeAuraId: string | null
-  activeBuffs: Record<string, boolean>
-  customStats: CustomStat[]
-  treeSocketed: Record<number, TreeSocketContent | null>
-  mainSkillId: string | null
-  enemyConditions: Record<string, boolean>
-  playerConditions: Record<string, boolean>
-  skillProjectiles: Record<string, number>
-  enemyResistances: Record<string, number>
-  procToggles: Record<string, boolean>
-  killsPerSec: number
-}
-
-function computeTreeBuildPerformance(
-  allocation: Set<number>,
-  deps: TreeBuildDeps,
-): TreeBuildPerformance {
-  const computed = computeBuildStats(
-    deps.classId,
-    deps.level,
-    deps.allocatedAttrs,
-    deps.inventory,
-    deps.skillRanks,
-    deps.activeAuraId,
-    deps.activeBuffs,
-    deps.customStats,
-    allocation,
-    deps.treeSocketed,
-    deps.playerConditions,
-    deps.subskillRanks,
-    deps.enemyConditions,
-  )
-
-  const allClassSkills = getSkillsByClass(deps.classId)
-  const classSkills = allClassSkills.filter((s) => s.kind === 'active')
-  const activeSkill = deps.mainSkillId
-    ? classSkills.find((s) => s.id === deps.mainSkillId)
-    : null
-  const activeRank = activeSkill ? (deps.skillRanks[activeSkill.id] ?? 0) : 0
-
-  const itemSkillBonuses = aggregateItemSkillBonuses(deps.inventory)
-  const skillRanksByName: Record<string, number> = {}
-  const skillsByNormalizedName: Record<string, Skill> = {}
-  for (const s of allClassSkills) {
-    skillRanksByName[normalizeSkillName(s.name)] = deps.skillRanks[s.id] ?? 0
-    skillsByNormalizedName[normalizeSkillName(s.name)] = s
-  }
-
-  const activeSubAgg = activeSkill
-    ? aggregateSubskillStats(
-        activeSkill,
-        deps.subskillRanks,
-        deps.enemyConditions,
-      )
-    : null
-  const activeProjectileBoost = activeSubAgg?.stats.projectile_count ?? 0
-  const effectiveProjectiles = activeSkill
-    ? (deps.skillProjectiles[activeSkill.id] ?? 1) + activeProjectileBoost
-    : undefined
-
-  const damage =
-    activeSkill && activeRank > 0
-      ? computeSkillDamage(
-          activeSkill,
-          activeRank,
-          computed.attributes,
-          computed.stats,
-          skillRanksByName,
-          itemSkillBonuses,
-          deps.enemyConditions,
-          deps.enemyResistances,
-          skillsByNormalizedName,
-          effectiveProjectiles,
-        )
-      : null
-
-  const fcrCombined = combineAdditiveAndMore(
-    computed.stats.faster_cast_rate,
-    computed.stats.faster_cast_rate_more,
-  )
-  const fcrMin = rangedMin(fcrCombined)
-  const fcrMax = rangedMax(fcrCombined)
-  const effCastMin = activeSkill?.baseCastRate
-    ? activeSkill.baseCastRate * (1 + fcrMin / 100)
-    : undefined
-  const effCastMax = activeSkill?.baseCastRate
-    ? activeSkill.baseCastRate * (1 + fcrMax / 100)
-    : undefined
-  const hitDpsMin =
-    damage && effCastMin !== undefined ? damage.finalMin * effCastMin : undefined
-  const hitDpsMax =
-    damage && effCastMax !== undefined ? damage.finalMax * effCastMax : undefined
-  const avgHitDpsMin =
-    damage && effCastMin !== undefined ? damage.avgMin * effCastMin : undefined
-  const avgHitDpsMax =
-    damage && effCastMax !== undefined ? damage.avgMax * effCastMax : undefined
-
-  let procDpsMin = 0
-  let procDpsMax = 0
-  for (const procSkill of allClassSkills) {
-    if (!procSkill.proc) continue
-    if (!deps.procToggles[procSkill.id]) continue
-    const procRank = deps.skillRanks[procSkill.id] ?? 0
-    if (procRank === 0) continue
-    const targetName = normalizeSkillName(procSkill.proc.target)
-    const target = skillsByNormalizedName[targetName]
-    if (!target) continue
-    const targetRank = deps.skillRanks[target.id] ?? 0
-    if (targetRank === 0) continue
-    const targetDmg = computeSkillDamage(
-      target,
-      targetRank,
-      computed.attributes,
-      computed.stats,
-      skillRanksByName,
-      itemSkillBonuses,
-      deps.enemyConditions,
-      deps.enemyResistances,
-      skillsByNormalizedName,
-      deps.skillProjectiles[target.id],
-    )
-    if (!targetDmg) continue
-    const rate = procSkill.proc.trigger === 'on_kill' ? deps.killsPerSec : 1
-    const factor = rate * (procSkill.proc.chance / 100)
-    procDpsMin += factor * targetDmg.avgMin
-    procDpsMax += factor * targetDmg.avgMax
-  }
-
-  for (const ownerSkill of allClassSkills) {
-    for (const sub of ownerSkill.subskills ?? []) {
-      if (!sub.proc?.target) continue
-      const subRank =
-        deps.subskillRanks[subskillKey(ownerSkill.id, sub.id)] ?? 0
-      if (subRank === 0) continue
-      const targetName = normalizeSkillName(sub.proc.target)
-      const target = skillsByNormalizedName[targetName]
-      if (!target) continue
-      const targetRank = deps.skillRanks[target.id] ?? 0
-      if (targetRank === 0) continue
-      const targetDmg = computeSkillDamage(
-        target,
-        targetRank,
-        computed.attributes,
-        computed.stats,
-        skillRanksByName,
-        itemSkillBonuses,
-        deps.enemyConditions,
-        deps.enemyResistances,
-        skillsByNormalizedName,
-        deps.skillProjectiles[target.id],
-      )
-      if (!targetDmg) continue
-      const chance =
-        (sub.proc.chance.base ?? 0) +
-        (sub.proc.chance.perRank ?? 0) * subRank
-      const rate = sub.proc.trigger === 'on_kill' ? deps.killsPerSec : 1
-      const factor = rate * (chance / 100)
-      procDpsMin += factor * targetDmg.avgMin
-      procDpsMax += factor * targetDmg.avgMax
-    }
-  }
-
-  const combinedDpsMin =
-    avgHitDpsMin !== undefined ? avgHitDpsMin + procDpsMin : undefined
-  const combinedDpsMax =
-    avgHitDpsMax !== undefined ? avgHitDpsMax + procDpsMax : undefined
-
-  return {
-    attributes: computed.attributes,
-    stats: computed.stats,
-    damage,
-    hitDpsMin,
-    hitDpsMax,
-    avgHitDpsMin,
-    avgHitDpsMax,
-    procDpsMin,
-    procDpsMax,
-    combinedDpsMin,
-    combinedDpsMax,
-    activeSkillName: activeSkill?.name ?? null,
-  }
-}
-
-interface TreeStatDiff {
-  key: string
-  label: string
-  beforeMin: number
-  beforeMax: number
-  afterMin: number
-  afterMax: number
-  delta: number
-  isPercent: boolean
-  kind: 'up' | 'down'
-}
-
-function rangedBoundsTree(v: RangedValue | undefined): {
-  min: number
-  max: number
-} {
-  if (v === undefined) return { min: 0, max: 0 }
-  return { min: rangedMin(v), max: rangedMax(v) }
-}
-
-function diffRangePair(
-  key: string,
-  label: string,
-  beforeMin: number,
-  beforeMax: number,
-  afterMin: number,
-  afterMax: number,
-  isPercent: boolean,
-): TreeStatDiff | null {
-  const beforeAvg = (beforeMin + beforeMax) / 2
-  const afterAvg = (afterMin + afterMax) / 2
-  const delta = afterAvg - beforeAvg
-  if (Math.abs(delta) < 0.001) return null
-  return {
-    key,
-    label,
-    beforeMin,
-    beforeMax,
-    afterMin,
-    afterMax,
-    delta,
-    isPercent,
-    kind: delta > 0 ? 'up' : 'down',
-  }
-}
-
-function diffPerformanceStats(
-  before: TreeBuildPerformance,
-  after: TreeBuildPerformance,
-): TreeStatDiff[] {
-  const rows: TreeStatDiff[] = []
-  const attrLabel = (key: string): string =>
-    gameConfig.attributes.find((a) => a.key === key)?.name ?? statName(key)
-
-  const allAttrKeys = new Set<string>([
-    ...Object.keys(before.attributes),
-    ...Object.keys(after.attributes),
-  ])
-  for (const key of allAttrKeys) {
-    const b = rangedBoundsTree(before.attributes[key])
-    const a = rangedBoundsTree(after.attributes[key])
-    const diff = diffRangePair(
-      key,
-      attrLabel(key),
-      b.min,
-      b.max,
-      a.min,
-      a.max,
-      false,
-    )
-    if (diff) rows.push(diff)
-  }
-
-  const allStatKeys = new Set<string>([
-    ...Object.keys(before.stats),
-    ...Object.keys(after.stats),
-  ])
-  for (const key of allStatKeys) {
-    const b = rangedBoundsTree(before.stats[key])
-    const a = rangedBoundsTree(after.stats[key])
-    const diff = diffRangePair(
-      key,
-      statName(key),
-      b.min,
-      b.max,
-      a.min,
-      a.max,
-      statDef(key)?.format === 'percent',
-    )
-    if (diff) rows.push(diff)
-  }
-
-  return rows
-}
-
-function diffPerformanceDps(
-  before: TreeBuildPerformance,
-  after: TreeBuildPerformance,
-): TreeStatDiff[] {
-  const rows: TreeStatDiff[] = []
-  const hit = diffRangePair(
-    'hit_dps',
-    'Hit DPS',
-    before.hitDpsMin ?? 0,
-    before.hitDpsMax ?? 0,
-    after.hitDpsMin ?? 0,
-    after.hitDpsMax ?? 0,
-    false,
-  )
-  if (hit) rows.push(hit)
-
-  const combined = diffRangePair(
-    'combined_dps',
-    'Combined DPS',
-    before.combinedDpsMin ?? 0,
-    before.combinedDpsMax ?? 0,
-    after.combinedDpsMin ?? 0,
-    after.combinedDpsMax ?? 0,
-    false,
-  )
-  if (combined) rows.push(combined)
-
-  const avgHit = diffRangePair(
-    'avg_hit',
-    'Average Hit',
-    before.damage !== null ? before.damage.avgMin : 0,
-    before.damage !== null ? before.damage.avgMax : 0,
-    after.damage !== null ? after.damage.avgMin : 0,
-    after.damage !== null ? after.damage.avgMax : 0,
-    false,
-  )
-  if (avgHit) rows.push(avgHit)
-
-  return rows
-}
-
 export default function TreeView() {
   // Top-level Talent Tree view: renders the full Hero Siege passive tree as a pan-and-zoomable SVG with allocated nodes, preview path on hover, search, node tooltips, and click-to-allocate / click-to-deallocate that defers cleanup of orphaned subtrees to the build store.
   const allocated = useBuild((s) => s.allocatedTreeNodes)
@@ -540,68 +182,13 @@ export default function TreeView() {
   const resetTree = useBuild((s) => s.resetTreeNodes)
   const treeSocketed = useBuild((s) => s.treeSocketed)
   const setTreeSocketed = useBuild((s) => s.setTreeSocketed)
-  const classId = useBuild((s) => s.classId)
-  const level = useBuild((s) => s.level)
-  const allocatedAttrs = useBuild((s) => s.allocated)
-  const inventory = useBuild((s) => s.inventory)
-  const skillRanks = useBuild((s) => s.skillRanks)
-  const subskillRanks = useBuild((s) => s.subskillRanks)
-  const activeAuraId = useBuild((s) => s.activeAuraId)
-  const activeBuffs = useBuild((s) => s.activeBuffs)
-  const customStats = useBuild((s) => s.customStats)
-  const mainSkillId = useBuild((s) => s.mainSkillId)
-  const enemyConditions = useBuild((s) => s.enemyConditions)
-  const playerConditions = useBuild((s) => s.playerConditions)
-  const skillProjectiles = useBuild((s) => s.skillProjectiles)
-  const enemyResistances = useBuild((s) => s.enemyResistances)
-  const procToggles = useBuild((s) => s.procToggles)
-  const killsPerSec = useBuild((s) => s.killsPerSec)
   const [socketModalNodeId, setSocketModalNodeId] = useState<number | null>(null)
 
-  const treeDeps = useMemo<TreeBuildDeps>(
-    () => ({
-      classId,
-      level,
-      allocatedAttrs,
-      inventory,
-      skillRanks,
-      subskillRanks,
-      activeAuraId,
-      activeBuffs,
-      customStats,
-      treeSocketed,
-      mainSkillId,
-      enemyConditions,
-      playerConditions,
-      skillProjectiles,
-      enemyResistances,
-      procToggles,
-      killsPerSec,
-    }),
-    [
-      classId,
-      level,
-      allocatedAttrs,
-      inventory,
-      skillRanks,
-      subskillRanks,
-      activeAuraId,
-      activeBuffs,
-      customStats,
-      treeSocketed,
-      mainSkillId,
-      enemyConditions,
-      playerConditions,
-      skillProjectiles,
-      enemyResistances,
-      procToggles,
-      killsPerSec,
-    ],
-  )
+  const treeDeps = useBuildPerformanceDeps()
 
-  const currentPerformance = useMemo<TreeBuildPerformance>(
-    () => computeTreeBuildPerformance(allocated, treeDeps),
-    [allocated, treeDeps],
+  const currentPerformance = useMemo<BuildPerformance>(
+    () => computeBuildPerformance(treeDeps),
+    [treeDeps],
   )
 
   const [scale, setScale] = useState(0.35)
@@ -724,10 +311,13 @@ export default function TreeView() {
     return next
   }, [hoverId, allocated, previewPath])
 
-  const previewPerformance = useMemo<TreeBuildPerformance | null>(
+  const previewPerformance = useMemo<BuildPerformance | null>(
     () =>
       previewAllocation
-        ? computeTreeBuildPerformance(previewAllocation, treeDeps)
+        ? computeBuildPerformance({
+            ...treeDeps,
+            allocatedTreeNodes: previewAllocation,
+          })
         : null,
     [previewAllocation, treeDeps],
   )
@@ -741,10 +331,13 @@ export default function TreeView() {
     return next
   }, [hoverId, allocated])
 
-  const singleNodePerformance = useMemo<TreeBuildPerformance | null>(
+  const singleNodePerformance = useMemo<BuildPerformance | null>(
     () =>
       singleNodeAllocation
-        ? computeTreeBuildPerformance(singleNodeAllocation, treeDeps)
+        ? computeBuildPerformance({
+            ...treeDeps,
+            allocatedTreeNodes: singleNodeAllocation,
+          })
         : null,
     [singleNodeAllocation, treeDeps],
   )
@@ -909,6 +502,41 @@ export default function TreeView() {
     return keys
   }, [allocated])
 
+  const edgeLines = useMemo(
+    () =>
+      EDGES.map(([x1, y1, x2, y2], i) => {
+        let stroke = '#2a2f3a'
+        let strokeWidth = 1.5
+        const ka = `${Math.round(x1 * 10)}_${Math.round(y1 * 10)}`
+        const kb = `${Math.round(x2 * 10)}_${Math.round(y2 * 10)}`
+        const idA = POS_ID_MAP.get(ka)
+        const idB = POS_ID_MAP.get(kb)
+        if (idA != null && idB != null) {
+          if (TREE_WARP_IDS.has(idA) && TREE_WARP_IDS.has(idB)) return null
+          const key = idA < idB ? `${idA}-${idB}` : `${idB}-${idA}`
+          if (allocatedEdgeKeys.has(key)) {
+            stroke = '#c48a3a'
+            strokeWidth = 2.5
+          } else if (previewEdgeKeys?.has(key)) {
+            stroke = '#8a6a2a'
+            strokeWidth = 2
+          }
+        }
+        return (
+          <line
+            key={i}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke={stroke}
+            strokeWidth={strokeWidth}
+          />
+        )
+      }),
+    [allocatedEdgeKeys, previewEdgeKeys],
+  )
+
   return (
     <div className="relative h-full" style={{ backgroundColor: '#0a0b0f' }}>
       <div
@@ -941,38 +569,7 @@ export default function TreeView() {
           viewBox={`0 0 ${viewportSize.w} ${viewportSize.h}`}
         >
           <g transform={`translate(${tx} ${ty}) scale(${scale})`}>
-            <g>
-              {EDGES.map(([x1, y1, x2, y2], i) => {
-                let stroke = '#2a2f3a'
-                let strokeWidth = 1.5
-                const ka = `${Math.round(x1 * 10)}_${Math.round(y1 * 10)}`
-                const kb = `${Math.round(x2 * 10)}_${Math.round(y2 * 10)}`
-                const idA = POS_ID_MAP.get(ka)
-                const idB = POS_ID_MAP.get(kb)
-                if (idA != null && idB != null) {
-                  if (TREE_WARP_IDS.has(idA) && TREE_WARP_IDS.has(idB)) return null
-                  const key = idA < idB ? `${idA}-${idB}` : `${idB}-${idA}`
-                  if (allocatedEdgeKeys.has(key)) {
-                    stroke = '#c48a3a'
-                    strokeWidth = 2.5
-                  } else if (previewEdgeKeys?.has(key)) {
-                    stroke = '#8a6a2a'
-                    strokeWidth = 2
-                  }
-                }
-                return (
-                  <line
-                    key={i}
-                    x1={x1}
-                    y1={y1}
-                    x2={x2}
-                    y2={y2}
-                    stroke={stroke}
-                    strokeWidth={strokeWidth}
-                  />
-                )
-              })}
-            </g>
+            <g>{edgeLines}</g>
             <g style={{ opacity: searchMatches ? 0.25 : 1 }}>{nodeCircles}</g>
             {previewOverlay && (
               <g style={{ opacity: searchMatches ? 0.25 : 1 }}>{previewOverlay}</g>
@@ -1167,9 +764,9 @@ function NodeTooltip({
   socketContent: TreeSocketContent | null
   isJewelry: boolean
   isAllocated: boolean
-  currentPerformance: TreeBuildPerformance
-  previewPerformance: TreeBuildPerformance | null
-  singleNodePerformance: TreeBuildPerformance | null
+  currentPerformance: BuildPerformance
+  previewPerformance: BuildPerformance | null
+  singleNodePerformance: BuildPerformance | null
   previewAddedCount: number
   previewRemovedCount: number
 }) {
@@ -1444,57 +1041,6 @@ function NodeTooltip({
   )
 }
 
-function NetChangeRow({ diff }: { diff: TreeStatDiff }) {
-  const fmtScalar = (v: number) => {
-    if (diff.isPercent) {
-      const rounded =
-        Math.abs(v - Math.round(v)) < 0.05 ? Math.round(v) : Math.round(v * 10) / 10
-      return `${rounded}%`
-    }
-    const abs = Math.abs(v)
-    if (abs >= 1000) {
-      return `${(v / 1000).toFixed(abs >= 10000 ? 1 : 2)}k`
-    }
-    const rounded =
-      Math.abs(v - Math.round(v)) < 0.05 ? Math.round(v) : Math.round(v * 10) / 10
-    return `${rounded}`
-  }
-  const fmtRange = (min: number, max: number) => {
-    if (Math.abs(max - min) < 0.001) return fmtScalar(min)
-    return `${fmtScalar(min)}-${fmtScalar(max)}`
-  }
-  const fmtDelta = (v: number) => {
-    const sign = v > 0 ? '+' : ''
-    return `${sign}${fmtScalar(v)}`
-  }
-  const tone =
-    diff.kind === 'up'
-      ? 'border-stat-green/35 bg-stat-green/8 text-stat-green'
-      : 'border-stat-red/35 bg-stat-red/8 text-stat-red'
-  const afterColor = diff.kind === 'up' ? 'text-stat-green' : 'text-stat-red'
-  return (
-    <div
-      className="grid items-center gap-2 px-1 py-0.5 font-mono text-[11px] break-inside-avoid"
-      style={{ gridTemplateColumns: '1fr auto auto auto auto' }}
-    >
-      <span className="font-sans text-[12px] text-text/85">{diff.label}</span>
-      <span className="text-right tabular-nums text-faint">
-        {fmtRange(diff.beforeMin, diff.beforeMax)}
-      </span>
-      <span className="text-faint">→</span>
-      <span
-        className={`text-right font-semibold tabular-nums ${afterColor}`}
-      >
-        {fmtRange(diff.afterMin, diff.afterMax)}
-      </span>
-      <span
-        className={`min-w-[52px] rounded-[2px] border px-1.5 py-0.5 text-right text-[10px] font-semibold tabular-nums ${tone}`}
-      >
-        {fmtDelta(diff.delta)}
-      </span>
-    </div>
-  )
-}
 
 function JewelrySocketSection({
   content,

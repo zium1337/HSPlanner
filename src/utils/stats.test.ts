@@ -48,11 +48,14 @@ describe('Tree-node Agile Wizard support', () => {
       { id: '2', value: '20', statKey: 'increased_attack_speed_more' },
     ]
     // Allocate node 1838 (Agile Wizard).
-    const { stats } = computeBuildStats(
-      null, 1, zeroAttrs, emptyInventory,
-      undefined, undefined, undefined, customStats,
-      new Set([1838]),
-    )
+    const { stats } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
+      customStats,
+      allocatedTreeNodes: new Set([1838]),
+    })
     // Effective IAS = (1.40 × 1.20 - 1) × 100 = 68%.  Conversion: 68 × 0.75 = 51.
     const msd = rangedMin(stats.magic_skill_damage ?? 0)
     expect(msd).toBeCloseTo(51)
@@ -63,11 +66,14 @@ describe('Tree-node Agile Wizard support', () => {
       { id: '1', value: '200', statKey: 'to_intelligence' },
     ]
     // node id 1634 is Magister's Intellect.
-    const { stats, attributes } = computeBuildStats(
-      null, 1, zeroAttrs, emptyInventory,
-      undefined, undefined, undefined, customStats,
-      new Set([1634]),
-    )
+    const { stats, attributes } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
+      customStats,
+      allocatedTreeNodes: new Set([1634]),
+    })
     // Intelligence: 200 (custom) + 1 (default) + 25 (notable's "+25 to Intelligence") = 226.
     const intel = rangedMin(attributes.intelligence)
     expect(intel).toBe(226)
@@ -81,11 +87,14 @@ describe('Tree-node Agile Wizard support', () => {
       { id: '1', value: '100', statKey: 'lightning_resistance' },
     ]
     // Allocate node 2720 (Vanguard of Lightning).
-    const { stats } = computeBuildStats(
-      null, 1, zeroAttrs, emptyInventory,
-      undefined, undefined, undefined, customStats,
-      new Set([2720]),
-    )
+    const { stats } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
+      customStats,
+      allocatedTreeNodes: new Set([2720]),
+    })
     // 100 lightning resist × 0.40 = 40 lightning_skill_damage from the conversion.
     const lsd = rangedMin(stats.lightning_skill_damage ?? 0)
     expect(lsd).toBeCloseTo(40)
@@ -96,20 +105,26 @@ describe('Tree-node Agile Wizard support', () => {
       { id: '1', value: '50', statKey: 'life_replenish' },
       { id: '2', value: '10', statKey: 'life_replenish_pct' },
     ]
-    const without = computeBuildStats(
-      null, 1, zeroAttrs, emptyInventory,
-      undefined, undefined, undefined, customStats,
-      new Set(),
-    )
+    const without = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
+      customStats,
+      allocatedTreeNodes: new Set(),
+    })
     // Without Agile Wizard, life_replenish is positive (custom 50 + class defaults).
     expect(rangedMin(without.stats.life_replenish ?? 0)).toBeGreaterThan(0)
     expect(rangedMin(without.stats.life_replenish_pct ?? 0)).toBeGreaterThan(0)
 
-    const withAgile = computeBuildStats(
-      null, 1, zeroAttrs, emptyInventory,
-      undefined, undefined, undefined, customStats,
-      new Set([1838]),
-    )
+    const withAgile = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
+      customStats,
+      allocatedTreeNodes: new Set([1838]),
+    })
     expect(withAgile.stats.life_replenish).toBe(0)
     expect(withAgile.stats.life_replenish_pct).toBe(0)
   })
@@ -142,11 +157,13 @@ describe('computeBuildStats - per-attribute percentage application', () => {
   }
 
   it('applies +X% Increased <Attr> to the matching attribute only', () => {
-    const baseline = computeBuildStats(
-      null, 1, zeroAttrs, emptyInventory,
-      undefined, undefined, undefined,
-      [{ id: '1', value: '100', statKey: 'to_intelligence' }],
-    )
+    const baseline = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
+      customStats: [{ id: '1', value: '100', statKey: 'to_intelligence' }],
+    })
     const baseInt = rangedMin(baseline.attributes.intelligence)
 
     const customStats = [
@@ -154,28 +171,35 @@ describe('computeBuildStats - per-attribute percentage application', () => {
       { id: '2', value: '100', statKey: 'to_strength' },
       { id: '3', value: '10', statKey: 'increased_intelligence' },
     ]
-    const { attributes } = computeBuildStats(
-      null, 1, zeroAttrs, emptyInventory,
-      undefined, undefined, undefined, customStats,
-    )
+    const { attributes } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
+      customStats,
+    })
     // Intelligence: baseInt × (1 + 10%); strength gets no `increased_strength`, so unchanged.
     expect(rangedMin(attributes.intelligence)).toBe(Math.floor(baseInt * 1.1))
     const baseStr = rangedMin(
-      computeBuildStats(
-        null, 1, zeroAttrs, emptyInventory,
-        undefined, undefined, undefined,
-        [{ id: '1', value: '100', statKey: 'to_strength' }],
-      ).attributes.strength,
+      computeBuildStats({
+        classId: null,
+        level: 1,
+        allocated: zeroAttrs,
+        inventory: emptyInventory,
+        customStats: [{ id: '1', value: '100', statKey: 'to_strength' }],
+      }).attributes.strength,
     )
     expect(rangedMin(attributes.strength)).toBe(baseStr)
   })
 
   it('compounds Total (_more) with additive Increased', () => {
-    const baseline = computeBuildStats(
-      null, 1, zeroAttrs, emptyInventory,
-      undefined, undefined, undefined,
-      [{ id: '1', value: '100', statKey: 'to_intelligence' }],
-    )
+    const baseline = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
+      customStats: [{ id: '1', value: '100', statKey: 'to_intelligence' }],
+    })
     const baseInt = rangedMin(baseline.attributes.intelligence)
 
     const customStats = [
@@ -183,10 +207,13 @@ describe('computeBuildStats - per-attribute percentage application', () => {
       { id: '2', value: '50', statKey: 'increased_intelligence' },
       { id: '3', value: '20', statKey: 'increased_intelligence_more' },
     ]
-    const { attributes } = computeBuildStats(
-      null, 1, zeroAttrs, emptyInventory,
-      undefined, undefined, undefined, customStats,
-    )
+    const { attributes } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
+      customStats,
+    })
     expect(rangedMin(attributes.intelligence)).toBe(
       Math.floor(baseInt * 1.5 * 1.2),
     )
@@ -251,19 +278,15 @@ describe('computeBuildStats - tree self-conditions', () => {
       { id: '1', value: '15', statKey: 'increased_attack_speed_more' },
       { id: '2', value: '60', statKey: 'crit_chance' },
     ]
-    const without = computeBuildStats(
-      null,
-      1,
-      zeroAttrs,
-      emptyInventory,
-      undefined,
-      undefined,
-      undefined,
+    const without = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
       customStats,
-      new Set([1802]),
-      undefined,
-      {},
-    )
+      allocatedTreeNodes: new Set([1802]),
+      playerConditions: {},
+    })
     expect(without.stats.increased_attack_speed_more).toBe(15)
   })
 
@@ -272,19 +295,15 @@ describe('computeBuildStats - tree self-conditions', () => {
       { id: '1', value: '15', statKey: 'increased_attack_speed_more' },
       { id: '2', value: '60', statKey: 'crit_chance' },
     ]
-    const withCondition = computeBuildStats(
-      null,
-      1,
-      zeroAttrs,
-      emptyInventory,
-      undefined,
-      undefined,
-      undefined,
+    const withCondition = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
       customStats,
-      new Set([1802]),
-      undefined,
-      { crit_chance_below_40: true },
-    )
+      allocatedTreeNodes: new Set([1802]),
+      playerConditions: { crit_chance_below_40: true },
+    })
     expect(withCondition.stats.increased_attack_speed_more).toBe(30)
   })
 
@@ -293,19 +312,15 @@ describe('computeBuildStats - tree self-conditions', () => {
       { id: '1', value: '15', statKey: 'increased_attack_speed_more' },
       { id: '2', value: '20', statKey: 'crit_chance' },
     ]
-    const auto = computeBuildStats(
-      null,
-      1,
-      zeroAttrs,
-      emptyInventory,
-      undefined,
-      undefined,
-      undefined,
+    const auto = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: emptyInventory,
       customStats,
-      new Set([1802]),
-      undefined,
-      {},
-    )
+      allocatedTreeNodes: new Set([1802]),
+      playerConditions: {},
+    })
     expect(auto.stats.increased_attack_speed_more).toBe(30)
   })
 })
@@ -383,10 +398,13 @@ describe('_more stays separate; combineAdditiveAndMore handles compounding', () 
       { id: '1', value: '20', statKey: 'movement_speed' },
       { id: '2', value: '5', statKey: 'movement_speed_more' },
     ]
-    const { stats } = computeBuildStats(
-      null, 1, allocated, emptyInventory,
-      undefined, undefined, undefined, customStats,
-    )
+    const { stats } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated,
+      inventory: emptyInventory,
+      customStats,
+    })
     expect(stats.movement_speed).toBe(20)
     expect(stats.movement_speed_more).toBe(5)
   })
@@ -400,21 +418,26 @@ describe('_more stays separate; combineAdditiveAndMore handles compounding', () 
 
   it('applyMultiplier: base mana × (1 + add) × (1 + more)', () => {
     const allocated = { strength: 0, dexterity: 0, intelligence: 0, energy: 0, vitality: 0, armor: 0 }
-    const baseOnly = computeBuildStats(
-      null, 1, allocated, emptyInventory,
-      undefined, undefined, undefined, [],
-    )
+    const baseOnly = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated,
+      inventory: emptyInventory,
+      customStats: [],
+    })
     const baseMana = baseOnly.stats.mana
     expect(typeof baseMana).toBe('number')
 
-    const withMore = computeBuildStats(
-      null, 1, allocated, emptyInventory,
-      undefined, undefined, undefined,
-      [
+    const withMore = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated,
+      inventory: emptyInventory,
+      customStats: [
         { id: '1', value: '50', statKey: 'increased_mana' },
         { id: '2', value: '20', statKey: 'increased_mana_more' },
       ],
-    )
+    })
     expect(withMore.stats.mana).toBe(Math.floor((baseMana as number) * 1.5 * 1.2))
   })
 })
@@ -476,34 +499,31 @@ describe('Buff/aura passiveStats scale with effective rank', () => {
     // Pick a real class buff: stormweaver has Symphony of Thunder (id: symphony_of_thunder).
     // It's a Lightning buff with passiveStats.perRank.lightning_skill_damage.
     // We bypass the actual file by using customStats to inject all_skills and lightning_skills, plus rank-1 buff allocation.
-    const baseline = computeBuildStats(
-      'stormweaver',
-      1,
-      zeroAttrs,
-      {},
-      { symphony_of_thunder: 1 },
-      undefined,
-      { symphony_of_thunder: true },
-      undefined,
-    )
+    const baseline = computeBuildStats({
+      classId: 'stormweaver',
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: {},
+      skillRanks: { symphony_of_thunder: 1 },
+      activeBuffs: { symphony_of_thunder: true },
+    })
     const baselineLight = rangedMin(
       baseline.stats.lightning_skill_damage ?? 0,
     )
 
-    const boosted = computeBuildStats(
-      'stormweaver',
-      1,
-      zeroAttrs,
-      {},
-      { symphony_of_thunder: 1 },
-      undefined,
-      { symphony_of_thunder: true },
+    const boosted = computeBuildStats({
+      classId: 'stormweaver',
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: {},
+      skillRanks: { symphony_of_thunder: 1 },
+      activeBuffs: { symphony_of_thunder: true },
       // Inject +10 all_skills + +5 lightning_skills via customStats so effective rank becomes 1+10+5 = 16.
-      [
+      customStats: [
         { id: '1', value: '10', statKey: 'all_skills' },
         { id: '2', value: '5', statKey: 'lightning_skills' },
       ],
-    )
+    })
     const boostedLight = rangedMin(
       boosted.stats.lightning_skill_damage ?? 0,
     )
@@ -526,7 +546,12 @@ describe('Item-granted skills (passiveConverts)', () => {
         stars: 0,
       },
     }
-    const { stats } = computeBuildStats(null, 1, zeroAttrs, inventory)
+    const { stats } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory,
+    })
     const fcr = stats.faster_cast_rate
     expect(typeof fcr === 'object').toBe(true)
     expect(rangedMin(fcr as RangedValue)).toBeCloseTo(4)
@@ -547,9 +572,12 @@ describe('Item-granted skills (passiveConverts)', () => {
         stars: 5,
       },
     }
-    const { stats } = computeBuildStats(
-      null, 1, zeroAttrs, inventory,
-    )
+    const { stats } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory,
+    })
     // 5* applies the documented ITEM SPECIFIC staircase (+3 to skill ranks):
     //   Fallen God's Bloodlust rank [1,10] -> [4,13]
     // increased_attack_speed scales 3% per star and is rounded to int:
@@ -565,10 +593,13 @@ describe('Item-granted skills (passiveConverts)', () => {
     const customStats = [
       { id: '1', value: '50', statKey: 'increased_attack_speed' },
     ]
-    const { stats } = computeBuildStats(
-      null, 1, zeroAttrs, {},
-      undefined, undefined, undefined, customStats,
-    )
+    const { stats } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory: {},
+      customStats,
+    })
     expect(stats.increased_attack_speed).toBe(50)
     expect(stats.faster_cast_rate).toBeUndefined()
   })
@@ -593,10 +624,13 @@ describe('Item-granted skills (passiveConverts)', () => {
     const customStats = [
       { id: '1', value: '20', statKey: 'increased_attack_speed_more' },
     ]
-    const { stats } = computeBuildStats(
-      null, 1, zeroAttrs, inventory,
-      undefined, undefined, undefined, customStats,
-    )
+    const { stats } = computeBuildStats({
+      classId: null,
+      level: 1,
+      allocated: zeroAttrs,
+      inventory,
+      customStats,
+    })
     const fcr = stats.faster_cast_rate
     expect(rangedMin(fcr as RangedValue)).toBeCloseTo(6.8)
     expect(rangedMax(fcr as RangedValue)).toBeCloseTo(80)
