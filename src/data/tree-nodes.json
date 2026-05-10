@@ -7273,6 +7273,41 @@
       "+5 to Armor"
     ]
   },
+  "1892": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "1894": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "1896": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "1898": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
+  "1900": {
+    "t": "Maximum Mana",
+    "n": "normal",
+    "l": [
+      "+25 to Maximum Mana"
+    ]
+  },
   "1902": {
     "t": "Maximum Mana",
     "n": "normal",
@@ -7588,11 +7623,25 @@
       "+8% Increased Arcane Skill Damage"
     ]
   },
+  "1992": {
+    "t": "Arcane Damage",
+    "n": "normal",
+    "l": [
+      "+15 to Arcane Skill Damage"
+    ]
+  },
   "1994": {
     "t": "Arcana's Touch",
     "n": "big",
     "l": [
       "+20% Increased Total Arcane Skill Damage"
+    ]
+  },
+  "1996": {
+    "t": "All Attributes",
+    "n": "normal",
+    "l": [
+      "+5 to All Attributes"
     ]
   },
   "1998": {
