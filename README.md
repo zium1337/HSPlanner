@@ -19,7 +19,6 @@ A desktop build planner for **Hero Siege** — a calculator for the talent tree,
 - [x] **Notes** — sanitized WYSIWYG editor (per build), preserved across share links
 - [x] **Builds menu** — multiple saved builds, each with multiple profiles
 - [x] **Share** — export the entire build to a compressed URL (lz-string)
-- [ ] **Save File** *(broken)* — read and edit `.hss` Hero Siege save files (level, hero level, class, hardcore, wormhole, chaos towers)
 - [x] **Update check** — opt-in update check via GitHub Releases
 
 <img width="1277" height="800" alt="{139CD596-7ABD-4699-B268-81E259A94519}" src="https://github.com/user-attachments/assets/d2f51f6e-0a1d-46a6-a26d-3214916ffb37" />
