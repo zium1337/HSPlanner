@@ -349,6 +349,202 @@
       { "source": "Chain Lightning", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Static Shock", "stat": "lightning_skill_damage", "value": 13.75, "per": "skill_level" },
       { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "lightning_surge_core",
+        "positionIndex": 0,
+        "name": "Lightning Surge",
+        "description": "Core of the Lightning Surge subtree.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Big_spr_0",
+        "maxRank": 1
+      },
+      {
+        "id": "amplified_storm",
+        "positionIndex": 1,
+        "name": "Amplified Storm",
+        "description": "Increases the damage dealt by lightning surge.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_0",
+        "maxRank": 7,
+        "effects": {
+          "perRank": { "lightning_skill_damage": 9 }
+        }
+      },
+      {
+        "id": "storms_prophet",
+        "positionIndex": 2,
+        "name": "Storm's Prophet",
+        "description": "Decreases the mana cost of lightning surge.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_1",
+        "maxRank": 5,
+        "effects": {
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "shocked_to_the_core",
+        "positionIndex": 3,
+        "name": "Shocked to the Core",
+        "description": "Chance to lower target attack rating on hit.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_2",
+        "maxRank": 5,
+        "effects": {
+          "perRank": { "lightning_skill_damage": 4.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "shocked", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "heated_lightning",
+        "positionIndex": 4,
+        "name": "Heated Lightning",
+        "description": "Chance to inflict burning on hit.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_3",
+        "maxRank": 5,
+        "effects": {
+          "perRank": { "increased_burning_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "piercing_bolt",
+        "positionIndex": 5,
+        "name": "Piercing Bolt",
+        "description": "Chance to inflict lightning break on hit.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_4",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "lightning_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "restoring_surge",
+        "positionIndex": 6,
+        "name": "Restoring Surge",
+        "description": "Chance to restore portion of your maximum mana on hit.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_5",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "perRank": { "mana_replenish_pct": 1 }
+          }
+        }
+      },
+      {
+        "id": "voltaic_pressure",
+        "positionIndex": 7,
+        "name": "Voltaic Pressure",
+        "description": "Increases cast rate when using lightning surge.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_6",
+        "maxRank": 3,
+        "effects": {
+          "perRank": { "faster_cast_rate": 8 }
+        }
+      },
+      {
+        "id": "storm_summoner",
+        "positionIndex": 8,
+        "name": "Storm Summoner",
+        "description": "Chance to summon a small storm cloud on hit.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_7",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "target": "Storm Cloud",
+          "effects": {
+            "perRank": { "of_total_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "lightning_strikes_twice",
+        "positionIndex": 9,
+        "name": "Lightning Strikes Twice!",
+        "description": "Chance on cast to unleash an additional lightning surge.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_8",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "target": "Lightning Surge"
+        }
+      },
+      {
+        "id": "grounding_surge",
+        "positionIndex": 10,
+        "name": "Grounding Surge",
+        "description": "Chance for lightning surge to explode into multiple smaller surges on hit.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Small_spr_9",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "perRank": { "of_total_damage": 35, "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "surging_comeback",
+        "positionIndex": 11,
+        "name": "Surging Comeback",
+        "description": "Lightning surge returns after a short duration dealing increased damage.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Big_spr_1",
+        "maxRank": 3,
+        "effects": {
+          "perRank": { "lightning_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "supercharged",
+        "positionIndex": 12,
+        "name": "Supercharged",
+        "description": "Unleash multiple narrower surges in an arc dealing a portion of the damage.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Big_spr_2",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 3 },
+          "perRank": { "of_total_damage": 50, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "concurrent_current",
+        "positionIndex": 13,
+        "name": "Concurrent Current",
+        "description": "Lightning surge attaches a tether to multiple targets dealing damage over time.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Big_spr_3",
+        "maxRank": 3,
+        "effects": {
+          "perRank": { "of_total_damage": 30, "chain_lightning_targets": 2 }
+        }
+      },
+      {
+        "id": "surging_tornado",
+        "positionIndex": 14,
+        "name": "Surging Tornado",
+        "description": "Unleash a tornado of surging lightning dealing increased damage.",
+        "icon": "Sub_Stormweaver_Lightning_Surge_Big_spr_4",
+        "maxRank": 3,
+        "effects": {
+          "perRank": { "lightning_skill_damage": 25 }
+        }
+      }
     ]
   },
   {

@@ -1,7 +1,12 @@
 import { useMemo } from "react";
 import { gameConfig, getClass, getSkillsByClass } from "../data";
 import { isImageUrl } from "../utils/icon";
-import { attrPointsFor, skillPointsFor, useBuild } from "../store/build";
+import {
+  attrPointsFor,
+  skillPointsFor,
+  subskillKey,
+  useBuild,
+} from "../store/build";
 import {
   aggregateItemSkillBonuses,
   combineAdditiveAndMore,
@@ -16,6 +21,7 @@ import {
   rangedMin,
   statDef,
 } from "../utils/stats";
+import { aggregateSubskillStats } from "../utils/subtree";
 import type { RangedValue, Skill } from "../types";
 
 const ATTRIBUTE_ORDER: string[] = [
@@ -97,6 +103,7 @@ export default function LeftStatsPanel() {
   const inventory = useBuild((s) => s.inventory);
   const treeAllocated = useBuild((s) => s.allocatedTreeNodes);
   const skillRanks = useBuild((s) => s.skillRanks);
+  const subskillRanks = useBuild((s) => s.subskillRanks);
   const mainSkillId = useBuild((s) => s.mainSkillId);
   const setMainSkill = useBuild((s) => s.setMainSkill);
   const activeAuraId = useBuild((s) => s.activeAuraId);
@@ -124,6 +131,8 @@ export default function LeftStatsPanel() {
         treeAllocated,
         treeSocketed,
         playerConditions,
+        subskillRanks,
+        enemyConditions,
       ),
     [
       classId,
@@ -137,6 +146,8 @@ export default function LeftStatsPanel() {
       treeAllocated,
       treeSocketed,
       playerConditions,
+      subskillRanks,
+      enemyConditions,
     ],
   );
 
@@ -255,6 +266,18 @@ export default function LeftStatsPanel() {
   }, [allClassSkills]);
 
   const skillProjectiles = useBuild((s) => s.skillProjectiles);
+  const activeSubAgg = useMemo(
+    () =>
+      activeSkill
+        ? aggregateSubskillStats(activeSkill, subskillRanks, enemyConditions)
+        : null,
+    [activeSkill, subskillRanks, enemyConditions],
+  );
+  const activeProjectileBoost =
+    activeSubAgg?.stats.projectile_count ?? 0;
+  const effectiveProjectiles = activeSkill
+    ? (skillProjectiles[activeSkill.id] ?? 1) + activeProjectileBoost
+    : undefined;
   const damage =
     activeSkill && activeRank > 0
       ? computeSkillDamage(
@@ -267,7 +290,7 @@ export default function LeftStatsPanel() {
           enemyConditions,
           enemyResistances,
           skillsByNormalizedName,
-          skillProjectiles[activeSkill.id],
+          effectiveProjectiles,
         )
       : null;
   const hitDpsMin =
@@ -320,11 +343,46 @@ export default function LeftStatsPanel() {
       min += factor * targetDmg.avgMin;
       max += factor * targetDmg.avgMax;
     }
+    for (const ownerSkill of allClassSkills) {
+      for (const sub of ownerSkill.subskills ?? []) {
+        if (!sub.proc?.target) continue;
+        const subRank =
+          subskillRanks[subskillKey(ownerSkill.id, sub.id)] ?? 0;
+        if (subRank === 0) continue;
+        const targetName = normalizeSkillName(sub.proc.target);
+        const target = skillsByNormalizedName[targetName];
+        if (!target) continue;
+        const targetRank = skillRanks[target.id] ?? 0;
+        if (targetRank === 0) continue;
+        const targetDmg = computeSkillDamage(
+          target,
+          targetRank,
+          attributes,
+          stats,
+          skillRanksByName,
+          itemSkillBonuses,
+          enemyConditions,
+          enemyResistances,
+          skillsByNormalizedName,
+          skillProjectiles[target.id],
+        );
+        if (!targetDmg) continue;
+        const chance =
+          (sub.proc.chance.base ?? 0) +
+          (sub.proc.chance.perRank ?? 0) * subRank;
+        const rate = sub.proc.trigger === "on_kill" ? killsPerSec : 1;
+        const factor = rate * (chance / 100);
+        min += factor * targetDmg.avgMin;
+        max += factor * targetDmg.avgMax;
+      }
+    }
     return { min, max };
   }, [
     procSkills,
     procToggles,
     skillRanks,
+    subskillRanks,
+    allClassSkills,
     attributes,
     stats,
     skillRanksByName,

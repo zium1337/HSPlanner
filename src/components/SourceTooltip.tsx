@@ -13,6 +13,7 @@ const SOURCE_COLOR: Record<SourceType, string> = {
   item: 'text-cyan-400',
   socket: 'text-pink-400',
   skill: 'text-yellow-300',
+  subskill: 'text-yellow-300',
   custom: 'text-orange-400',
   tree: 'text-amber-400',
 }
@@ -25,6 +26,7 @@ const SOURCE_LABEL: Record<SourceType, string> = {
   item: 'Item',
   socket: 'Socket',
   skill: 'Skill',
+  subskill: 'Subtree',
   custom: 'Config',
   tree: 'Tree',
 }

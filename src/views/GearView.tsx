@@ -45,8 +45,10 @@ import {
   MAX_STARS,
   RAINBOW_MULTIPLIER,
   maxSocketsFor,
+  subskillKey,
   useBuild,
 } from '../store/build'
+import { aggregateSubskillStats } from '../utils/subtree'
 import {
   aggregateItemSkillBonuses,
   combineAdditiveAndMore,
@@ -1318,6 +1320,7 @@ interface BuildSummaryDeps {
   level: number
   allocated: Record<AttributeKey, number>
   skillRanks: Record<string, number>
+  subskillRanks: Record<string, number>
   activeAuraId: string | null
   activeBuffs: Record<string, boolean>
   customStats: CustomStat[]
@@ -1349,6 +1352,8 @@ function computeBuildSummary(
     deps.allocatedTreeNodes,
     deps.treeSocketed,
     deps.playerConditions,
+    deps.subskillRanks,
+    deps.enemyConditions,
   )
 
   const allClassSkills = getSkillsByClass(deps.classId)
@@ -1366,6 +1371,18 @@ function computeBuildSummary(
     skillsByNormalizedName[normalizeSkillName(s.name)] = s
   }
 
+  const activeSubAgg = activeSkill
+    ? aggregateSubskillStats(
+        activeSkill,
+        deps.subskillRanks,
+        deps.enemyConditions,
+      )
+    : null
+  const activeProjectileBoost = activeSubAgg?.stats.projectile_count ?? 0
+  const effectiveProjectiles = activeSkill
+    ? (deps.skillProjectiles[activeSkill.id] ?? 1) + activeProjectileBoost
+    : undefined
+
   const damage =
     activeSkill && activeRank > 0
       ? computeSkillDamage(
@@ -1378,7 +1395,7 @@ function computeBuildSummary(
           deps.enemyConditions,
           deps.enemyResistances,
           skillsByNormalizedName,
-          deps.skillProjectiles[activeSkill.id],
+          effectiveProjectiles,
         )
       : null
 
@@ -1432,6 +1449,40 @@ function computeBuildSummary(
     const factor = rate * (procSkill.proc.chance / 100)
     procDpsMin += factor * targetDmg.avgMin
     procDpsMax += factor * targetDmg.avgMax
+  }
+
+  for (const ownerSkill of allClassSkills) {
+    for (const sub of ownerSkill.subskills ?? []) {
+      if (!sub.proc?.target) continue
+      const subRank =
+        deps.subskillRanks[subskillKey(ownerSkill.id, sub.id)] ?? 0
+      if (subRank === 0) continue
+      const targetName = normalizeSkillName(sub.proc.target)
+      const target = skillsByNormalizedName[targetName]
+      if (!target) continue
+      const targetRank = deps.skillRanks[target.id] ?? 0
+      if (targetRank === 0) continue
+      const targetDmg = computeSkillDamage(
+        target,
+        targetRank,
+        computed.attributes,
+        computed.stats,
+        skillRanksByName,
+        itemSkillBonuses,
+        deps.enemyConditions,
+        deps.enemyResistances,
+        skillsByNormalizedName,
+        deps.skillProjectiles[target.id],
+      )
+      if (!targetDmg) continue
+      const chance =
+        (sub.proc.chance.base ?? 0) +
+        (sub.proc.chance.perRank ?? 0) * subRank
+      const rate = sub.proc.trigger === 'on_kill' ? deps.killsPerSec : 1
+      const factor = rate * (chance / 100)
+      procDpsMin += factor * targetDmg.avgMin
+      procDpsMax += factor * targetDmg.avgMax
+    }
   }
 
   const combinedDpsMin =
@@ -2136,6 +2187,7 @@ function GearSlotModal({
   const level = useBuild((s) => s.level)
   const allocated = useBuild((s) => s.allocated)
   const skillRanks = useBuild((s) => s.skillRanks)
+  const subskillRanks = useBuild((s) => s.subskillRanks)
   const activeAuraId = useBuild((s) => s.activeAuraId)
   const activeBuffs = useBuild((s) => s.activeBuffs)
   const customStats = useBuild((s) => s.customStats)
@@ -2163,6 +2215,7 @@ function GearSlotModal({
       level,
       allocated,
       skillRanks,
+      subskillRanks,
       activeAuraId,
       activeBuffs,
       customStats,
@@ -2181,6 +2234,7 @@ function GearSlotModal({
       level,
       allocated,
       skillRanks,
+      subskillRanks,
       activeAuraId,
       activeBuffs,
       customStats,

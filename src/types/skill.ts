@@ -115,6 +115,7 @@ export interface SubskillProc {
   chance: { base?: number; perRank?: number }
   effects?: SubskillEffect
   tags?: string[]
+  target?: string
   appliesStates?: (string | AppliedState)[]
 }
 

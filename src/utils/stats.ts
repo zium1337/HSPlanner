@@ -34,6 +34,7 @@ import type {
   TreeSocketContent,
 } from '../types'
 import { parseCustomStatValue } from './parseCustomStat'
+import { aggregateSubskillStats } from './subtree'
 import {
   ELEMENTS,
   parseTreeNodeMeta,
@@ -52,6 +53,7 @@ export type SourceType =
   | 'item'
   | 'socket'
   | 'skill'
+  | 'subskill'
   | 'custom'
   | 'tree'
 
@@ -195,6 +197,8 @@ export function computeBuildStats(
   allocatedTreeNodes?: Set<number>,
   treeSocketed?: Record<number, TreeSocketContent | null>,
   playerConditions?: Record<string, boolean>,
+  subskillRanks?: Record<string, number>,
+  enemyConditions?: Record<string, boolean>,
 ): ComputedStats {
   // Two-pass auto-resolution for the `crit_chance_below_40` self-condition: when the user has not explicitly toggled it on, run a baseline pass to compute the final crit_chance, and if it falls below 40%, run a second pass with the condition activated so any tree-node mods gated on it apply automatically. Cheap because the second pass only happens when the user is actually below the threshold.
   const baseline = computeBuildStatsCore(
@@ -209,6 +213,8 @@ export function computeBuildStats(
     allocatedTreeNodes,
     treeSocketed,
     playerConditions,
+    subskillRanks,
+    enemyConditions,
   )
   if (
     !playerConditions?.crit_chance_below_40 &&
@@ -229,6 +235,8 @@ export function computeBuildStats(
         allocatedTreeNodes,
         treeSocketed,
         { ...playerConditions, crit_chance_below_40: true },
+        subskillRanks,
+        enemyConditions,
       )
     }
   }
@@ -247,6 +255,8 @@ function computeBuildStatsCore(
   allocatedTreeNodes?: Set<number>,
   treeSocketed?: Record<number, TreeSocketContent | null>,
   playerConditions?: Record<string, boolean>,
+  subskillRanks?: Record<string, number>,
+  enemyConditions?: Record<string, boolean>,
 ): ComputedStats {
   // Top-level aggregator that walks every input (class base, allocated attributes, inventory items, sockets/runewords, augments, allocated talent-tree nodes, set bonuses, default per-level stats, allocated active passive/aura/buff skills, custom stats, derived per-attribute stats and item-granted skill effects) and produces a single ComputedStats object containing both the summed values and the per-source breakdown. Used by the build store on every state change to refresh the stats panel and feed the damage calculators.
   const cls = classId ? getClass(classId) : undefined
@@ -754,6 +764,31 @@ function computeBuildStatsCore(
             })
           }
         }
+      }
+    }
+  }
+
+  if (subskillRanks && classId) {
+    const classSubskillSkills = getSkillsByClass(classId)
+    for (const ownerSkill of classSubskillSkills) {
+      if (!ownerSkill.subskills?.length) continue
+      const agg = aggregateSubskillStats(
+        ownerSkill,
+        subskillRanks,
+        enemyConditions,
+      )
+      for (const [key, value] of Object.entries(agg.stats)) {
+        if (value === 0) continue
+        const def = STAT_DEFS_MAP.get(key)
+        if (def?.skillScoped) continue
+        applyContribution(
+          attrSources,
+          statSources,
+          key,
+          value,
+          `${ownerSkill.name} subtree`,
+          'subskill',
+        )
       }
     }
   }
