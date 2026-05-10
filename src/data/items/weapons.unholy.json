@@ -80,8 +80,8 @@
     "twoHanded": true
   },
   {
-    "id": "sword_unholy_stofflix_cooking_cleaver",
-    "name": "Stofflix Cooking Cleaver",
+    "id": "sword_unholy_stormflix_cooking_cleaver",
+    "name": "Stormflix Cooking Cleaver",
     "baseType": "Sword",
     "slot": "weapon",
     "rarity": "unholy",
@@ -94,10 +94,13 @@
         625
       ],
       "all_skills": 2,
-      "fire_skills": 8,
+      "fire_skills": [
+        6,
+        10
+      ],
       "faster_cast_rate": [
-        40,
-        55
+        35,
+        45
       ],
       "increased_attack_speed": [
         50,
@@ -112,8 +115,8 @@
         30
       ],
       "flat_fire_skill_damage": [
-        22,
-        50
+        28,
+        60
       ],
       "fire_skill_damage": 35
     },
@@ -142,7 +145,16 @@
         4,
         5
       ],
+      "increased_attack_speed": [
+        6,
+        15
+      ],
+      "movement_speed": [
+        3,
+        10
+      ],
       "deadly_blow": 30,
+      "defense_ignored": 35,
       "extra_damage_bleeding": [
         33,
         40
@@ -150,7 +162,15 @@
       "flat_fire_skill_damage": [
         40,
         70
-      ]
+      ],
+      "ignore_fire_res": 25
+    },
+    "skillBonuses": {
+      "Adrenaline Momentum": [
+        10,
+        15
+      ],
+      "Pyro Technician": 20
     },
     "uniqueEffects": [
       "Attack Dmg",

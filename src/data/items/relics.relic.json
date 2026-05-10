@@ -108,7 +108,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "damage_return": 200
+      "damage_return": 100
     }
   },
   {
@@ -136,7 +136,13 @@
     "name": "Bomb",
     "baseType": "Relic",
     "slot": "relic_1",
-    "rarity": "relic"
+    "rarity": "relic",
+    "implicit": {
+      "explosion_damage": 50
+    },
+    "uniqueEffects": [
+      "Grant Spell: Naval Bomb"
+    ]
   },
   {
     "id": "relic_relic_bonsai_tree",
@@ -145,8 +151,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "magic_find": 20,
-      "to_vitality": 20
+      "skill_haste": 40
     }
   },
   {
@@ -157,6 +162,16 @@
     "rarity": "relic",
     "uniqueEffects": [
       "Grant Spell: Satanic Chant"
+    ]
+  },
+  {
+    "id": "relic_relic_book_of_command",
+    "name": "Book of Command",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Commanding Power"
     ]
   },
   {
@@ -186,7 +201,8 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "life_replenish_pct": 50
+      "life_replenish_pct": 50,
+      "increased_life": 15
     }
   },
   {
@@ -231,6 +247,16 @@
     }
   },
   {
+    "id": "relic_relic_candy_basket",
+    "name": "Candy Basket",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Candy Basket"
+    ]
+  },
+  {
     "id": "relic_relic_candy_crusher",
     "name": "Candy Crusher",
     "baseType": "Relic",
@@ -258,7 +284,10 @@
     "rarity": "relic",
     "implicit": {
       "life_steal": 10
-    }
+    },
+    "uniqueEffects": [
+      "Grant Spell: Charmed Blood"
+    ]
   },
   {
     "id": "relic_relic_cheese_burger",
@@ -267,9 +296,19 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "life": 580,
+      "life": 1000,
       "life_replenish_pct": 50
     }
+  },
+  {
+    "id": "relic_relic_chicken_mask",
+    "name": "Chicken Mask",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: All Them Chickens"
+    ]
   },
   {
     "id": "relic_relic_commander_s_sword",
@@ -289,9 +328,19 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "life_replenish_pct": 30,
-      "mana_replenish_pct": 30
+      "physical_damage_reduction": 10,
+      "magic_damage_reduction": 10
     }
+  },
+  {
+    "id": "relic_relic_cursed_book",
+    "name": "Cursed Book",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Dare to Read?"
+    ]
   },
   {
     "id": "relic_relic_damned_buckler",
@@ -300,7 +349,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "to_armor": 32,
+      "to_armor": 50,
       "faster_hit_recovery": 20
     }
   },
@@ -356,7 +405,7 @@
   },
   {
     "id": "relic_relic_devil_horn",
-    "name": "Devil Horn",
+    "name": "Devil's Horn",
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
@@ -381,8 +430,8 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "additive_physical_damage": 33,
-      "attack_rating": 475
+      "additive_physical_damage": 40,
+      "defense_ignored": 30
     }
   },
   {
@@ -411,10 +460,9 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "to_dexterity": 22,
-      "to_strength": 22
-    }
+    "uniqueEffects": [
+      "Grant Spell: Holy Aura"
+    ]
   },
   {
     "id": "relic_relic_double_scythe",
@@ -489,6 +537,26 @@
     }
   },
   {
+    "id": "relic_relic_fish_net",
+    "name": "Fish Net",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Trap the Fish"
+    ]
+  },
+  {
+    "id": "relic_relic_flail",
+    "name": "Flail",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Flailstrike"
+    ]
+  },
+  {
     "id": "relic_relic_fly_swatter",
     "name": "Fly Swatter",
     "baseType": "Relic",
@@ -520,6 +588,16 @@
     ]
   },
   {
+    "id": "relic_relic_gamma_pulser",
+    "name": "Gamma Pulser",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Gamma Pulse"
+    ]
+  },
+  {
     "id": "relic_relic_guardian_angel",
     "name": "Guardian Angel",
     "baseType": "Relic",
@@ -535,10 +613,9 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "life_per_kill": 21,
-      "mana_per_kill": 21
-    }
+    "uniqueEffects": [
+      "+10% of Vitality added as Magic Skill Damage"
+    ]
   },
   {
     "id": "relic_relic_hand_of_midas",
@@ -557,9 +634,19 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "increased_attack_speed": 15,
-      "attack_rating_pct": 20
+      "increased_attack_speed": 20,
+      "deadly_blow": 30
     }
+  },
+  {
+    "id": "relic_relic_head_extractor",
+    "name": "Head Extractor",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Extract Heads"
+    ]
   },
   {
     "id": "relic_relic_hellscream_axe",
@@ -568,8 +655,8 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "additive_fire_damage": 1696,
-      "additive_physical_damage": 21
+      "crushing_blow_chance": 30,
+      "additive_physical_damage": 30
     }
   },
   {
@@ -598,10 +685,9 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "damage_return": 20,
-      "physical_damage_reduction": 10
-    }
+    "uniqueEffects": [
+      "+10% of Energy added as Magic Skill Damage"
+    ]
   },
   {
     "id": "relic_relic_hungering_blade_of_frost",
@@ -643,7 +729,7 @@
     "rarity": "relic",
     "implicit": {
       "light_radius": 10,
-      "magic_find": 30
+      "magic_find": 40
     }
   },
   {
@@ -683,7 +769,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "gold_find": 35
+      "gold_find": 30
     }
   },
   {
@@ -776,7 +862,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "uniqueEffects": [
-      "Grant Spell: Pipe Diver"
+      "Grant Spell: Pipe Driver"
     ]
   },
   {
@@ -786,7 +872,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "life": 600,
+      "life": 100,
       "to_vitality": 20
     }
   },
@@ -827,7 +913,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "attack_damage": 20,
+      "attack_damage": 50,
       "movement_speed": 30
     }
   },
@@ -848,7 +934,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "magic_find": 20,
+      "magic_find": 30,
       "movement_speed": 30
     }
   },
@@ -880,7 +966,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "magic_skill_damage": 10
+      "magic_skill_damage": 30
     }
   },
   {
@@ -923,7 +1009,7 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "ignore_lightning_res": 30
+      "ignore_fire_res": 30
     }
   },
   {
@@ -1049,7 +1135,7 @@
     "rarity": "relic",
     "implicit": {
       "movement_speed": 30,
-      "to_strength": 30
+      "all_attributes": 20
     }
   },
   {
@@ -1093,6 +1179,16 @@
     ]
   },
   {
+    "id": "relic_relic_satan_s_horn",
+    "name": "Satan's Horn",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Satanic Groundsmash"
+    ]
+  },
+  {
     "id": "relic_relic_satan_s_tooth",
     "name": "Satan's Tooth",
     "baseType": "Relic",
@@ -1109,8 +1205,8 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "increased_life": 10,
-      "increased_mana": 10
+      "increased_life": 15,
+      "increased_mana": 15
     }
   },
   {
@@ -1119,9 +1215,9 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Skill Movement Diminish"
-    ]
+    "implicit": {
+      "reduced_movement_diminish": 100
+    }
   },
   {
     "id": "relic_relic_shattered_katana",
@@ -1141,6 +1237,16 @@
     "rarity": "relic",
     "uniqueEffects": [
       "Chance When Attacking: Live by the Sword"
+    ]
+  },
+  {
+    "id": "relic_relic_shocker_3000",
+    "name": "Shocker-3000",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Shocker 9000"
     ]
   },
   {
@@ -1254,6 +1360,26 @@
     "rarity": "relic",
     "uniqueEffects": [
       "Chance When Striking: Lightning Strike"
+    ]
+  },
+  {
+    "id": "relic_relic_sucker_5000",
+    "name": "Sucker-5000",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Sucking Power"
+    ]
+  },
+  {
+    "id": "relic_relic_sucker_5000_b",
+    "name": "Sucker-5000-B",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "uniqueEffects": [
+      "Grant Spell: Empowered Sucking Power"
     ]
   },
   {

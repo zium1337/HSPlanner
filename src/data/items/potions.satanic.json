@@ -7,8 +7,13 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "defense": 37,
+      "damage_return": 275
+    },
     "uniqueEffects": [
-      "Grant Spell: Spartan Defense"
+      "Grant Spell: Spartan Defense",
+      "Defense increased by 37% | Damage Return 275%"
     ]
   },
   {
@@ -19,8 +24,12 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "movement_speed": 40
+    },
     "uniqueEffects": [
-      "Grant Spell: Fleet Footwork"
+      "Grant Spell: Fleet Footwork",
+      "Movement Speed increased by 40% | Phasing"
     ]
   },
   {
@@ -31,8 +40,13 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "attack_damage": 32,
+      "crit_damage": 32
+    },
     "uniqueEffects": [
-      "Grant Spell: Drunken Kung Fu"
+      "Grant Spell: Drunken Kung Fu",
+      "Attack Damage increased by 32% | Critical Strike Damage increased by 32%"
     ]
   },
   {
@@ -43,8 +57,12 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "extra_damage_burning": 42
+    },
     "uniqueEffects": [
-      "Grant Spell: The Fragrance of Dark Coffee"
+      "Grant Spell: The Fragrance of Dark Coffee",
+      "42% extra Damage to Burning targets"
     ]
   },
   {
@@ -55,8 +73,12 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 1,
+    "implicit": {
+      "increased_poisoned_damage": 52
+    },
     "uniqueEffects": [
-      "Grant Spell: Corrosion of Darkness"
+      "Grant Spell: Corrosion of Darkness",
+      "Poisoned Damage 52%"
     ]
   },
   {
@@ -67,20 +89,13 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "attack_damage": 42,
+      "magic_skill_damage": 42
+    },
     "uniqueEffects": [
-      "Grant Spell: Berserkers Rage"
-    ]
-  },
-  {
-    "id": "potion_satanic_elixir_of_unworldly_cognition",
-    "name": "Elixir of Unworldly Cognition",
-    "baseType": "Potion",
-    "slot": "potion_1",
-    "rarity": "satanic",
-    "grade": "SS",
-    "requiresLevel": 1,
-    "uniqueEffects": [
-      "Grant Spell: Untamed Knowledge"
+      "Grant Spell: Berserkers Rage",
+      "Attack Damage increased by 42% | Magic Skill Damage increased by 42%"
     ]
   },
   {
@@ -91,8 +106,12 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "all_skills": 5
+    },
     "uniqueEffects": [
-      "Grant Spell: Drunken Infused Wisdom"
+      "Grant Spell: Drunken Infused Wisdom",
+      "+5 to All Skills"
     ]
   },
   {
@@ -103,8 +122,12 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "magic_skill_damage": 57
+    },
     "uniqueEffects": [
-      "Grant Spell: Parallel Dimension"
+      "Grant Spell: Parallel Dimension",
+      "Magic Skill Damage increased by 57%"
     ]
   },
   {
@@ -115,8 +138,13 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "increased_attack_speed": 42,
+      "attack_rating_pct": 42
+    },
     "uniqueEffects": [
-      "Grant Spell: Absolute Power"
+      "Grant Spell: Absolute Power",
+      "Attack Speed increased by 42% | Attack Rating increased by 42%"
     ]
   },
   {
@@ -128,7 +156,8 @@
     "grade": "S",
     "requiresLevel": 1,
     "uniqueEffects": [
-      "Grant Spell: Chaos Unleashed"
+      "Grant Spell: Chaos Unleashed",
+      "Causes your skills to rain down Comets dealing fire damage for a short period (Comet Level 62)"
     ]
   },
   {
@@ -139,8 +168,12 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "life_steal": 38
+    },
     "uniqueEffects": [
-      "Grant Spell: Vampirism"
+      "Grant Spell: Vampirism",
+      "Life Stolen per Hit increased by 38%"
     ]
   },
   {
@@ -151,8 +184,12 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "all_resistances": 62
+    },
     "uniqueEffects": [
-      "Grant Spell: Prismatic Skin"
+      "Grant Spell: Prismatic Skin",
+      "+62% to All Resistances"
     ]
   },
   {
@@ -163,8 +200,13 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "to_strength": 95,
+      "to_vitality": 60
+    },
     "uniqueEffects": [
-      "Grant Spell: Flexing"
+      "Grant Spell: Flexing",
+      "+95 to Strength | +60 to Vitality"
     ]
   },
   {
@@ -175,8 +217,13 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "increased_attack_speed": 42,
+      "movement_speed": 32
+    },
     "uniqueEffects": [
-      "Grant Spell: Hyper Activity"
+      "Grant Spell: Hyper Activity",
+      "Attack Speed increased by 42% | Movement Speed increased by 32%"
     ]
   },
   {
@@ -187,8 +234,12 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 1,
+    "implicit": {
+      "movement_speed": 60
+    },
     "uniqueEffects": [
-      "Grant Spell: Caffeinated"
+      "Grant Spell: Caffeinated",
+      "Movement Speed increased by 60%"
     ]
   },
   {
@@ -199,8 +250,13 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "life_replenish_pct": 280,
+      "mana_replenish_pct": 280
+    },
     "uniqueEffects": [
-      "Grant Spell: Taste of Heaven"
+      "Grant Spell: Taste of Heaven",
+      "+280% to Life Replenish | +280% to Mana Replenish"
     ]
   },
   {
@@ -211,8 +267,13 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "life_replenish_pct": 160,
+      "mana_replenish_pct": 160
+    },
     "uniqueEffects": [
-      "Grant Spell: Conjured Replenishment"
+      "Grant Spell: Conjured Replenishment",
+      "Instantly recover full Life and Mana | +160% Life Replenish | +160% Mana Replenish"
     ]
   },
   {
@@ -223,8 +284,12 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "implicit": {
+      "faster_cast_rate": 38
+    },
     "uniqueEffects": [
-      "Grant Spell: Rapidcaster"
+      "Grant Spell: Rapidcaster",
+      "Faster Cast Rate 38%"
     ]
   }
 ]

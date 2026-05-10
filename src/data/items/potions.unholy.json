@@ -1,0 +1,46 @@
+[
+  {
+    "id": "potion_unholy_amun_ras_demise",
+    "name": "Amun Ra's Demise",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "uniqueEffects": [
+      "Monsters have a chance to explode on death dealing 10% of their maximum life as Fire Damage in a small area",
+      "Proc Chance: 30%"
+    ]
+  },
+  {
+    "id": "potion_unholy_elixir_of_unworldly_cognition",
+    "name": "Elixir of Unworldly Cognition",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "experience_gain": 56
+    },
+    "uniqueEffects": [
+      "Grant Spell: Untamed Knowledge",
+      "Experience Gain increased by 56%"
+    ]
+  },
+  {
+    "id": "potion_unholy_sung_lees_flask_of_carnage",
+    "name": "Sung Lee's Flask of Carnage",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "increased_bleeding_damage": 40
+    },
+    "uniqueEffects": [
+      "Bleeding Damage increased by 40%"
+    ]
+  }
+]
