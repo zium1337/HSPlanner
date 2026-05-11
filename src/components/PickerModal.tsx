@@ -96,15 +96,14 @@ export default function PickerModal({
   const filter = q.trim().toLowerCase()
   const filteredRows = useMemo(() => {
     if (!filter) return rows
-    return rows.filter((r) => {
-      if (r.name.toLowerCase().includes(filter)) return true
-      if (typeof r.meta === 'string' && r.meta.toLowerCase().includes(filter))
-        return true
-      if (r.kindLabel?.toLowerCase().includes(filter)) return true
-      if (r.group?.toLowerCase().includes(filter)) return true
-      if (r.searchTerms?.toLowerCase().includes(filter)) return true
-      return false
-    })
+    return rows.filter(
+      (r) =>
+        r.name.toLowerCase().includes(filter) ||
+        (typeof r.meta === 'string' && r.meta.toLowerCase().includes(filter)) ||
+        (r.kindLabel?.toLowerCase().includes(filter) ?? false) ||
+        (r.group?.toLowerCase().includes(filter) ?? false) ||
+        (r.searchTerms?.toLowerCase().includes(filter) ?? false),
+    )
   }, [rows, filter])
 
   const groupedRows = useMemo(() => {
@@ -160,7 +159,7 @@ export default function PickerModal({
           ref={dialogRef}
           role="dialog"
           aria-modal="true"
-          className="relative flex h-[88vh] flex-col overflow-hidden rounded-[6px] border border-border"
+          className="relative flex h-[88vh] flex-col overflow-hidden rounded-md border border-border"
           style={{
             width,
             background:
@@ -248,7 +247,7 @@ export default function PickerModal({
                 <div key={g.group ?? `__${gi}`}>
                   {hasGroupHeaders && g.group && (
                     <div
-                      className="sticky top-0 z-[1] flex items-center gap-2 border-b border-accent-deep/30 px-4 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70"
+                      className="sticky top-0 z-1 flex items-center gap-2 border-b border-accent-deep/30 px-4 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70"
                       style={{
                         background: 'var(--color-panel-2)',
                       }}
@@ -298,13 +297,13 @@ export default function PickerModal({
                             : 'cursor-pointer hover:bg-accent-hot/5'
                         } ${
                           selected
-                            ? 'bg-gradient-to-r from-accent-hot/10 to-transparent'
+                            ? 'bg-linear-to-r from-accent-hot/10 to-transparent'
                             : ''
                         }`}
                         style={{ gridTemplateColumns: cols }}
                       >
                         <span
-                          className={`pointer-events-none absolute left-0 top-0 bottom-0 w-[2px] bg-accent-hot transition-opacity ${
+                          className={`pointer-events-none absolute left-0 top-0 bottom-0 w-0.5 bg-accent-hot transition-opacity ${
                             selected
                               ? 'opacity-100'
                               : 'opacity-0 group-hover:opacity-60'
@@ -346,7 +345,7 @@ export default function PickerModal({
                         </span>
                         {showTierBadge && (
                           <span
-                            className={`w-max rounded-[2px] border px-2 py-0.5 text-center font-mono text-[11px] font-semibold tracking-[0.06em] ${tierClass}`}
+                            className={`w-max rounded-xs border px-2 py-0.5 text-center font-mono text-[11px] font-semibold tracking-[0.06em] ${tierClass}`}
                             style={{
                               background:
                                 'linear-gradient(180deg, #3a2e18, #2a2418)',
@@ -358,7 +357,7 @@ export default function PickerModal({
                         <span
                           className={`truncate font-mono text-[10px] tracking-[0.02em] text-muted ${
                             typeof r.meta === 'string' && r.meta === '—'
-                              ? 'italic text-faint tracking-[0.1em]'
+                              ? 'italic text-faint tracking-widest'
                               : ''
                           }`}
                         >
@@ -488,7 +487,7 @@ function FallbackIcon({
   )
 }
 
-function CornerMarks() {
+export function CornerMarks() {
   const base: React.CSSProperties = {
     position: 'absolute',
     width: 10,

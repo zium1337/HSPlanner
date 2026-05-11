@@ -39,7 +39,7 @@ import {
 } from '../utils/shareBuild'
 
 export { defaultEnemyResistances, DEFAULT_ENEMY_RESISTANCE_PCT }
-import { findPath, reachableFromAny, START_IDS } from '../utils/treeGraph'
+import { ADJ, findPath, reachableFromAny, START_IDS } from '../utils/treeGraph'
 
 type AttrMap = Record<AttributeKey, number>
 
@@ -80,6 +80,7 @@ interface BuildActions {
   resetAttrs: () => void
   equipItem: (slot: SlotKey, baseId: string) => void
   unequipItem: (slot: SlotKey) => void
+  replaceEquippedItem: (slot: SlotKey, equipped: EquippedItem) => void
   setSocketCount: (slot: SlotKey, count: number) => void
   setSocketed: (slot: SlotKey, idx: number, socketableId: string | null) => void
   setSocketType: (slot: SlotKey, idx: number, type: SocketType) => void
@@ -100,6 +101,7 @@ interface BuildActions {
   decSkillRank: (skillId: string) => void
   resetSkillRanks: () => void
   toggleTreeNode: (nodeId: number) => void
+  applySuggestedNodes: (ids: Iterable<number>) => void
   resetTreeNodes: () => void
   setTreeSocketed: (nodeId: number, content: TreeSocketContent | null) => void
   setMainSkill: (skillId: string | null) => void
@@ -314,6 +316,26 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       return { allocatedTreeNodes: next }
     }),
 
+  applySuggestedNodes: (ids) =>
+    set((s) => {
+      // Bulk-allocates a pre-validated set of tree node ids (typically produced by `suggestNodes`). Only includes the START_IDS that are actually adjacent to (or contained in) the union — historically the modal pulled in all 8 starts which polluted the allocation with unused class entry points. Used by the Suggest Nodes modal to apply an algorithmic recommendation, then prunes anything that became unreachable as a safety net.
+      const next = new Set(s.allocatedTreeNodes)
+      for (const id of ids) next.add(id)
+      for (const sid of START_IDS) {
+        if (next.has(sid)) continue
+        const nbrs = ADJ.get(sid)
+        if (!nbrs) continue
+        for (const nb of nbrs) {
+          if (next.has(nb)) {
+            next.add(sid)
+            break
+          }
+        }
+      }
+      const reachable = reachableFromAny(START_IDS, next)
+      return { allocatedTreeNodes: reachable }
+    }),
+
   resetTreeNodes: () => set({ allocatedTreeNodes: new Set<number>(), treeSocketed: {} }),
   // Clears every allocated talent-tree node and any tree-socket content. Used by TreeView's reset button.
 
@@ -510,6 +532,13 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       const next = { ...s.inventory }
       delete next[slot]
       return { inventory: next }
+    })
+  },
+
+  replaceEquippedItem: (slot, equipped) => {
+    set((s) => {
+      if (!getItem(equipped.baseId)) return s
+      return { inventory: { ...s.inventory, [slot]: equipped } }
     })
   },
 

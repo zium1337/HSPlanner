@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import SourceTooltip from '../components/SourceTooltip'
 import { classes, gameConfig, skills } from '../data'
+import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { computeBuildStatsAsync } from '../lib/calc/bridge'
 import { useBuild } from '../store/build'
 import {
   aggregateItemSkillBonuses,
   combineAdditiveAndMore,
-  computeBuildStats,
   computeSkillDamage,
   computeWeaponDamage,
   effectiveCap,
@@ -19,6 +20,7 @@ import {
   statName,
 } from '../utils/stats'
 import type {
+  ComputedStats,
   SkillDamageBreakdown,
   SourceContribution,
   WeaponDamageBreakdown,
@@ -166,20 +168,11 @@ export default function StatsView() {
   // Stats tab matching the "Stats View Mockup": page head with filter chips, hero build summary, search box, attributes strip, weapon damage hero with breakdown, per-skill cards (main skill highlighted in gold), and a 2-column Defensive / Resources grid. All stat math reuses computeBuildStats / computeWeaponDamage / computeSkillDamage from utils.
   const {
     classId,
-    level,
-    allocated,
     inventory,
     skillRanks,
-    subskillRanks,
-    activeAuraId,
-    activeBuffs,
     enemyConditions,
-    playerConditions,
     skillProjectiles,
     enemyResistances,
-    customStats,
-    allocatedTreeNodes,
-    treeSocketed,
     mainSkillId: storeMainSkillId,
   } = useBuild()
   const [query, setQuery] = useState('')
@@ -188,39 +181,25 @@ export default function StatsView() {
   const matches = (label: string) =>
     normalizedQuery.length > 0 &&
     label.toLowerCase().includes(normalizedQuery)
-  const { attributes, stats, attributeSources, statSources } = useMemo(
-    () =>
-      computeBuildStats({
-        classId,
-        level,
-        allocated,
-        inventory,
-        skillRanks,
-        activeAuraId,
-        activeBuffs,
-        customStats,
-        allocatedTreeNodes,
-        treeSocketed,
-        playerConditions,
-        subskillRanks,
-        enemyConditions,
-      }),
-    [
-      classId,
-      level,
-      allocated,
-      inventory,
-      skillRanks,
-      activeAuraId,
-      activeBuffs,
-      customStats,
-      allocatedTreeNodes,
-      treeSocketed,
-      playerConditions,
-      subskillRanks,
-      enemyConditions,
-    ],
+  const buildDeps = useBuildPerformanceDeps()
+  const [computed, setComputed] = useState<ComputedStats | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    computeBuildStatsAsync(buildDeps).then((c) => {
+      if (!cancelled) setComputed(c)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [buildDeps])
+  // Memoise the fallback so downstream useMemo deps don't see a fresh {} each render.
+  const attributes = useMemo(() => computed?.attributes ?? {}, [computed])
+  const stats = useMemo(() => computed?.stats ?? {}, [computed])
+  const attributeSources = useMemo(
+    () => computed?.attributeSources ?? {},
+    [computed],
   )
+  const statSources = useMemo(() => computed?.statSources ?? {}, [computed])
   const fcrRange = stats.faster_cast_rate ?? 0
   const mcrRange = stats.mana_cost_reduction ?? 0
   const itemSkillBonuses = useMemo(

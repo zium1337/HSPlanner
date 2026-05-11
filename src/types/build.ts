@@ -6,6 +6,7 @@ export interface EquippedAffix {
   affixId: string
   tier: number
   roll: number
+  customValue?: number
 }
 
 export interface TreeSocketEquipped {
@@ -32,6 +33,7 @@ export interface EquippedItem {
   stars?: number
   forgedMods?: EquippedAffix[]
   augment?: { id: string; level: number }
+  implicitOverrides?: Record<string, number>
 }
 
 export type Inventory = Partial<Record<SlotKey, EquippedItem>>

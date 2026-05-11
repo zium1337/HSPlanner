@@ -1,4 +1,5 @@
-mod damage;
+pub mod calc;
+mod suggest_engine;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -18,8 +19,12 @@ pub fn run() {
       Ok(())
     })
     .invoke_handler(tauri::generate_handler![
-      damage::compute_skill_damage,
-      damage::compute_weapon_damage,
+      calc::commands::compute_skill_damage,
+      calc::commands::compute_weapon_damage,
+      calc::commands::calc_build_performance,
+      calc::commands::calc_build_stats,
+      calc::commands::calc_warmup,
+      suggest_engine::command::suggest_tree_nodes,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

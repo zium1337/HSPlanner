@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import BottomBar from "./components/BottomBar";
 import BuildsMenu from "./components/BuildsMenu";
 import LeftStatsPanel from "./components/LeftStatsPanel";
@@ -6,6 +7,7 @@ import Logo from "./components/Logo";
 import ShareButton from "./components/ShareButton";
 import { classes, getClass } from "./data";
 import { useBuild } from "./store/build";
+import { preloadSprites } from "./utils/preloadAssets";
 import { readStorageWithLegacy, writeStorage } from "./utils/storage";
 import CharacterView from "./views/CharacterView";
 import ConfigView from "./views/ConfigView";
@@ -14,6 +16,13 @@ import NotesView from "./views/NotesView";
 import SkillsView from "./views/SkillsView";
 import StatsView from "./views/StatsView";
 import TreeView from "./views/TreeView";
+
+declare global {
+  interface Window {
+    __bootProgress?: (pct: number, status?: string) => void;
+    __bootFinish?: () => void;
+  }
+}
 
 const SECTIONS = [
   { id: "character", label: "Character", view: CharacterView },
@@ -32,15 +41,70 @@ const LEGACY_SECTION_KEY = "heroplanner.activeSection.v1";
 const SECTION_IDS = new Set<Section>(SECTIONS.map((s) => s.id));
 
 function readInitialSection(): Section {
-  // Reads the previously-active app section from localStorage (with the legacy "heroplanner" key fallback) and validates it against the known section ids, defaulting to "tree". Used to seed the App component so the user lands on the same tab they left.
+  // Try the new key first, then the old "heroplanner" one (renamed at 0.4.x).
   const stored = readStorageWithLegacy(SECTION_KEY, LEGACY_SECTION_KEY);
   if (stored && SECTION_IDS.has(stored as Section)) return stored as Section;
   return "tree";
 }
 
+// Splits the progress bar in half: 0–50% for the Rust warm-up, 50–100% for
+// the sprite fetches. Roughly matches how long each phase actually takes.
+const WARMUP_WEIGHT = 0.5;
+const SPRITES_WEIGHT = 0.5;
+
 function App() {
-  // Top-level shell that hosts the navigation header (section tabs, class/level controls, ProfileSwitcher, BuildsMenu, ShareButton), the persistent LeftStatsPanel, the active section view, and the BottomBar. Persists the active section to localStorage and binds Ctrl/Cmd+F to focus the search input on Tree/Stats views.
   const [section, setSection] = useState<Section>(readInitialSection);
+
+  // Boot: warm up the Rust calc caches and preload every sprite while the
+  // HTML splash from index.html is visible. The splash listens for these
+  // updates via window.__bootProgress / window.__bootFinish.
+  useEffect(() => {
+    // Keep the splash up for at least this long even if everything finishes
+    // instantly (otherwise it looks like a quick flash on hot reload).
+    const MIN_DISPLAY_MS = 1200;
+    let cancelled = false;
+    const bootStart = performance.now();
+
+    const report = (pct: number, status?: string) => {
+      window.__bootProgress?.(pct, status);
+    };
+
+    (async () => {
+      report(2, "Loading game data");
+      try {
+        // Forces the Rust side to initialise its data + parser caches, so the
+        // first real calc isn't slow.
+        await invoke<boolean>("calc_warmup");
+      } catch {
+        // Probably running in a plain browser (no Tauri) — just keep going.
+      }
+      if (cancelled) return;
+      report(WARMUP_WEIGHT * 100, "Loading sprites");
+
+      await preloadSprites((loaded, total) => {
+        if (cancelled) return;
+        const fraction = total > 0 ? loaded / total : 1;
+        report(
+          (WARMUP_WEIGHT + SPRITES_WEIGHT * fraction) * 100,
+          "Loading sprites",
+        );
+      });
+      if (cancelled) return;
+      report(100, "Ready");
+
+      // Wait out the rest of MIN_DISPLAY_MS so the splash isn't gone in 200 ms.
+      const elapsed = performance.now() - bootStart;
+      const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
+      if (remaining > 0) {
+        await new Promise((r) => window.setTimeout(r, remaining));
+      }
+      if (cancelled) return;
+      window.__bootFinish?.();
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     writeStorage(SECTION_KEY, section);

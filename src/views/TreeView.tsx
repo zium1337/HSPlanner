@@ -13,27 +13,24 @@ import treeData from '../data/hero-siege-tree.json'
 import { getAffix, getGem, getRune } from '../data'
 import { useBuild } from '../store/build'
 import {
-  computeBuildPerformance,
-  diffPerformanceDps,
-  diffPerformanceStats,
-  type BuildPerformance,
-} from '../utils/buildPerformance'
-import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
-import NetChangeRow from '../components/NetChangeRow'
-import {
   ADJ,
   findPath,
   reachableFromAny,
   START_IDS,
   START_SET,
 } from '../utils/treeGraph'
+import { formatValue, rolledAffixValue, statName } from '../utils/stats'
 import {
-  formatValue,
-  rolledAffixValue,
-  statName,
-} from '../utils/stats'
+  diffPerformanceDps,
+  diffPerformanceStats,
+  type BuildPerformance,
+} from '../utils/buildPerformance'
+import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
+import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import NetChangeRow from '../components/NetChangeRow'
 import type { TreeSocketContent } from '../types'
 import JewelSocketModal from '../components/JewelSocketModal'
+import SuggestNodesModal from '../components/SuggestNodesModal'
 import {
   TooltipHeader,
   TooltipSection,
@@ -180,16 +177,28 @@ export default function TreeView() {
   const allocated = useBuild((s) => s.allocatedTreeNodes)
   const toggleNode = useBuild((s) => s.toggleTreeNode)
   const resetTree = useBuild((s) => s.resetTreeNodes)
+  const applySuggestedNodes = useBuild((s) => s.applySuggestedNodes)
   const treeSocketed = useBuild((s) => s.treeSocketed)
   const setTreeSocketed = useBuild((s) => s.setTreeSocketed)
   const [socketModalNodeId, setSocketModalNodeId] = useState<number | null>(null)
+  const [suggestOpen, setSuggestOpen] = useState(false)
+  const [suggestedPreview, setSuggestedPreview] = useState<Set<number> | null>(
+    null,
+  )
 
   const treeDeps = useBuildPerformanceDeps()
 
-  const currentPerformance = useMemo<BuildPerformance>(
-    () => computeBuildPerformance(treeDeps),
-    [treeDeps],
-  )
+  const [currentPerformance, setCurrentPerformance] =
+    useState<BuildPerformance | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    computeBuildPerformanceAsync(treeDeps).then((p) => {
+      if (!cancelled) setCurrentPerformance(p)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [treeDeps])
 
   const [scale, setScale] = useState(0.35)
   const [tx, setTx] = useState(0)
@@ -311,16 +320,25 @@ export default function TreeView() {
     return next
   }, [hoverId, allocated, previewPath])
 
-  const previewPerformance = useMemo<BuildPerformance | null>(
-    () =>
-      previewAllocation
-        ? computeBuildPerformance({
-            ...treeDeps,
-            allocatedTreeNodes: previewAllocation,
-          })
-        : null,
-    [previewAllocation, treeDeps],
-  )
+  const [previewPerformance, setPreviewPerformance] =
+    useState<BuildPerformance | null>(null)
+  useEffect(() => {
+    if (!previewAllocation) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPreviewPerformance(null)
+      return
+    }
+    let cancelled = false
+    computeBuildPerformanceAsync({
+      ...treeDeps,
+      allocatedTreeNodes: previewAllocation,
+    }).then((p) => {
+      if (!cancelled) setPreviewPerformance(p)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [previewAllocation, treeDeps])
 
   // Toggles only the hovered node — used by the "this node alone" sub-section, separate from the path-aware previewAllocation. Clicking never produces this exact allocation, but it's the right mental model for evaluating a destination's standalone value.
   const singleNodeAllocation = useMemo<Set<number> | null>(() => {
@@ -331,16 +349,25 @@ export default function TreeView() {
     return next
   }, [hoverId, allocated])
 
-  const singleNodePerformance = useMemo<BuildPerformance | null>(
-    () =>
-      singleNodeAllocation
-        ? computeBuildPerformance({
-            ...treeDeps,
-            allocatedTreeNodes: singleNodeAllocation,
-          })
-        : null,
-    [singleNodeAllocation, treeDeps],
-  )
+  const [singleNodePerformance, setSingleNodePerformance] =
+    useState<BuildPerformance | null>(null)
+  useEffect(() => {
+    if (!singleNodeAllocation) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSingleNodePerformance(null)
+      return
+    }
+    let cancelled = false
+    computeBuildPerformanceAsync({
+      ...treeDeps,
+      allocatedTreeNodes: singleNodeAllocation,
+    }).then((p) => {
+      if (!cancelled) setSingleNodePerformance(p)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [singleNodeAllocation, treeDeps])
 
   const previewAddedCount = useMemo(() => {
     if (!previewAllocation) return 0
@@ -490,6 +517,47 @@ export default function TreeView() {
     ))
   }, [searchMatches])
 
+  const suggestedOverlay = useMemo(() => {
+    if (!suggestedPreview || suggestedPreview.size === 0) return null
+    return NODES.filter((n) => suggestedPreview.has(n.id)).map((n) => (
+      <g key={`suggest-${n.id}`}>
+        <circle
+          cx={n.x}
+          cy={n.y}
+          r={n.r + 6}
+          fill="none"
+          stroke="#7fd966"
+          strokeWidth={2.5}
+          opacity={0.85}
+          style={{ filter: 'drop-shadow(0 0 6px rgba(127,217,102,0.55))' }}
+        />
+        <circle
+          cx={n.x}
+          cy={n.y}
+          r={n.r}
+          fill="rgba(127,217,102,0.18)"
+          stroke="#7fd966"
+          strokeWidth={1.5}
+          pointerEvents="none"
+        />
+      </g>
+    ))
+  }, [suggestedPreview])
+
+  const suggestedEdgeKeys = useMemo(() => {
+    if (!suggestedPreview || suggestedPreview.size === 0) return null
+    const keys = new Set<string>()
+    const union = new Set<number>([...allocated, ...suggestedPreview])
+    for (const id of union) {
+      for (const nb of ADJ.get(id) ?? []) {
+        if (!union.has(nb)) continue
+        if (!suggestedPreview.has(id) && !suggestedPreview.has(nb)) continue
+        keys.add(id < nb ? `${id}-${nb}` : `${nb}-${id}`)
+      }
+    }
+    return keys
+  }, [suggestedPreview, allocated])
+
   const allocatedEdgeKeys = useMemo(() => {
     const keys = new Set<string>()
     for (const id of allocated) {
@@ -501,41 +569,6 @@ export default function TreeView() {
     }
     return keys
   }, [allocated])
-
-  const edgeLines = useMemo(
-    () =>
-      EDGES.map(([x1, y1, x2, y2], i) => {
-        let stroke = '#2a2f3a'
-        let strokeWidth = 1.5
-        const ka = `${Math.round(x1 * 10)}_${Math.round(y1 * 10)}`
-        const kb = `${Math.round(x2 * 10)}_${Math.round(y2 * 10)}`
-        const idA = POS_ID_MAP.get(ka)
-        const idB = POS_ID_MAP.get(kb)
-        if (idA != null && idB != null) {
-          if (TREE_WARP_IDS.has(idA) && TREE_WARP_IDS.has(idB)) return null
-          const key = idA < idB ? `${idA}-${idB}` : `${idB}-${idA}`
-          if (allocatedEdgeKeys.has(key)) {
-            stroke = '#c48a3a'
-            strokeWidth = 2.5
-          } else if (previewEdgeKeys?.has(key)) {
-            stroke = '#8a6a2a'
-            strokeWidth = 2
-          }
-        }
-        return (
-          <line
-            key={i}
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
-            stroke={stroke}
-            strokeWidth={strokeWidth}
-          />
-        )
-      }),
-    [allocatedEdgeKeys, previewEdgeKeys],
-  )
 
   return (
     <div className="relative h-full" style={{ backgroundColor: '#0a0b0f' }}>
@@ -569,10 +602,49 @@ export default function TreeView() {
           viewBox={`0 0 ${viewportSize.w} ${viewportSize.h}`}
         >
           <g transform={`translate(${tx} ${ty}) scale(${scale})`}>
-            <g>{edgeLines}</g>
+            <g>
+              {EDGES.map(([x1, y1, x2, y2], i) => {
+                let stroke = '#2a2f3a'
+                let strokeWidth = 1.5
+                const ka = `${Math.round(x1 * 10)}_${Math.round(y1 * 10)}`
+                const kb = `${Math.round(x2 * 10)}_${Math.round(y2 * 10)}`
+                const idA = POS_ID_MAP.get(ka)
+                const idB = POS_ID_MAP.get(kb)
+                if (idA != null && idB != null) {
+                  if (TREE_WARP_IDS.has(idA) && TREE_WARP_IDS.has(idB)) return null
+                  const key = idA < idB ? `${idA}-${idB}` : `${idB}-${idA}`
+                  if (allocatedEdgeKeys.has(key)) {
+                    stroke = '#c48a3a'
+                    strokeWidth = 2.5
+                  } else if (suggestedEdgeKeys?.has(key)) {
+                    stroke = '#5fa84a'
+                    strokeWidth = 2.5
+                  } else if (previewEdgeKeys?.has(key)) {
+                    stroke = '#8a6a2a'
+                    strokeWidth = 2
+                  }
+                }
+                return (
+                  <line
+                    key={i}
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    stroke={stroke}
+                    strokeWidth={strokeWidth}
+                  />
+                )
+              })}
+            </g>
             <g style={{ opacity: searchMatches ? 0.25 : 1 }}>{nodeCircles}</g>
             {previewOverlay && (
               <g style={{ opacity: searchMatches ? 0.25 : 1 }}>{previewOverlay}</g>
+            )}
+            {suggestedOverlay && (
+              <g style={{ opacity: searchMatches ? 0.35 : 1 }}>
+                {suggestedOverlay}
+              </g>
             )}
             <g pointerEvents="none" style={{ opacity: searchMatches ? 0.25 : 1 }}>
               {NODE_ICONS.map((icon) => {
@@ -648,6 +720,13 @@ export default function TreeView() {
           )}
         </div>
         <button
+          onClick={() => setSuggestOpen(true)}
+          className="pointer-events-auto rounded-[3px] border border-accent-deep bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot hover:shadow-[0_0_12px_rgba(224,184,100,0.25)]"
+          style={{ background: 'linear-gradient(180deg, #2a2418, #1a1410)' }}
+        >
+          Suggest
+        </button>
+        <button
           onClick={fitView}
           className="pointer-events-auto rounded-[3px] border border-border-2 bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
         >
@@ -708,7 +787,7 @@ export default function TreeView() {
         )}
       </div>
 
-      {hoverNode && hoverPos && !dragging &&
+      {hoverNode && hoverPos && !dragging && currentPerformance &&
         createPortal(
           <NodeTooltip
             key={hoverNode.id}
@@ -738,6 +817,19 @@ export default function TreeView() {
           onClose={() => setSocketModalNodeId(null)}
           onApply={(content) => {
             setTreeSocketed(socketModalNodeId, content)
+          }}
+        />
+      )}
+
+      {suggestOpen && (
+        <SuggestNodesModal
+          currentAllocation={allocated}
+          deps={treeDeps}
+          onPreviewChange={setSuggestedPreview}
+          onApply={(nodes) => applySuggestedNodes(nodes)}
+          onClose={() => {
+            setSuggestOpen(false)
+            setSuggestedPreview(null)
           }}
         />
       )}
@@ -1040,7 +1132,6 @@ function NodeTooltip({
     </div>
   )
 }
-
 
 function JewelrySocketSection({
   content,

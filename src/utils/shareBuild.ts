@@ -63,6 +63,7 @@ const equippedAffixSchema = z.object({
   affixId: SAFE_STRING,
   tier: FINITE_NUMBER,
   roll: FINITE_NUMBER,
+  customValue: FINITE_NUMBER.optional(),
 })
 
 const treeSocketContentSchema = z.discriminatedUnion('kind', [
@@ -91,6 +92,12 @@ const equippedItemSchema = z
     forgedMods: z.array(equippedAffixSchema).max(MAX_AFFIXES_PER_ITEM).optional(),
     augment: z
       .object({ id: SAFE_STRING, level: FINITE_NUMBER })
+      .optional(),
+    implicitOverrides: z
+      .record(SAFE_STRING, FINITE_NUMBER)
+      .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
+        message: 'too many implicit overrides',
+      })
       .optional(),
   })
   .passthrough()

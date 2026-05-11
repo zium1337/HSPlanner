@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { gameConfig, getClass, getSkillsByClass } from "../data";
 import { isImageUrl } from "../utils/icon";
 import {
@@ -18,7 +18,8 @@ import {
   rangedMin,
   statDef,
 } from "../utils/stats";
-import { computeBuildPerformance } from "../utils/buildPerformance";
+import { computeBuildPerformanceAsync } from "../lib/calc/bridge";
+import type { BuildPerformance } from "../utils/buildPerformance";
 import { useBuildPerformanceDeps } from "../hooks/useBuildPerformanceDeps";
 import type { RangedValue } from "../types";
 
@@ -106,19 +107,23 @@ export default function LeftStatsPanel() {
   const setActiveAura = useBuild((s) => s.setActiveAura);
 
   const buildDeps = useBuildPerformanceDeps();
-  const performance = useMemo(
-    () => computeBuildPerformance(buildDeps),
-    [buildDeps],
-  );
-  const {
-    attributes,
-    stats,
-    damage,
-    hitDpsMin,
-    hitDpsMax,
-    combinedDpsMin,
-    combinedDpsMax,
-  } = performance;
+  const [performance, setPerformance] = useState<BuildPerformance | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    computeBuildPerformanceAsync(buildDeps).then((p) => {
+      if (!cancelled) setPerformance(p);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [buildDeps]);
+  const attributes = performance?.attributes ?? {};
+  const stats = performance?.stats ?? {};
+  const damage = performance?.damage ?? null;
+  const hitDpsMin = performance?.hitDpsMin;
+  const hitDpsMax = performance?.hitDpsMax;
+  const combinedDpsMin = performance?.combinedDpsMin;
+  const combinedDpsMax = performance?.combinedDpsMax;
 
   const cls = classId ? getClass(classId) : undefined;
   const attrSpent = Object.values(allocated).reduce((s, v) => s + v, 0);

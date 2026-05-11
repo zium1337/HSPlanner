@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { resolveSkillIcon } from '../data'
 import { SUBTREE_TEMPLATE, getTemplateEdges } from '../data/subtree-template'
 import {
@@ -9,11 +9,11 @@ import {
 import type { Skill, SubskillNode } from '../types'
 import { statDef, statName } from '../utils/stats'
 import {
-  computeBuildPerformance,
   diffPerformanceDps,
   diffPerformanceStats,
   type BuildPerformance,
 } from '../utils/buildPerformance'
+import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import NetChangeRow from './NetChangeRow'
 
@@ -58,10 +58,17 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
 
   const buildDeps = useBuildPerformanceDeps()
 
-  const currentPerformance = useMemo<BuildPerformance>(
-    () => computeBuildPerformance(buildDeps),
-    [buildDeps],
-  )
+  const [currentPerformance, setCurrentPerformance] =
+    useState<BuildPerformance | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    computeBuildPerformanceAsync(buildDeps).then((p) => {
+      if (!cancelled) setCurrentPerformance(p)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [buildDeps])
 
   const totalPoints = subskillPointsFor(level)
   const spent = useMemo(
@@ -92,16 +99,32 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
     isKeystone: boolean
   } | null>(null)
 
-  const previewPerformance = useMemo<BuildPerformance | null>(() => {
-    if (!hover) return null
+  const [previewPerformance, setPreviewPerformance] =
+    useState<BuildPerformance | null>(null)
+  useEffect(() => {
+    if (!hover) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPreviewPerformance(null)
+      return
+    }
     const key = subskillKey(skill.id, hover.sub.id)
     const currentRank = subskillRanks[key] ?? 0
-    if (currentRank >= hover.sub.maxRank) return null
+    if (currentRank >= hover.sub.maxRank) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPreviewPerformance(null)
+      return
+    }
     const previewRanks = { ...subskillRanks, [key]: currentRank + 1 }
-    return computeBuildPerformance({
+    let cancelled = false
+    computeBuildPerformanceAsync({
       ...buildDeps,
       subskillRanks: previewRanks,
+    }).then((p) => {
+      if (!cancelled) setPreviewPerformance(p)
     })
+    return () => {
+      cancelled = true
+    }
   }, [hover, skill.id, subskillRanks, buildDeps])
 
   const skillIcon = !skill.icon || skill.icon.startsWith('http') ? '✦' : skill.icon
@@ -118,7 +141,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-[4px] border border-border"
+        className="relative flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-sm border border-border"
         style={{
           background:
             'linear-gradient(180deg, var(--color-panel-2), var(--color-bg))',
@@ -179,13 +202,13 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
             </div>
             <button
               onClick={() => resetSubskillsFor(skill.id)}
-              className="rounded-[2px] border border-border-2 bg-transparent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+              className="rounded-xs border border-border-2 bg-transparent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
             >
               Reset
             </button>
             <button
               onClick={onClose}
-              className="rounded-[2px] border border-accent-deep px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot"
+              className="rounded-xs border border-accent-deep px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot"
               style={{
                 background: 'linear-gradient(180deg, #3a2f1a, #2a2418)',
               }}
@@ -286,8 +309,8 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                 const allocated = rank > 0
 
                 let fill = 'url(#hsplanner-node-fill)'
-                let stroke = '#363742'
-                let strokeWidth = 1.5
+                let stroke: string
+                let strokeWidth: number
                 let glow: string | undefined
 
                 if (isRoot) {
@@ -444,7 +467,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
           )}
         </div>
       </div>
-      {hover && (
+      {hover && currentPerformance && (
         <SubskillTooltip
           sub={hover.sub}
           rank={subskillRanks[subskillKey(skill.id, hover.sub.id)] ?? 0}
@@ -589,7 +612,7 @@ function SubskillTooltip({
 
   return (
     <div
-      className={`pointer-events-none fixed z-[60] ${netChangeVisible ? 'w-96' : 'w-72'} overflow-hidden rounded-[4px] border border-border`}
+      className={`pointer-events-none fixed z-60 ${netChangeVisible ? 'w-96' : 'w-72'} overflow-hidden rounded-sm border border-border`}
       style={{
         left: x + 18,
         top: y + 18,

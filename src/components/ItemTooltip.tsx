@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import {
   detectRuneword,
@@ -14,26 +14,27 @@ import {
   getRune,
   isGearSlot,
 } from '../data'
+import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
 import { BONUS_SOCKET_MOD_ID, RAINBOW_MULTIPLIER, useBuild } from '../store/build'
+import type { BuildPerformanceDeps } from '../utils/buildPerformance'
 import type {
-  CustomStat,
   EquippedItem,
-  Inventory,
   ItemBase,
   ItemGrantedSkill,
   ItemRarity,
+  RangedValue,
   SlotKey,
   StatMap,
-  TreeSocketContent,
 } from '../types'
 import {
   applyStarsToRangedValue,
-  computeBuildStats,
-  computeWeaponDamage,
+  formatAffixRange,
   formatValue,
   isZero,
   rangedMax,
   rangedMin,
+  rolledAffixValue,
   rolledAffixValueWithStars,
   shouldScaleImplicit,
   statName,
@@ -165,17 +166,28 @@ export function ItemTooltipBody({
     base.attackSpeed !== undefined
 
   const scaleImplicit = shouldScaleImplicit(!!runeword)
-  const implicitEntries = base.implicit
+  const implicitOverrides = equipped?.implicitOverrides
+  const baseImplicitEntries: Array<[string, RangedValue, boolean]> = base.implicit
     ? Object.entries(base.implicit)
-        .map(
-          ([k, v]) =>
-            [
-              k,
-              scaleImplicit ? applyStarsToRangedValue(v, k, stars) : v,
-            ] as [string, typeof v],
-        )
+        .map(([k, v]) => {
+          const override = implicitOverrides?.[k]
+          if (override !== undefined) {
+            return [k, override, true] as [string, RangedValue, boolean]
+          }
+          const scaled = scaleImplicit
+            ? applyStarsToRangedValue(v, k, stars)
+            : v
+          return [k, scaled, false] as [string, RangedValue, boolean]
+        })
         .filter(([, v]) => !isZero(v))
     : []
+  const extraImplicitEntries: Array<[string, RangedValue, boolean]> =
+    implicitOverrides
+      ? Object.entries(implicitOverrides)
+          .filter(([k]) => !base.implicit || !(k in base.implicit))
+          .map(([k, v]) => [k, v, true] as [string, RangedValue, boolean])
+      : []
+  const implicitEntries = [...baseImplicitEntries, ...extraImplicitEntries]
   const skillBonusEntries = base.skillBonuses
     ? Object.entries(base.skillBonuses)
     : []
@@ -285,9 +297,17 @@ export function ItemTooltipBody({
         <TooltipSection>
           <TooltipSectionHeader tone="gold">Implicit</TooltipSectionHeader>
           <ul className="space-y-0.5 text-[12px]">
-            {implicitEntries.map(([key, value]) => (
+            {implicitEntries.map(([key, value, isCustom]) => (
               <li key={`impl-${key}`} className="text-accent-hot">
                 {formatValue(value, key)} {statName(key)}
+                {isCustom && (
+                  <span
+                    className="ml-1 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot/70"
+                    title="Custom value (overrides base implicit)"
+                  >
+                    custom
+                  </span>
+                )}
               </li>
             ))}
             {skillBonusEntries.map(([skill, val]) => (
@@ -359,6 +379,7 @@ export function ItemTooltipBody({
         )
         const renderItem = ({
           idx,
+          eq,
           affix,
         }: (typeof indexed)[number]) => {
           if (!affix) return null
@@ -375,12 +396,25 @@ export function ItemTooltipBody({
             )
           }
           const descNoValue = affix.description
-            .replace(/^[+-]?\[?[^\]]*\]?%?\s*/, '')
+            .replace(/^[+-]?\[?[^\]]*]?%?\s*/, '')
             .replace(/\s+/g, ' ')
             .trim()
+          const valueDisplay =
+            eq.customValue !== undefined
+              ? formatValue(eq.customValue, affix.statKey)
+              : formatAffixRange(affix, equipped?.stars)
+          const customMark = eq.customValue !== undefined ? ' ✦' : ''
           return (
             <li key={idx} className={colorBase}>
-              {formatAffixRange(affix, equipped?.stars)} {descNoValue}
+              {valueDisplay} {descNoValue}
+              {customMark && (
+                <span
+                  className="ml-1 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot/70"
+                  title="Custom value (overrides tier+roll)"
+                >
+                  custom
+                </span>
+              )}
             </li>
           )
         }
@@ -564,12 +598,24 @@ function aggregateItemStats(
 
   if (base.implicit) {
     for (const [k, v] of Object.entries(base.implicit)) {
+      const override = equipped?.implicitOverrides?.[k]
+      if (override !== undefined) {
+        add(k, override)
+        continue
+      }
       const scaled = scaleImplicit ? applyStarsToRangedValue(v, k, stars) : v
       add(k, (rangedMin(scaled) + rangedMax(scaled)) / 2)
     }
   }
 
   if (!equipped) return out
+
+  if (equipped.implicitOverrides) {
+    for (const [k, v] of Object.entries(equipped.implicitOverrides)) {
+      if (base.implicit && k in base.implicit) continue
+      add(k, v)
+    }
+  }
 
   for (const eq of equipped.affixes) {
     const affix = getAffix(eq.affixId)
@@ -578,7 +624,21 @@ function aggregateItemStats(
     // delta (the range mid-point) instead of locking to whatever roll was
     // saved (the picker-modal default is `roll: 1`, which would otherwise
     // bias every comparison toward the maximum end of the range).
-    add(affix.statKey, rolledAffixValueWithStars(affix, 0.5, equipped.stars))
+    const value =
+      eq.customValue !== undefined
+        ? eq.customValue
+        : rolledAffixValueWithStars(affix, 0.5, equipped.stars)
+    add(affix.statKey, value)
+  }
+
+  for (const eq of equipped.forgedMods ?? []) {
+    const mod = getCrystalMod(eq.affixId)
+    if (!mod?.statKey) continue
+    const value =
+      eq.customValue !== undefined
+        ? eq.customValue
+        : rolledAffixValue(mod, 0.5)
+    add(mod.statKey, value)
   }
 
   if (runeword) {
@@ -614,7 +674,7 @@ function DiffRow({
   const arrow = direction === 'up' ? '▲' : '▼'
   return (
     <li className="flex items-baseline justify-between gap-2">
-      <span className="text-muted min-w-0 break-words leading-tight">
+      <span className="text-muted min-w-0 wrap-break-words leading-tight">
         {statName(diffKey)}
       </span>
       <span
@@ -637,21 +697,9 @@ function NetChangeSection({
   compareWith: EquippedItem
   slotKey?: SlotKey
 }) {
-  // Renders the per-item "Net Change" comparison block inside an item tooltip: green positives, red negatives, and an optional weapon DPS delta (with before/after numbers) computed by re-running the stats pipeline with the candidate item swapped in. Used by ItemCard's compare flow.
-  const classId = useBuild((s) => s.classId)
-  const level = useBuild((s) => s.level)
-  const allocated = useBuild((s) => s.allocated)
-  const inventory = useBuild((s) => s.inventory)
-  const skillRanks = useBuild((s) => s.skillRanks)
-  const subskillRanks = useBuild((s) => s.subskillRanks)
-  const activeAuraId = useBuild((s) => s.activeAuraId)
-  const activeBuffs = useBuild((s) => s.activeBuffs)
-  const enemyConditions = useBuild((s) => s.enemyConditions)
-  const playerConditions = useBuild((s) => s.playerConditions)
-  const customStats = useBuild((s) => s.customStats)
-  const allocatedTreeNodes = useBuild((s) => s.allocatedTreeNodes)
-  const treeSocketed = useBuild((s) => s.treeSocketed)
-
+  // Shows stat diffs (green up / red down) for the hovered vs equipped item,
+  // plus a DPS row if either is a weapon.
+  const baseDeps = useBuildPerformanceDeps()
   const beforeBase = getItem(compareWith.baseId)
 
   const diffs = useMemo(() => {
@@ -669,44 +717,22 @@ function NetChangeSection({
     return out
   }, [beforeBase, compareWith, base, equipped])
 
-  const dpsRow = useMemo(() => {
-    if (!slotKey) return null
-    return computeDpsDelta(
-      {
-        classId,
-        level,
-        allocated,
-        inventory,
-        skillRanks,
-        subskillRanks,
-        activeAuraId,
-        activeBuffs,
-        enemyConditions,
-        playerConditions,
-        customStats,
-        allocatedTreeNodes,
-        treeSocketed,
-      },
-      slotKey,
-      base,
-    )
-  }, [
-    slotKey,
-    base,
-    classId,
-    level,
-    allocated,
-    inventory,
-    skillRanks,
-    subskillRanks,
-    activeAuraId,
-    activeBuffs,
-    enemyConditions,
-    playerConditions,
-    customStats,
-    allocatedTreeNodes,
-    treeSocketed,
-  ])
+  const [dpsRow, setDpsRow] = useState<DpsRow | null>(null)
+
+  useEffect(() => {
+    if (!slotKey) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDpsRow(null)
+      return
+    }
+    let cancelled = false
+    computeDpsDeltaAsync(baseDeps, slotKey, base).then((row) => {
+      if (!cancelled) setDpsRow(row)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [slotKey, base, baseDeps])
 
   if (!beforeBase) return null
 
@@ -786,51 +812,21 @@ function formatDpsValue(n: number): string {
   return rounded.toLocaleString('en-US')
 }
 
-function computeDpsDelta(
-  state: {
-    classId: string | null
-    level: number
-    allocated: Record<string, number>
-    inventory: Inventory
-    skillRanks: Record<string, number>
-    subskillRanks: Record<string, number>
-    activeAuraId: string | null
-    activeBuffs: Record<string, boolean>
-    enemyConditions: Record<string, boolean>
-    playerConditions: Record<string, boolean>
-    customStats: CustomStat[]
-    allocatedTreeNodes: Set<number>
-    treeSocketed: Record<number, TreeSocketContent | null>
-  },
+interface DpsRow {
+  beforeAvg: number
+  afterAvg: number
+  diffAvg: number
+  hasWeapon: boolean
+}
+
+async function computeDpsDeltaAsync(
+  baseDeps: BuildPerformanceDeps,
   slotKey: SlotKey,
   prospectBase: ItemBase,
-): { beforeAvg: number; afterAvg: number; diffAvg: number; hasWeapon: boolean } | null {
-  // Re-runs `computeBuildStats` and `computeWeaponDamage` for both the current inventory and a hypothetical inventory with the prospect item swapped into `slotKey`, returning the average-DPS before/after deltas. Used by NetChangeSection to display weapon-DPS impact for upgrade comparisons.
-  const computeForInventory = (
-    inv: Inventory,
-  ): { avg: number; hasWeapon: boolean } => {
-    const built = computeBuildStats({
-      classId: state.classId,
-      level: state.level,
-      allocated: state.allocated,
-      inventory: inv,
-      skillRanks: state.skillRanks,
-      activeAuraId: state.activeAuraId,
-      activeBuffs: state.activeBuffs,
-      customStats: state.customStats,
-      allocatedTreeNodes: state.allocatedTreeNodes,
-      treeSocketed: state.treeSocketed,
-      playerConditions: state.playerConditions,
-      subskillRanks: state.subskillRanks,
-      enemyConditions: state.enemyConditions,
-    })
-    const dps = computeWeaponDamage(inv, built.stats, state.enemyConditions)
-    return {
-      avg: (dps.dpsMin + dps.dpsMax) / 2,
-      hasWeapon: dps.hasWeapon,
-    }
-  }
-
+): Promise<DpsRow | null> {
+  // Run two calcs in parallel: one for the current inventory, one for the
+  // inventory with the hovered item swapped into `slotKey`. The diff between
+  // the two hit-DPS numbers is what the tooltip's "DPS" row shows.
   const synthetic: EquippedItem = {
     baseId: prospectBase.id,
     affixes: [],
@@ -839,17 +835,31 @@ function computeDpsDelta(
     socketTypes: Array(prospectBase.sockets ?? 0).fill('normal'),
   }
 
-  const replaced: Inventory = { ...state.inventory, [slotKey]: synthetic }
+  const prospectDeps: BuildPerformanceDeps = {
+    ...baseDeps,
+    inventory: { ...baseDeps.inventory, [slotKey]: synthetic },
+  }
 
-  const before = computeForInventory(state.inventory)
-  const after = computeForInventory(replaced)
+  const [before, after] = await Promise.all([
+    computeBuildPerformanceAsync(baseDeps),
+    computeBuildPerformanceAsync(prospectDeps),
+  ])
 
-  if (!before.hasWeapon && !after.hasWeapon) return null
+  const avg = (lo: number | undefined, hi: number | undefined): number =>
+    lo !== undefined && hi !== undefined ? (lo + hi) / 2 : 0
+
+  const beforeHas = before.hitDpsMin !== undefined && before.hitDpsMax !== undefined
+  const afterHas = after.hitDpsMin !== undefined && after.hitDpsMax !== undefined
+
+  if (!beforeHas && !afterHas) return null
+
+  const beforeAvg = avg(before.hitDpsMin, before.hitDpsMax)
+  const afterAvg = avg(after.hitDpsMin, after.hitDpsMax)
   return {
-    beforeAvg: before.avg,
-    afterAvg: after.avg,
-    diffAvg: after.avg - before.avg,
-    hasWeapon: before.hasWeapon || after.hasWeapon,
+    beforeAvg,
+    afterAvg,
+    diffAvg: afterAvg - beforeAvg,
+    hasWeapon: beforeHas || afterHas,
   }
 }
 
@@ -878,7 +888,7 @@ export function ItemCard({
   if (!base) {
     return (
       <div
-        className={`relative bg-panel border border-dashed border-border rounded-[4px] ${stateClass} ${className ?? ''}`}
+        className={`relative bg-panel border border-dashed border-border rounded-sm ${stateClass} ${className ?? ''}`}
       >
         {state && arcLabel && (
           <div className="compare-arc" style={arcStyle('neutral')}>
@@ -897,7 +907,7 @@ export function ItemCard({
 
   return (
     <div
-      className={`relative bg-panel border ${TONE_BORDER[tone]} ${TONE_GLOW[tone]} rounded-[4px] ${overflow} ${stateClass} ${className ?? ''}`}
+      className={`relative bg-panel border ${TONE_BORDER[tone]} ${TONE_GLOW[tone]} rounded-sm ${overflow} ${stateClass} ${className ?? ''}`}
     >
       {state && arcLabel && (
         <div className="compare-arc" style={arcStyle(tone)}>
@@ -976,33 +986,6 @@ function collectSocketStats(
     }
   }
   return Object.entries(stats).filter(([, v]) => v !== 0)
-}
-
-function formatAffixRange(
-  affix: {
-    sign: '+' | '-'
-    format: 'flat' | 'percent'
-    valueMin: number | null
-    valueMax: number | null
-    statKey: string | null
-  },
-  stars?: number,
-): string {
-  // Formats a single affix's *full* roll window as a signed bracketed range string ("+[15-25]%", "+[12-18]", "+30") with the percent suffix when appropriate, applying the equipped item's star multiplier to both endpoints. Single-value affixes (min === max) drop the brackets and dash. Used by ItemTooltipBody to render each affix line as a min-max bracket instead of a single rolled value, matching the GearSlotModal's range display.
-  if (affix.valueMin === null || affix.valueMax === null) return affix.sign
-  const minSigned = rolledAffixValueWithStars(affix, 0, stars)
-  const maxSigned = rolledAffixValueWithStars(affix, 1, stars)
-  const fmtAbs = (v: number) => {
-    const abs = Math.abs(v)
-    return Number.isInteger(abs) ? abs : Math.round(abs * 100) / 100
-  }
-  const lo = fmtAbs(minSigned)
-  const hi = fmtAbs(maxSigned)
-  const sign =
-    affix.sign === '-' || minSigned < 0 || maxSigned < 0 ? '-' : '+'
-  const suffix = affix.format === 'percent' ? '%' : ''
-  if (lo === hi) return `${sign}${hi}${suffix}`
-  return `${sign}[${lo}-${hi}]${suffix}`
 }
 
 export { RARITY_TONE, RARITY_LABEL }

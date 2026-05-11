@@ -1,11 +1,12 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { SkillIconImage } from '../components/SkillIconImage'
 import SubtreeOverlay from '../components/SubtreeOverlay'
 import { classes, getClass, resolveSkillIcon, skills } from '../data'
+import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { computeBuildStatsAsync } from '../lib/calc/bridge'
 import { skillPointsFor, subskillKey, useBuild } from '../store/build'
 import {
   aggregateItemSkillBonuses,
-  computeBuildStats,
   formatValue,
   manaCostAtRank,
   normalizeSkillName,
@@ -14,6 +15,7 @@ import {
   rangedMin,
   statName,
 } from '../utils/stats'
+import type { ComputedStats } from '../utils/stats'
 import { aggregateSubskillStats } from '../utils/subtree'
 import type {
   AttributeKey,
@@ -53,9 +55,10 @@ export default function SkillsView() {
   const {
     classId,
     level,
-    allocated,
     inventory,
     skillRanks,
+    subskillRanks,
+    enemyConditions,
     incSkillRank,
     decSkillRank,
     resetSkillRanks,
@@ -77,47 +80,19 @@ export default function SkillsView() {
     [classId],
   )
 
-  const activeAuraId = useBuild((s) => s.activeAuraId)
-  const activeBuffs = useBuild((s) => s.activeBuffs)
-  const subskillRanks = useBuild((s) => s.subskillRanks)
-  const enemyConditions = useBuild((s) => s.enemyConditions)
-  const playerConditions = useBuild((s) => s.playerConditions)
-  const customStats = useBuild((s) => s.customStats)
-  const treeAllocated = useBuild((s) => s.allocatedTreeNodes)
-  const treeSocketed = useBuild((s) => s.treeSocketed)
-  const { stats, attributes } = useMemo(
-    () =>
-      computeBuildStats({
-        classId,
-        level,
-        allocated,
-        inventory,
-        skillRanks,
-        activeAuraId,
-        activeBuffs,
-        customStats,
-        allocatedTreeNodes: treeAllocated,
-        treeSocketed,
-        playerConditions,
-        subskillRanks,
-        enemyConditions,
-      }),
-    [
-      classId,
-      level,
-      allocated,
-      inventory,
-      skillRanks,
-      activeAuraId,
-      activeBuffs,
-      customStats,
-      treeAllocated,
-      treeSocketed,
-      playerConditions,
-      subskillRanks,
-      enemyConditions,
-    ],
-  )
+  const buildDeps = useBuildPerformanceDeps()
+  const [computed, setComputed] = useState<ComputedStats | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    computeBuildStatsAsync(buildDeps).then((c) => {
+      if (!cancelled) setComputed(c)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [buildDeps])
+  const stats = computed?.stats ?? {}
+  const attributes = computed?.attributes ?? {}
   const itemSkillBonuses = useMemo(
     () => aggregateItemSkillBonuses(inventory),
     [inventory],

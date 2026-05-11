@@ -1,5 +1,5 @@
 import { subskillKey } from '../store/build'
-import type { Skill, SubskillEffect, SubskillNode } from '../types'
+import type { Skill, SubskillEffect } from '../types'
 
 type StatMap = Record<string, number>
 
@@ -150,23 +150,3 @@ function isConditionActive(
   return !!enemyConditions[m[1]!]
 }
 
-export function sumSubskillRanks(
-  skill: Skill,
-  subskillRanks: Record<string, number>,
-): number {
-  // Returns the total number of points the player has allocated across every node in the supplied skill's subtree. Used by the SkillsView and budget logic to display and validate subtree spend.
-  let total = 0
-  for (const sub of skill.subskills ?? []) {
-    total += subskillRanks[subskillKey(skill.id, sub.id)] ?? 0
-  }
-  return total
-}
-
-export function hasAllocatedSubskill(
-  sub: SubskillNode,
-  skill: Skill,
-  subskillRanks: Record<string, number>,
-): boolean {
-  // Returns true when the player has put at least one point into the given subskill node. Used by the SubtreeOverlay/UI to decide whether a node should render in its allocated state and whether prerequisites are satisfied.
-  return (subskillRanks[subskillKey(skill.id, sub.id)] ?? 0) > 0
-}

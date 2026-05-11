@@ -5,6 +5,7 @@ import ItemTooltip, {
   ItemTooltipBody,
   RARITY_TONE,
 } from '../components/ItemTooltip'
+import ItemTextEditorModal from '../components/ItemTextEditorModal'
 import PickerModal, {
   type PickerPanelState,
   type PickerRow,
@@ -47,11 +48,11 @@ import {
   useBuild,
 } from '../store/build'
 import {
-  computeBuildPerformance,
   rangedBounds,
   type BuildPerformance,
   type BuildPerformanceDeps,
 } from '../utils/buildPerformance'
+import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import {
   fmtStats,
@@ -1294,12 +1295,12 @@ interface BuildSummary extends BuildPerformance {
 
 type BuildSummaryDeps = Omit<BuildPerformanceDeps, 'inventory'>
 
-function computeBuildSummary(
+async function computeBuildSummary(
   inventory: Inventory,
   slot: SlotKey,
   deps: BuildSummaryDeps,
-): BuildSummary {
-  const performance = computeBuildPerformance({ ...deps, inventory })
+): Promise<BuildSummary> {
+  const performance = await computeBuildPerformanceAsync({ ...deps, inventory })
   const equipped = inventory[slot]
   const base = equipped ? getItem(equipped.baseId) : null
   const baseSockets = base?.sockets ?? 0
@@ -1836,19 +1837,37 @@ function CompareColumn({
   slot: SlotKey
   deps: BuildSummaryDeps
 }) {
-  const beforeSummary = useMemo(
-    () => computeBuildSummary(baselineInventory, slot, deps),
-    [baselineInventory, slot, deps],
-  )
-  const afterSummary = useMemo(
-    () => computeBuildSummary(currentInventory, slot, deps),
-    [currentInventory, slot, deps],
-  )
+  const [summaries, setSummaries] = useState<{
+    before: BuildSummary
+    after: BuildSummary
+  } | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    Promise.all([
+      computeBuildSummary(baselineInventory, slot, deps),
+      computeBuildSummary(currentInventory, slot, deps),
+    ]).then(([before, after]) => {
+      if (!cancelled) setSummaries({ before, after })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [baselineInventory, currentInventory, slot, deps])
 
-  const verdict = useMemo(
-    () => computeVerdict(beforeSummary, afterSummary),
-    [beforeSummary, afterSummary],
-  )
+  if (!summaries) {
+    return (
+      <div className="flex w-150 min-w-0 shrink-0 flex-col items-center justify-center border-l border-border bg-black/15">
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+          Calculating compare…
+        </span>
+      </div>
+    )
+  }
+
+  const beforeSummary = summaries.before
+  const afterSummary = summaries.after
+
+  const verdict = computeVerdict(beforeSummary, afterSummary)
 
   const hitDps = hitDpsDiff(beforeSummary, afterSummary)
   const combinedDps = combinedDpsDiff(beforeSummary, afterSummary)
@@ -1971,6 +1990,8 @@ function GearSlotModal({
   // Full-screen slot editor that replaces the old aside EditPanel. The left column lists every item that fits this slot (grouped by rarity, searchable by name AND affix/effect text); the right column shows the live configuration of the equipped item (sockets, stars, affixes, forge mods, augment, runeword presets) or — when hovering a different item — a side-by-side compare overlay.
   const [q, setQ] = useState('')
   const [showCompareCol, setShowCompareCol] = useState(true)
+  const [textEditorOpen, setTextEditorOpen] = useState(false)
+  const replaceEquippedItem = useBuild((s) => s.replaceEquippedItem)
   const rows = useMemo(() => pickerItemsForSlot(slot), [slot])
   const inv = useBuild((s) => s.inventory)
 
@@ -2048,7 +2069,9 @@ function GearSlotModal({
 
   const isOffhandLocked = slot === 'offhand' && offhandLocked && !equipped
 
-  return createPortal(
+  return (
+    <>
+      {createPortal(
     <div
       role="presentation"
       className="fixed inset-0 z-100 flex items-center justify-center bg-black/70"
@@ -2112,6 +2135,14 @@ function GearSlotModal({
             >
               Compare
             </button>
+            {equipped && base && (
+              <button
+                onClick={() => setTextEditorOpen(true)}
+                className="rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+              >
+                Edit Text
+              </button>
+            )}
             {equipped && (
               <button
                 onClick={onUnequip}
@@ -2312,7 +2343,19 @@ function GearSlotModal({
         </footer>
       </div>
     </div>,
-    document.body,
+        document.body,
+      )}
+      {textEditorOpen && equipped && base && (
+        <ItemTextEditorModal
+          slot={slot}
+          slotName={slotName}
+          equipped={equipped}
+          base={base}
+          onSave={(next) => replaceEquippedItem(slot, next)}
+          onClose={() => setTextEditorOpen(false)}
+        />
+      )}
+    </>
   )
 }
 
@@ -3256,12 +3299,22 @@ function AffixesSection({
               </span>
               <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">
                 <span className="font-mono font-semibold tabular-nums text-amber-300">
-                  {formatAffixRange(affix, equipped.stars)}
+                  {eq.customValue !== undefined && affix.statKey
+                    ? formatValue(eq.customValue, affix.statKey)
+                    : formatAffixRange(affix, equipped.stars)}
                 </span>
                 <span className="truncate text-text/85">{affix.name}</span>
                 <span className="rounded-xs border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
                   T{affix.tier}
                 </span>
+                {eq.customValue !== undefined && (
+                  <span
+                    className="rounded-xs border border-accent-hot/60 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot"
+                    title="Custom value override"
+                  >
+                    custom
+                  </span>
+                )}
               </span>
               <button
                 onClick={() => onRemove(idx)}
@@ -3382,12 +3435,22 @@ function ForgedModsSection({
               </span>
               <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">
                 <span className="font-mono font-semibold tabular-nums text-amber-300">
-                  {formatAffixRange(mod)}
+                  {eq.customValue !== undefined && mod.statKey
+                    ? formatValue(eq.customValue, mod.statKey)
+                    : formatAffixRange(mod)}
                 </span>
                 <span className="truncate text-text/85">{mod.name}</span>
                 <span className="rounded-xs border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
                   T{mod.tier}
                 </span>
+                {eq.customValue !== undefined && (
+                  <span
+                    className="rounded-xs border border-accent-hot/60 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot"
+                    title="Custom value override"
+                  >
+                    custom
+                  </span>
+                )}
               </span>
               <button
                 onClick={() => onRemove(idx)}
