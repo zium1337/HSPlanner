@@ -131,7 +131,7 @@ export async function suggestNodesNative(
   const statContributions = contributionsRecord(baseline.statSources)
   const attrContributions = contributionsRecord(baseline.attributeSources)
 
-  const cls = getClass(deps.classId)
+  const cls = deps.classId ? getClass(deps.classId) : undefined
   const classInfo = cls
     ? {
         id: cls.id,
@@ -147,10 +147,9 @@ export async function suggestNodesNative(
     ? allClassSkills.find((s) => s.id === deps.mainSkillId)
     : null
 
-  const activeSkillRank =
-    activeSkill && deps.skillRanks[activeSkill.id] !== undefined
-      ? deps.skillRanks[activeSkill.id]
-      : 0
+  const activeSkillRank = activeSkill
+    ? (deps.skillRanks[activeSkill.id] ?? 0)
+    : 0
 
   const itemSkillBonuses: Record<string, Ranged> = {}
   for (const [k, v] of Object.entries(
