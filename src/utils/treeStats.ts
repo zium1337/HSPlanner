@@ -5,6 +5,7 @@ export interface TreeNodeInfo {
   n: string
   l: string[]
   g?: string[]
+  note?: string
 }
 
 export const TREE_NODE_INFO = treeNodeInfo as Record<string, TreeNodeInfo>
@@ -879,6 +880,10 @@ const RULES: ParseRule[] = [
     build: () => null,
   },
   {
+    test: /^Path\s+to\s+any\s+Black\s+Hole$/i,
+    build: () => null,
+  },
+  {
     test: /^([+\-\d.]+)%\s+Increased\s+Explosion\s+(?:area\s+of\s+effect\s+)?radius$/i,
     build: (m) => ({ key: 'explosion_aoe', value: num(m[1]!) }),
   },
@@ -1137,7 +1142,7 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'area_of_effect', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)%\s+Increased\s+Crushing\s+Blow\s+Chance$/i,
+    test: /^([+\-\d.]+)%\s+(?:Increased\s+Crushing\s+Blow\s+Chance|Chance\s+for\s+a\s+Crushing\s+Blow)$/i,
     build: (m) => ({ key: 'crushing_blow_chance', value: num(m[1]!) }),
   },
   {
@@ -1217,7 +1222,7 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'evasion_when_struck_chance', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)\s+Evasion\s+Duration$/i,
+    test: /^([+\-\d.]+)\s+(?:s\s+)?Evasion\s+Duration$/i,
     build: (m) => ({ key: 'evasion_duration', value: num(m[1]!) }),
   },
   {
@@ -1285,7 +1290,7 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'defense_ignored', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)\s+Stun\s+Duration$/i,
+    test: /^([+\-\d.]+)\s+(?:s\s+)?Stun\s+Duration$/i,
     build: (m) => ({ key: 'stun_duration', value: num(m[1]!) }),
   },
   {
@@ -1333,7 +1338,7 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'cooldown_recovery_after_kill_chance', value: num(m[1]!) }),
   },
   {
-    test: /^([+\-\d.]+)\s+Cooldown\s+Recovered$/i,
+    test: /^([+\-\d.]+)\s+(?:s\s+)?Cooldown\s+Recovered$/i,
     build: (m) => ({ key: 'cooldown_recovered_flat', value: num(m[1]!) }),
   },
   {
@@ -1899,6 +1904,7 @@ export function parseTreeNodeMeta(line: string): ParsedMeta | null {
 }
 
 const PARSE_CACHE = new Map<string, ParsedMod | null>()
+const RECOGNIZED_NO_STAT = new Set<string>()
 
 export function parseTreeNodeMod(line: string): ParsedMod | null {
   const trimmed = line.trim()
@@ -1914,6 +1920,7 @@ export function parseTreeNodeMod(line: string): ParsedMod | null {
       if (m) {
         const built = rule.build(m)
         if (built === null) {
+          RECOGNIZED_NO_STAT.add(trimmed)
           PARSE_CACHE.set(trimmed, null)
           return null
         }
@@ -1931,6 +1938,13 @@ export function parseTreeNodeMod(line: string): ParsedMod | null {
   return null
 }
 
+export function isRecognizedTreeLine(line: string): boolean {
+  const trimmed = line.trim()
+  if (RECOGNIZED_NO_STAT.has(trimmed)) return true
+  parseTreeNodeMod(trimmed)
+  return RECOGNIZED_NO_STAT.has(trimmed)
+}
+
 export interface NodeModBreakdown {
   parsed: { line: string; mod: ParsedMod | ParsedMeta }[]
   unsupported: string[]
@@ -1945,6 +1959,7 @@ export function classifyNodeLines(lines: string[]): NodeModBreakdown {
       parsed.push({ line, mod })
       continue
     }
+    if (isRecognizedTreeLine(line)) continue
     const meta = parseTreeNodeMeta(line)
     if (meta) {
       parsed.push({ line, mod: meta })

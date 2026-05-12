@@ -1001,6 +1001,13 @@ function NodeTooltip({
               <UnsupportedModsList lines={lineGroups.unsupported} />
             </TooltipSection>
           )}
+          {info?.note && (
+            <TooltipSection>
+              <div className="text-[12px] leading-[1.55] text-accent-hot italic">
+                {info.note}
+              </div>
+            </TooltipSection>
+          )}
           {netChangeVisible && (
             <TooltipSection>
               <div className="mb-2 flex items-center gap-2.5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">

@@ -4603,7 +4603,7 @@
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+1% Increased Maximum Mana"
+      "+25 to Maximum Mana"
     ]
   },
   "1232": {
@@ -4680,21 +4680,21 @@
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+1% Increased Maximum Mana"
+      "+25 to Maximum Mana"
     ]
   },
   "1254": {
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+1% Increased Maximum Mana"
+      "+25 to Maximum Mana"
     ]
   },
   "1256": {
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+1% Increased Maximum Mana"
+      "+25 to Maximum Mana"
     ]
   },
   "1258": {
@@ -5082,10 +5082,10 @@
     ]
   },
   "1350": {
-    "t": "All Attributes",
+    "t": "Intelligence",
     "n": "normal",
     "l": [
-      "+5 to All Attributes"
+      "+5 to Intelligence"
     ]
   },
   "1352": {
@@ -5234,10 +5234,10 @@
     ]
   },
   "1382": {
-    "t": "All Attributes",
+    "t": "Intelligence",
     "n": "normal",
     "l": [
-      "+5 to All Attributes"
+      "+5 to Intelligence"
     ]
   },
   "1384": {
@@ -6603,14 +6603,16 @@
     "n": "big",
     "l": [
       "+100% Overflow Effectiveness"
-    ]
+    ],
+    "note": "Overflowing mana recover from taking damage now heals you"
   },
   "1726": {
     "t": "Agitation",
     "n": "big",
     "l": [
       "+10% Agitation Movement Speed"
-    ]
+    ],
+    "note": "When taking damage gain a stack of agitation increasing your movement speed for a short duration"
   },
   "1728": {
     "t": "Armor Conversion",
@@ -6757,7 +6759,8 @@
     ],
     "g": [
       "Summon"
-    ]
+    ],
+    "note": "Summons explode at 25% life dealing area of effect fire damage based on their life"
   },
   "1766": {
     "t": "Living Carcass",
@@ -6768,7 +6771,8 @@
     ],
     "g": [
       "Summon"
-    ]
+    ],
+    "note": "Summons now explode instantly after coming in contact with a monster"
   },
   "1768": {
     "t": "Retaliatory Evasion",
@@ -6778,7 +6782,8 @@
     ],
     "g": [
       "Melee"
-    ]
+    ],
+    "note": "Throw both of your weapons towards the attacker when evading damage"
   },
   "1770": {
     "t": "Accurate Cleaver",
@@ -6861,7 +6866,8 @@
     "n": "big",
     "l": [
       "+25% Elemental Weakness"
-    ]
+    ],
+    "note": "Hitting a monster with an element increases its damage mitigation towards that element but increasing damage dealt with other elements"
   },
   "1790": {
     "t": "Venomancer",
@@ -6903,7 +6909,8 @@
     "n": "big",
     "l": [
       "+50% Total Mana Replenish"
-    ]
+    ],
+    "note": "Your mana replenish now happens every 2 seconds with increased power"
   },
   "1802": {
     "t": "Ying & Yang",
@@ -7035,7 +7042,8 @@
     ],
     "g": [
       "Summon"
-    ]
+    ],
+    "note": "Summon projectile chain hits unleash a Void Blast dealing damage around the target"
   },
   "1832": {
     "t": "Spellfork",
@@ -7091,14 +7099,16 @@
     "n": "big",
     "l": [
       "+50% of Monster Damage Over Time Immunity Shattered"
-    ]
+    ],
+    "note": "Shatters the immunity of monsters that are immune to damage over time effects. Non immune monsters take increased damage by half the value"
   },
   "1844": {
     "t": "Death Over Time",
     "n": "big",
     "l": [
       "+50% of Monster Damage Over Time Immunity Shattered"
-    ]
+    ],
+    "note": "Shatters the immunity of monsters that are immune to damage over time effects. Non immune monsters take increased damage by half the value"
   },
   "1846": {
     "t": "Mirror of Valhalla",
@@ -7113,7 +7123,7 @@
     "n": "big",
     "l": [
       "+3% Chance after kill to recover all skill cooldowns",
-      "+0.1 Cooldown Recovered"
+      "+0.1 s Cooldown Recovered"
     ]
   },
   "1850": {
@@ -7121,7 +7131,8 @@
     "n": "big",
     "l": [
       "+5% Increased Damage and Increased Damage Taken"
-    ]
+    ],
+    "note": "Gain a stack of Surging Storm every second gaining increased Damage but also increased Damage taken from all sources capping at 10 stacks. The buff is removed when you get hit."
   },
   "1852": {
     "t": "Colossal Monstrosity",
@@ -7141,7 +7152,8 @@
     ],
     "g": [
       "Spell"
-    ]
+    ],
+    "note": "Every 3rd spell creates a temporal echo that casts the same spell with decreased damage"
   },
   "1856": {
     "t": "Amplified Intelligence",
@@ -7158,14 +7170,16 @@
     ],
     "g": [
       "Melee"
-    ]
+    ],
+    "note": "You can destroy trees with melee attacks gaining stacks of branches throwing them towards monsters on hit"
   },
   "1860": {
     "t": "Stampede",
     "n": "big",
     "l": [
       "+125% Stampede Damage based on your physical damage"
-    ]
+    ],
+    "note": "Deal damage when phasing through monsters"
   },
   "1862": {
     "t": "Life",
@@ -7312,35 +7326,35 @@
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+1% Increased Maximum Mana"
+      "+25 to Maximum Mana"
     ]
   },
   "1904": {
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+1% Increased Maximum Mana"
+      "+25 to Maximum Mana"
     ]
   },
   "1906": {
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+1% Increased Maximum Mana"
+      "+25 to Maximum Mana"
     ]
   },
   "1908": {
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+1% Increased Maximum Mana"
+      "+25 to Maximum Mana"
     ]
   },
   "1910": {
     "t": "Maximum Mana",
     "n": "normal",
     "l": [
-      "+1% Increased Maximum Mana"
+      "+25 to Maximum Mana"
     ]
   },
   "1912": {
@@ -7826,7 +7840,8 @@
     "n": "big",
     "l": [
       "+40% Total Damage Dealt and Damage Taken"
-    ]
+    ],
+    "note": "When below 40% Maximum Life deal Increased Damage but also take Increased Damage from all sources"
   },
   "2046": {
     "t": "Low Life Attack Speed",
@@ -7861,7 +7876,8 @@
     "n": "big",
     "l": [
       "+40% Total Damage Dealt and Damage Taken"
-    ]
+    ],
+    "note": "When below 40% Maximum Life deal Increased Damage but also take Increased Damage from all sources"
   },
   "2056": {
     "t": "Faster Cast Rate",
@@ -7896,7 +7912,8 @@
     "n": "big",
     "l": [
       "+1% Faster Cast Rate per Stack of Wizardry"
-    ]
+    ],
+    "note": "Gain a stack of Wizardry when you cast a spell up to 50 stacks"
   },
   "2066": {
     "t": "Faster Cast Rate",
@@ -8078,15 +8095,16 @@
     "t": "Safe Landing",
     "n": "big",
     "l": [
-      "+2 Stun Duration"
-    ]
+      "+2 s Stun Duration"
+    ],
+    "note": "When landing after jumping unleash an area of effect pulse knocking monsters back and stunning them when colliding with terrain"
   },
   "2118": {
     "t": "Dodge Master",
     "n": "big",
     "l": [
       "+2% Chance to gain 100% Evasion for a short duration after being hit",
-      "+2 Evasion Duration"
+      "+2 s Evasion Duration"
     ]
   },
   "2120": {
@@ -8157,7 +8175,8 @@
     "n": "big",
     "l": [
       "+20% Increased Attack Speed & Damage and Increased Damage Reduction & All Resistances"
-    ]
+    ],
+    "note": "When below 40% Maximum Life gain increased total Attack Speed, Increased Damage Dealt, Increased Damage Reduction and Increased All Resistances"
   },
   "2140": {
     "t": "Attack Speed at Full Life",
@@ -8199,7 +8218,8 @@
     "n": "big",
     "l": [
       "+25% When at full Life gain increased total Attack Speed and Damage Dealt but also decreased Damage Reduction and All Resistances"
-    ]
+    ],
+    "note": "When at full Life gain increased total Attack Speed and Damage Dealt but also decreased Damage Reduction and All Resistances"
   },
   "2152": {
     "t": "All Attributes",
@@ -9312,7 +9332,8 @@
     "n": "big",
     "l": [
       "+150% of physical damage as Arrow Damage"
-    ]
+    ],
+    "note": "When Evading call down a barrage of arrows stunning and dealing damage to nearby monsters"
   },
   "2452": {
     "t": "Maximum Mana",
@@ -9674,7 +9695,8 @@
     "n": "big",
     "l": [
       "+-25% Increased Total Faster Cast Rate"
-    ]
+    ],
+    "note": "You can now dual wield wands"
   },
   "2554": {
     "t": "Faster Cast Rate with Wands",
@@ -9978,7 +10000,8 @@
     ],
     "g": [
       "Spell"
-    ]
+    ],
+    "note": "Spell Mana Leech is now instant but you can no longer replenish mana from any other sources"
   },
   "2634": {
     "t": "Spell Projectile Damage",
@@ -11007,7 +11030,7 @@
   },
   "2906": {
     "t": "Colossus of Staves",
-    "n": "normal",
+    "n": "big",
     "l": [
       "+40% Chance to block Physical Damage when wielding a Staff or a Cane"
     ]
@@ -11115,7 +11138,8 @@
     "n": "big",
     "l": [
       "+100% of Returned Damage is dealt as Lightning Damage"
-    ]
+    ],
+    "note": "Damage returned as zaps of lightning when wielding a Shield"
   },
   "2938": {
     "t": "Damage Returned to Attacker",
@@ -12321,40 +12345,28 @@
     "t": "Crushing Blow",
     "n": "normal",
     "l": [
-      "+3% Increased Crushing Blow Chance"
-    ],
-    "g": [
-      "Melee"
+      "+3% Chance for a Crushing Blow"
     ]
   },
   "3234": {
     "t": "Crushing Blow",
     "n": "normal",
     "l": [
-      "+3% Increased Crushing Blow Chance"
-    ],
-    "g": [
-      "Melee"
+      "+3% Chance for a Crushing Blow"
     ]
   },
   "3236": {
-    "t": "Crushing Blow",
-    "n": "normal",
+    "t": "Crusher",
+    "n": "big",
     "l": [
       "+25% Crushing Blow Effectiveness"
-    ],
-    "g": [
-      "Melee"
     ]
   },
   "3238": {
     "t": "Crushing Blow",
     "n": "normal",
     "l": [
-      "+3% Increased Crushing Blow Chance"
-    ],
-    "g": [
-      "Melee"
+      "+3% Chance for a Crushing Blow"
     ]
   }
 }

@@ -10,6 +10,10 @@
     "dialog:default",
     "dialog:allow-open",
     "updater:default",
-    "process:default"
+    "process:default",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [{ "url": "https://ko-fi.com/*" }]
+    }
   ]
 }

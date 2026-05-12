@@ -215,7 +215,29 @@ export default function BottomBar() {
         />
       )}
 
-      <span className="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-green">
+      <a
+        href="https://ko-fi.com/zium1337"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Support HSPlanner on Ko-fi"
+        onClick={(e) => {
+          if (inTauriRuntime()) {
+            e.preventDefault()
+            void import('@tauri-apps/plugin-opener').then(({ openUrl }) =>
+              openUrl('https://ko-fi.com/zium1337'),
+            )
+          }
+        }}
+        className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-accent-deep px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(58,46,24,0.5), rgba(42,36,24,0.35))',
+        }}
+      >
+        <KofiIcon className="h-3 w-3" />
+        Support on Ko-fi
+      </a>
+      <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-green">
         <span
           aria-hidden
           className="h-1.5 w-1.5 rounded-full bg-stat-green"
@@ -228,7 +250,7 @@ export default function BottomBar() {
         <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
           Build
         </span>
-        <span className="max-w-[12rem] truncate font-mono text-[11px] text-accent-hot">
+        <span className="max-w-48 truncate font-mono text-[11px] text-accent-hot">
           {buildName}
         </span>
       </span>
@@ -330,6 +352,27 @@ function UpdateBadge({
     >
       Check
     </button>
+  )
+}
+
+function KofiIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      className={className}
+    >
+      <path d="M17 8h1a4 4 0 0 1 0 8h-1" />
+      <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
+      <line x1="6" y1="2" x2="6" y2="4" />
+      <line x1="10" y1="2" x2="10" y2="4" />
+      <line x1="14" y1="2" x2="14" y2="4" />
+    </svg>
   )
 }
 
