@@ -9,9 +9,10 @@ pub fn compute_weapon_damage(
     enemy_conditions: &ConditionMap,
 ) -> WeaponDamageBreakdown {
     let has_weapon = weapon.is_some();
+    // Unarmed: every character has a 2-6 base physical damage when no weapon is equipped.
     let (w_min, w_max) = weapon
         .map(|w| (w.damage_min, w.damage_max))
-        .unwrap_or((0.0, 0.0));
+        .unwrap_or((2.0, 6.0));
 
     let ed = rg(stats, "enhanced_damage");
     let ed_more = rg(stats, "enhanced_damage_more");

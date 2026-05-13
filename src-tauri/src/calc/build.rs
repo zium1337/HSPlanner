@@ -9,8 +9,9 @@ use serde::Serialize;
 use super::data;
 use super::rank::{aggregate_item_skill_bonuses, normalize_skill_name};
 use super::skills::{
-    BonusSource, DamageFormula, DamageRow, Ranged, Skill as CalcSkill, SkillDamageBreakdown,
-    SkillInput, compute_skill_damage,
+    AttackKind, AttackSkillDamageBreakdown, AttackSkillInput, AttackSkillScaling, BonusSource,
+    DamageFormula, DamageRow, Ranged, Skill as CalcSkill, SkillDamageBreakdown, SkillInput, Weapon,
+    compute_attack_skill_damage, compute_skill_damage,
 };
 use super::stats::{
     BuildStatsInput, ComputedStats, combine_additive_and_more, compute_build_stats,
@@ -47,6 +48,7 @@ pub struct BuildPerformance {
     pub attributes: HashMap<String, Ranged>,
     pub stats: HashMap<String, Ranged>,
     pub damage: Option<SkillDamageBreakdown>,
+    pub attack_damage: Option<AttackSkillDamageBreakdown>,
     pub hit_dps_min: Option<f64>,
     pub hit_dps_max: Option<f64>,
     pub avg_hit_dps_min: Option<f64>,
@@ -61,14 +63,15 @@ pub struct BuildPerformance {
 // Converts a JSON-loaded SkillSpec into the calc-runtime damage Skill.
 // (Subskill conversion lives in stats.rs as skill_spec_to_subskill_owner.)
 fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
+    let to_formula = |f: super::types::DamageFormulaSpec| DamageFormula {
+        base: f.base,
+        per_level: f.per_level,
+    };
     CalcSkill {
         name: normalize_skill_name(&spec.name),
         tags: spec.tags.clone().unwrap_or_default(),
         damage_type: spec.damage_type.clone(),
-        damage_formula: spec.damage_formula.map(|f| DamageFormula {
-            base: f.base,
-            per_level: f.per_level,
-        }),
+        damage_formula: spec.damage_formula.map(to_formula),
         damage_per_rank: spec.damage_per_rank.as_ref().map(|rows| {
             rows.iter()
                 .map(|r| DamageRow {
@@ -97,6 +100,16 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
                     .collect()
             })
             .unwrap_or_default(),
+        attack_kind: spec.attack_kind.map(|k| match k {
+            super::types::AttackKindSpec::Attack => AttackKind::Attack,
+            super::types::AttackKindSpec::Spell => AttackKind::Spell,
+        }),
+        attack_scaling: spec.attack_scaling.map(|s| AttackSkillScaling {
+            weapon_damage_pct: s.weapon_damage_pct.map(to_formula),
+            flat_physical_min: s.flat_physical_min.map(to_formula),
+            flat_physical_max: s.flat_physical_max.map(to_formula),
+            attack_rating_pct: s.attack_rating_pct.map(to_formula),
+        }),
     }
 }
 
@@ -167,7 +180,6 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     };
     let computed = compute_build_stats(&stats_input);
 
-    // 2. Resolve class skills + active skill (must be `Active` kind).
     let all_class_skills: &[SkillSpec] = match deps.class_id {
         Some(cid) => data::get_skills_by_class(cid),
         None => &[],
@@ -182,7 +194,6 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         .and_then(|s| deps.skill_ranks.get(&s.id).copied())
         .unwrap_or(0);
 
-    // 3. Build damage-calc input lookups (per-name rank table + per-name calc skill).
     let item_skill_bonuses = aggregate_item_skill_bonuses(deps.inventory, &data::data().items);
     let skill_ranks_by_name: HashMap<String, f64> = all_class_skills
         .iter()
@@ -198,10 +209,8 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         .map(|s| (normalize_skill_name(&s.name), skill_spec_to_calc_skill(s)))
         .collect();
 
-    // 4. Active-skill subskill projectile boost. Skill-scoped stats are
-    //    filtered out of computed.stats by apply_subskill_aggregation; here we
-    //    re-aggregate just the active skill (without the filter) to pull
-    //    projectile_count out for damage calc.
+    // Skill-scoped stats are filtered out of computed.stats by apply_subskill_aggregation;
+    // re-aggregate just the active skill (without the filter) to pull projectile_count out.
     let active_projectile_boost: u32 = active_skill
         .map(|s| {
             let owner = skill_spec_to_subskill_owner(s);
@@ -219,12 +228,33 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         base + active_projectile_boost
     });
 
-    // 5. Active-skill damage.
-    let damage: Option<SkillDamageBreakdown> = match (active_skill, active_rank > 0) {
-        (Some(skill), true) => {
-            let calc_skill = skill_spec_to_calc_skill(skill);
+    // Reuse the calc-skill already built into skills_by_name instead of re-converting.
+    let active_calc_skill: Option<&CalcSkill> = active_skill
+        .and_then(|s| skills_by_name.get(&normalize_skill_name(&s.name)));
+    let is_attack_skill = active_calc_skill
+        .and_then(|s| s.attack_kind)
+        == Some(AttackKind::Attack);
+
+    let weapon_for_attack: Option<Weapon> = is_attack_skill
+        .then(|| {
+            deps.inventory
+                .get("weapon")
+                .and_then(|eq| data::get_item(&eq.base_id))
+                .and_then(|base| match (base.damage_min, base.damage_max) {
+                    (Some(min), Some(max)) => Some(Weapon {
+                        name: base.name.clone(),
+                        damage_min: min,
+                        damage_max: max,
+                    }),
+                    _ => None,
+                })
+        })
+        .flatten();
+
+    let damage: Option<SkillDamageBreakdown> = match (active_calc_skill, active_rank > 0) {
+        (Some(calc_skill), true) => {
             let input = SkillInput {
-                skill: &calc_skill,
+                skill: calc_skill,
                 allocated_rank: active_rank as f64,
                 attributes: &computed.attributes,
                 stats: &computed.stats,
@@ -240,7 +270,30 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         _ => None,
     };
 
-    // 6. Hit DPS = damage × (base_cast_rate × (1 + fcr/100)).
+    // Attack-kind skills (e.g. Noxious Strike) combine weapon-based physical
+    // damage with a per-rank skill damage type (e.g. poison) and scale by
+    // attacks-per-second. The poison part is reused from `damage` above
+    // (computed once, consumed by both the spell-style breakdown and
+    // the combined attack DPS).
+    let attack_damage: Option<AttackSkillDamageBreakdown> =
+        match (active_calc_skill, active_rank > 0, is_attack_skill) {
+            (Some(calc_skill), true, true) => {
+                let input = AttackSkillInput {
+                    skill: calc_skill,
+                    allocated_rank: active_rank as f64,
+                    stats: &computed.stats,
+                    item_skill_bonuses: &item_skill_bonuses,
+                    enemy_conditions: deps.enemy_conditions,
+                    weapon: weapon_for_attack.as_ref(),
+                    poison_breakdown: damage.as_ref(),
+                };
+                compute_attack_skill_damage(&input)
+            }
+            _ => None,
+        };
+
+    // Hit DPS. Attack skills use attack-speed × combined (physical+element);
+    // spell skills use cast-rate × skill damage.
     let fcr = computed
         .stats
         .get("faster_cast_rate")
@@ -255,18 +308,32 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     let base_cast = active_skill.and_then(|s| s.base_cast_rate);
     let eff_cast_min = base_cast.map(|r| r * (1.0 + fcr_combined.0 / 100.0));
     let eff_cast_max = base_cast.map(|r| r * (1.0 + fcr_combined.1 / 100.0));
-    let hit_dps_min = damage
-        .as_ref()
-        .and_then(|d| eff_cast_min.map(|c| d.final_min as f64 * c));
-    let hit_dps_max = damage
-        .as_ref()
-        .and_then(|d| eff_cast_max.map(|c| d.final_max as f64 * c));
-    let avg_hit_dps_min = damage
-        .as_ref()
-        .and_then(|d| eff_cast_min.map(|c| d.avg_min as f64 * c));
-    let avg_hit_dps_max = damage
-        .as_ref()
-        .and_then(|d| eff_cast_max.map(|c| d.avg_max as f64 * c));
+
+    let (hit_dps_min, hit_dps_max, avg_hit_dps_min, avg_hit_dps_max) = if let Some(ad) =
+        attack_damage.as_ref()
+    {
+        (
+            Some(ad.combined_hit_min as f64 * ad.attacks_per_second_min),
+            Some(ad.combined_hit_max as f64 * ad.attacks_per_second_max),
+            Some(ad.combined_avg_min as f64 * ad.attacks_per_second_min),
+            Some(ad.combined_avg_max as f64 * ad.attacks_per_second_max),
+        )
+    } else {
+        (
+            damage
+                .as_ref()
+                .and_then(|d| eff_cast_min.map(|c| d.final_min as f64 * c)),
+            damage
+                .as_ref()
+                .and_then(|d| eff_cast_max.map(|c| d.final_max as f64 * c)),
+            damage
+                .as_ref()
+                .and_then(|d| eff_cast_min.map(|c| d.avg_min as f64 * c)),
+            damage
+                .as_ref()
+                .and_then(|d| eff_cast_max.map(|c| d.avg_max as f64 * c)),
+        )
+    };
 
     // 7. Proc DPS — top-level skill procs.
     let ctx = ProcContext {
@@ -361,6 +428,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         attributes: computed.attributes,
         stats: computed.stats,
         damage,
+        attack_damage,
         hit_dps_min,
         hit_dps_max,
         avg_hit_dps_min,

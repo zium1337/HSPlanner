@@ -7,10 +7,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Wanderer",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "cloud_of_sand",
@@ -20,10 +29,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Wanderer",
-    "position": { "row": 0, "col": 2 }
+    "position": {
+      "row": 0,
+      "col": 2
+    }
   },
   {
     "id": "sand_tremors",
@@ -33,10 +51,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Wanderer",
-    "position": { "row": 1, "col": 0 }
+    "position": {
+      "row": 1,
+      "col": 0
+    }
   },
   {
     "id": "sand_entombment",
@@ -46,10 +73,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Wanderer",
-    "position": { "row": 1, "col": 1 }
+    "position": {
+      "row": 1,
+      "col": 1
+    }
   },
   {
     "id": "mystic_sand",
@@ -59,10 +95,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Wanderer",
-    "position": { "row": 2, "col": 0 }
+    "position": {
+      "row": 2,
+      "col": 0
+    }
   },
   {
     "id": "sand_gush",
@@ -72,10 +117,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Wanderer",
-    "position": { "row": 2, "col": 2 }
+    "position": {
+      "row": 2,
+      "col": 2
+    }
   },
   {
     "id": "dissipating_tornado",
@@ -85,10 +139,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Wanderer",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    }
   },
   {
     "id": "oasis_aura",
@@ -98,10 +161,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Aura"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Aura"
+    ],
     "tree": "Wanderer",
-    "position": { "row": 3, "col": 2 }
+    "position": {
+      "row": 3,
+      "col": 2
+    }
   },
   {
     "id": "sand_vortex",
@@ -111,10 +183,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Wanderer",
-    "position": { "row": 4, "col": 0 }
+    "position": {
+      "row": 4,
+      "col": 0
+    }
   },
   {
     "id": "blade_strike",
@@ -124,10 +205,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Vagabond",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "eye_of_ra",
@@ -137,10 +227,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Vagabond",
-    "position": { "row": 0, "col": 3 }
+    "position": {
+      "row": 0,
+      "col": 2
+    }
   },
   {
     "id": "flying_scimitar",
@@ -150,10 +249,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Vagabond",
-    "position": { "row": 1, "col": 0 }
+    "position": {
+      "row": 1,
+      "col": 0
+    }
   },
   {
     "id": "healing_sunrays",
@@ -163,10 +271,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Vagabond",
-    "position": { "row": 1, "col": 3 }
+    "position": {
+      "row": 1,
+      "col": 2
+    }
   },
   {
     "id": "chainslice",
@@ -176,10 +293,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Vagabond",
-    "position": { "row": 2, "col": 2 }
+    "position": {
+      "row": 2,
+      "col": 1
+    }
   },
   {
     "id": "rupture",
@@ -189,10 +315,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Vagabond",
-    "position": { "row": 2, "col": 3 }
+    "position": {
+      "row": 2,
+      "col": 2
+    }
   },
   {
     "id": "scimitar_charge",
@@ -202,10 +337,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Vagabond",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    }
   },
   {
     "id": "hemorrhage",
@@ -215,10 +359,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Vagabond",
-    "position": { "row": 3, "col": 3 }
+    "position": {
+      "row": 3,
+      "col": 2
+    }
   },
   {
     "id": "phantom_blade",
@@ -228,9 +381,18 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Vagabond",
-    "position": { "row": 4, "col": 2 }
+    "position": {
+      "row": 4,
+      "col": 1
+    }
   }
 ]

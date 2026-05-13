@@ -3,7 +3,7 @@
 import { invoke } from '@tauri-apps/api/core'
 
 import type { CustomStat, Inventory, RangedValue, TreeSocketContent } from '../../types'
-import type { SkillDamageBreakdown } from '../../utils/stats'
+import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from '../../utils/stats'
 import type {
   BuildPerformance,
   BuildPerformanceDeps,
@@ -48,6 +48,7 @@ export interface BuildPerformanceOutput {
   attributes: Record<string, RustRanged>
   stats: Record<string, RustRanged>
   damage: SkillDamageBreakdown | null
+  attackDamage: AttackSkillDamageBreakdown | null
   hitDpsMin: number | null
   hitDpsMax: number | null
   avgHitDpsMin: number | null
@@ -118,6 +119,7 @@ function toLegacyBuildPerformance(
       Object.entries(raw.stats).map(([k, v]) => [k, asRangedValue(v)]),
     ),
     damage: raw.damage,
+    attackDamage: raw.attackDamage,
     hitDpsMin: raw.hitDpsMin ?? undefined,
     hitDpsMax: raw.hitDpsMax ?? undefined,
     avgHitDpsMin: raw.avgHitDpsMin ?? undefined,

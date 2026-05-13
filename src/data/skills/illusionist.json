@@ -7,10 +7,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Sand Manipulator",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "call_for_war",
@@ -20,10 +29,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Sand Manipulator",
-    "position": { "row": 0, "col": 2 }
+    "position": {
+      "row": 0,
+      "col": 2
+    }
   },
   {
     "id": "piercing_sand",
@@ -33,10 +51,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Sand Manipulator",
-    "position": { "row": 1, "col": 1 }
+    "position": {
+      "row": 1,
+      "col": 1
+    }
   },
   {
     "id": "link_of_sand",
@@ -46,10 +73,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Sand Manipulator",
-    "position": { "row": 1, "col": 2 }
+    "position": {
+      "row": 1,
+      "col": 2
+    }
   },
   {
     "id": "circle_of_guardians",
@@ -59,10 +95,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Sand Manipulator",
-    "position": { "row": 2, "col": 0 }
+    "position": {
+      "row": 2,
+      "col": 0
+    }
   },
   {
     "id": "dissipation",
@@ -72,10 +117,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Sand Manipulator",
-    "position": { "row": 2, "col": 1 }
+    "position": {
+      "row": 2,
+      "col": 1
+    }
   },
   {
     "id": "cheapshot",
@@ -85,10 +139,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Sand Manipulator",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    }
   },
   {
     "id": "spirit_link",
@@ -98,10 +161,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Sand Manipulator",
-    "position": { "row": 3, "col": 2 }
+    "position": {
+      "row": 3,
+      "col": 2
+    }
   },
   {
     "id": "combat_order",
@@ -111,10 +183,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Sand Manipulator",
-    "position": { "row": 4, "col": 0 }
+    "position": {
+      "row": 4,
+      "col": 0
+    }
   },
   {
     "id": "age_proliferation",
@@ -124,10 +205,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Chronomancer",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "gravitation_slam",
@@ -137,10 +227,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Chronomancer",
-    "position": { "row": 0, "col": 3 }
+    "position": {
+      "row": 0,
+      "col": 2
+    }
   },
   {
     "id": "split_reality",
@@ -150,10 +249,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Chronomancer",
-    "position": { "row": 1, "col": 1 }
+    "position": {
+      "row": 1,
+      "col": 1
+    }
   },
   {
     "id": "time_deceleration",
@@ -163,10 +271,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Chronomancer",
-    "position": { "row": 1, "col": 3 }
+    "position": {
+      "row": 1,
+      "col": 2
+    }
   },
   {
     "id": "dimensional_displacement",
@@ -176,10 +293,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Chronomancer",
-    "position": { "row": 2, "col": 0 }
+    "position": {
+      "row": 2,
+      "col": 0
+    }
   },
   {
     "id": "sands_of_time",
@@ -189,10 +315,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Chronomancer",
-    "position": { "row": 2, "col": 1 }
+    "position": {
+      "row": 2,
+      "col": 1
+    }
   },
   {
     "id": "expansive_mind",
@@ -202,10 +337,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Chronomancer",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    }
   },
   {
     "id": "precognition",
@@ -215,10 +359,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Chronomancer",
-    "position": { "row": 3, "col": 3 }
+    "position": {
+      "row": 3,
+      "col": 2
+    }
   },
   {
     "id": "temporal_heroes",
@@ -228,9 +381,18 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Chronomancer",
-    "position": { "row": 4, "col": 1 }
+    "position": {
+      "row": 4,
+      "col": 1
+    }
   }
 ]

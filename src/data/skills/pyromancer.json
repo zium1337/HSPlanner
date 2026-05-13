@@ -7,10 +7,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Flame Diviner",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "fire_enchant",
@@ -20,10 +29,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Flame Diviner",
-    "position": { "row": 0, "col": 2 }
+    "position": {
+      "row": 0,
+      "col": 2
+    }
   },
   {
     "id": "phoenix_flight",
@@ -33,10 +51,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Flame Diviner",
-    "position": { "row": 1, "col": 0 }
+    "position": {
+      "row": 1,
+      "col": 0
+    }
   },
   {
     "id": "inferno_slash",
@@ -46,10 +73,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Flame Diviner",
-    "position": { "row": 1, "col": 1 }
+    "position": {
+      "row": 1,
+      "col": 1
+    }
   },
   {
     "id": "searing_chains",
@@ -59,10 +95,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Flame Diviner",
-    "position": { "row": 2, "col": 1 }
+    "position": {
+      "row": 2,
+      "col": 1
+    }
   },
   {
     "id": "ignite",
@@ -72,10 +117,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Flame Diviner",
-    "position": { "row": 2, "col": 2 }
+    "position": {
+      "row": 2,
+      "col": 2
+    }
   },
   {
     "id": "fire_shield",
@@ -85,10 +139,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Flame Diviner",
-    "position": { "row": 3, "col": 0 }
+    "position": {
+      "row": 3,
+      "col": 0
+    }
   },
   {
     "id": "fiery_presence",
@@ -98,10 +161,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Flame Diviner",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    }
   },
   {
     "id": "avatar_of_fire",
@@ -111,10 +183,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Flame Diviner",
-    "position": { "row": 4, "col": 1 }
+    "position": {
+      "row": 4,
+      "col": 1
+    }
   },
   {
     "id": "breath_of_fire",
@@ -124,10 +205,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Arsonist",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "fireball",
@@ -137,10 +227,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Arsonist",
-    "position": { "row": 0, "col": 3 }
+    "position": {
+      "row": 0,
+      "col": 2
+    }
   },
   {
     "id": "scorching_aura",
@@ -150,10 +249,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Aura"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Aura"
+    ],
     "tree": "Arsonist",
-    "position": { "row": 1, "col": 1 }
+    "position": {
+      "row": 1,
+      "col": 1
+    }
   },
   {
     "id": "hydra",
@@ -163,10 +271,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Arsonist",
-    "position": { "row": 1, "col": 2 }
+    "position": {
+      "row": 1,
+      "col": 2
+    }
   },
   {
     "id": "volcano",
@@ -176,10 +293,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Arsonist",
-    "position": { "row": 2, "col": 1 }
+    "position": {
+      "row": 2,
+      "col": 1
+    }
   },
   {
     "id": "meteor",
@@ -189,10 +315,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Arsonist",
-    "position": { "row": 2, "col": 3 }
+    "position": {
+      "row": 2,
+      "col": 2
+    }
   },
   {
     "id": "fire_nova",
@@ -202,10 +337,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Arsonist",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    }
   },
   {
     "id": "comet",
@@ -215,10 +359,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Arsonist",
-    "position": { "row": 3, "col": 3 }
+    "position": {
+      "row": 3,
+      "col": 2
+    }
   },
   {
     "id": "armageddon",
@@ -228,9 +381,18 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Arsonist",
-    "position": { "row": 4, "col": 1 }
+    "position": {
+      "row": 4,
+      "col": 1
+    }
   }
 ]

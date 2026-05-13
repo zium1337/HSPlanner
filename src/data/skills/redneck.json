@@ -7,10 +7,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Hillbilly",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "pipe_bombs",
@@ -20,10 +29,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Hillbilly",
-    "position": { "row": 0, "col": 1 }
+    "position": {
+      "row": 0,
+      "col": 1
+    }
   },
   {
     "id": "tire_fire",
@@ -33,10 +51,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Hillbilly",
-    "position": { "row": 1, "col": 0 }
+    "position": {
+      "row": 1,
+      "col": 0
+    }
   },
   {
     "id": "oil_spill",
@@ -46,10 +73,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Hillbilly",
-    "position": { "row": 1, "col": 1 }
+    "position": {
+      "row": 1,
+      "col": 1
+    }
   },
   {
     "id": "combustible_oil",
@@ -59,10 +95,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Hillbilly",
-    "position": { "row": 2, "col": 0 }
+    "position": {
+      "row": 2,
+      "col": 0
+    }
   },
   {
     "id": "hillbilly_rage",
@@ -72,10 +117,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Hillbilly",
-    "position": { "row": 2, "col": 1 }
+    "position": {
+      "row": 2,
+      "col": 1
+    }
   },
   {
     "id": "spontaneous_combustion",
@@ -85,10 +139,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Hillbilly",
-    "position": { "row": 3, "col": 0 }
+    "position": {
+      "row": 3,
+      "col": 0
+    }
   },
   {
     "id": "moonshine_madness",
@@ -98,10 +161,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Hillbilly",
-    "position": { "row": 3, "col": 2 }
+    "position": {
+      "row": 3,
+      "col": 2
+    }
   },
   {
     "id": "pickup_raid",
@@ -111,10 +183,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Hillbilly",
-    "position": { "row": 4, "col": 1 }
+    "position": {
+      "row": 4,
+      "col": 1
+    }
   },
   {
     "id": "durable_wear",
@@ -124,10 +205,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Logger",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "chainsaw_slash",
@@ -137,10 +227,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Logger",
-    "position": { "row": 0, "col": 3 }
+    "position": {
+      "row": 0,
+      "col": 2
+    }
   },
   {
     "id": "loggers_endurance",
@@ -150,10 +249,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Logger",
-    "position": { "row": 1, "col": 0 }
+    "position": {
+      "row": 1,
+      "col": 0
+    }
   },
   {
     "id": "chainsaw_massacre",
@@ -163,10 +271,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Logger",
-    "position": { "row": 1, "col": 3 }
+    "position": {
+      "row": 1,
+      "col": 2
+    }
   },
   {
     "id": "experienced_logger",
@@ -176,10 +293,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Logger",
-    "position": { "row": 2, "col": 0 }
+    "position": {
+      "row": 2,
+      "col": 0
+    }
   },
   {
     "id": "revved_up",
@@ -189,10 +315,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Logger",
-    "position": { "row": 2, "col": 2 }
+    "position": {
+      "row": 2,
+      "col": 2
+    }
   },
   {
     "id": "rogue_chainsaw",
@@ -202,10 +337,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Logger",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    }
   },
   {
     "id": "chainsaw_mastery",
@@ -215,10 +359,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Logger",
-    "position": { "row": 3, "col": 3 }
+    "position": {
+      "row": 3,
+      "col": 2
+    }
   },
   {
     "id": "tree_trunk_triumph",
@@ -228,9 +381,18 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Logger",
-    "position": { "row": 4, "col": 2 }
+    "position": {
+      "row": 4,
+      "col": 1
+    }
   }
 ]

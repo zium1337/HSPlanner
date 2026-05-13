@@ -189,6 +189,33 @@ export interface SkillDamageBreakdown {
   avgMax: number
 }
 
+export interface AttackSkillDamageBreakdown {
+  effectiveRankMin: number
+  effectiveRankMax: number
+  weaponDamagePctMin: number
+  weaponDamagePctMax: number
+  skillFlatPhysMin: number
+  skillFlatPhysMax: number
+  attackRatingPctMin: number
+  attackRatingPctMax: number
+  physicalHitMin: number
+  physicalHitMax: number
+  physicalAvgMin: number
+  physicalAvgMax: number
+  poisonHitMin: number
+  poisonHitMax: number
+  poisonAvgMin: number
+  poisonAvgMax: number
+  combinedHitMin: number
+  combinedHitMax: number
+  combinedAvgMin: number
+  combinedAvgMax: number
+  attacksPerSecondMin: number
+  attacksPerSecondMax: number
+  dpsMin: number
+  dpsMax: number
+}
+
 export interface WeaponDamageBreakdown {
   hasWeapon: boolean
   weaponName?: string
@@ -461,21 +488,25 @@ export function computeSkillDamage(
   const effectiveRankMax =
     allocatedRank + allSkillsMax + elementSkillsMax + itemBonus[1]
 
+  // Clamp to >= 0: linear formulas can extrapolate negative at low ranks,
+  // a skill never deals negative damage. Mirrors Rust damage.rs.
   let baseMin: number
   let baseMax: number
   if (skill.damageFormula) {
-    baseMin =
-      skill.damageFormula.base +
-      skill.damageFormula.perLevel * effectiveRankMin
-    baseMax =
-      skill.damageFormula.base +
-      skill.damageFormula.perLevel * effectiveRankMax
+    baseMin = Math.max(
+      0,
+      skill.damageFormula.base + skill.damageFormula.perLevel * effectiveRankMin,
+    )
+    baseMax = Math.max(
+      0,
+      skill.damageFormula.base + skill.damageFormula.perLevel * effectiveRankMax,
+    )
   } else {
     const table = skill.damagePerRank!
     const idxMin = Math.min(Math.max(effectiveRankMin, 1), table.length) - 1
     const idxMax = Math.min(Math.max(effectiveRankMax, 1), table.length) - 1
-    baseMin = table[idxMin]?.min ?? 0
-    baseMax = table[idxMax]?.max ?? 0
+    baseMin = Math.max(0, table[idxMin]?.min ?? 0)
+    baseMax = Math.max(0, table[idxMax]?.max ?? 0)
   }
 
   const flatKeys: string[] = ['flat_skill_damage', 'flat_elemental_skill_damage']
@@ -663,8 +694,9 @@ export function computeWeaponDamage(
   const hasWeapon =
     !!base && base.damageMin !== undefined && base.damageMax !== undefined
 
-  const weaponDamageMin = hasWeapon ? base!.damageMin! : 0
-  const weaponDamageMax = hasWeapon ? base!.damageMax! : 0
+  // Unarmed: every character has a 2-6 base physical damage when no weapon is equipped.
+  const weaponDamageMin = hasWeapon ? base!.damageMin! : 2
+  const weaponDamageMax = hasWeapon ? base!.damageMax! : 6
 
   const ed = stats.enhanced_damage ?? 0
   const enhancedDamageMinPct = rangedMin(ed)

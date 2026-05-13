@@ -89,6 +89,8 @@ mod tests {
             damage_formula: None,
             damage_per_rank: None,
             bonus_sources: vec![],
+            attack_kind: None,
+            attack_scaling: None,
         }
     }
 

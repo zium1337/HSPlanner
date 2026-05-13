@@ -112,6 +112,8 @@ impl From<SkillDto> for calc::Skill {
                 .damage_per_rank
                 .map(|t| t.into_iter().map(Into::into).collect()),
             bonus_sources: v.bonus_sources.into_iter().map(Into::into).collect(),
+            attack_kind: None,
+            attack_scaling: None,
         }
     }
 }

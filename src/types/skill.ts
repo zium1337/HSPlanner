@@ -30,6 +30,15 @@ export interface DamageFormula {
   perLevel: number
 }
 
+export type AttackKind = 'attack' | 'spell'
+
+export interface AttackSkillScaling {
+  weaponDamagePct?: DamageFormula
+  flatPhysicalMin?: DamageFormula
+  flatPhysicalMax?: DamageFormula
+  attackRatingPct?: DamageFormula
+}
+
 export interface ManaCostFormula {
   base: number
   perLevel: number
@@ -81,6 +90,8 @@ export interface Skill {
   damageFormula?: DamageFormula
   manaCostFormula?: ManaCostFormula
   bonusSources?: BonusSource[]
+  attackKind?: AttackKind
+  attackScaling?: AttackSkillScaling
   passiveStats?: PassiveStats
   proc?: SkillProc
   subskills?: SubskillNode[]

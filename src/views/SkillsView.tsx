@@ -1034,10 +1034,11 @@ function SkillEffectsBlock({
   const allocated = currentRank > 0
   const curMin = allocated ? effRankMin : 1
   const curMax = allocated ? effRankMax : 1
-  const nextMin =
-    allocated && curMin < skill.maxRank ? curMin + 1 : null
-  const nextMax =
-    allocated && curMax < skill.maxRank ? curMax + 1 : null
+  // Cap is on allocated rank (player-pointable), not effective rank
+  // (which can exceed maxRank via +all_skills / +element_skills bonuses).
+  const canIncrement = allocated && currentRank < skill.maxRank
+  const nextMin = canIncrement ? curMin + 1 : null
+  const nextMax = canIncrement ? curMax + 1 : null
 
   const passiveCurMin = passiveStatsAtRank(skill, curMin)
   const passiveCurMax = passiveStatsAtRank(skill, curMax)
@@ -1053,14 +1054,14 @@ function SkillEffectsBlock({
 
   const computeBaseDmg = (rank: number): [number, number] | null => {
     if (skill.damageFormula) {
-      const v = skill.damageFormula.base + skill.damageFormula.perLevel * rank
+      const v = Math.max(0, skill.damageFormula.base + skill.damageFormula.perLevel * rank)
       return [v, v]
     }
     if (skill.damagePerRank) {
       const idx = Math.min(rank, skill.damagePerRank.length) - 1
       if (idx >= 0) {
         const d = skill.damagePerRank[idx]!
-        return [d.min, d.max]
+        return [Math.max(0, d.min), Math.max(0, d.max)]
       }
     }
     return null
@@ -1204,7 +1205,11 @@ function SkillEffectsBlock({
       <div className="space-y-0.5 text-xs tabular-nums">
         {baseDmgCurMin && baseDmgCurMax && (
           <EffRow
-            label="Base damage"
+            label={
+              skill.attackKind === 'attack' && skill.damageType
+                ? `${skill.damageType[0]!.toUpperCase()}${skill.damageType.slice(1)} damage`
+                : 'Base damage'
+            }
             cur={formatDmgRange(baseDmgCurMin, baseDmgCurMax)}
             next={
               baseDmgNextMin && baseDmgNextMax
@@ -1214,6 +1219,50 @@ function SkillEffectsBlock({
             color={allocated ? 'text-accent-hot' : 'text-muted'}
           />
         )}
+        {(['weaponDamagePct', 'attackRatingPct'] as const).map((key) => {
+          const f = skill.attackScaling?.[key]
+          if (!f) return null
+          const label = key === 'weaponDamagePct' ? 'Attack damage' : 'Attack rating'
+          return (
+            <EffRow
+              key={key}
+              label={label}
+              cur={formatPctRange(evalFormulaClamped(f, curMin), evalFormulaClamped(f, curMax))}
+              next={
+                nextMin !== null && nextMax !== null
+                  ? formatPctRange(
+                      evalFormulaClamped(f, nextMin),
+                      evalFormulaClamped(f, nextMax),
+                    )
+                  : undefined
+              }
+              color={allocated ? 'text-accent-hot' : 'text-muted'}
+            />
+          )
+        })}
+        {skill.attackScaling?.flatPhysicalMin &&
+          skill.attackScaling.flatPhysicalMax && (
+            <EffRow
+              label="Physical damage"
+              cur={formatFlatPhys(
+                skill.attackScaling.flatPhysicalMin,
+                skill.attackScaling.flatPhysicalMax,
+                curMin,
+                curMax,
+              )}
+              next={
+                nextMin !== null && nextMax !== null
+                  ? formatFlatPhys(
+                      skill.attackScaling.flatPhysicalMin,
+                      skill.attackScaling.flatPhysicalMax,
+                      nextMin,
+                      nextMax,
+                    )
+                  : undefined
+              }
+              color={allocated ? 'text-accent-hot' : 'text-muted'}
+            />
+          )}
         {manaCurMin !== undefined && manaCurMax !== undefined && (
           <EffRow
             label="Mana cost"
@@ -1306,6 +1355,33 @@ function formatStatPair(key: string, min: number, max: number): string {
   // Renders a `[min, max]` stat range as either a single signed value or "min-max" with the per-stat unit suffix. Used by SkillEffectsBlock.
   if (min === max) return formatValue(min, key)
   return `${formatValue(min, key)}-${formatValue(max, key).replace(/^[+-]/, '')}`
+}
+
+// Clamp to >= 0: linear formulas can extrapolate negative at low ranks,
+// but UI never shows negative skill scaling.
+function evalFormulaClamped(f: { base: number; perLevel: number }, rank: number): number {
+  return Math.max(0, f.base + f.perLevel * rank)
+}
+
+function formatPctRange(min: number, max: number): string {
+  const m = Math.round(min * 100) / 100
+  const mx = Math.round(max * 100) / 100
+  if (m === mx) return `${m}%`
+  return `${m}% - ${mx}%`
+}
+
+function formatFlatPhys(
+  minF: { base: number; perLevel: number },
+  maxF: { base: number; perLevel: number },
+  curMin: number,
+  curMax: number,
+): string {
+  const fmt = (rank: number) =>
+    `[${Math.round(evalFormulaClamped(minF, rank) * 100) / 100} to ${
+      Math.round(evalFormulaClamped(maxF, rank) * 100) / 100
+    }]`
+  if (curMin === curMax) return fmt(curMin)
+  return `${fmt(curMin)} … ${fmt(curMax)}`
 }
 
 function formatDmgRange(min: [number, number], max: [number, number]): string {

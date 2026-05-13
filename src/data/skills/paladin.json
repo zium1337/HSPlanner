@@ -7,10 +7,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Justiciar",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "thunder_shield",
@@ -20,10 +29,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Justiciar",
-    "position": { "row": 0, "col": 2 }
+    "position": {
+      "row": 0,
+      "col": 2
+    }
   },
   {
     "id": "divine_storm",
@@ -33,10 +51,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Justiciar",
-    "position": { "row": 1, "col": 0 }
+    "position": {
+      "row": 1,
+      "col": 0
+    }
   },
   {
     "id": "fanaticism_aura",
@@ -46,10 +73,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Aura"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Aura"
+    ],
     "tree": "Justiciar",
-    "position": { "row": 1, "col": 1 }
+    "position": {
+      "row": 1,
+      "col": 1
+    }
   },
   {
     "id": "holy_shock_aura",
@@ -59,10 +95,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Aura"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Aura"
+    ],
     "tree": "Justiciar",
-    "position": { "row": 2, "col": 1 }
+    "position": {
+      "row": 2,
+      "col": 1
+    }
   },
   {
     "id": "ball_lightning",
@@ -72,10 +117,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Justiciar",
-    "position": { "row": 2, "col": 2 }
+    "position": {
+      "row": 2,
+      "col": 2
+    }
   },
   {
     "id": "lightning_fury",
@@ -85,10 +139,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Justiciar",
-    "position": { "row": 3, "col": 0 }
+    "position": {
+      "row": 3,
+      "col": 0
+    }
   },
   {
     "id": "eye_of_the_storm",
@@ -98,10 +161,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Justiciar",
-    "position": { "row": 3, "col": 2 }
+    "position": {
+      "row": 3,
+      "col": 2
+    }
   },
   {
     "id": "thors_fury",
@@ -111,10 +183,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Justiciar",
-    "position": { "row": 4, "col": 1 }
+    "position": {
+      "row": 4,
+      "col": 1
+    }
   },
   {
     "id": "divine_wisdom",
@@ -124,10 +205,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
     "tree": "Lionheart",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    }
   },
   {
     "id": "holy_bolt",
@@ -137,10 +227,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Lionheart",
-    "position": { "row": 0, "col": 3 }
+    "position": {
+      "row": 0,
+      "col": 2
+    }
   },
   {
     "id": "lights_embrace",
@@ -150,10 +249,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Lionheart",
-    "position": { "row": 1, "col": 0 }
+    "position": {
+      "row": 1,
+      "col": 0
+    }
   },
   {
     "id": "holy_retribution",
@@ -163,10 +271,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Lionheart",
-    "position": { "row": 1, "col": 1 }
+    "position": {
+      "row": 1,
+      "col": 1
+    }
   },
   {
     "id": "holy_nova",
@@ -176,10 +293,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Lionheart",
-    "position": { "row": 2, "col": 1 }
+    "position": {
+      "row": 2,
+      "col": 1
+    }
   },
   {
     "id": "holy_hammer",
@@ -189,10 +315,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Lionheart",
-    "position": { "row": 2, "col": 3 }
+    "position": {
+      "row": 2,
+      "col": 2
+    }
   },
   {
     "id": "holy_aura",
@@ -202,10 +337,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Aura"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Aura"
+    ],
     "tree": "Lionheart",
-    "position": { "row": 3, "col": 0 }
+    "position": {
+      "row": 3,
+      "col": 0
+    }
   },
   {
     "id": "fist_of_the_heavens",
@@ -215,10 +359,19 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
     "tree": "Lionheart",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    }
   },
   {
     "id": "the_venerated_one",
@@ -228,9 +381,18 @@
     "description": "",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
     "tree": "Lionheart",
-    "position": { "row": 4, "col": 1 }
+    "position": {
+      "row": 4,
+      "col": 1
+    }
   }
 ]

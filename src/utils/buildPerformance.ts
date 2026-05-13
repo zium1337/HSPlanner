@@ -1,6 +1,6 @@
 import { gameConfig } from '../data'
 import { rangedMax, rangedMin, statDef, statName } from './stats'
-import type { SkillDamageBreakdown } from './stats'
+import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from './stats'
 import type {
   AttributeKey,
   CustomStat,
@@ -13,6 +13,7 @@ export interface BuildPerformance {
   attributes: Record<AttributeKey, RangedValue>
   stats: Record<string, RangedValue>
   damage: SkillDamageBreakdown | null
+  attackDamage: AttackSkillDamageBreakdown | null
   hitDpsMin: number | undefined
   hitDpsMax: number | undefined
   avgHitDpsMin: number | undefined

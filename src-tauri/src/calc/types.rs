@@ -376,6 +376,26 @@ pub struct BonusSourceSpec {
     pub per: String,
 }
 
+#[derive(Debug, Clone, Copy, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum AttackKindSpec {
+    Attack,
+    Spell,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct AttackSkillScalingSpec {
+    #[serde(default)]
+    pub weapon_damage_pct: Option<DamageFormulaSpec>,
+    #[serde(default)]
+    pub flat_physical_min: Option<DamageFormulaSpec>,
+    #[serde(default)]
+    pub flat_physical_max: Option<DamageFormulaSpec>,
+    #[serde(default)]
+    pub attack_rating_pct: Option<DamageFormulaSpec>,
+}
+
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SkillRankSpec {
@@ -530,6 +550,10 @@ pub struct SkillSpec {
     pub tree: Option<String>,
     #[serde(default)]
     pub icon: Option<String>,
+    #[serde(default)]
+    pub attack_kind: Option<AttackKindSpec>,
+    #[serde(default)]
+    pub attack_scaling: Option<AttackSkillScalingSpec>,
 }
 
 // ---------- game config ----------

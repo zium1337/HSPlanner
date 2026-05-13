@@ -5,6 +5,7 @@ import BuildsMenu from "./components/BuildsMenu";
 import LeftStatsPanel from "./components/LeftStatsPanel";
 import Logo from "./components/Logo";
 import ShareButton from "./components/ShareButton";
+import StartupBuildModal from "./components/StartupBuildModal";
 import { classes, getClass } from "./data";
 import { useBuild } from "./store/build";
 import { preloadSprites } from "./utils/preloadAssets";
@@ -54,6 +55,9 @@ const SPRITES_WEIGHT = 0.5;
 
 function App() {
   const [section, setSection] = useState<Section>(readInitialSection);
+  const [showStartup, setShowStartup] = useState(false);
+  const loadSavedBuild = useBuild((s) => s.loadSavedBuild);
+  const importBuildSnapshot = useBuild((s) => s.importBuildSnapshot);
 
   // Boot: warm up the Rust calc caches and preload every sprite while the
   // HTML splash from index.html is visible. The splash listens for these
@@ -100,6 +104,7 @@ function App() {
       }
       if (cancelled) return;
       window.__bootFinish?.();
+      setShowStartup(true);
     })();
     return () => {
       cancelled = true;
@@ -287,6 +292,21 @@ function App() {
       </div>
 
       <BottomBar />
+
+      {showStartup && (
+        <StartupBuildModal
+          onOpenBuild={(id) => {
+            loadSavedBuild(id);
+            setShowStartup(false);
+          }}
+          onNewBuild={() => setShowStartup(false)}
+          onImport={(decoded) => {
+            if (decoded) importBuildSnapshot(decoded.snapshot, decoded.notes);
+            setShowStartup(false);
+          }}
+          onCancel={() => setShowStartup(false)}
+        />
+      )}
     </div>
   );
 }

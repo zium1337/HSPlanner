@@ -5,12 +5,12 @@ use super::{
     SkillDamageBreakdown, SkillRanks, StatMap, collect_extra_damage, crit_factors, r_max, r_min, rg,
 };
 
-struct ElementKeys {
-    skills: &'static str,
-    skill_damage: &'static str,
-    skill_damage_more: &'static str,
-    flat_skill_damage: &'static str,
-    ignore_res: &'static str,
+pub(super) struct ElementKeys {
+    pub skills: &'static str,
+    pub skill_damage: &'static str,
+    pub skill_damage_more: &'static str,
+    pub flat_skill_damage: &'static str,
+    pub ignore_res: &'static str,
 }
 
 const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
@@ -96,7 +96,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
     ),
 ];
 
-fn element_keys(damage_type: &str) -> Option<&'static ElementKeys> {
+pub(super) fn element_keys(damage_type: &str) -> Option<&'static ElementKeys> {
     ELEMENT_KEYS
         .iter()
         .find(|(k, _)| *k == damage_type)
@@ -149,14 +149,19 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let eff_min = input.allocated_rank + r_min(all_skills) + elem_min + item.0;
     let eff_max = input.allocated_rank + r_max(all_skills) + elem_max + item.1;
 
+    // Clamp to >= 0: a skill never deals negative damage, even when the
+    // linear formula extrapolates below zero at low ranks.
     let (base_min, base_max) = if let Some(f) = &s.damage_formula {
-        (f.base + f.per_level * eff_min, f.base + f.per_level * eff_max)
+        (
+            (f.base + f.per_level * eff_min).max(0.0),
+            (f.base + f.per_level * eff_max).max(0.0),
+        )
     } else {
         let t = s.damage_per_rank.as_ref().unwrap();
         let n = t.len() as i64;
         let i_min = ((eff_min as i64).max(1).min(n) - 1) as usize;
         let i_max = ((eff_max as i64).max(1).min(n) - 1) as usize;
-        (t[i_min].min, t[i_max].max)
+        (t[i_min].min.max(0.0), t[i_max].max.max(0.0))
     };
 
     let mut flat_min = 0.0;

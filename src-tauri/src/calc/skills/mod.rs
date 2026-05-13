@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 
+pub mod attack;
 pub mod damage;
 pub mod weapon;
 
+pub use attack::{AttackSkillInput, compute_attack_skill_damage};
 pub use damage::{SkillInput, compute_skill_damage};
 pub use weapon::compute_weapon_damage;
 
@@ -45,6 +47,20 @@ pub enum BonusSource {
     SkillLevel { source: String, value: f64 },
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AttackKind {
+    Attack,
+    Spell,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct AttackSkillScaling {
+    pub weapon_damage_pct: Option<DamageFormula>,
+    pub flat_physical_min: Option<DamageFormula>,
+    pub flat_physical_max: Option<DamageFormula>,
+    pub attack_rating_pct: Option<DamageFormula>,
+}
+
 #[derive(Debug, Clone)]
 pub struct Skill {
     pub name: String,
@@ -53,6 +69,8 @@ pub struct Skill {
     pub damage_formula: Option<DamageFormula>,
     pub damage_per_rank: Option<Vec<DamageRow>>,
     pub bonus_sources: Vec<BonusSource>,
+    pub attack_kind: Option<AttackKind>,
+    pub attack_scaling: Option<AttackSkillScaling>,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -103,6 +121,35 @@ pub struct SkillDamageBreakdown {
     pub final_max: i64,
     pub avg_min: i64,
     pub avg_max: i64,
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AttackSkillDamageBreakdown {
+    pub effective_rank_min: f64,
+    pub effective_rank_max: f64,
+    pub weapon_damage_pct_min: f64,
+    pub weapon_damage_pct_max: f64,
+    pub skill_flat_phys_min: f64,
+    pub skill_flat_phys_max: f64,
+    pub attack_rating_pct_min: f64,
+    pub attack_rating_pct_max: f64,
+    pub physical_hit_min: i64,
+    pub physical_hit_max: i64,
+    pub physical_avg_min: i64,
+    pub physical_avg_max: i64,
+    pub poison_hit_min: i64,
+    pub poison_hit_max: i64,
+    pub poison_avg_min: i64,
+    pub poison_avg_max: i64,
+    pub combined_hit_min: i64,
+    pub combined_hit_max: i64,
+    pub combined_avg_min: i64,
+    pub combined_avg_max: i64,
+    pub attacks_per_second_min: f64,
+    pub attacks_per_second_max: f64,
+    pub dps_min: f64,
+    pub dps_max: f64,
 }
 
 #[derive(Debug, Clone, Default)]

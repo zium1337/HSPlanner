@@ -44,6 +44,8 @@ fn skill_ref_to_calc(skill: &SkillRef) -> calc::Skill {
                 },
             })
             .collect(),
+        attack_kind: None,
+        attack_scaling: None,
     }
 }
 
