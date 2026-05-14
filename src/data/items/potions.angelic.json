@@ -10,10 +10,6 @@
     "implicit": {
       "magic_find": 325,
       "gold_find": 32
-    },
-    "uniqueEffects": [
-      "Grant Spell: Endless Wealth",
-      "Magic Find increased by 325% | 32% extra Gold dropped from enemies"
-    ]
+    }
   }
 ]

@@ -10,11 +10,7 @@
     "implicit": {
       "defense": 37,
       "damage_return": 275
-    },
-    "uniqueEffects": [
-      "Grant Spell: Spartan Defense",
-      "Defense increased by 37% | Damage Return 275%"
-    ]
+    }
   },
   {
     "id": "potion_satanic_bottle_of_radogate",
@@ -28,8 +24,7 @@
       "movement_speed": 40
     },
     "uniqueEffects": [
-      "Grant Spell: Fleet Footwork",
-      "Movement Speed increased by 40% | Phasing"
+      "Phasing"
     ]
   },
   {
@@ -43,11 +38,7 @@
     "implicit": {
       "attack_damage": 32,
       "crit_damage": 32
-    },
-    "uniqueEffects": [
-      "Grant Spell: Drunken Kung Fu",
-      "Attack Damage increased by 32% | Critical Strike Damage increased by 32%"
-    ]
+    }
   },
   {
     "id": "potion_satanic_caffeinated_coffee_container",
@@ -59,11 +50,7 @@
     "requiresLevel": 1,
     "implicit": {
       "extra_damage_burning": 42
-    },
-    "uniqueEffects": [
-      "Grant Spell: The Fragrance of Dark Coffee",
-      "42% extra Damage to Burning targets"
-    ]
+    }
   },
   {
     "id": "potion_satanic_dark_vial_of_corrosion",
@@ -75,11 +62,7 @@
     "requiresLevel": 1,
     "implicit": {
       "increased_poisoned_damage": 52
-    },
-    "uniqueEffects": [
-      "Grant Spell: Corrosion of Darkness",
-      "Poisoned Damage 52%"
-    ]
+    }
   },
   {
     "id": "potion_satanic_elixir_of_death",
@@ -92,11 +75,7 @@
     "implicit": {
       "attack_damage": 42,
       "magic_skill_damage": 42
-    },
-    "uniqueEffects": [
-      "Grant Spell: Berserkers Rage",
-      "Attack Damage increased by 42% | Magic Skill Damage increased by 42%"
-    ]
+    }
   },
   {
     "id": "potion_satanic_empty_bottle_of_vodka",
@@ -108,11 +87,7 @@
     "requiresLevel": 1,
     "implicit": {
       "all_skills": 5
-    },
-    "uniqueEffects": [
-      "Grant Spell: Drunken Infused Wisdom",
-      "+5 to All Skills"
-    ]
+    }
   },
   {
     "id": "potion_satanic_ghostly_potion",
@@ -124,11 +99,7 @@
     "requiresLevel": 1,
     "implicit": {
       "magic_skill_damage": 57
-    },
-    "uniqueEffects": [
-      "Grant Spell: Parallel Dimension",
-      "Magic Skill Damage increased by 57%"
-    ]
+    }
   },
   {
     "id": "potion_satanic_maggot_eye_elixir",
@@ -141,11 +112,7 @@
     "implicit": {
       "increased_attack_speed": 42,
       "attack_rating_pct": 42
-    },
-    "uniqueEffects": [
-      "Grant Spell: Absolute Power",
-      "Attack Speed increased by 42% | Attack Rating increased by 42%"
-    ]
+    }
   },
   {
     "id": "potion_satanic_power_of_void",
@@ -170,11 +137,7 @@
     "requiresLevel": 1,
     "implicit": {
       "life_steal": 38
-    },
-    "uniqueEffects": [
-      "Grant Spell: Vampirism",
-      "Life Stolen per Hit increased by 38%"
-    ]
+    }
   },
   {
     "id": "potion_satanic_prismatic_potion",
@@ -186,11 +149,7 @@
     "requiresLevel": 1,
     "implicit": {
       "all_resistances": 62
-    },
-    "uniqueEffects": [
-      "Grant Spell: Prismatic Skin",
-      "+62% to All Resistances"
-    ]
+    }
   },
   {
     "id": "potion_satanic_protein_shake",
@@ -203,11 +162,7 @@
     "implicit": {
       "to_strength": 95,
       "to_vitality": 60
-    },
-    "uniqueEffects": [
-      "Grant Spell: Flexing",
-      "+95 to Strength | +60 to Vitality"
-    ]
+    }
   },
   {
     "id": "potion_satanic_radbull",
@@ -220,11 +175,7 @@
     "implicit": {
       "increased_attack_speed": 42,
       "movement_speed": 32
-    },
-    "uniqueEffects": [
-      "Grant Spell: Hyper Activity",
-      "Attack Speed increased by 42% | Movement Speed increased by 32%"
-    ]
+    }
   },
   {
     "id": "potion_satanic_sarcasters_coffee_mug",
@@ -236,11 +187,7 @@
     "requiresLevel": 1,
     "implicit": {
       "movement_speed": 60
-    },
-    "uniqueEffects": [
-      "Grant Spell: Caffeinated",
-      "Movement Speed increased by 60%"
-    ]
+    }
   },
   {
     "id": "potion_satanic_surstr_mming",
@@ -253,11 +200,7 @@
     "implicit": {
       "life_replenish_pct": 280,
       "mana_replenish_pct": 280
-    },
-    "uniqueEffects": [
-      "Grant Spell: Taste of Heaven",
-      "+280% to Life Replenish | +280% to Mana Replenish"
-    ]
+    }
   },
   {
     "id": "potion_satanic_witches_potion",
@@ -272,8 +215,7 @@
       "mana_replenish_pct": 160
     },
     "uniqueEffects": [
-      "Grant Spell: Conjured Replenishment",
-      "Instantly recover full Life and Mana | +160% Life Replenish | +160% Mana Replenish"
+      "Instantly recover full Life and Mana"
     ]
   },
   {
@@ -286,10 +228,6 @@
     "requiresLevel": 1,
     "implicit": {
       "faster_cast_rate": 38
-    },
-    "uniqueEffects": [
-      "Grant Spell: Rapidcaster",
-      "Faster Cast Rate 38%"
-    ]
+    }
   }
 ]
