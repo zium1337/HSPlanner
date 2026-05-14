@@ -1,7 +1,19 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { createPortal } from "react-dom";
 import { classes, getClass } from "../data";
-import { listSavedBuilds, type SavedBuild } from "../utils/savedBuilds";
+import { useBuild } from "../store/build";
+import {
+  createBuild,
+  listSavedBuilds,
+  type SavedBuild,
+  type SavedProfile,
+} from "../utils/savedBuilds";
 import {
   decodeShareToBuild,
   parseBuildCodeFromInput,
@@ -14,6 +26,14 @@ type Scope =
   | { kind: "all" }
   | { kind: "class"; classId: string };
 
+type Mode =
+  | "menu"
+  | "save"
+  | "import"
+  | "renameBuild"
+  | "renameProfile"
+  | "addProfile";
+
 interface BuildMeta {
   level: number;
   nodes: number;
@@ -22,22 +42,47 @@ interface BuildMeta {
   decoded: boolean;
 }
 
+interface ContextMenuState {
+  x: number;
+  y: number;
+  kind: "build" | "profile";
+  buildId: string;
+  profileId?: string;
+}
+
 interface Props {
-  onOpenBuild: (buildId: string) => void;
-  onNewBuild: () => void;
-  onImport: (snapshot: ReturnType<typeof decodeShareToBuild>) => void;
-  onCancel: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const RECENT_LIMIT = 12;
 
-export default function StartupBuildModal({
-  onOpenBuild,
-  onNewBuild,
-  onImport,
-  onCancel,
-}: Props) {
-  const builds = useMemo(() => listSavedBuilds(), []);
+export default function StartupBuildModal({ isOpen, onClose }: Props) {
+  // Self-contained build library modal. Renders the same screen used at app boot, but also serves as the "Builds" picker reachable from the header — supports loading, saving (overwrite or save-as-new), importing, renaming/deleting builds, and full profile management (activate/add/duplicate/rename/delete) via right-click context menus.
+  const activeBuildId = useBuild((s) => s.activeBuildId);
+  const activeProfileId = useBuild((s) => s.activeProfileId);
+  const exportSnapshot = useBuild((s) => s.exportBuildSnapshot);
+  const importBuildSnapshot = useBuild((s) => s.importBuildSnapshot);
+  const loadSavedBuildAction = useBuild((s) => s.loadSavedBuild);
+  const bindToBuild = useBuild((s) => s.bindToBuild);
+  const deleteSavedBuild = useBuild((s) => s.deleteSavedBuild);
+  const renameSavedBuildAction = useBuild((s) => s.renameSavedBuild);
+  const commitActiveProfile = useBuild((s) => s.commitActiveProfile);
+  const switchActiveProfile = useBuild((s) => s.switchActiveProfile);
+  const addProfileToActiveBuild = useBuild(
+    (s) => s.addProfileToActiveBuild,
+  );
+  const duplicateActiveProfile = useBuild((s) => s.duplicateActiveProfile);
+  const renameActiveProfile = useBuild((s) => s.renameActiveProfile);
+  const removeActiveProfile = useBuild((s) => s.removeActiveProfile);
+  const savedBuildsVersion = useBuild((s) => s.savedBuildsVersion);
+
+  const builds = useMemo(
+    () => (isOpen ? listSavedBuilds() : []),
+    // savedBuildsVersion is the store cache-buster: re-read on every store mutation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isOpen, savedBuildsVersion],
+  );
 
   const metaByBuild = useMemo<Record<string, BuildMeta>>(() => {
     const out: Record<string, BuildMeta> = {};
@@ -81,19 +126,67 @@ export default function StartupBuildModal({
     [classCounts],
   );
 
-  const [scope, setScope] = useState<Scope>(
-    builds.length > 0 ? { kind: "recent" } : { kind: "all" },
-  );
+  const [mode, setMode] = useState<Mode>("menu");
+  const [scope, setScope] = useState<Scope>({ kind: "recent" });
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("lastOpened");
-  const [preferredId, setPreferredId] = useState<string | null>(
-    builds[0]?.id ?? null,
-  );
-  const [showImport, setShowImport] = useState(false);
+  const [preferredId, setPreferredId] = useState<string | null>(null);
+  const [saveName, setSaveName] = useState("");
   const [importText, setImportText] = useState("");
   const [importError, setImportError] = useState<string | null>(null);
+  const [renameBuildTarget, setRenameBuildTarget] =
+    useState<SavedBuild | null>(null);
+  const [renameProfileTarget, setRenameProfileTarget] =
+    useState<SavedProfile | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const [addProfileValue, setAddProfileValue] = useState("");
+  const [notice, setNotice] = useState<string | null>(null);
+  const [pendingDeleteKey, setPendingDeleteKey] = useState<string | null>(
+    null,
+  );
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(
+    null,
+  );
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const flashTimer = useRef<number | null>(null);
+
+  // Reset transient UI state when the modal is closed; ensures next open is clean.
+  useEffect(() => {
+    if (isOpen) return;
+    setMode("menu");
+    setSearch("");
+    setContextMenu(null);
+    setPendingDeleteKey(null);
+    setImportText("");
+    setImportError(null);
+    setSaveName("");
+    setAddProfileValue("");
+    setRenameBuildTarget(null);
+    setRenameProfileTarget(null);
+  }, [isOpen]);
+
+  // On open, prefer the active build if present, otherwise the first build.
+  useEffect(() => {
+    if (!isOpen) return;
+    setPreferredId((cur) => cur ?? activeBuildId ?? builds[0]?.id ?? null);
+    setScope((cur) => {
+      if (builds.length === 0) return { kind: "all" };
+      return cur;
+    });
+  }, [isOpen, activeBuildId, builds]);
+
+  useEffect(() => {
+    return () => {
+      if (flashTimer.current !== null) window.clearTimeout(flashTimer.current);
+    };
+  }, []);
+
+  const flash = (msg: string) => {
+    setNotice(msg);
+    if (flashTimer.current !== null) window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setNotice(null), 2000);
+  };
 
   const visible = useMemo(() => {
     const filter = search.trim().toLowerCase();
@@ -136,27 +229,40 @@ export default function StartupBuildModal({
     return visible[0]?.id ?? null;
   }, [visible, preferredId]);
 
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        if (showImport) {
-          setShowImport(false);
-          return;
-        }
-        onCancel();
-      }
-      if (e.key === "Enter" && !showImport && selectedId) {
-        onOpenBuild(selectedId);
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onCancel, onOpenBuild, selectedId, showImport]);
-
   const selectedBuild = selectedId
     ? builds.find((b) => b.id === selectedId)
     : null;
   const selectedMeta = selectedBuild ? metaByBuild[selectedBuild.id] : null;
+
+  const doLoad = (buildId: string) => {
+    if (buildId === activeBuildId) {
+      onClose();
+      return;
+    }
+    const ok = loadSavedBuildAction(buildId);
+    if (!ok) {
+      flash("Failed to load build");
+      return;
+    }
+    const target = builds.find((b) => b.id === buildId);
+    flash(`Loaded "${target?.name ?? "build"}"`);
+    onClose();
+  };
+
+  const doSaveAsNew = () => {
+    const name = saveName.trim() || "Untitled build";
+    const notes = useBuild.getState().notes;
+    const rec = createBuild(name, exportSnapshot(), undefined, notes);
+    bindToBuild(rec.id, rec.activeProfileId);
+    flash(`Saved "${rec.name}"`);
+    setSaveName("");
+    setMode("menu");
+  };
+
+  const doOverwriteActive = () => {
+    if (!activeBuildId || !activeProfileId) return;
+    if (commitActiveProfile()) flash("Updated active profile");
+  };
 
   const tryImport = (text: string) => {
     const code = parseBuildCodeFromInput(text);
@@ -170,9 +276,11 @@ export default function StartupBuildModal({
       return;
     }
     setImportError(null);
-    setShowImport(false);
+    importBuildSnapshot(decoded.snapshot, decoded.notes);
     setImportText("");
-    onImport(decoded);
+    setMode("menu");
+    flash("Build imported");
+    onClose();
   };
 
   const handleFile = (file: File) => {
@@ -185,11 +293,135 @@ export default function StartupBuildModal({
     reader.readAsText(file);
   };
 
+  const doStartRenameBuild = (b: SavedBuild) => {
+    setRenameBuildTarget(b);
+    setRenameValue(b.name);
+    setMode("renameBuild");
+  };
+
+  const doRenameBuild = () => {
+    if (!renameBuildTarget) return;
+    renameSavedBuildAction(
+      renameBuildTarget.id,
+      renameValue.trim() || renameBuildTarget.name,
+    );
+    setRenameBuildTarget(null);
+    setMode("menu");
+  };
+
+  const doStartRenameProfile = (p: SavedProfile) => {
+    setRenameProfileTarget(p);
+    setRenameValue(p.name);
+    setMode("renameProfile");
+  };
+
+  const doRenameProfile = () => {
+    if (!renameProfileTarget) return;
+    renameActiveProfile(
+      renameProfileTarget.id,
+      renameValue.trim() || renameProfileTarget.name,
+    );
+    setRenameProfileTarget(null);
+    setMode("menu");
+  };
+
+  const doDeleteBuild = (b: SavedBuild) => {
+    const key = `build:${b.id}`;
+    if (pendingDeleteKey !== key) {
+      setPendingDeleteKey(key);
+      return;
+    }
+    deleteSavedBuild(b.id);
+    setPendingDeleteKey(null);
+    flash(`Deleted "${b.name}"`);
+  };
+
+  const doActivateProfile = (p: SavedProfile) => {
+    if (p.id === activeProfileId) return;
+    if (switchActiveProfile(p.id)) flash(`Profile: ${p.name}`);
+  };
+
+  const doDuplicateProfile = (p: SavedProfile) => {
+    if (duplicateActiveProfile(p.id)) flash(`Duplicated "${p.name}"`);
+  };
+
+  const doAddProfile = () => {
+    const activeBuild = builds.find((b) => b.id === activeBuildId);
+    const fallback = activeBuild
+      ? `Profile ${activeBuild.profiles.length + 1}`
+      : "Profile";
+    const name = addProfileValue.trim() || fallback;
+    if (addProfileToActiveBuild(name)) {
+      flash(`Added profile "${name}"`);
+      setAddProfileValue("");
+      setMode("menu");
+    }
+  };
+
+  const doDeleteProfile = (p: SavedProfile) => {
+    const activeBuild = builds.find((b) => b.id === activeBuildId);
+    if (!activeBuild) return;
+    if (activeBuild.profiles.length <= 1) {
+      flash("Cannot remove the last profile");
+      return;
+    }
+    const key = `profile:${p.id}`;
+    if (pendingDeleteKey !== key) {
+      setPendingDeleteKey(key);
+      return;
+    }
+    if (removeActiveProfile(p.id)) {
+      setPendingDeleteKey(null);
+      flash(`Removed profile "${p.name}"`);
+    }
+  };
+
+  const openContextMenu = (
+    e: React.MouseEvent,
+    payload: Omit<ContextMenuState, "x" | "y">,
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setPendingDeleteKey(null);
+    setContextMenu({ x: e.clientX, y: e.clientY, ...payload });
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        if (mode !== "menu") {
+          setMode("menu");
+          return;
+        }
+        if (contextMenu) {
+          setContextMenu(null);
+          return;
+        }
+        onClose();
+      }
+      if (
+        e.key === "Enter" &&
+        mode === "menu" &&
+        !contextMenu &&
+        selectedId
+      ) {
+        const tag = (e.target as HTMLElement | null)?.tagName;
+        if (tag !== "TEXTAREA" && tag !== "INPUT") doLoad(selectedId);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, mode, contextMenu, selectedId, onClose]);
+
+  if (!isOpen) return null;
+
   return createPortal(
     <div
       role="presentation"
-      className="fixed inset-0 z-[150] flex items-center justify-center backdrop-blur-sm"
-      onMouseDown={onCancel}
+      className="fixed inset-0 z-150 flex items-center justify-center backdrop-blur-sm"
+      onMouseDown={onClose}
       style={{
         background:
           "radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.08), rgba(0,0,0,0.85) 65%)",
@@ -200,7 +432,7 @@ export default function StartupBuildModal({
         aria-modal="true"
         aria-label="Select build"
         onMouseDown={(e) => e.stopPropagation()}
-        className="relative flex max-h-[90vh] w-[920px] max-w-[94vw] flex-col overflow-hidden rounded-[6px] border border-border"
+        className="relative flex max-h-[90vh] w-230 max-w-[94vw] flex-col overflow-hidden rounded-md border border-border"
         style={{
           background:
             "linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))",
@@ -234,24 +466,32 @@ export default function StartupBuildModal({
               Select Build
             </h2>
             <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              Open a saved build or start a new one
+              Right-click a build or profile for more actions
             </p>
           </div>
-          <div className="flex shrink-0 gap-2">
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setMode("save")}
+              className="inline-flex items-center gap-1.5 rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+            >
+              <SaveIcon />
+              Save current
+            </button>
             <button
               type="button"
               onClick={() => {
                 setImportError(null);
-                setShowImport(true);
+                setMode("import");
               }}
               className="inline-flex items-center gap-1.5 rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
             >
               <UploadIcon />
-              Import from file
+              Import
             </button>
             <button
               type="button"
-              onClick={onNewBuild}
+              onClick={onClose}
               className="inline-flex items-center gap-1.5 rounded-[3px] border border-accent-deep bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
               style={{
                 background: "linear-gradient(180deg, #3a2f1a, #2a2418)",
@@ -264,7 +504,7 @@ export default function StartupBuildModal({
         </header>
 
         <div
-          className="grid min-h-[28rem] flex-1 overflow-hidden"
+          className="grid min-h-112 flex-1 overflow-hidden"
           style={{ gridTemplateColumns: "220px 1fr" }}
         >
           <aside
@@ -356,9 +596,12 @@ export default function StartupBuildModal({
               </label>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto">
+            <div
+              className="min-h-0 flex-1 overflow-y-auto"
+              onClick={() => setContextMenu(null)}
+            >
               {builds.length === 0 ? (
-                <EmptyState onNewBuild={onNewBuild} />
+                <EmptyState onNewBuild={onClose} />
               ) : visible.length === 0 ? (
                 <div className="p-10 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
                   No matches
@@ -367,14 +610,35 @@ export default function StartupBuildModal({
                 <ul className="flex flex-col gap-1.5 p-3">
                   {visible.map((b) => {
                     const meta = metaByBuild[b.id];
+                    const isActive = b.id === activeBuildId;
+                    const armed = pendingDeleteKey === `build:${b.id}`;
                     return (
                       <BuildCard
                         key={b.id}
                         build={b}
                         meta={meta}
                         selected={b.id === selectedId}
+                        isActive={isActive}
+                        armed={armed}
+                        activeProfileId={activeProfileId}
+                        armedProfileKey={pendingDeleteKey}
                         onSelect={() => setPreferredId(b.id)}
-                        onOpen={() => onOpenBuild(b.id)}
+                        onOpen={() => doLoad(b.id)}
+                        onContextMenu={(e) =>
+                          openContextMenu(e, {
+                            kind: "build",
+                            buildId: b.id,
+                          })
+                        }
+                        onActivateProfile={doActivateProfile}
+                        onAddProfile={() => setMode("addProfile")}
+                        onProfileContextMenu={(e, p) =>
+                          openContextMenu(e, {
+                            kind: "profile",
+                            buildId: b.id,
+                            profileId: p.id,
+                          })
+                        }
                       />
                     );
                   })}
@@ -386,7 +650,9 @@ export default function StartupBuildModal({
 
         <footer className="flex items-center justify-between gap-3 border-t border-border bg-black/35 px-5 py-3">
           <div className="min-w-0 flex-1 truncate font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-            {selectedBuild ? (
+            {notice ? (
+              <span className="text-accent-hot">{notice}</span>
+            ) : selectedBuild ? (
               <>
                 <span className="text-accent-hot">{selectedBuild.name}</span>
                 <span className="mx-2 text-faint">·</span>
@@ -403,7 +669,7 @@ export default function StartupBuildModal({
           <div className="flex shrink-0 gap-2">
             <button
               type="button"
-              onClick={onCancel}
+              onClick={onClose}
               className="rounded-[3px] border border-border-2 bg-transparent px-4 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
             >
               Cancel
@@ -411,7 +677,7 @@ export default function StartupBuildModal({
             <button
               type="button"
               disabled={!selectedId}
-              onClick={() => selectedId && onOpenBuild(selectedId)}
+              onClick={() => selectedId && doLoad(selectedId)}
               className="inline-flex items-center gap-2 rounded-[3px] border border-accent-deep px-4 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-hot transition-all hover:border-accent-hot hover:text-[#fff0c4] disabled:cursor-not-allowed disabled:border-border-2 disabled:bg-transparent disabled:text-faint disabled:shadow-none"
               style={{
                 background: selectedId
@@ -429,16 +695,130 @@ export default function StartupBuildModal({
         </footer>
       </div>
 
-      {showImport && (
+      {mode === "import" && (
         <ImportOverlay
           text={importText}
           error={importError}
           onTextChange={setImportText}
-          onClose={() => setShowImport(false)}
+          onClose={() => {
+            setMode("menu");
+            setImportText("");
+            setImportError(null);
+          }}
           onPickFile={() => fileInputRef.current?.click()}
           onSubmit={() => tryImport(importText)}
         />
       )}
+
+      {mode === "save" && (
+        <SaveOverlay
+          name={saveName}
+          activeBuildId={activeBuildId}
+          activeProfileId={activeProfileId}
+          onNameChange={setSaveName}
+          onClose={() => setMode("menu")}
+          onSaveAsNew={doSaveAsNew}
+          onOverwrite={() => {
+            doOverwriteActive();
+            setMode("menu");
+          }}
+        />
+      )}
+
+      {mode === "addProfile" && (
+        <MiniInputOverlay
+          title="Add profile"
+          sectionLabel="New profile"
+          label="Profile name"
+          value={addProfileValue}
+          placeholder="e.g. Variant"
+          submitLabel="Add"
+          hint="Seeded with the current state, then activated."
+          onValueChange={setAddProfileValue}
+          onClose={() => setMode("menu")}
+          onSubmit={doAddProfile}
+        />
+      )}
+
+      {mode === "renameBuild" && renameBuildTarget && (
+        <MiniInputOverlay
+          title={`Rename "${renameBuildTarget.name}"`}
+          sectionLabel="Rename build"
+          label="New name"
+          value={renameValue}
+          submitLabel="Save"
+          onValueChange={setRenameValue}
+          onClose={() => setMode("menu")}
+          onSubmit={doRenameBuild}
+        />
+      )}
+
+      {mode === "renameProfile" && renameProfileTarget && (
+        <MiniInputOverlay
+          title={`Rename "${renameProfileTarget.name}"`}
+          sectionLabel="Rename profile"
+          label="New profile name"
+          value={renameValue}
+          submitLabel="Save"
+          onValueChange={setRenameValue}
+          onClose={() => setMode("menu")}
+          onSubmit={doRenameProfile}
+        />
+      )}
+
+      {contextMenu &&
+        (() => {
+          const build = builds.find((b) => b.id === contextMenu.buildId);
+          if (!build) return null;
+          const profile =
+            contextMenu.kind === "profile" && contextMenu.profileId
+              ? (build.profiles.find((p) => p.id === contextMenu.profileId) ??
+                null)
+              : null;
+          return (
+            <ContextMenu
+              state={contextMenu}
+              build={build}
+              profile={profile}
+              isActiveBuild={build.id === activeBuildId}
+              isActiveProfile={profile?.id === activeProfileId}
+              armedBuild={pendingDeleteKey === `build:${build.id}`}
+              armedProfile={
+                profile != null && pendingDeleteKey === `profile:${profile.id}`
+              }
+              isLastProfile={build.profiles.length <= 1}
+              onClose={() => setContextMenu(null)}
+              onLoadBuild={() => {
+                doLoad(build.id);
+                setContextMenu(null);
+              }}
+              onUpdateBuild={() => {
+                doOverwriteActive();
+                setContextMenu(null);
+              }}
+              onRenameBuild={() => {
+                setContextMenu(null);
+                doStartRenameBuild(build);
+              }}
+              onDeleteBuild={() => doDeleteBuild(build)}
+              onActivateProfile={() => {
+                if (profile) doActivateProfile(profile);
+                setContextMenu(null);
+              }}
+              onRenameProfile={() => {
+                setContextMenu(null);
+                if (profile) doStartRenameProfile(profile);
+              }}
+              onDuplicateProfile={() => {
+                if (profile) doDuplicateProfile(profile);
+                setContextMenu(null);
+              }}
+              onDeleteProfile={() => {
+                if (profile) doDeleteProfile(profile);
+              }}
+            />
+          );
+        })()}
 
       <input
         ref={fileInputRef}
@@ -493,12 +873,12 @@ function SidebarRow({
       className={`group relative flex items-center justify-between gap-3 rounded-[3px] px-2.5 py-1.5 text-left text-[12px] transition-colors ${
         active
           ? "bg-accent-hot/10 text-accent-hot"
-          : "text-muted hover:bg-white/[0.025] hover:text-text"
+          : "text-muted hover:bg-white/2.5 hover:text-text"
       }`}
     >
       <span
         aria-hidden
-        className={`absolute left-0 top-1.5 bottom-1.5 w-[2px] transition-opacity ${
+        className={`absolute left-0 top-1.5 bottom-1.5 w-0.5 transition-opacity ${
           active ? "bg-accent-hot opacity-100" : "opacity-0"
         }`}
         style={
@@ -533,97 +913,209 @@ function BuildCard({
   build,
   meta,
   selected,
+  isActive,
+  armed,
+  activeProfileId,
+  armedProfileKey,
   onSelect,
   onOpen,
+  onContextMenu,
+  onActivateProfile,
+  onAddProfile,
+  onProfileContextMenu,
 }: {
   build: SavedBuild;
   meta: BuildMeta | undefined;
   selected: boolean;
+  isActive: boolean;
+  armed: boolean;
+  activeProfileId: string | null;
+  armedProfileKey: string | null;
   onSelect: () => void;
   onOpen: () => void;
+  onContextMenu: (e: React.MouseEvent) => void;
+  onActivateProfile: (p: SavedProfile) => void;
+  onAddProfile: () => void;
+  onProfileContextMenu: (e: React.MouseEvent, p: SavedProfile) => void;
 }) {
   const color = build.classId ? classColor(build.classId) : "#5a5448";
   const initial = (meta?.className?.[0] ?? "?").toUpperCase();
   return (
     <li>
-      <button
-        type="button"
-        onClick={onSelect}
-        onDoubleClick={onOpen}
-        className={`group relative grid w-full items-center gap-4 rounded-[3px] border px-3 py-2.5 text-left transition-all ${
+      <div
+        className={`group relative flex flex-col rounded-[3px] border transition-all ${
           selected
-            ? "border-accent-deep bg-accent-hot/[0.06]"
-            : "border-border-2/60 bg-panel/40 hover:border-accent-deep/50 hover:bg-accent-hot/[0.03]"
+            ? "border-accent-deep bg-accent-hot/6"
+            : "border-border-2/60 bg-panel/40 hover:border-accent-deep/50 hover:bg-accent-hot/3"
         }`}
         style={{
-          gridTemplateColumns: "44px 1fr auto",
           boxShadow: selected
             ? "0 0 0 1px rgba(224,184,100,0.18), 0 0 24px rgba(224,184,100,0.08)"
             : undefined,
         }}
       >
-        <span
-          aria-hidden
-          className="flex h-11 w-11 items-center justify-center rounded-[3px] border font-mono text-[15px] font-bold tracking-tight"
-          style={{
-            color,
-            borderColor: `${color}55`,
-            background: `linear-gradient(180deg, ${color}1a, ${color}05)`,
-            boxShadow: selected ? `0 0 14px ${color}40` : undefined,
-          }}
+        <button
+          type="button"
+          onClick={onSelect}
+          onDoubleClick={onOpen}
+          onContextMenu={onContextMenu}
+          className="grid w-full items-center gap-4 px-3 py-2.5 text-left"
+          style={{ gridTemplateColumns: "44px 1fr auto" }}
         >
-          {initial}
-        </span>
+          <span
+            aria-hidden
+            className="flex h-11 w-11 items-center justify-center rounded-[3px] border font-mono text-[15px] font-bold tracking-tight"
+            style={{
+              color,
+              borderColor: `${color}55`,
+              background: `linear-gradient(180deg, ${color}1a, ${color}05)`,
+              boxShadow: selected ? `0 0 14px ${color}40` : undefined,
+            }}
+          >
+            {initial}
+          </span>
 
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <div className="flex min-w-0 items-center gap-2">
-            <span
-              className={`truncate text-[14px] font-medium tracking-[0.01em] ${
-                selected
-                  ? "text-accent-hot"
-                  : "text-text group-hover:text-accent-hot"
-              }`}
-            >
-              {build.name}
-            </span>
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <div className="flex min-w-0 items-center gap-2">
+              <span
+                className={`truncate text-[14px] font-medium tracking-[0.01em] ${
+                  selected
+                    ? "text-accent-hot"
+                    : "text-text group-hover:text-accent-hot"
+                }`}
+              >
+                {build.name}
+              </span>
+              {isActive && (
+                <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-accent-deep">
+                  Active
+                </span>
+              )}
+              {armed && (
+                <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-stat-red">
+                  Click delete again
+                </span>
+              )}
+            </div>
+            <div className="flex min-w-0 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+              <span className="truncate">{meta?.className ?? "—"}</span>
+              <span aria-hidden className="text-faint">
+                ·
+              </span>
+              <span className="tabular-nums">
+                {build.profiles.length} profile
+                {build.profiles.length === 1 ? "" : "s"}
+              </span>
+              {!meta?.decoded && (
+                <>
+                  <span aria-hidden className="text-faint">
+                    ·
+                  </span>
+                  <span className="text-stat-red/80">unreadable</span>
+                </>
+              )}
+            </div>
           </div>
-          <div className="flex min-w-0 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-            <span className="truncate">{meta?.className ?? "—"}</span>
-            <span aria-hidden className="text-faint">
-              ·
+
+          <div className="flex flex-col items-end gap-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+            <span className="text-[13px] tabular-nums tracking-[0.02em] text-text">
+              Lv <span className="text-accent-hot">{meta?.level ?? "—"}</span>
             </span>
             <span className="tabular-nums">
-              {build.profiles.length} profile
-              {build.profiles.length === 1 ? "" : "s"}
+              {(meta?.nodes ?? 0).toLocaleString()} nodes
             </span>
-            {!meta?.decoded && (
-              <>
-                <span aria-hidden className="text-faint">
-                  ·
-                </span>
-                <span className="text-stat-red/80">unreadable</span>
-              </>
-            )}
+            <span>{formatTimestamp(build.updatedAt)}</span>
           </div>
-        </div>
+        </button>
 
-        <div className="flex flex-col items-end gap-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-          <span className="text-[13px] tabular-nums tracking-[0.02em] text-text">
-            Lv <span className="text-accent-hot">{meta?.level ?? "—"}</span>
-          </span>
-          <span className="tabular-nums">
-            {(meta?.nodes ?? 0).toLocaleString()} nodes
-          </span>
-          <span>{formatTimestamp(build.updatedAt)}</span>
-        </div>
-      </button>
+        {isActive && build.profiles.length > 0 && (
+          <ProfileSubList
+            profiles={build.profiles}
+            activeProfileId={activeProfileId}
+            armedProfileKey={armedProfileKey}
+            onActivate={onActivateProfile}
+            onAdd={onAddProfile}
+            onContextMenu={onProfileContextMenu}
+          />
+        )}
+      </div>
     </li>
+  );
+}
+
+function ProfileSubList({
+  profiles,
+  activeProfileId,
+  armedProfileKey,
+  onActivate,
+  onAdd,
+  onContextMenu,
+}: {
+  profiles: SavedProfile[];
+  activeProfileId: string | null;
+  armedProfileKey: string | null;
+  onActivate: (p: SavedProfile) => void;
+  onAdd: () => void;
+  onContextMenu: (e: React.MouseEvent, p: SavedProfile) => void;
+}) {
+  return (
+    <div
+      className="border-t border-border/60 bg-black/20"
+      style={{
+        backgroundImage:
+          "linear-gradient(90deg, rgba(201,165,90,0.04), transparent 60%)",
+      }}
+    >
+      <ul className="flex flex-col">
+        {profiles.map((p) => {
+          const active = p.id === activeProfileId;
+          const armed = armedProfileKey === `profile:${p.id}`;
+          return (
+            <li key={p.id}>
+              <button
+                type="button"
+                onClick={() => onActivate(p)}
+                onContextMenu={(e) => onContextMenu(e, p)}
+                className="group relative grid w-full items-center gap-3 px-4 py-1.5 pl-14 text-left transition-colors hover:bg-accent-hot/5"
+                style={{ gridTemplateColumns: "12px 1fr auto" }}
+              >
+                <span
+                  aria-hidden
+                  className={`inline-block h-1 w-1 rotate-45 ${active ? "bg-accent-hot" : "bg-faint"}`}
+                  style={
+                    active
+                      ? { boxShadow: "0 0 6px rgba(224,184,100,0.6)" }
+                      : undefined
+                  }
+                />
+                <span
+                  className={`truncate text-[12px] ${active ? "text-accent-hot" : "text-muted group-hover:text-text"}`}
+                >
+                  {p.name}
+                </span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-faint">
+                  {active ? "Active" : armed ? "Click delete again" : ""}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <button
+        type="button"
+        onClick={onAdd}
+        className="flex w-full items-center gap-2 border-t border-dashed border-border/60 px-4 py-1.5 pl-14 text-left font-mono text-[10px] uppercase tracking-[0.14em] text-faint transition-colors hover:bg-accent-hot/5 hover:text-accent-hot"
+      >
+        <span aria-hidden>+</span>
+        Add profile
+      </button>
+    </div>
   );
 }
 
 function EmptyState({ onNewBuild }: { onNewBuild: () => void }) {
   return (
-    <div className="flex h-full min-h-[20rem] flex-col items-center justify-center gap-4 px-6 text-center">
+    <div className="flex h-full min-h-80 flex-col items-center justify-center gap-4 px-6 text-center">
       <div
         aria-hidden
         className="flex h-14 w-14 items-center justify-center rounded-full border border-accent-deep/50"
@@ -678,7 +1170,7 @@ function ImportOverlay({
   return (
     <div
       role="presentation"
-      className="fixed inset-0 z-[160] flex items-center justify-center backdrop-blur-[2px]"
+      className="fixed inset-0 z-160 flex items-center justify-center backdrop-blur-[2px]"
       onMouseDown={onClose}
       style={{ background: "rgba(0,0,0,0.55)" }}
     >
@@ -686,7 +1178,7 @@ function ImportOverlay({
         role="dialog"
         aria-modal="true"
         onMouseDown={(e) => e.stopPropagation()}
-        className="relative flex w-[520px] max-w-[92vw] flex-col overflow-hidden rounded-[6px] border border-border"
+        className="relative flex w-130 max-w-[92vw] flex-col overflow-hidden rounded-md border border-border"
         style={{
           background:
             "linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))",
@@ -766,6 +1258,390 @@ function ImportOverlay({
         </footer>
       </div>
     </div>
+  );
+}
+
+function SaveOverlay({
+  name,
+  activeBuildId,
+  activeProfileId,
+  onNameChange,
+  onClose,
+  onSaveAsNew,
+  onOverwrite,
+}: {
+  name: string;
+  activeBuildId: string | null;
+  activeProfileId: string | null;
+  onNameChange: (s: string) => void;
+  onClose: () => void;
+  onSaveAsNew: () => void;
+  onOverwrite: () => void;
+}) {
+  const canOverwrite = !!activeBuildId && !!activeProfileId;
+  return (
+    <div
+      role="presentation"
+      className="fixed inset-0 z-160 flex items-center justify-center backdrop-blur-[2px]"
+      onMouseDown={onClose}
+      style={{ background: "rgba(0,0,0,0.55)" }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        onMouseDown={(e) => e.stopPropagation()}
+        className="relative flex w-115 max-w-[92vw] flex-col overflow-hidden rounded-md border border-border"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))",
+          boxShadow: "0 24px 64px rgba(0,0,0,0.7)",
+        }}
+      >
+        <CornerMarks />
+        <header
+          className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(201,165,90,0.05), transparent)",
+          }}
+        >
+          <div>
+            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-faint">
+              Save
+            </div>
+            <h3 className="m-0 text-[16px] font-semibold uppercase tracking-[0.14em] text-accent-hot">
+              Save build
+            </h3>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-[3px] border border-border-2 bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+          >
+            Close
+          </button>
+        </header>
+        <div className="flex flex-col gap-3 p-5">
+          {canOverwrite && (
+            <button
+              type="button"
+              onClick={onOverwrite}
+              className="w-full justify-center rounded-[3px] border border-accent-deep px-3.5 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+              style={{
+                background: "linear-gradient(180deg, #3a2f1a, #2a2418)",
+              }}
+            >
+              Update active profile
+            </button>
+          )}
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+            New build name
+          </span>
+          <input
+            autoFocus
+            value={name}
+            onChange={(e) => onNameChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") onSaveAsNew();
+              if (e.key === "Escape") onClose();
+            }}
+            placeholder="e.g. Lightning Viking"
+            className="w-full rounded-[3px] border border-border-2 px-3 py-2 text-text placeholder:text-faint focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
+            style={{
+              background:
+                "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
+              boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+            }}
+          />
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+            Creates a new build with one profile seeded from current state.
+          </p>
+        </div>
+        <footer className="flex items-center justify-end gap-2 border-t border-border bg-black/30 px-5 py-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onSaveAsNew}
+            className="rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+            style={{ background: "linear-gradient(180deg, #3a2f1a, #2a2418)" }}
+          >
+            Save as new
+          </button>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+function MiniInputOverlay({
+  title,
+  sectionLabel,
+  label,
+  value,
+  placeholder,
+  submitLabel,
+  hint,
+  onValueChange,
+  onClose,
+  onSubmit,
+}: {
+  title: string;
+  sectionLabel: string;
+  label: string;
+  value: string;
+  placeholder?: string;
+  submitLabel: string;
+  hint?: string;
+  onValueChange: (s: string) => void;
+  onClose: () => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <div
+      role="presentation"
+      className="fixed inset-0 z-160 flex items-center justify-center backdrop-blur-[2px]"
+      onMouseDown={onClose}
+      style={{ background: "rgba(0,0,0,0.55)" }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        onMouseDown={(e) => e.stopPropagation()}
+        className="relative flex w-115 max-w-[92vw] flex-col overflow-hidden rounded-md border border-border"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))",
+          boxShadow: "0 24px 64px rgba(0,0,0,0.7)",
+        }}
+      >
+        <CornerMarks />
+        <header
+          className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(201,165,90,0.05), transparent)",
+          }}
+        >
+          <div>
+            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-faint">
+              {sectionLabel}
+            </div>
+            <h3 className="m-0 text-[16px] font-semibold uppercase tracking-[0.14em] text-accent-hot">
+              {title}
+            </h3>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-[3px] border border-border-2 bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+          >
+            Close
+          </button>
+        </header>
+        <div className="flex flex-col gap-3 p-5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+            {label}
+          </span>
+          <input
+            autoFocus
+            value={value}
+            onChange={(e) => onValueChange(e.target.value)}
+            placeholder={placeholder}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") onSubmit();
+              if (e.key === "Escape") onClose();
+            }}
+            className="w-full rounded-[3px] border border-border-2 px-3 py-2 text-text placeholder:text-faint focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
+            style={{
+              background:
+                "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
+              boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+            }}
+          />
+          {hint && (
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+              {hint}
+            </p>
+          )}
+        </div>
+        <footer className="flex items-center justify-end gap-2 border-t border-border bg-black/30 px-5 py-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onSubmit}
+            className="rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+            style={{ background: "linear-gradient(180deg, #3a2f1a, #2a2418)" }}
+          >
+            {submitLabel}
+          </button>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+const CONTEXT_ITEM_CLASS =
+  "flex w-full items-center gap-2 px-3 py-1.5 text-left font-mono text-[11px] tracking-[0.06em] text-text transition-colors hover:bg-accent-hot/10 hover:text-accent-hot";
+const CONTEXT_ITEM_DANGER_CLASS =
+  "flex w-full items-center gap-2 px-3 py-1.5 text-left font-mono text-[11px] tracking-[0.06em] text-muted transition-colors hover:bg-stat-red/10 hover:text-stat-red";
+
+function ContextMenu({
+  state,
+  build,
+  profile,
+  isActiveBuild,
+  isActiveProfile,
+  armedBuild,
+  armedProfile,
+  isLastProfile,
+  onClose,
+  onLoadBuild,
+  onUpdateBuild,
+  onRenameBuild,
+  onDeleteBuild,
+  onActivateProfile,
+  onRenameProfile,
+  onDuplicateProfile,
+  onDeleteProfile,
+}: {
+  state: ContextMenuState;
+  build: SavedBuild;
+  profile: SavedProfile | null;
+  isActiveBuild: boolean;
+  isActiveProfile: boolean;
+  armedBuild: boolean;
+  armedProfile: boolean;
+  isLastProfile: boolean;
+  onClose: () => void;
+  onLoadBuild: () => void;
+  onUpdateBuild: () => void;
+  onRenameBuild: () => void;
+  onDeleteBuild: () => void;
+  onActivateProfile: () => void;
+  onRenameProfile: () => void;
+  onDuplicateProfile: () => void;
+  onDeleteProfile: () => void;
+}) {
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    function onDown() {
+      onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("mousedown", onDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("mousedown", onDown);
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div
+      role="menu"
+      onMouseDown={(e) => e.stopPropagation()}
+      className="fixed z-200 flex min-w-55 flex-col overflow-hidden rounded-sm border border-accent-deep/60 py-1"
+      style={{
+        left: state.x,
+        top: state.y,
+        background: "var(--color-panel)",
+        boxShadow:
+          "0 12px 32px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.03)",
+      }}
+    >
+      <div className="border-b border-border px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-faint">
+        {state.kind === "build" ? build.name : (profile?.name ?? "")}
+      </div>
+      {state.kind === "build" && (
+        <>
+          {!isActiveBuild && (
+            <button
+              type="button"
+              onClick={onLoadBuild}
+              className={CONTEXT_ITEM_CLASS}
+            >
+              Load build
+            </button>
+          )}
+          {isActiveBuild && (
+            <button
+              type="button"
+              onClick={onUpdateBuild}
+              className={CONTEXT_ITEM_CLASS}
+            >
+              Update active profile
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onRenameBuild}
+            className={CONTEXT_ITEM_CLASS}
+          >
+            Rename build…
+          </button>
+          <button
+            type="button"
+            onClick={onDeleteBuild}
+            className={CONTEXT_ITEM_DANGER_CLASS}
+          >
+            {armedBuild ? "Confirm delete?" : "Delete build"}
+          </button>
+        </>
+      )}
+      {state.kind === "profile" && profile && (
+        <>
+          {!isActiveProfile && (
+            <button
+              type="button"
+              onClick={onActivateProfile}
+              className={CONTEXT_ITEM_CLASS}
+            >
+              Activate profile
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onRenameProfile}
+            className={CONTEXT_ITEM_CLASS}
+          >
+            Rename profile…
+          </button>
+          <button
+            type="button"
+            onClick={onDuplicateProfile}
+            className={CONTEXT_ITEM_CLASS}
+          >
+            Duplicate profile
+          </button>
+          <button
+            type="button"
+            disabled={isLastProfile}
+            onClick={onDeleteProfile}
+            className={`${CONTEXT_ITEM_DANGER_CLASS} disabled:cursor-not-allowed disabled:opacity-40`}
+          >
+            {armedProfile
+              ? "Confirm delete?"
+              : isLastProfile
+                ? "Delete profile (last)"
+                : "Delete profile"}
+          </button>
+        </>
+      )}
+    </div>,
+    document.body,
   );
 }
 
@@ -853,6 +1729,26 @@ function UploadIcon() {
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
       <polyline points="17 8 12 3 7 8" />
       <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
+
+function SaveIcon() {
+  return (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+      <polyline points="17 21 17 13 7 13 7 21" />
+      <polyline points="7 3 7 8 15 8" />
     </svg>
   );
 }
