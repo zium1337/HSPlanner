@@ -8,6 +8,7 @@ import LeftStatsPanel from "./components/LeftStatsPanel";
 import Logo from "./components/Logo";
 import ShareButton from "./components/ShareButton";
 import StartupBuildModal from "./components/StartupBuildModal";
+import StorageErrorBanner from "./components/StorageErrorBanner";
 import { classes, getClass } from "./data";
 import { useBuild } from "./store/build";
 import { preloadSprites } from "./utils/preloadAssets";
@@ -309,6 +310,8 @@ function App() {
         isOpen={showStartup}
         onClose={() => setShowStartup(false)}
       />
+
+      <StorageErrorBanner />
     </div>
   );
 }

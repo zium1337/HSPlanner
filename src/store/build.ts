@@ -21,6 +21,7 @@ import type {
 import {
   addProfile as storeAddProfile,
   commitProfileSnapshot as storeCommitProfile,
+  createBuild as storeCreateBuild,
   deleteBuild as storeDeleteBuild,
   duplicateProfile as storeDuplicateProfile,
   getSavedBuild,
@@ -30,7 +31,9 @@ import {
   renameBuild as storeRenameBuild,
   setActiveProfile as storeSetActiveProfile,
   setBuildNotes as storeSetBuildNotes,
+  type SavedBuild,
 } from '../utils/savedBuilds'
+import { guardStorage } from './storageError'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import {
   defaultEnemyResistances,
@@ -68,6 +71,7 @@ interface BuildState {
   activeBuildId: string | null
   activeProfileId: string | null
   savedBuildsVersion: number
+  storageError: string | null
   notes: string
   customStats: CustomStat[]
 }
@@ -142,6 +146,8 @@ interface BuildActions {
   bindToBuild: (buildId: string, profileId: string) => void
   deleteSavedBuild: (buildId: string) => void
   renameSavedBuild: (buildId: string, name: string) => boolean
+  saveCurrentAsNewBuild: (name: string, notes?: string) => SavedBuild | null
+  dismissStorageError: () => void
 }
 
 export { START_IDS as TREE_START_IDS, START_SET as TREE_START_SET } from '../utils/treeGraph'
@@ -230,6 +236,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   activeBuildId: null,
   activeProfileId: null,
   savedBuildsVersion: 0,
+  storageError: null,
   notes: '',
   customStats: [],
 
@@ -260,14 +267,19 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       return s.notes === cleaned ? s : { notes: cleaned }
     }),
 
-  commitBuildNotes: () => {
-    // Persists the current `notes` field onto the active SavedBuild (and bumps the savedBuilds version). No-op when no build is currently active. Used by NotesView to flush edits to disk.
-    const s = get()
-    if (!s.activeBuildId) return false
-    const ok = storeSetBuildNotes(s.activeBuildId, s.notes) !== null
-    if (ok) bumpSavedBuilds(set)
-    return ok
-  },
+  commitBuildNotes: () =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Persists the current `notes` field onto the active SavedBuild (and bumps the savedBuilds version). No-op when no build is currently active. Used by NotesView to flush edits to disk.
+        const s = get()
+        if (!s.activeBuildId) return false
+        const ok = storeSetBuildNotes(s.activeBuildId, s.notes) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
 
   addCustomStat: (init = {}) =>
     set((s) => ({
@@ -652,172 +664,224 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     set(() => ({ activeBuildId: null, activeProfileId: null })),
   // Detaches the live state from any saved build/profile so further edits are not auto-committed. Used when the user explicitly leaves a saved build.
 
-  deleteSavedBuild: (buildId) => {
-    // Deletes a SavedBuild from disk and, if it was the active build, also detaches the live state. Used by BuildsMenu's delete action.
-    storeDeleteBuild(buildId)
-    set((cur) => {
-      const detach = cur.activeBuildId === buildId
-      return {
-        savedBuildsVersion: cur.savedBuildsVersion + 1,
-        ...(detach
-          ? { activeBuildId: null, activeProfileId: null }
-          : {}),
-      }
-    })
-  },
+  deleteSavedBuild: (buildId) =>
+    guardStorage<void>(
+      (m) => set({ storageError: m }),
+      undefined,
+      () => {
+        // Deletes a SavedBuild from disk and, if it was the active build, also detaches the live state. Used by BuildsMenu's delete action.
+        storeDeleteBuild(buildId)
+        set((cur) => {
+          const detach = cur.activeBuildId === buildId
+          return {
+            savedBuildsVersion: cur.savedBuildsVersion + 1,
+            ...(detach
+              ? { activeBuildId: null, activeProfileId: null }
+              : {}),
+          }
+        })
+      },
+    ),
 
-  renameSavedBuild: (buildId, name) => {
-    // Renames a SavedBuild on disk and bumps the savedBuilds version. Returns false when the build does not exist. Used by BuildsMenu's inline rename.
-    const ok = storeRenameBuild(buildId, name) !== null
-    if (ok) bumpSavedBuilds(set)
-    return ok
-  },
+  renameSavedBuild: (buildId, name) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Renames a SavedBuild on disk and bumps the savedBuilds version. Returns false when the build does not exist. Used by BuildsMenu's inline rename.
+        const ok = storeRenameBuild(buildId, name) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
 
-  commitActiveProfile: () => {
-    // Persists the current in-memory state into the active SavedProfile of the active SavedBuild. No-op when nothing is active. Used by autosave-style flows and the "Save" button.
-    const s = get()
-    if (!s.activeBuildId || !s.activeProfileId) return false
-    const snap = s.exportBuildSnapshot()
-    const result = storeCommitProfile(s.activeBuildId, s.activeProfileId, snap)
-    if (result) bumpSavedBuilds(set)
-    return result !== null
-  },
+  commitActiveProfile: () =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Persists the current in-memory state into the active SavedProfile of the active SavedBuild. No-op when nothing is active. Used by autosave-style flows and the "Save" button.
+        const s = get()
+        if (!s.activeBuildId || !s.activeProfileId) return false
+        const snap = s.exportBuildSnapshot()
+        const result = storeCommitProfile(
+          s.activeBuildId,
+          s.activeProfileId,
+          snap,
+        )
+        if (result) bumpSavedBuilds(set)
+        return result !== null
+      },
+    ),
 
-  loadSavedBuild: (buildId, profileId) => {
-    // Loads a SavedBuild (optionally a specific profile) into the live state, after auto-committing whatever profile was previously active. Used by BuildsMenu when the user opens a saved build.
-    const cur = get()
-    if (cur.activeBuildId && cur.activeProfileId) {
-      storeCommitProfile(
-        cur.activeBuildId,
-        cur.activeProfileId,
-        cur.exportBuildSnapshot(),
-      )
-    }
-    const build = getSavedBuild(buildId)
-    if (!build) return false
-    const targetProfileId =
-      profileId && build.profiles.some((p) => p.id === profileId)
-        ? profileId
-        : build.activeProfileId
-    const snap = loadProfileSnapshot(buildId, targetProfileId)
-    if (!snap) return false
-    storeSetActiveProfile(buildId, targetProfileId)
-    set((s) => ({
-      ...snapshotPatch(snap),
-      notes: sanitizeHtml(build.notes ?? ''),
-      activeBuildId: buildId,
-      activeProfileId: targetProfileId,
-      savedBuildsVersion: s.savedBuildsVersion + 1,
-    }))
-    return true
-  },
+  loadSavedBuild: (buildId, profileId) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Loads a SavedBuild (optionally a specific profile) into the live state, after auto-committing whatever profile was previously active. Used by BuildsMenu when the user opens a saved build.
+        const cur = get()
+        if (cur.activeBuildId && cur.activeProfileId) {
+          storeCommitProfile(
+            cur.activeBuildId,
+            cur.activeProfileId,
+            cur.exportBuildSnapshot(),
+          )
+        }
+        const build = getSavedBuild(buildId)
+        if (!build) return false
+        const targetProfileId =
+          profileId && build.profiles.some((p) => p.id === profileId)
+            ? profileId
+            : build.activeProfileId
+        const snap = loadProfileSnapshot(buildId, targetProfileId)
+        if (!snap) return false
+        storeSetActiveProfile(buildId, targetProfileId)
+        set((s) => ({
+          ...snapshotPatch(snap),
+          notes: sanitizeHtml(build.notes ?? ''),
+          activeBuildId: buildId,
+          activeProfileId: targetProfileId,
+          savedBuildsVersion: s.savedBuildsVersion + 1,
+        }))
+        return true
+      },
+    ),
 
-  switchActiveProfile: (profileId) => {
-    // Switches the active profile within the currently active SavedBuild, auto-committing the outgoing profile so unsaved edits survive. Returns true when the switch succeeded. Used by ProfileSwitcher.
-    const s = get()
-    if (!s.activeBuildId) return false
-    if (s.activeProfileId === profileId) return true
-    if (s.activeProfileId) {
-      storeCommitProfile(
-        s.activeBuildId,
-        s.activeProfileId,
-        s.exportBuildSnapshot(),
-      )
-    }
-    const snap = loadProfileSnapshot(s.activeBuildId, profileId)
-    if (!snap) return false
-    storeSetActiveProfile(s.activeBuildId, profileId)
-    set((cur) => ({
-      ...snapshotPatch(snap),
-      activeProfileId: profileId,
-      savedBuildsVersion: cur.savedBuildsVersion + 1,
-    }))
-    return true
-  },
-
-  addProfileToActiveBuild: (name) => {
-    // Forks the current state into a new profile inside the active SavedBuild, auto-committing the outgoing profile first, and activates the new profile. Returns the new profile id, or null when no build is active. Used by ProfileSwitcher's "Add profile" action.
-    const s = get()
-    if (!s.activeBuildId) return null
-    if (s.activeProfileId) {
-      storeCommitProfile(
-        s.activeBuildId,
-        s.activeProfileId,
-        s.exportBuildSnapshot(),
-      )
-    }
-    const result = storeAddProfile(
-      s.activeBuildId,
-      name,
-      s.exportBuildSnapshot(),
-      { activate: true },
-    )
-    if (!result) return null
-    set((cur) => ({
-      activeProfileId: result.profile.id,
-      savedBuildsVersion: cur.savedBuildsVersion + 1,
-    }))
-    return result.profile.id
-  },
-
-  duplicateActiveProfile: (profileId) => {
-    // Duplicates a profile within the active SavedBuild, auto-committing the outgoing profile first so the duplicate captures the user's current edits, and switches the live state to the copy. Returns the new profile id, or null on failure. Used by ProfileSwitcher's duplicate action.
-    const s = get()
-    if (!s.activeBuildId) return null
-    if (s.activeProfileId) {
-      storeCommitProfile(
-        s.activeBuildId,
-        s.activeProfileId,
-        s.exportBuildSnapshot(),
-      )
-    }
-    const result = storeDuplicateProfile(s.activeBuildId, profileId)
-    if (!result) return null
-    const snap = loadProfileSnapshot(s.activeBuildId, result.profile.id)
-    if (snap) {
-      set((cur) => ({
-        ...snapshotPatch(snap),
-        activeProfileId: result.profile.id,
-        savedBuildsVersion: cur.savedBuildsVersion + 1,
-      }))
-    } else {
-      bumpSavedBuilds(set)
-    }
-    return result.profile.id
-  },
-
-  renameActiveProfile: (profileId, name) => {
-    // Renames a profile inside the active SavedBuild on disk. Used by ProfileSwitcher's inline rename.
-    const s = get()
-    if (!s.activeBuildId) return false
-    const ok = storeRenameProfile(s.activeBuildId, profileId, name) !== null
-    if (ok) bumpSavedBuilds(set)
-    return ok
-  },
-
-  removeActiveProfile: (profileId) => {
-    // Removes a profile from the active SavedBuild and, if the deleted profile was active, hydrates the live state from the new active profile. Used by ProfileSwitcher's delete action.
-    const s = get()
-    if (!s.activeBuildId) return false
-    const isActive = s.activeProfileId === profileId
-    const updated = storeRemoveProfile(s.activeBuildId, profileId)
-    if (!updated) return false
-    if (isActive) {
-      const snap = loadProfileSnapshot(s.activeBuildId, updated.activeProfileId)
-      if (snap) {
+  switchActiveProfile: (profileId) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Switches the active profile within the currently active SavedBuild, auto-committing the outgoing profile so unsaved edits survive. Returns true when the switch succeeded. Used by ProfileSwitcher.
+        const s = get()
+        if (!s.activeBuildId) return false
+        if (s.activeProfileId === profileId) return true
+        if (s.activeProfileId) {
+          storeCommitProfile(
+            s.activeBuildId,
+            s.activeProfileId,
+            s.exportBuildSnapshot(),
+          )
+        }
+        const snap = loadProfileSnapshot(s.activeBuildId, profileId)
+        if (!snap) return false
+        storeSetActiveProfile(s.activeBuildId, profileId)
         set((cur) => ({
           ...snapshotPatch(snap),
-          activeProfileId: updated.activeProfileId,
+          activeProfileId: profileId,
           savedBuildsVersion: cur.savedBuildsVersion + 1,
         }))
-      } else {
-        bumpSavedBuilds(set)
-      }
-    } else {
-      bumpSavedBuilds(set)
-    }
-    return true
-  },
+        return true
+      },
+    ),
+
+  addProfileToActiveBuild: (name) =>
+    guardStorage<string | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Forks the current state into a new profile inside the active SavedBuild, auto-committing the outgoing profile first, and activates the new profile. Returns the new profile id, or null when no build is active. Used by ProfileSwitcher's "Add profile" action.
+        const s = get()
+        if (!s.activeBuildId) return null
+        if (s.activeProfileId) {
+          storeCommitProfile(
+            s.activeBuildId,
+            s.activeProfileId,
+            s.exportBuildSnapshot(),
+          )
+        }
+        const result = storeAddProfile(
+          s.activeBuildId,
+          name,
+          s.exportBuildSnapshot(),
+          { activate: true },
+        )
+        if (!result) return null
+        set((cur) => ({
+          activeProfileId: result.profile.id,
+          savedBuildsVersion: cur.savedBuildsVersion + 1,
+        }))
+        return result.profile.id
+      },
+    ),
+
+  duplicateActiveProfile: (profileId) =>
+    guardStorage<string | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Duplicates a profile within the active SavedBuild, auto-committing the outgoing profile first so the duplicate captures the user's current edits, and switches the live state to the copy. Returns the new profile id, or null on failure. Used by ProfileSwitcher's duplicate action.
+        const s = get()
+        if (!s.activeBuildId) return null
+        if (s.activeProfileId) {
+          storeCommitProfile(
+            s.activeBuildId,
+            s.activeProfileId,
+            s.exportBuildSnapshot(),
+          )
+        }
+        const result = storeDuplicateProfile(s.activeBuildId, profileId)
+        if (!result) return null
+        const snap = loadProfileSnapshot(s.activeBuildId, result.profile.id)
+        if (snap) {
+          set((cur) => ({
+            ...snapshotPatch(snap),
+            activeProfileId: result.profile.id,
+            savedBuildsVersion: cur.savedBuildsVersion + 1,
+          }))
+        } else {
+          bumpSavedBuilds(set)
+        }
+        return result.profile.id
+      },
+    ),
+
+  renameActiveProfile: (profileId, name) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Renames a profile inside the active SavedBuild on disk. Used by ProfileSwitcher's inline rename.
+        const s = get()
+        if (!s.activeBuildId) return false
+        const ok = storeRenameProfile(s.activeBuildId, profileId, name) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  removeActiveProfile: (profileId) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Removes a profile from the active SavedBuild and, if the deleted profile was active, hydrates the live state from the new active profile. Used by ProfileSwitcher's delete action.
+        const s = get()
+        if (!s.activeBuildId) return false
+        const isActive = s.activeProfileId === profileId
+        const updated = storeRemoveProfile(s.activeBuildId, profileId)
+        if (!updated) return false
+        if (isActive) {
+          const snap = loadProfileSnapshot(
+            s.activeBuildId,
+            updated.activeProfileId,
+          )
+          if (snap) {
+            set((cur) => ({
+              ...snapshotPatch(snap),
+              activeProfileId: updated.activeProfileId,
+              savedBuildsVersion: cur.savedBuildsVersion + 1,
+            }))
+          } else {
+            bumpSavedBuilds(set)
+          }
+        } else {
+          bumpSavedBuilds(set)
+        }
+        return true
+      },
+    ),
 
   applyRuneword: (slot, runewordId) => {
     // Applies a runeword to a common-rarity item by inserting its rune sequence into the sockets, validating the base type and socket cap. Used by GearView's runeword picker.
@@ -1052,6 +1116,26 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   resetSkillRanks: () => set({ skillRanks: {} }),
   // Clears every allocated skill rank. Used by SkillsView's reset button.
+
+  dismissStorageError: () => set({ storageError: null }),
+  // Clears the recorded storage-write error, e.g. after the user dismisses the storage-full banner.
+
+  saveCurrentAsNewBuild: (name, notes = '') =>
+    guardStorage<SavedBuild | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Saves the live in-memory state as a brand-new SavedBuild with a single profile and binds the store to it. Returns the new record, or null (with storageError set) when localStorage rejects the write. Used by the "Save as new" flow.
+        const snapshot = get().exportBuildSnapshot()
+        const record = storeCreateBuild(name, snapshot, undefined, notes)
+        set((cur) => ({
+          activeBuildId: record.id,
+          activeProfileId: record.activeProfileId,
+          savedBuildsVersion: cur.savedBuildsVersion + 1,
+        }))
+        return record
+      },
+    ),
 }))
 
 export function skillPointsFor(level: number): number {

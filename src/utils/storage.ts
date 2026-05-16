@@ -16,12 +16,13 @@ export function readStorageWithLegacy(
   return readStorage(key) ?? readStorage(legacyKey)
 }
 
-export function writeStorage(key: string, value: string): void {
-  // Safely writes a string value to localStorage, silently ignoring SSR and quota-exceeded errors. Used as the write-side wrapper for every persistent setting (selected build, profile, configuration flags, etc.).
-  if (typeof window === 'undefined') return
+export function writeStorage(key: string, value: string): boolean {
+  // Safely writes a string value to localStorage, returning true on success and false when the write is rejected (no window, storage disabled, or quota exceeded). Used as the write-side wrapper for every persistent setting; callers that must not silently lose data (see savedBuilds.write) check the result instead of assuming the write succeeded.
+  if (typeof window === 'undefined') return false
   try {
     window.localStorage.setItem(key, value)
+    return true
   } catch {
-    return
+    return false
   }
 }

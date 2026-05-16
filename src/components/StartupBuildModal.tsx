@@ -11,7 +11,6 @@ import { backdropVariants, panelVariants } from "../lib/motion";
 import { classes, getClass } from "../data";
 import { useBuild } from "../store/build";
 import {
-  createBuild,
   listSavedBuilds,
   type SavedBuild,
   type SavedProfile,
@@ -63,10 +62,9 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
   // Self-contained build library modal. Renders the same screen used at app boot, but also serves as the "Builds" picker reachable from the header — supports loading, saving (overwrite or save-as-new), importing, renaming/deleting builds, and full profile management (activate/add/duplicate/rename/delete) via right-click context menus.
   const activeBuildId = useBuild((s) => s.activeBuildId);
   const activeProfileId = useBuild((s) => s.activeProfileId);
-  const exportSnapshot = useBuild((s) => s.exportBuildSnapshot);
   const importBuildSnapshot = useBuild((s) => s.importBuildSnapshot);
   const loadSavedBuildAction = useBuild((s) => s.loadSavedBuild);
-  const bindToBuild = useBuild((s) => s.bindToBuild);
+  const saveCurrentAsNewBuild = useBuild((s) => s.saveCurrentAsNewBuild);
   const deleteSavedBuild = useBuild((s) => s.deleteSavedBuild);
   const renameSavedBuildAction = useBuild((s) => s.renameSavedBuild);
   const commitActiveProfile = useBuild((s) => s.commitActiveProfile);
@@ -254,8 +252,11 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
   const doSaveAsNew = () => {
     const name = saveName.trim() || "Untitled build";
     const notes = useBuild.getState().notes;
-    const rec = createBuild(name, exportSnapshot(), undefined, notes);
-    bindToBuild(rec.id, rec.activeProfileId);
+    const rec = saveCurrentAsNewBuild(name, notes);
+    // saveCurrentAsNewBuild returns null when the write was rejected (e.g.
+    // localStorage is full); the global StorageErrorBanner already explains
+    // why, so keep the dialog open rather than flash a false "Saved".
+    if (!rec) return;
     flash(`Saved "${rec.name}"`);
     setSaveName("");
     setMode("menu");

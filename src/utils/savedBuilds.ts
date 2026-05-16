@@ -13,6 +13,17 @@ const LEGACY_STORAGE_KEY = 'heroplanner.savedBuilds.v2'
 
 export const DEFAULT_PROFILE_NAME = 'Default'
 
+export class StorageWriteError extends Error {
+  // Thrown by `write` when persisting the saved-builds list to localStorage
+  // fails — most commonly because the ~5 MB origin quota is exhausted. It lets
+  // callers (and ultimately the build store) surface the failure to the user
+  // instead of silently dropping the build they believed they had saved.
+  constructor(message = 'Could not save to local storage — it may be full.') {
+    super(message)
+    this.name = 'StorageWriteError'
+  }
+}
+
 const MAX_BUILDS = 1_000
 const MAX_PROFILES_PER_BUILD = 100
 const MAX_NAME_LENGTH = 500
@@ -174,7 +185,14 @@ function read(): SavedBuild[] {
     const v1 = readV1()
     if (v1.length === 0) return []
     const migrated = migrateV1(v1)
-    write(migrated)
+    try {
+      write(migrated)
+    } catch {
+      // Best-effort migration: if the rewrite under the v2 key fails (e.g.
+      // storage is full) we still return the migrated builds in memory and
+      // retry persisting them on the next load — throwing here would make
+      // every read appear to wipe the user's entire library.
+    }
     return migrated
   } catch {
     return []
@@ -182,8 +200,10 @@ function read(): SavedBuild[] {
 }
 
 function write(list: SavedBuild[]): void {
-  // Persists the supplied list of SavedBuild records back to localStorage as JSON under the v2 key. Used by every mutating function in this module to commit changes.
-  writeStorage(STORAGE_KEY, JSON.stringify(list))
+  // Persists the supplied list of SavedBuild records to localStorage as JSON under the v2 key, throwing StorageWriteError when the write is rejected (e.g. the storage quota is exceeded) so the failure is never silently swallowed. Used by every mutating function in this module to commit changes.
+  if (!writeStorage(STORAGE_KEY, JSON.stringify(list))) {
+    throw new StorageWriteError()
+  }
 }
 
 export function listSavedBuilds(): SavedBuild[] {
