@@ -148,12 +148,13 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
     null,
   );
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const flashTimer = useRef<number | null>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Reset transient UI state when the modal is closed; ensures next open is clean.
   useEffect(() => {
     if (isOpen) return;
+    // One-shot reset keyed to the isOpen close transition, not a render loop.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMode("menu");
     setSearch("");
     setContextMenu(null);
@@ -169,6 +170,8 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
   // On open, prefer the active build if present, otherwise the first build.
   useEffect(() => {
     if (!isOpen) return;
+    // One-shot init keyed to the isOpen open transition, not a render loop.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPreferredId((cur) => cur ?? activeBuildId ?? builds[0]?.id ?? null);
     setScope((cur) => {
       if (builds.length === 0) return { kind: "all" };
@@ -176,16 +179,18 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
     });
   }, [isOpen, activeBuildId, builds]);
 
+  // Auto-dismiss the transient footer notice 2s after it changes. An effect
+  // (not a ref + manual setTimeout) keeps all timer handling out of render —
+  // which is what cleared the 5 react-hooks/refs errors on doLoad/doDelete/etc.
   useEffect(() => {
-    return () => {
-      if (flashTimer.current !== null) window.clearTimeout(flashTimer.current);
-    };
-  }, []);
+    if (!notice) return;
+    const t = window.setTimeout(() => setNotice(null), 2000);
+    return () => window.clearTimeout(t);
+  }, [notice]);
 
   const flash = (msg: string) => {
+    // Shows a transient footer notice; the effect above clears it after 2s.
     setNotice(msg);
-    if (flashTimer.current !== null) window.clearTimeout(flashTimer.current);
-    flashTimer.current = window.setTimeout(() => setNotice(null), 2000);
   };
 
   const visible = useMemo(() => {
