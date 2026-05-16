@@ -6,6 +6,8 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import { motion } from "motion/react";
+import { backdropVariants, panelVariants } from "../lib/motion";
 import { classes, getClass } from "../data";
 import { useBuild } from "../store/build";
 import {
@@ -418,20 +420,26 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
   return createPortal(
-    <div
+    <motion.div
       role="presentation"
       className="fixed inset-0 z-150 flex items-center justify-center backdrop-blur-sm"
       onMouseDown={onClose}
+      variants={backdropVariants}
+      initial="initial"
+      animate="animate"
       style={{
         background:
           "radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.08), rgba(0,0,0,0.85) 65%)",
       }}
     >
-      <div
+      <motion.div
         role="dialog"
         aria-modal="true"
         aria-label="Select build"
         onMouseDown={(e) => e.stopPropagation()}
+        variants={panelVariants}
+        initial="initial"
+        animate="animate"
         className="relative flex max-h-[90vh] w-230 max-w-[94vw] flex-col overflow-hidden rounded-md border border-border"
         style={{
           background:
@@ -693,7 +701,7 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
             </button>
           </div>
         </footer>
-      </div>
+      </motion.div>
 
       {mode === "import" && (
         <ImportOverlay
@@ -831,7 +839,7 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
           e.target.value = "";
         }}
       />
-    </div>,
+    </motion.div>,
     document.body,
   );
 }

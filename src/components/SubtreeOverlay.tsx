@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import { motion } from 'motion/react'
+import { backdropVariants, panelVariants } from '../lib/motion'
 import { resolveSkillIcon } from '../data'
 import { SUBTREE_TEMPLATE, getTemplateEdges } from '../data/subtree-template'
 import {
@@ -130,17 +132,23 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
   const skillIcon = !skill.icon || skill.icon.startsWith('http') ? '✦' : skill.icon
 
   return (
-    <div
+    <motion.div
       role="presentation"
       className="fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm"
       onClick={onClose}
+      variants={backdropVariants}
+      initial="initial"
+      animate="animate"
       style={{
         background:
           'radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)',
       }}
     >
-      <div
+      <motion.div
         onClick={(e) => e.stopPropagation()}
+        variants={panelVariants}
+        initial="initial"
+        animate="animate"
         className="relative flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-sm border border-border"
         style={{
           background:
@@ -466,7 +474,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
             </p>
           )}
         </div>
-      </div>
+      </motion.div>
       {hover && currentPerformance && (
         <SubskillTooltip
           sub={hover.sub}
@@ -478,7 +486,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
           previewPerformance={previewPerformance}
         />
       )}
-    </div>
+    </motion.div>
   )
 }
 

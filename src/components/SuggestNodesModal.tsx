@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { motion } from 'motion/react'
+import { backdropVariants, panelVariants } from '../lib/motion'
 import type { BuildPerformanceDeps } from '../utils/buildPerformance'
 import { suggestNodesNative } from '../utils/nativeSuggest'
 import { TREE_NODE_INFO } from '../utils/treeStats'
@@ -181,19 +183,25 @@ export default function SuggestNodesModal({
       : 0
 
   return createPortal(
-    <div
+    <motion.div
       role="presentation"
       className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm"
       onMouseDown={handleClose}
+      variants={backdropVariants}
+      initial="initial"
+      animate="animate"
       style={{
         background:
           'radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)',
       }}
     >
-      <div
+      <motion.div
         role="dialog"
         aria-modal="true"
         onMouseDown={(e) => e.stopPropagation()}
+        variants={panelVariants}
+        initial="initial"
+        animate="animate"
         className="relative flex max-h-[88vh] w-[540px] max-w-[94vw] flex-col overflow-hidden rounded-[6px] border border-border"
         style={{
           background:
@@ -472,7 +480,7 @@ export default function SuggestNodesModal({
             </button>
           </div>
         </footer>
-      </div>
+      </motion.div>
 
       <style>{`
         .suggest-range {
@@ -514,7 +522,7 @@ export default function SuggestNodesModal({
           cursor: not-allowed;
         }
       `}</style>
-    </div>,
+    </motion.div>,
     document.body,
   )
 }

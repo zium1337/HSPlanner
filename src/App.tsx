@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { AnimatePresence, motion } from "motion/react";
+import { EASE_OUT, hoverTap, viewVariants } from "./lib/motion";
 import BottomBar from "./components/BottomBar";
 import BuildsMenu from "./components/BuildsMenu";
 import LeftStatsPanel from "./components/LeftStatsPanel";
@@ -166,9 +168,10 @@ function App() {
           {SECTIONS.map((s) => {
             const active = section === s.id;
             return (
-              <button
+              <motion.button
                 key={s.id}
                 onClick={() => setSection(s.id)}
+                {...hoverTap}
                 className={`group relative flex h-full items-center gap-2 px-3.5 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors ${
                   active
                     ? "text-accent-hot"
@@ -189,20 +192,20 @@ function App() {
                   }
                 />
                 {s.label}
-                <span
-                  aria-hidden
-                  className={`pointer-events-none absolute bottom-0 left-2 right-2 h-[2px] transition-opacity ${
-                    active ? "opacity-100" : "opacity-0"
-                  }`}
-                  style={{
-                    background:
-                      "linear-gradient(90deg, transparent, var(--color-accent-hot), transparent)",
-                    boxShadow: active
-                      ? "0 0 12px rgba(224,184,100,0.45)"
-                      : undefined,
-                  }}
-                />
-              </button>
+                {active && (
+                  <motion.span
+                    layoutId="tab-underline"
+                    aria-hidden
+                    className="pointer-events-none absolute bottom-0 left-2 right-2 h-[2px]"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, transparent, var(--color-accent-hot), transparent)",
+                      boxShadow: "0 0 12px rgba(224,184,100,0.45)",
+                    }}
+                    transition={{ duration: 0.16, ease: EASE_OUT }}
+                  />
+                )}
+              </motion.button>
             );
           })}
         </nav>
@@ -285,7 +288,18 @@ function App() {
         <main
           className={`flex-1 min-w-0 ${needsScroll ? "overflow-auto p-6" : "overflow-hidden"}`}
         >
-          <ActiveView />
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={section}
+              variants={viewVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="h-full"
+            >
+              <ActiveView />
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
 

@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { motion } from 'motion/react'
+import FlashOnChange from '../components/FlashOnChange'
 import { SkillIconImage } from '../components/SkillIconImage'
 import SubtreeOverlay from '../components/SubtreeOverlay'
+import { listContainerVariants, skillIconVariants } from '../lib/motion'
 import { classes, getClass, resolveSkillIcon, skills } from '../data'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import { computeBuildStatsAsync } from '../lib/calc/bridge'
@@ -167,7 +170,7 @@ export default function SkillsView() {
                 : undefined
             }
           >
-            {spent}
+            <FlashOnChange value={spent}>{spent}</FlashOnChange>
           </span>
           <span className="text-faint">/ {totalPoints}</span>
           <span aria-hidden className="h-3 w-px bg-border" />
@@ -301,7 +304,13 @@ function SkillTree({
           {name}
         </h3>
       </div>
-      <div className="relative" style={{ width, height }}>
+      <motion.div
+        className="relative"
+        style={{ width, height }}
+        variants={listContainerVariants}
+        initial="initial"
+        animate="animate"
+      >
         <svg
           className="pointer-events-none absolute inset-0"
           width={width}
@@ -357,7 +366,7 @@ function SkillTree({
             />
           )
         })}
-      </div>
+      </motion.div>
     </section>
   )
 }
@@ -398,8 +407,9 @@ function SkillIcon({
   const canInc = canIncrement && rank < skill.maxRank && !locked
 
   return (
-    <div
+    <motion.div
       style={style}
+      variants={skillIconVariants}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onContextMenu={(e) => {
@@ -473,7 +483,7 @@ function SkillIcon({
           ⚙
         </button>
       )}
-    </div>
+    </motion.div>
   )
 }
 

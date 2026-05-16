@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "motion/react";
+import { backdropVariants, panelVariants } from "../lib/motion";
 import {
   installUpdate,
   type InstallProgress,
@@ -139,20 +141,26 @@ export default function UpdateModal({
         };
 
   return (
-    <div
+    <motion.div
       className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm"
       role="presentation"
       onMouseDown={safeClose}
+      variants={backdropVariants}
+      initial="initial"
+      animate="animate"
       style={{
         background:
           "radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)",
       }}
     >
-      <div
+      <motion.div
         role="dialog"
         aria-modal="true"
         aria-labelledby="update-modal-title"
         onMouseDown={(e) => e.stopPropagation()}
+        variants={panelVariants}
+        initial="initial"
+        animate="animate"
         className="relative flex max-h-[88vh] w-160 max-w-[92vw] flex-col overflow-hidden rounded-[6px] border border-border"
         style={{
           background:
@@ -346,8 +354,8 @@ export default function UpdateModal({
             </div>
           </footer>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
