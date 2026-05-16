@@ -87,6 +87,7 @@ export function Dropdown({
 
   useEffect(() => {
     if (!open) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuery('')
     setKb(-1)
     setHoveredId(null)
