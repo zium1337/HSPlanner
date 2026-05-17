@@ -2822,6 +2822,37 @@
     "twoHanded": true
   },
   {
+    "id": "staff_satanic_necrobutcher_s_curse",
+    "name": "Necrobutcher's Curse",
+    "baseType": "Staff",
+    "slot": "weapon",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 88,
+    "implicit": {
+      "attacks_per_second": 1.25,
+      "summon_skills": [
+        3,
+        4
+      ],
+      "all_skills": [
+        2,
+        4
+      ]
+    },
+    "uniqueEffects": [
+      "Attack Dmg",
+      "Grant Spell: Raise Skeleton",
+      "Grant Spell: Raise Skeleton Mage",
+      "Grant Spell: Summon Mastery",
+      "Summon Amount",
+      "Summon Attack Speed",
+      "Summon Dmg",
+      "Summon Life"
+    ],
+    "twoHanded": true
+  },
+  {
     "id": "mace_satanic_nightmare_slasher",
     "name": "Nightmare Slasher",
     "baseType": "Mace",

@@ -8,7 +8,7 @@
     "damageMin": 62,
     "damageMax": 72,
     "attackSpeed": 1,
-    "sockets": 3,
+    "sockets": 2,
     "maxSockets": 4,
     "implicit": {
       "enhanced_damage": [

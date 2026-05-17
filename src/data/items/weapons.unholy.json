@@ -7,122 +7,53 @@
     "rarity": "unholy",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 85,
+    "damageMax": 92,
+    "attackSpeed": 1.75,
     "implicit": {
-      "attacks_per_second": 1.75,
-      "enhanced_damage": [
-        800,
-        850
-      ],
-      "all_skills": [
-        3,
-        4
-      ],
-      "movement_speed": [
-        25,
-        40
-      ],
-      "increased_attack_speed": [
-        75,
-        100
-      ],
+      "enhanced_damage": [800, 850],
+      "all_skills": [3, 4],
+      "movement_speed": [25, 40],
+      "increased_attack_speed": [75, 100],
       "deadly_blow": 30,
       "attack_rating_pct": 25,
-      "crit_damage": [
-        50,
-        65
-      ],
-      "extra_damage_stunned": [
-        20,
-        30
-      ],
-      "magic_skill_damage": [
-        50,
-        65
-      ]
+      "crit_damage": [50, 65],
+      "extra_damage_stunned": [20, 30],
+      "magic_skill_damage": [50, 65]
+    },
+    "skillBonuses": {
+      "Laser Sight": 1
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Laser Sight",
-      "Skill Movement Diminish"
+      "Skill Movement Diminish decreased by [50-75]%"
     ],
     "sockets": 4,
     "maxSockets": 4
   },
   {
-    "id": "staff_unholy_necrobutcher_s_curse",
-    "name": "Necrobutcher's Curse",
-    "baseType": "Staff",
-    "slot": "weapon",
-    "rarity": "unholy",
-    "grade": "SS",
-    "requiresLevel": 88,
-    "implicit": {
-      "attacks_per_second": 1.25,
-      "summon_skills": [
-        3,
-        4
-      ],
-      "all_skills": [
-        2,
-        4
-      ]
-    },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Raise Skeleton",
-      "Grant Spell: Raise Skeleton Mage",
-      "Grant Spell: Summon Mastery",
-      "Summon Amount",
-      "Summon Attack Speed",
-      "Summon Dmg",
-      "Summon Life"
-    ],
-    "twoHanded": true
-  },
-  {
     "id": "sword_unholy_stormflix_cooking_cleaver",
-    "name": "Stormflix Cooking Cleaver",
+    "name": "Stofflinx Cooking Cleaver",
     "baseType": "Sword",
     "slot": "weapon",
     "rarity": "unholy",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 68,
+    "damageMax": 76,
+    "attackSpeed": 1.65,
     "implicit": {
-      "attacks_per_second": 1.65,
-      "enhanced_damage": [
-        575,
-        625
-      ],
+      "enhanced_damage": [575, 625],
       "all_skills": 2,
-      "fire_skills": [
-        6,
-        10
-      ],
-      "faster_cast_rate": [
-        35,
-        45
-      ],
-      "increased_attack_speed": [
-        50,
-        75
-      ],
-      "extra_damage_burning": [
-        35,
-        50
-      ],
-      "all_attributes": [
-        20,
-        30
-      ],
-      "flat_fire_skill_damage": [
-        28,
-        60
-      ],
+      "fire_skills": [6, 10],
+      "faster_cast_rate": [35, 45],
+      "increased_attack_speed": [50, 75],
+      "extra_damage_burning": [35, 50],
+      "all_attributes": [20, 30],
+      "flat_fire_skill_damage": [28, 60],
       "fire_skill_damage": 35
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Supernova"
+      "15% Chance when Casting to cast Supernova Level 85"
     ],
     "sockets": 4,
     "maxSockets": 4
@@ -135,48 +66,24 @@
     "rarity": "unholy",
     "grade": "SS",
     "requiresLevel": 100,
+    "damageMin": 102,
+    "damageMax": 112,
+    "attackSpeed": 1.75,
     "implicit": {
-      "attacks_per_second": 1.75,
-      "enhanced_damage": [
-        930,
-        1180
-      ],
-      "all_skills": [
-        4,
-        5
-      ],
-      "increased_attack_speed": [
-        6,
-        15
-      ],
-      "movement_speed": [
-        3,
-        10
-      ],
+      "enhanced_damage": [930, 1180],
+      "all_skills": [4, 5],
       "deadly_blow": 30,
       "defense_ignored": 35,
-      "extra_damage_bleeding": [
-        33,
-        40
-      ],
-      "flat_fire_skill_damage": [
-        40,
-        70
-      ],
+      "extra_damage_bleeding": [30, 40],
+      "flat_fire_skill_damage": [40, 70],
       "ignore_fire_res": 25
     },
     "skillBonuses": {
-      "Adrenaline Momentum": [
-        10,
-        15
-      ],
+      "Adrenaline Momentum": [10, 15],
       "Pyro Technician": 20
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Pyro Technician",
-      "Grant Spell: Random Bard Skill",
-      "Attacks Hit Multiple Enemies None",
+      "Attacks can hit multiple enemies",
       "Double Jump"
     ],
     "sockets": 6,

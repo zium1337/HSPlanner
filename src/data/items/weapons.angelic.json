@@ -1,53 +1,66 @@
 [
   {
-    "id": "axe_angelic_aurelion_fury",
-    "name": "Aurelion Fury",
-    "baseType": "Axe",
+    "id": "sword_angelic_st_mika_s_zweih_nder",
+    "name": "St. Mika's Zweihänder",
+    "baseType": "Sword",
     "slot": "weapon",
     "rarity": "angelic",
     "grade": "SS",
+    "requiresLevel": 95,
     "twoHanded": true,
-    "requiresLevel": 100,
-    "damageMin": 158,
-    "damageMax": 165,
-    "attackSpeed": 1,
+    "damageMin": 125,
+    "damageMax": 140,
+    "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [
-        925,
-        1175
-      ],
-      "all_skills": [
-        5,
-        8
-      ],
-      "increased_attack_speed": -35,
-      "deadly_blow": 15,
-      "mana_steal": [
-        7,
-        13
-      ],
-      "to_vitality": [
-        40,
-        65
-      ],
-      "all_attributes": 35,
-      "all_resistances": [
-        30,
-        40
-      ]
+      "enhanced_damage": [725, 850],
+      "all_skills": [3, 5],
+      "fire_skills": [3, 6],
+      "movement_speed": 30,
+      "life_steal": [8, 15],
+      "extra_damage_burning": [25, 40],
+      "to_strength": [35, 60],
+      "additive_fire_damage": [4000, 7500]
     },
     "uniqueEffects": [
-      "Deadly Blow Damage increased by [100-150]%",
-      "Lunar Aura Level [12-15]"
+      "22% Chance when Striking to cast Fresh Cut Level 4",
+      "5% Chance when Attacking to cast Butchers Hook Level 36",
+      "+1500 to Attack Rating (Based on Level)",
+      "Attacks can hit multiple enemies"
+    ],
+    "sockets": 3,
+    "maxSockets": 6
+  },
+  {
+    "id": "mace_angelic_the_dawn_bringer",
+    "name": "The Dawn Bringer",
+    "baseType": "Mace",
+    "slot": "weapon",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "damageMin": 58,
+    "damageMax": 64,
+    "attackSpeed": 1.75,
+    "implicit": {
+      "enhanced_damage": [430, 480],
+      "all_skills": 5,
+      "faster_cast_rate": [40, 60],
+      "magic_skill_damage": [40, 60],
+      "damage_taken_reduced": 10,
+      "all_resistances": [20, 30],
+      "max_all_resistances": 5
+    },
+    "uniqueEffects": [
+      "22% Chance when Casting to cast Fist of the Heavens Level 60",
+      "Ailment Damage increased by [25-35]%",
+      "-25% to All Enemy Resistances"
     ],
     "sockets": 4,
-    "maxSockets": 6,
-    "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy"
+    "maxSockets": 5
   },
   {
     "id": "gun_angelic_commander_s_sentry_blaster",
-    "name": "Commander´s Sentry Blaster",
+    "name": "Commander's Sentry Blaster",
     "baseType": "Gun",
     "slot": "weapon",
     "rarity": "angelic",
@@ -57,22 +70,20 @@
     "damageMax": 74,
     "attackSpeed": 1.85,
     "implicit": {
-      "enhanced_damage": [
-        800,
-        850
-      ],
-      "all_skills": 3
+      "enhanced_damage": [800, 850],
+      "all_skills": 3,
+      "sentry_attack_speed": [30, 40],
+      "sentry_damage": [35, 45]
+    },
+    "skillBonuses": {
+      "Gunner Drone": [5, 7],
+      "Cannon Turret": [5, 7],
+      "Arrow Turret": [5, 7],
+      "Rocket Turret": [5, 7]
     },
     "uniqueEffects": [
-      "+[4-6] to Sentry Skills",
       "8% Chance when Attacking to cast Master Mechanic Level 20",
-      "+[5-7] to Gunner Drones",
-      "+[5-7] to Cannon Turret",
-      "+[5-7] to Arrow Turret",
-      "+[5-7] to Rocket Turret",
-      "+[30-40]% Increased Sentry Attack Speed",
-      "Sentry Damage increased by [35-45]%",
-      "Sentry Duration increased by 25%"
+      "+[4-6] to Sentry Skills"
     ],
     "sockets": 4,
     "maxSockets": 4
@@ -85,121 +96,25 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "twoHanded": true,
     "damageMin": 125,
     "damageMax": 145,
     "attackSpeed": 1.85,
     "implicit": {
-      "enhanced_damage": [
-        925,
-        950
-      ],
+      "enhanced_damage": [925, 950],
       "all_skills": 5,
-      "increased_attack_speed": [
-        40,
-        50
-      ],
-      "deadly_blow": 30,
+      "increased_attack_speed": [40, 50],
+      "deadly_blow": 20,
       "crushing_blow_chance": 30,
       "life_steal": 15,
       "mana_steal": 10,
-      "defense_ignored": [
-        50,
-        75
-      ]
+      "defense_ignored": [50, 75]
     },
     "uniqueEffects": [
       "+5 to Random Skill Element"
     ],
     "sockets": 5,
-    "maxSockets": 5,
-    "twoHanded": true
-  },
-  {
-    "id": "chainsaw_angelic_st_draxis_longsaw",
-    "name": "St. Draxis Longsaw",
-    "baseType": "Chainsaw",
-    "slot": "weapon",
-    "rarity": "angelic",
-    "grade": "SS",
-    "requiresLevel": 99,
-    "damageMin": 110,
-    "damageMax": 125,
-    "attackSpeed": 1.35,
-    "implicit": {
-      "enhanced_damage": [
-        850,
-        925
-      ],
-      "all_skills": [
-        4,
-        6
-      ],
-      "movement_speed": 40,
-      "increased_attack_speed": [
-        40,
-        80
-      ],
-      "attack_rating_pct": 30,
-      "open_wounds": 25,
-      "to_strength": 50,
-      "to_dexterity": 50,
-      "attack_damage": [
-        45,
-        65
-      ]
-    },
-    "uniqueEffects": [
-      "Attack Range Increased by [50-100]%",
-      "20% Chance when Striking to cast Tree Trunk Triumph Level [125-150]"
-    ],
-    "sockets": 6,
-    "maxSockets": 6,
-    "twoHanded": true
-  },
-  {
-    "id": "polearm_angelic_st_draxis_pigstick",
-    "name": "St. Draxis' Pigstick",
-    "baseType": "Polearm",
-    "slot": "weapon",
-    "rarity": "angelic",
-    "grade": "SS",
-    "requiresLevel": 100,
-    "damageMin": 80,
-    "damageMax": 88,
-    "attackSpeed": 1.85,
-    "implicit": {
-      "enhanced_damage": [
-        725,
-        925
-      ],
-      "all_skills": 4,
-      "increased_attack_speed": [
-        65,
-        75
-      ],
-      "deadly_blow": [
-        30,
-        50
-      ],
-      "attack_rating_pct": [
-        25,
-        35
-      ],
-      "to_vitality": 55,
-      "to_armor": 55,
-      "damage_return": [
-        1000,
-        1250
-      ]
-    },
-    "uniqueEffects": [
-      "15% Chance when Attacking to cast Commending Banner Level 20",
-      "+15 to Crushing Lance",
-      "+15 to Lance Thrust"
-    ],
-    "sockets": 5,
-    "maxSockets": 5,
-    "twoHanded": true
+    "maxSockets": 5
   },
   {
     "id": "sword_angelic_st_gabriel_s_retribution",
@@ -213,50 +128,52 @@
     "damageMax": 94,
     "attackSpeed": 1.65,
     "implicit": {
-      "enhanced_damage": [
-        810,
-        920
-      ],
-      "all_skills": [
-        3,
-        4
-      ],
-      "increased_attack_speed": [
-        45,
-        65
-      ],
+      "enhanced_damage": [810, 920],
+      "all_skills": [3, 4],
+      "increased_attack_speed": [45, 65],
       "all_attributes": 50,
-      "additive_physical_damage": [
-        54,
-        72
-      ],
-      "flat_arcane_skill_damage": [
-        54,
-        72
-      ],
-      "flat_lightning_skill_damage": [
-        54,
-        72
-      ],
-      "flat_poison_skill_damage": [
-        54,
-        72
-      ],
-      "flat_fire_skill_damage": [
-        54,
-        72
-      ],
-      "flat_cold_skill_damage": [
-        54,
-        72
-      ],
+      "additive_physical_damage": [54, 72],
+      "flat_arcane_skill_damage": [54, 72],
+      "flat_fire_skill_damage": [54, 72],
+      "flat_cold_skill_damage": [54, 72],
+      "flat_lightning_skill_damage": [54, 72],
+      "flat_poison_skill_damage": [54, 72],
       "light_radius": 5
     },
     "uniqueEffects": [
-      "18% Chance when Striking to cast Gabriels Glory Level 122"
+      "18% Chance when Striking to cast Gabriel's Glory Level 122"
     ],
     "sockets": 2,
     "maxSockets": 4
+  },
+  {
+    "id": "bow_angelic_st_soloyolo_s_holy_bow",
+    "name": "St. Soloyolo's Holy Bow",
+    "baseType": "Bow",
+    "slot": "weapon",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "twoHanded": true,
+    "damageMin": 126,
+    "damageMax": 138,
+    "attackSpeed": 1.65,
+    "implicit": {
+      "enhanced_damage": [900, 1000],
+      "increased_attack_speed": [40, 80],
+      "crit_chance": 25,
+      "life_steal": [8, 14],
+      "mana_steal": [8, 14],
+      "crit_damage": [50, 100],
+      "defense_ignored": 30,
+      "all_attributes": [25, 30]
+    },
+    "uniqueEffects": [
+      "17% Chance when Attacking to cast Holy Bolt Level 149",
+      "Piercing Attack"
+    ],
+    "sockets": 4,
+    "maxSockets": 5
   },
   {
     "id": "wand_angelic_st_houdeanii_s_tiny_fire_rod",
@@ -271,295 +188,20 @@
     "attackSpeed": 1.75,
     "implicit": {
       "all_skills": 4,
-      "fire_skills": [
-        3,
-        4
-      ],
+      "fire_skills": [3, 4],
       "faster_cast_rate": 75,
-      "increased_burning_damage": [
-        30,
-        40
-      ],
+      "increased_burning_damage": [30, 40],
       "mana_replenish": 10,
       "extra_damage_burning": 30,
-      "to_intelligence": [
-        40,
-        60
-      ],
-      "fire_skill_damage": [
-        40,
-        50
-      ],
+      "to_intelligence": [40, 60],
+      "fire_skill_damage": [40, 50],
       "ignore_fire_res": 50
     },
     "uniqueEffects": [
-      "22% Chance after each Kill to cast Comet Level 131"
+      "22% Chance after each Kill to cast Comet Level 133"
     ],
     "sockets": 3,
     "maxSockets": 4
-  },
-  {
-    "id": "sword_angelic_st_mika_s_zweih_nder",
-    "name": "St. Mika's Zweihänder",
-    "baseType": "Sword",
-    "slot": "weapon",
-    "rarity": "angelic",
-    "grade": "SS",
-    "requiresLevel": 95,
-    "damageMin": 125,
-    "damageMax": 140,
-    "attackSpeed": 1.75,
-    "implicit": {
-      "enhanced_damage": [
-        725,
-        850
-      ],
-      "all_skills": 5,
-      "movement_speed": [
-        25,
-        40
-      ],
-      "increased_attack_speed": [
-        25,
-        40
-      ],
-      "crit_chance": [
-        15,
-        25
-      ],
-      "attack_rating_pct": 25,
-      "attack_rating": 1555,
-      "crit_damage": [
-        35,
-        55
-      ],
-      "all_attributes": 45,
-      "additive_lightning_damage": 20000,
-      "lightning_skill_damage": [
-        35,
-        60
-      ]
-    },
-    "uniqueEffects": [
-      "18% Chance when Striking to cast Divine Storm Level [75-90]",
-      "18% Chance when Striking to cast Astrope's Battle Maiden Level [15-25]"
-    ],
-    "sockets": 5,
-    "maxSockets": 6,
-    "twoHanded": true
-  },
-  {
-    "id": "cane_angelic_st_nimo_s_lightbringer",
-    "name": "St. Nimo's Lightbringer",
-    "baseType": "Cane",
-    "slot": "weapon",
-    "rarity": "angelic",
-    "grade": "SS",
-    "requiresLevel": 100,
-    "damageMin": 32,
-    "damageMax": 42,
-    "attackSpeed": 0.77,
-    "implicit": {
-      "all_skills": [
-        7,
-        10
-      ],
-      "movement_speed": [
-        15,
-        25
-      ],
-      "to_vitality": [
-        40,
-        65
-      ],
-      "attack_damage": -25,
-      "magic_skill_damage": [
-        -20,
-        -5
-      ],
-      "all_resistances": [
-        10,
-        15
-      ]
-    },
-    "uniqueEffects": [
-      "Mirror Aura Level 1 (Holder Only)"
-    ],
-    "sockets": 4,
-    "maxSockets": 4,
-    "twoHanded": true
-  },
-  {
-    "id": "axe_angelic_st_rexis_sundering_axe",
-    "name": "St. Rexis Sundering Axe",
-    "baseType": "Axe",
-    "slot": "weapon",
-    "rarity": "angelic",
-    "grade": "SS",
-    "requiresLevel": 100,
-    "damageMin": 82,
-    "damageMax": 94,
-    "attackSpeed": 1.9,
-    "implicit": {
-      "enhanced_damage": [
-        775,
-        885
-      ],
-      "all_skills": [
-        3,
-        4
-      ],
-      "increased_attack_speed": [
-        45,
-        60
-      ],
-      "crushing_blow_chance": 50,
-      "life_steal": [
-        7,
-        10
-      ],
-      "defense_ignored": 75,
-      "to_strength": 75,
-      "life_per_kill": 45
-    },
-    "uniqueEffects": [
-      "+1 to Maximum Crushing Blow Stacks",
-      "23% Chance when Striking to cast Fault Line Level 147"
-    ],
-    "sockets": 3,
-    "maxSockets": 5,
-    "twoHanded": true
-  },
-  {
-    "id": "bow_angelic_st_soloyolo_s_holy_bow",
-    "name": "St. Soloyolo's Holy Bow",
-    "baseType": "Bow",
-    "slot": "weapon",
-    "rarity": "angelic",
-    "grade": "SS",
-    "requiresLevel": 94,
-    "damageMin": 126,
-    "damageMax": 138,
-    "attackSpeed": 1.65,
-    "implicit": {
-      "enhanced_damage": [
-        900,
-        1000
-      ],
-      "increased_attack_speed": [
-        40,
-        80
-      ],
-      "crit_chance": 25,
-      "life_steal": [
-        8,
-        14
-      ],
-      "mana_steal": [
-        8,
-        14
-      ],
-      "crit_damage": [
-        50,
-        100
-      ],
-      "defense_ignored": 30,
-      "all_attributes": [
-        25,
-        30
-      ]
-    },
-    "uniqueEffects": [
-      "17% Chance when Attacking to cast Holy Bolt Level [125-150]",
-      "Piercing Attack"
-    ],
-    "sockets": 4,
-    "maxSockets": 5,
-    "twoHanded": true
-  },
-  {
-    "id": "claw_angelic_storm_fury",
-    "name": "Storm Fury",
-    "baseType": "Claw",
-    "slot": "weapon",
-    "rarity": "angelic",
-    "grade": "SS",
-    "requiresLevel": 98,
-    "damageMin": 56,
-    "damageMax": 64,
-    "attackSpeed": 1.75,
-    "implicit": {
-      "enhanced_damage": [
-        650,
-        800
-      ],
-      "all_skills": 2,
-      "increased_attack_speed": [
-        75,
-        100
-      ],
-      "defense_ignored": 40,
-      "all_attributes": [
-        25,
-        40
-      ],
-      "flat_lightning_skill_damage": [
-        45,
-        75
-      ],
-      "lightning_skill_damage": [
-        40,
-        50
-      ],
-      "ignore_lightning_res": 25
-    },
-    "uniqueEffects": [
-      "+[20-25] to Storm Totem",
-      "15% Chance when Striking to cast Thunder Shield Level [65-85]",
-      "15% Chance when Striking to cast Thor's Fury Level 76"
-    ],
-    "sockets": 5,
-    "maxSockets": 5
-  },
-  {
-    "id": "mace_angelic_the_dawn_bringer",
-    "name": "The Dawn Bringer",
-    "baseType": "Mace",
-    "slot": "weapon",
-    "rarity": "angelic",
-    "grade": "SS",
-    "requiresLevel": 100,
-    "damageMin": 58,
-    "damageMax": 64,
-    "attackSpeed": 1.75,
-    "implicit": {
-      "enhanced_damage": [
-        430,
-        480
-      ],
-      "all_skills": 5,
-      "faster_cast_rate": [
-        40,
-        60
-      ],
-      "all_attributes": [
-        25,
-        35
-      ],
-      "magic_skill_damage": [
-        40,
-        50
-      ],
-      "damage_taken_reduced": 10,
-      "max_all_resistances": 5
-    },
-    "uniqueEffects": [
-      "Ailment Damage increased by [25-35]%",
-      "-25% to All Enemy Resistances",
-      "22% Chance when Casting to cast Fist of the Heavens Level [60-70]"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
   },
   {
     "id": "throwing_angelic_st_neri_s_rainbow_lance",
@@ -573,41 +215,198 @@
     "damageMax": 82,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [
-        800,
-        850
-      ],
-      "all_skills": [
-        4,
-        5
-      ],
+      "enhanced_damage": [800, 850],
+      "all_skills": [4, 5],
       "attack_rating_pct": 30,
-      "mana_steal": [
-        8,
-        15
-      ],
-      "increased_stasis_damage": [
-        25,
-        35
-      ],
-      "flat_lightning_skill_damage": [
-        35,
-        65
-      ],
-      "lightning_skill_damage": [
-        50,
-        60
-      ],
-      "ignore_lightning_res": [
-        25,
-        50
-      ],
-      "to_dexterity": 125
+      "mana_steal": [8, 15],
+      "extra_damage_stasis": [25, 35],
+      "flat_lightning_skill_damage": [35, 65],
+      "lightning_skill_damage": [50, 60],
+      "ignore_lightning_res": [25, 50]
     },
     "uniqueEffects": [
-      "15% Chance when Striking to cast Thunder Fury Level 118"
+      "15% Chance when Striking to cast Thunder Fury Level 102",
+      "+125 to Dexterity (Based on Level)"
     ],
     "sockets": 3,
     "maxSockets": 4
+  },
+  {
+    "id": "cane_angelic_st_nimo_s_lightbringer",
+    "name": "St. Nimo's Lightbringer",
+    "baseType": "Cane",
+    "slot": "weapon",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "twoHanded": true,
+    "damageMin": 32,
+    "damageMax": 42,
+    "attackSpeed": 0.77,
+    "implicit": {
+      "all_skills": [7, 10],
+      "movement_speed": [15, 25],
+      "to_vitality": [40, 65],
+      "attack_damage": -25,
+      "magic_skill_damage": [-20, -5],
+      "all_resistances": [10, 15]
+    },
+    "uniqueEffects": [
+      "Mirror Aura Level 1 (Holder Only)"
+    ],
+    "sockets": 4,
+    "maxSockets": 4
+  },
+  {
+    "id": "chainsaw_angelic_st_draxis_longsaw",
+    "name": "St. Draxis Longsaw",
+    "baseType": "Chainsaw",
+    "slot": "weapon",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "twoHanded": true,
+    "damageMin": 110,
+    "damageMax": 125,
+    "attackSpeed": 1.35,
+    "implicit": {
+      "enhanced_damage": [850, 925],
+      "all_skills": [4, 6],
+      "movement_speed": 40,
+      "increased_attack_speed": [40, 80],
+      "attack_rating_pct": 30,
+      "to_strength": 50,
+      "to_dexterity": 50,
+      "attack_damage": [45, 65]
+    },
+    "uniqueEffects": [
+      "20% Chance when Striking to cast Tree Trunk Triumph Level 127",
+      "Attack Range Increased by [50-100]%",
+      "Attacks can hit multiple enemies"
+    ],
+    "sockets": 6,
+    "maxSockets": 6
+  },
+  {
+    "id": "polearm_angelic_st_draxis_pigstick",
+    "name": "St. Draxis Pigstick",
+    "baseType": "Polearm",
+    "slot": "weapon",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "twoHanded": true,
+    "damageMin": 80,
+    "damageMax": 88,
+    "attackSpeed": 1.85,
+    "implicit": {
+      "enhanced_damage": [725, 925],
+      "all_skills": 4,
+      "increased_attack_speed": [65, 75],
+      "deadly_blow": [30, 50],
+      "attack_rating_pct": [25, 35],
+      "to_vitality": 55,
+      "to_armor": 55
+    },
+    "skillBonuses": {
+      "Crushing Lance": 15,
+      "Lance Thrust": 15
+    },
+    "uniqueEffects": [
+      "15% Chance when Attacking to cast Commending Banner Level 20",
+      "Attacks can hit multiple enemies"
+    ],
+    "sockets": 5,
+    "maxSockets": 5
+  },
+  {
+    "id": "claw_angelic_storm_fury",
+    "name": "Storm Fury",
+    "baseType": "Claw",
+    "slot": "weapon",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "damageMin": 56,
+    "damageMax": 64,
+    "attackSpeed": 1.75,
+    "implicit": {
+      "enhanced_damage": [650, 800],
+      "all_skills": 2,
+      "lightning_skills": [4, 5],
+      "increased_attack_speed": [75, 100],
+      "defense_ignored": 40,
+      "all_attributes": [25, 40],
+      "flat_lightning_skill_damage": [45, 75],
+      "lightning_skill_damage": [40, 60],
+      "ignore_lightning_res": 25
+    },
+    "uniqueEffects": [
+      "15% Chance when Striking to cast Thunder Shield Level 71",
+      "15% Chance when Attacking to cast Thor's Fury Level 76"
+    ],
+    "sockets": 5,
+    "maxSockets": 5
+  },
+  {
+    "id": "axe_angelic_aurelion_fury",
+    "name": "Aurelion Fury",
+    "baseType": "Axe",
+    "slot": "weapon",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "twoHanded": true,
+    "damageMin": 158,
+    "damageMax": 165,
+    "attackSpeed": 1,
+    "implicit": {
+      "enhanced_damage": [925, 1175],
+      "all_skills": [5, 8],
+      "increased_attack_speed": -35,
+      "deadly_blow": 15,
+      "mana_steal": [7, 13],
+      "to_vitality": [40, 65],
+      "all_attributes": 35,
+      "all_resistances": [30, 40]
+    },
+    "uniqueEffects": [
+      "Deadly Blow Damage increased by [100-150]%",
+      "Attacks can hit multiple enemies",
+      "Lunar Aura Level [12-15]"
+    ],
+    "sockets": 4,
+    "maxSockets": 6,
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "axe_angelic_st_rexis_sundering_axe",
+    "name": "St. Rexis Sundering Axe",
+    "baseType": "Axe",
+    "slot": "weapon",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "twoHanded": true,
+    "damageMin": 82,
+    "damageMax": 94,
+    "attackSpeed": 1.9,
+    "implicit": {
+      "enhanced_damage": [775, 885],
+      "all_skills": [3, 4],
+      "increased_attack_speed": [45, 60],
+      "crushing_blow_chance": 50,
+      "life_steal": [7, 10],
+      "defense_ignored": 75,
+      "to_strength": 75,
+      "life_per_kill": 45
+    },
+    "uniqueEffects": [
+      "+1 to Maximum Crushing Blow Stacks",
+      "Attacks can hit multiple enemies"
+    ],
+    "sockets": 3,
+    "maxSockets": 5
   }
 ]
