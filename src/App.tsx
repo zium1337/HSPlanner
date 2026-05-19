@@ -15,7 +15,7 @@ import { preloadSprites } from "./utils/preloadAssets";
 import { readStorageWithLegacy, writeStorage } from "./utils/storage";
 import CharacterView from "./views/CharacterView";
 import ConfigView from "./views/ConfigView";
-import GearView from "./views/GearView";
+import GearView from "./views/gear/GearView";
 import NotesView from "./views/NotesView";
 import SkillsView from "./views/SkillsView";
 import StatsView from "./views/StatsView";
