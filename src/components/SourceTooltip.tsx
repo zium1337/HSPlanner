@@ -53,7 +53,8 @@ function extractItemName(label: string): string | null {
   const trimmed = label.trim()
   if (!trimmed) return null
   const match = trimmed.match(/\(([^()]+)\)\s*$/)
-  if (match) return match[1].trim()
+  const inner = match?.[1]
+  if (inner) return inner.trim()
   return trimmed
 }
 
@@ -69,12 +70,15 @@ function extractTreeRef(label: string): { id?: number; name?: string } | null {
   const trimmed = label.trim()
   if (!trimmed.startsWith('Tree:')) return null
   const idMatch = trimmed.match(/^Tree:\s*(.+?)\s+#(\d+)\b/)
-  if (idMatch) {
-    return { id: Number(idMatch[2]), name: idMatch[1].trim() }
+  const idName = idMatch?.[1]
+  const idStr = idMatch?.[2]
+  if (idName && idStr) {
+    return { id: Number(idStr), name: idName.trim() }
   }
   const nameMatch = trimmed.match(/^Tree:\s*(.+?)(?:\s*\(conditional\))?$/)
-  if (!nameMatch) return null
-  const name = nameMatch[1].trim()
+  const fallbackName = nameMatch?.[1]
+  if (!fallbackName) return null
+  const name = fallbackName.trim()
   if (name.includes(':')) return null
   return name ? { name } : null
 }

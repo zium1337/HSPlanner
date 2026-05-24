@@ -32,9 +32,12 @@ for (const [path, url] of Object.entries(NODE_ICON_FILES)) {
 const NODE_ICON_KEY_BY_ID = nodeIconsMap as Record<string, string>
 
 // Flat list of every tree node with its (x, y, r) and resolved display
-// name + sprite URL. Built once at module-load; ~1.6k entries.
+// name + sprite URL. Built once at module-load; ~1.6k entries. The JSON
+// shape is `[id, x, y, r]` per node, but TS infers it as `number[]` so we
+// cast through a tuple type before destructuring.
+type RawNode = [number, number, number, number]
 export const ALL_TREE_NODES: TreeNodeEntry[] = (
-  treeGraph.nodes as number[][]
+  treeGraph.nodes as RawNode[]
 ).map(([id, x, y, r]) => {
   const iconKey = NODE_ICON_KEY_BY_ID[String(id)]
   return {
@@ -52,12 +55,20 @@ export const ALL_TREE_NODES: TreeNodeEntry[] = (
 // between two nodes; we don't need adjacency here because the mini-map just
 // paints the silhouette without highlighting allocated paths.
 export type TreeEdge = readonly [number, number, number, number]
-export const ALL_TREE_EDGES: TreeEdge[] = treeGraph.edges as TreeEdge[]
+export const ALL_TREE_EDGES: TreeEdge[] = treeGraph.edges as unknown as TreeEdge[]
 
 // `viewBox` of the tree SVG, split into numeric components for reuse.
+// Uses `?? 0` fallbacks because TS treats `arr[n]` as possibly-undefined
+// under noUncheckedIndexedAccess; in practice every viewBox we ship has 4
+// components.
 export const TREE_VIEWBOX: { x: number; y: number; w: number; h: number } = (() => {
-  const [x, y, w, h] = treeGraph.viewBox.split(' ').map(Number)
-  return { x, y, w, h }
+  const parts = treeGraph.viewBox.split(' ').map(Number)
+  return {
+    x: parts[0] ?? 0,
+    y: parts[1] ?? 0,
+    w: parts[2] ?? 0,
+    h: parts[3] ?? 0,
+  }
 })()
 
 // Reverse-lookup by display name. First-write-wins when several nodes share a
