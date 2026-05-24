@@ -75,6 +75,18 @@ for (const [path, url] of Object.entries(skillImageModules)) {
   }
 }
 
+const classImageModules = import.meta.glob<string>(
+  '../assets/classes/*.{png,webp,jpg,jpeg}',
+  { eager: true, query: '?url', import: 'default' },
+)
+
+const classImageIndex = new Map<string, string>()
+for (const [path, url] of Object.entries(classImageModules)) {
+  const file = path.split('/').pop() ?? ''
+  const id = file.replace(/\.(png|webp|jpe?g)$/i, '')
+  if (id) classImageIndex.set(id, url)
+}
+
 function collectScalar<T>(modules: Record<string, { default: T }>): T[] {
   // Pulls the `default` export out of every entry in a `import.meta.glob` module map and returns them as a flat array. Used to gather single-record JSON files such as classes and talent trees into runtime arrays.
   return Object.values(modules).map((m) => m.default)
@@ -198,6 +210,11 @@ export function getSkillImage(
 ): string | undefined {
   // Returns the bundled asset URL for a skill icon matching `src/assets/skills/{classId}/{skillId}.{png,webp,jpg,jpeg}`, or undefined when no local sprite ships.
   return skillImageIndex.get(`${classId}/${skillId}`)
+}
+
+export function getClassIcon(classId: string): string | undefined {
+  // Returns the bundled asset URL for a class avatar matching `src/assets/classes/{classId}.{png,webp,jpg,jpeg}`, or undefined when no local sprite ships. Used by the build library to show the class emblem in build cards and the "By class" sidebar.
+  return classImageIndex.get(classId)
 }
 
 export function resolveSkillIcon(skill: {

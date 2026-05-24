@@ -8,7 +8,7 @@ import {
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 import { backdropVariants, panelVariants } from "../lib/motion";
-import { classes, getClass } from "../data";
+import { classes, getClass, getClassIcon } from "../data";
 import { useBuild } from "../store/build";
 import {
   listSavedBuilds,
@@ -555,6 +555,7 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
                       count={classCounts[c.id] ?? 0}
                       active={active}
                       dotColor={classColor(c.id)}
+                      iconUrl={getClassIcon(c.id)}
                       onClick={() =>
                         setScope(
                           active
@@ -872,12 +873,14 @@ function SidebarRow({
   count,
   active,
   dotColor,
+  iconUrl,
   onClick,
 }: {
   label: string;
   count: number;
   active: boolean;
   dotColor?: string;
+  iconUrl?: string;
   onClick: () => void;
 }) {
   return (
@@ -900,15 +903,29 @@ function SidebarRow({
         }
       />
       <span className="flex min-w-0 items-center gap-2">
-        {dotColor && (
-          <span
+        {iconUrl ? (
+          <img
+            src={iconUrl}
+            alt=""
             aria-hidden
-            className="inline-block h-2 w-2 rounded-full"
+            className="inline-block h-4 w-4 shrink-0 object-contain"
             style={{
-              backgroundColor: dotColor,
-              boxShadow: active ? `0 0 8px ${dotColor}` : undefined,
+              filter: active
+                ? "drop-shadow(0 0 6px rgba(224,184,100,0.45))"
+                : undefined,
             }}
           />
+        ) : (
+          dotColor && (
+            <span
+              aria-hidden
+              className="inline-block h-2 w-2 rounded-full"
+              style={{
+                backgroundColor: dotColor,
+                boxShadow: active ? `0 0 8px ${dotColor}` : undefined,
+              }}
+            />
+          )
         )}
         <span className="truncate">{label}</span>
       </span>
@@ -954,6 +971,7 @@ function BuildCard({
 }) {
   const color = build.classId ? classColor(build.classId) : "#5a5448";
   const initial = (meta?.className?.[0] ?? "?").toUpperCase();
+  const iconUrl = build.classId ? getClassIcon(build.classId) : undefined;
   return (
     <li>
       <div
@@ -976,18 +994,32 @@ function BuildCard({
           className="grid w-full items-center gap-4 px-3 py-2.5 text-left"
           style={{ gridTemplateColumns: "44px 1fr auto" }}
         >
-          <span
-            aria-hidden
-            className="flex h-11 w-11 items-center justify-center rounded-[3px] border font-mono text-[15px] font-bold tracking-tight"
-            style={{
-              color,
-              borderColor: `${color}55`,
-              background: `linear-gradient(180deg, ${color}1a, ${color}05)`,
-              boxShadow: selected ? `0 0 14px ${color}40` : undefined,
-            }}
-          >
-            {initial}
-          </span>
+          {iconUrl ? (
+            <img
+              src={iconUrl}
+              alt=""
+              aria-hidden
+              className="h-11 w-11 object-contain"
+              style={{
+                filter: selected
+                  ? `drop-shadow(0 0 10px ${color}aa)`
+                  : undefined,
+              }}
+            />
+          ) : (
+            <span
+              aria-hidden
+              className="flex h-11 w-11 items-center justify-center rounded-[3px] border font-mono text-[15px] font-bold tracking-tight"
+              style={{
+                color,
+                borderColor: `${color}55`,
+                background: `linear-gradient(180deg, ${color}1a, ${color}05)`,
+                boxShadow: selected ? `0 0 14px ${color}40` : undefined,
+              }}
+            >
+              {initial}
+            </span>
+          )}
 
           <div className="flex min-w-0 flex-col gap-0.5">
             <div className="flex min-w-0 items-center gap-2">
