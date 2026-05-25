@@ -42,32 +42,30 @@ const FORGE_COLOR: Record<ForgeKind, string> = {
   satanic_crystal: 'text-red-300',
 }
 
-// Extracts a worn-item display name from a source-contribution label. Rust
-// produces labels in four shapes:
-//   "Crown of Flames"                         (implicit / set bonus)
-//   "Inferno (Crown of Flames)"               (affix / runeword / socketed gem)
-//   "Augment: X Lv 5 (Crown of Flames)"       (augment)
-// We try the trailing parenthesised group first; if nothing is wrapped, we
-// fall back to the whole trimmed label. Returns null only for empty input.
+// Socket-in-item form checked first so Rainbow/Transform trailing parens
+// don't get mistaken for the item name by the generic parens fallback.
 function extractItemName(label: string): string | null {
   const trimmed = label.trim()
   if (!trimmed) return null
-  const match = trimmed.match(/\(([^()]+)\)\s*$/)
-  const inner = match?.[1]
+  const socketInItem = trimmed.match(
+    /\bin (.+?) #\d+(?:\s*\((?:Rainbow|Transform)\))?\s*$/,
+  )
+  if (socketInItem?.[1]) return socketInItem[1].trim()
+  const parens = trimmed.match(/\(([^()]+)\)\s*$/)
+  const inner = parens?.[1]
   if (inner) return inner.trim()
   return trimmed
 }
 
-// Parses a Rust-produced tree label into an identifier the mini-map can use.
-// Modern labels embed the node id as `#N` so multiple nodes sharing a display
-// name still resolve uniquely:
-//   "Tree: Pyromaniac #123"
-//   "Tree: Pyromaniac #123 (conditional)"
-//   "Tree: Pyromaniac #123: 20% of Strength"      (conversion — also OK)
-// Falls back to the plain name match for backwards compatibility with any
-// callers that haven't migrated yet.
+// Parses a tree label into a node id (preferred) or display name. Handles
+// modern "Tree: X #N" labels, "Tree Socket #N" gem labels, and a legacy
+// pre-#N fallback that stops capture at the first ":" / "(".
 function extractTreeRef(label: string): { id?: number; name?: string } | null {
   const trimmed = label.trim()
+  const socketMatch = trimmed.match(/\(Tree Socket #(\d+)\)\s*$/)
+  if (socketMatch?.[1]) {
+    return { id: Number(socketMatch[1]) }
+  }
   if (!trimmed.startsWith('Tree:')) return null
   const idMatch = trimmed.match(/^Tree:\s*(.+?)\s+#(\d+)\b/)
   const idName = idMatch?.[1]
@@ -75,11 +73,8 @@ function extractTreeRef(label: string): { id?: number; name?: string } | null {
   if (idName && idStr) {
     return { id: Number(idStr), name: idName.trim() }
   }
-  const nameMatch = trimmed.match(/^Tree:\s*(.+?)(?:\s*\(conditional\))?$/)
-  const fallbackName = nameMatch?.[1]
-  if (!fallbackName) return null
-  const name = fallbackName.trim()
-  if (name.includes(':')) return null
+  const legacy = trimmed.match(/^Tree:\s*([^:(]+?)(?:\s*\(conditional\)|:|$)/)
+  const name = legacy?.[1]?.trim()
   return name ? { name } : null
 }
 
@@ -88,35 +83,22 @@ interface Props {
   sources: SourceContribution[]
   moreSources?: SourceContribution[]
   children: ReactNode
-  // Optional Rust-computed breakdown rendered in the pinned modal only.
-  // When set, the pinned modal shows a Math section (additive + more + combined)
-  // and a By Source Type section (Tree / Items / Skills subtotals).
   breakdown?: StatBreakdown | null
-  // Fired the first time the user opens the pinned modal — caller uses it to
-  // kick off the async Rust fetch for the breakdown. Won't be called for hover.
   onRequestBreakdown?: () => void
-  // Title for the pinned modal header (defaults to the resolved statName).
   title?: string
 }
 
-// Returns the larger magnitude across the value's min and max endpoints, so
-// ranged contributions sort by their "biggest impact". Used as the comparison
-// key in `sortByMagnitude`.
 function magnitudeOf(value: RangedValue): number {
   if (typeof value === 'number') return Math.abs(value)
   return Math.max(Math.abs(value[0]), Math.abs(value[1]))
 }
 
-// Sorts a contribution list by absolute magnitude (biggest at the top) so the
-// most impactful sources show up first. Forge children get the same key as
-// their value; subsequent `orderSources` re-groups them under their parent
-// item, so the parent's position dictates where the cluster lands.
 function sortByMagnitude(sources: SourceContribution[]): SourceContribution[] {
   return [...sources].sort((a, b) => magnitudeOf(b.value) - magnitudeOf(a.value))
 }
 
+// Groups each forged-crystal child directly under its parent item-source.
 function orderSources(sources: SourceContribution[]): SourceContribution[] {
-  // Reorders a flat list of source contributions so each item-source is immediately followed by its forged crystal mod children, with any orphaned forged mods appended at the end. Used by SourceTooltip to render the parent/child indented layout.
   const forgedByParent = new Map<string, SourceContribution[]>()
   for (const s of sources) {
     if (!s.forge) continue
@@ -155,12 +137,8 @@ function SourceItem({
   s: SourceContribution
   statKey: string
   index: number
-  // Lookup from worn item's display name to its `EquippedItem` record. When
-  // we can match a source's parsed item name against an entry here, the row
-  // gets wrapped in <ItemTooltip> so hovering it shows the full item card.
   itemByName?: Map<string, EquippedItem>
 }) {
-  // Renders a single contribution row inside the tooltip: an indented "Forged modifier" entry when the source carries forge metadata, or a normal "tag · label · value" row for everything else. Used by SourceTooltip's list rendering.
   if (s.forge) {
     const color = FORGE_COLOR[s.forge.kind]
     const equipped = itemByName?.get(s.forge.itemName)
@@ -189,10 +167,7 @@ function SourceItem({
     }
     return <li key={index}>{forgedRow}</li>
   }
-  // For tree sources, the Rust label carries `#N` (node id) so the mini-map
-  // resolves to the correct allocated node — but it'd be noisy in the UI, so
-  // we strip it from the displayed string. The parser elsewhere reads the
-  // original `s.label` directly.
+  // Strip the `#N` node id from the display string; parsers read s.label.
   const displayLabel =
     s.sourceType === 'tree'
       ? s.label.replace(/\s+#\d+/, '')
@@ -212,9 +187,6 @@ function SourceItem({
       </span>
     </div>
   )
-  // Item / socket rows: try to enrich with a hover ItemTooltip pulled from the
-  // current build's inventory. Falls back to the plain row when we can't find
-  // a matching item (e.g. the worn name changed mid-session).
   if (
     itemByName &&
     (s.sourceType === 'item' || s.sourceType === 'socket')
@@ -231,9 +203,6 @@ function SourceItem({
       )
     }
   }
-  // Tree rows: pull the node's (x, y) from the static tree data and show a
-  // mini-map highlighting its location. Prefer the id-based lookup (modern
-  // labels embed `#N`) and only fall back to name lookup for legacy strings.
   if (s.sourceType === 'tree') {
     const ref = extractTreeRef(s.label)
     let treeNode = ref?.id != null ? findTreeNodeById(ref.id) : undefined
@@ -258,7 +227,6 @@ function SourceItem({
 }
 
 function sectionLabel(text: string, trailing?: string) {
-  // Renders the gold sub-section bar inside the tooltip with an optional right-aligned trailing string (e.g. a subtotal). Used by SourceTooltip to separate the "Additive" and "Multiplicative (Total)" groups.
   return (
     <div className="flex items-center justify-between px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-accent-hot/80 bg-accent-deep/10 border-b border-border/40">
       <span>{text}</span>
@@ -272,7 +240,6 @@ function sectionLabel(text: string, trailing?: string) {
 }
 
 function sumRangePct(sources: SourceContribution[]): [number, number] {
-  // Sums a list of source contributions into a single `[min, max]` percentage range. Used to compute the additive and multiplicative subtotals shown in the tooltip's section bars.
   let min = 0
   let max = 0
   for (const s of sources) {
@@ -285,7 +252,6 @@ function sumRangePct(sources: SourceContribution[]): [number, number] {
 }
 
 function fmtSubtotal([min, max]: [number, number]): string {
-  // Formats an additive subtotal range as a signed percentage (e.g. "+12%" or "+12–18%"). Used by SourceTooltip's "Additive" section header.
   const round = (n: number) =>
     Number.isInteger(n) ? n : Math.round(n * 100) / 100
   if (min === max) return `${min >= 0 ? '+' : ''}${round(min)}%`
@@ -293,7 +259,6 @@ function fmtSubtotal([min, max]: [number, number]): string {
 }
 
 function fmtMult([min, max]: [number, number]): string {
-  // Formats a Total / multiplicative range as a `×N` (or `×A–B`) multiplier string. Used by SourceTooltip's "Multiplicative" section header so the user can see the effective multiplier at a glance.
   const round = (n: number) => Math.round(n * 1000) / 1000
   const a = round(1 + min / 100)
   const b = round(1 + max / 100)
@@ -305,14 +270,13 @@ const TOOLTIP_WIDTH = 320
 const TOOLTIP_GAP = 6
 const VIEWPORT_PADDING = 8
 
-// --- breakdown-mode renderers (only used by the pinned modal) ---
+// --- breakdown-mode renderers (pinned modal only) ---
 
 function rangedToPair(v: RangedValue): [number, number] {
   return typeof v === 'number' ? [v, v] : v
 }
 
 function fmtPctRange(v: RangedValue, signed: boolean = true): string {
-  // Renders an already-percent-typed value as either "+X%" or "X%" with two-decimal precision when fractional. Used by the breakdown sections where the Rust side already established the value is in percent units.
   const round = (n: number) =>
     Number.isInteger(n) ? n : Math.round(n * 100) / 100
   const [min, max] = rangedToPair(v)
@@ -322,7 +286,6 @@ function fmtPctRange(v: RangedValue, signed: boolean = true): string {
 }
 
 function fmtMultRange(v: RangedValue): string {
-  // Renders a more-percent range as a `×N` multiplier ("×1.30" for 30%). Used by the breakdown's Multiplicative line.
   const round = (n: number) => Math.round(n * 1000) / 1000
   const [min, max] = rangedToPair(v)
   const a = round(1 + min / 100)
@@ -332,7 +295,6 @@ function fmtMultRange(v: RangedValue): string {
 }
 
 function fmtFlatRange(v: RangedValue): string {
-  // Renders a flat (non-percent) range as "X" or "X–Y", signed. Used by breakdown sections for stats like life / mana / defense.
   const round = (n: number) =>
     Number.isInteger(n) ? n : Math.round(n * 100) / 100
   const [min, max] = rangedToPair(v)
@@ -342,7 +304,6 @@ function fmtFlatRange(v: RangedValue): string {
 }
 
 function fmtBreakdownValue(v: RangedValue, isPercent: boolean): string {
-  // Picks the right format for a Rust-computed breakdown value depending on whether the stat is percent-formatted.
   return isPercent ? fmtPctRange(v) : fmtFlatRange(v)
 }
 
@@ -351,16 +312,16 @@ function isZeroRanged(v: RangedValue): boolean {
   return min === 0 && max === 0
 }
 
+// Fallback Title-Case rendering when statName returns the raw snake_case key.
+function humanizeStatKey(key: string): string {
+  return key
+    .split('_')
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
+}
+
 function CalculationSection({ breakdown }: { breakdown: StatBreakdown }) {
-  // PoB-style "how this number was derived" panel. Three shapes:
-  //   1. Multiplied-flat stats (life, mana, replenishes): the engine does
-  //      `flat × (1 + sum(increased)/100) × (1 + sum(more)/100)`. We show
-  //      Additive (flat), Increased (%), More (×), and Combined.
-  //   2. Percent stats with _more (e.g. increased_fire_damage): the engine
-  //      does `(1 + add/100) × (1 + more/100) − 1`. We show Additive (+),
-  //      Multiplicative (×), and Combined.
-  //   3. Plain percent or flat stats with no multipliers: single Total line.
-  // Numbers come from Rust; this component only renders.
   const {
     hasMore,
     hasIncreased,
@@ -387,8 +348,7 @@ function CalculationSection({ breakdown }: { breakdown: StatBreakdown }) {
       </div>
     )
   }
-  // Multiplied-flat stat path (life / mana / replenishes). isPercent is false
-  // — the additive sum is a flat unit and the combined value is too.
+  // Multiplied-flat stats (life / mana / replenishes) — additive is flat.
   if (hasIncreased || !isPercent) {
     return (
       <div className="border-b border-border/40">
@@ -429,7 +389,6 @@ function CalculationSection({ breakdown }: { breakdown: StatBreakdown }) {
       </div>
     )
   }
-  // Percent stat with _more companion (e.g. increased_fire_damage).
   return (
     <div className="border-b border-border/40">
       {sectionLabel('Calculation', fmtPctRange(combined))}
@@ -461,13 +420,6 @@ function CalculationSection({ breakdown }: { breakdown: StatBreakdown }) {
 }
 
 function BySourceTypeSection({ breakdown }: { breakdown: StatBreakdown }) {
-  // Per-source-type subtotals, sorted by magnitude (Rust does the sort).
-  // Renders three optional buckets, divider-separated:
-  //   - Additive (flat for multiplied stats, or +% for percent stats)
-  //   - Increased (only present on multiplied-flat stats — life, mana, etc.)
-  //   - Multiplicative (more%, when present)
-  // Bucket order matches CalculationSection's row order so the eye can map
-  // each subtotal back to its formula component.
   const {
     additiveByType,
     increasedByType,
@@ -483,8 +435,6 @@ function BySourceTypeSection({ breakdown }: { breakdown: StatBreakdown }) {
   ) {
     return null
   }
-  // For multiplied-flat stats, the Additive bucket carries flat units; for
-  // percent stats it carries percentages. fmtBreakdownValue handles both.
   const additiveAsPercent = isPercent && !hasIncreased
   const renderRow = (
     sub: StatTypeSubtotal,
@@ -554,14 +504,10 @@ function SourcesBody({
   sources: SourceContribution[]
   moreSources?: SourceContribution[]
   hasMore: boolean
-  // When true (pinned modal), prepend the Rust-computed Calculation and
-  // BySourceType sections before the standard contributor lists. Hover-mode
-  // callers leave this off so the compact tooltip stays compact.
   extended?: boolean
   breakdown?: StatBreakdown | null
   itemByName?: Map<string, EquippedItem>
 }) {
-  // Shared body of the source breakdown — used by both the hover tooltip and the pinned (right-click) modal so the rendering stays in one place. Sort by magnitude first, then group forge children under their parent items.
   const orderedAdd = orderSources(sortByMagnitude(sources))
   const orderedMore = hasMore
     ? orderSources(sortByMagnitude(moreSources!))
@@ -570,11 +516,17 @@ function SourcesBody({
   const moreSubtotal = hasMore
     ? sumRangePct(moreSources!)
     : ([0, 0] as [number, number])
-  const breakdownHead = extended && breakdown ? (
-    <>
-      <CalculationSection breakdown={breakdown} />
-      <BySourceTypeSection breakdown={breakdown} />
-    </>
+  const breakdownHead = extended ? (
+    breakdown ? (
+      <>
+        <CalculationSection breakdown={breakdown} />
+        <BySourceTypeSection breakdown={breakdown} />
+      </>
+    ) : (
+      <div className="border-b border-border/40 px-3 py-2 text-[11px] italic text-text/50">
+        Loading breakdown...
+      </div>
+    )
   ) : null
   if (hasMore) {
     return (
@@ -620,28 +572,26 @@ export default function SourceTooltip({
   onRequestBreakdown,
   title,
 }: Props) {
-  // Stat-source breakdown popover. Hover shows a small (~320px) anchored tooltip, left- or right-click pins a larger modal (centered, scrollable up to 80vh) with the Rust-computed Calculation + BySourceType sections on top. Both surfaces render into document.body via portal so ancestor `overflow-hidden` doesn't clip them.
   const hasMore = !!moreSources && moreSources.length > 0
   const triggerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
   const [pinned, setPinned] = useState(false)
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
-  const breakdownRequestedRef = useRef(false)
-  // Reset the "already requested" latch when the cached breakdown drops back
-  // to null — that happens when StatsView invalidates its cache after the
-  // user edits the build. Without this reset the modal would never re-fetch.
+  // Stable ref so the refetch effect doesn't churn on fresh inline arrows.
+  const onRequestBreakdownRef = useRef(onRequestBreakdown)
   useEffect(() => {
-    if (breakdown == null) {
-      breakdownRequestedRef.current = false
-    }
-  }, [breakdown])
+    onRequestBreakdownRef.current = onRequestBreakdown
+  })
+  // Refetch whenever the modal is pinned without a cached breakdown: covers
+  // initial open, build-edit cache invalidation, and reopen after a failure.
+  useEffect(() => {
+    if (!pinned || breakdown != null) return
+    onRequestBreakdownRef.current?.()
+  }, [pinned, breakdown])
   const inventory = useBuild((s) => s.inventory)
+  // First-match-wins for duplicates; copies carry identical stat ranges.
   const itemByName = useMemo(() => {
-    // Reverse-lookup map populated from the build's current inventory. Used by
-    // SourceItem to enrich item / socket / forge rows with a hover ItemTooltip.
-    // When two equipped items share a base name we keep the first match — both
-    // copies carry identical stat ranges, so the tooltip is representative.
     const map = new Map<string, EquippedItem>()
     for (const equipped of Object.values(inventory)) {
       if (!equipped) continue
@@ -651,14 +601,7 @@ export default function SourceTooltip({
     }
     return map
   }, [inventory])
-  const requestBreakdown = () => {
-    if (breakdownRequestedRef.current) return
-    if (!onRequestBreakdown) return
-    breakdownRequestedRef.current = true
-    onRequestBreakdown()
-  }
 
-  // Position the hover tooltip relative to its trigger and clamp to the viewport. Re-runs after mount (so we can read tooltip's real height) and on scroll/resize while open.
   useLayoutEffect(() => {
     if (!open || pinned || !triggerRef.current) return
     const reposition = () => {
@@ -705,18 +648,18 @@ export default function SourceTooltip({
   if (sources.length === 0 && !hasMore) return <>{children}</>
 
   const openPinned = () => {
-    requestBreakdown()
     setPinned(true)
     setOpen(false)
   }
   const handleContextMenu = (e: React.MouseEvent) => {
-    // Right-click pins the breakdown into a centered, scrollable modal so dense stats (lots of contributors) can be browsed without going off-screen.
     e.preventDefault()
     openPinned()
   }
+  // Skip when the user just drag-selected text — their intent was copy, not pin.
   const handleClick = (e: React.MouseEvent) => {
-    // Left-click also pins the breakdown — gives keyboard/click users the same affordance as right-click. Doesn't fire when the click started a drag/selection.
     if (e.defaultPrevented) return
+    const selection = window.getSelection()
+    if (selection && selection.toString().length > 0) return
     openPinned()
   }
 
@@ -776,9 +719,25 @@ export default function SourceTooltip({
         createPortal(
           <div
             className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 backdrop-blur-[2px]"
-            onClick={() => setPinned(false)}
+            onClick={(e) => {
+              // Skip dismissal when click lands on a portal-rendered tooltip
+              // (pointer-events-none lets the click bubble to the backdrop).
+              const tooltips = document.querySelectorAll('[role="tooltip"]')
+              for (const tt of tooltips) {
+                const rect = tt.getBoundingClientRect()
+                if (rect.width === 0 || rect.height === 0) continue
+                if (
+                  e.clientX >= rect.left &&
+                  e.clientX <= rect.right &&
+                  e.clientY >= rect.top &&
+                  e.clientY <= rect.bottom
+                ) {
+                  return
+                }
+              }
+              setPinned(false)
+            }}
             onContextMenu={(e) => {
-              // Right-click outside the modal (i.e. on the backdrop) also closes it; right-click on the modal itself stays open so links/text are still selectable.
               e.preventDefault()
               setPinned(false)
             }}
@@ -797,7 +756,12 @@ export default function SourceTooltip({
               >
                 <div className="flex items-baseline gap-2 min-w-0">
                   <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-hot truncate">
-                    {title ?? statName(statKey)}
+                    {(() => {
+                      const resolved = title ?? statName(statKey)
+                      return resolved === statKey
+                        ? humanizeStatKey(statKey)
+                        : resolved
+                    })()}
                   </span>
                   <span className="font-mono text-[10px] text-text/60 truncate">
                     {statKey}

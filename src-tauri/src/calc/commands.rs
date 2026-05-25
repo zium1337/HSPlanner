@@ -522,5 +522,9 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
         StatBreakdownKind::Stat => &computed.stat_sources,
         StatBreakdownKind::Attribute => &computed.attribute_sources,
     };
-    compute_stat_breakdown(sources, &input.stat_key)
+    let final_value = match input.kind {
+        StatBreakdownKind::Stat => computed.stats.get(&input.stat_key).copied(),
+        StatBreakdownKind::Attribute => computed.attributes.get(&input.stat_key).copied(),
+    };
+    compute_stat_breakdown(sources, &input.stat_key, final_value)
 }
