@@ -172,6 +172,10 @@ pub struct WeaponDamageInput {
     pub stats: HashMap<String, NumberOrRange>,
     #[serde(default)]
     pub enemy_conditions: HashMap<String, bool>,
+    #[serde(default)]
+    pub enemy_resistances: HashMap<String, f64>,
+    #[serde(default)]
+    pub projectile_count: Option<u32>,
 }
 
 #[derive(Serialize)]
@@ -273,26 +277,46 @@ pub struct WeaponDamageOutput {
     pub enhanced_damage_max_pct: f64,
     pub additive_physical_min: f64,
     pub additive_physical_max: f64,
+    pub additive_elemental_min: f64,
+    pub additive_elemental_max: f64,
+    pub additive_elemental_breakdown: Vec<ExtraSourceOut>,
     pub attack_damage_min_pct: f64,
     pub attack_damage_max_pct: f64,
     pub extra_damage_pct: f64,
     pub extra_damage_sources: Vec<ExtraSourceOut>,
+    pub crushing_blow_modifier: f64,
+    pub armor_break_pct: f64,
+    pub deadly_blow_chance: f64,
+    pub hit_chance: f64,
     pub crit_chance: f64,
     pub crit_damage_pct: f64,
     pub crit_multiplier_avg: f64,
     pub attacks_per_second_min: f64,
     pub attacks_per_second_max: f64,
+    pub projectile_count: u32,
+    pub enemy_phys_res_pct: f64,
+    pub phys_resistance_ignored_pct: f64,
     pub hit_min: i64,
     pub hit_max: i64,
     pub crit_min: i64,
     pub crit_max: i64,
     pub avg_min: i64,
     pub avg_max: i64,
+    pub open_wounds_min: i64,
+    pub open_wounds_max: i64,
     pub dps_min: i64,
     pub dps_max: i64,
 }
 impl From<calc::WeaponDamageBreakdown> for WeaponDamageOutput {
     fn from(v: calc::WeaponDamageBreakdown) -> Self {
+        let map_sources = |xs: Vec<calc::ExtraSource>| {
+            xs.into_iter()
+                .map(|e| ExtraSourceOut {
+                    label: e.label.to_string(),
+                    pct: e.pct,
+                })
+                .collect()
+        };
         Self {
             has_weapon: v.has_weapon,
             weapon_name: v.weapon_name,
@@ -302,28 +326,33 @@ impl From<calc::WeaponDamageBreakdown> for WeaponDamageOutput {
             enhanced_damage_max_pct: v.enhanced_damage_max_pct,
             additive_physical_min: v.additive_physical_min,
             additive_physical_max: v.additive_physical_max,
+            additive_elemental_min: v.additive_elemental_min,
+            additive_elemental_max: v.additive_elemental_max,
+            additive_elemental_breakdown: map_sources(v.additive_elemental_breakdown),
             attack_damage_min_pct: v.attack_damage_min_pct,
             attack_damage_max_pct: v.attack_damage_max_pct,
             extra_damage_pct: v.extra_damage_pct,
-            extra_damage_sources: v
-                .extra_damage_sources
-                .into_iter()
-                .map(|e| ExtraSourceOut {
-                    label: e.label.to_string(),
-                    pct: e.pct,
-                })
-                .collect(),
+            extra_damage_sources: map_sources(v.extra_damage_sources),
+            crushing_blow_modifier: v.crushing_blow_modifier,
+            armor_break_pct: v.armor_break_pct,
+            deadly_blow_chance: v.deadly_blow_chance,
+            hit_chance: v.hit_chance,
             crit_chance: v.crit_chance,
             crit_damage_pct: v.crit_damage_pct,
             crit_multiplier_avg: v.crit_multiplier_avg,
             attacks_per_second_min: v.attacks_per_second_min,
             attacks_per_second_max: v.attacks_per_second_max,
+            projectile_count: v.projectile_count,
+            enemy_phys_res_pct: v.enemy_phys_res_pct,
+            phys_resistance_ignored_pct: v.phys_resistance_ignored_pct,
             hit_min: v.hit_min,
             hit_max: v.hit_max,
             crit_min: v.crit_min,
             crit_max: v.crit_max,
             avg_min: v.avg_min,
             avg_max: v.avg_max,
+            open_wounds_min: v.open_wounds_min,
+            open_wounds_max: v.open_wounds_max,
             dps_min: v.dps_min,
             dps_max: v.dps_max,
         }
@@ -362,7 +391,14 @@ pub fn compute_skill_damage(input: SkillDamageInput) -> Option<SkillDamageOutput
 pub fn compute_weapon_damage(input: WeaponDamageInput) -> WeaponDamageOutput {
     let weapon: Option<calc::Weapon> = input.weapon.map(Into::into);
     let stats = ranged_map(input.stats);
-    calc::compute_weapon_damage(weapon.as_ref(), &stats, &input.enemy_conditions).into()
+    calc::compute_weapon_damage(
+        weapon.as_ref(),
+        &stats,
+        &input.enemy_conditions,
+        &input.enemy_resistances,
+        input.projectile_count,
+    )
+    .into()
 }
 
 // ---------- compute_build_performance command ----------

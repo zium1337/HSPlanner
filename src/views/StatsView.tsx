@@ -282,8 +282,8 @@ export default function StatsView() {
             damageMax: base.damageMax,
           }
         : undefined
-    return { weapon, stats, enemyConditions }
-  }, [inventory, stats, enemyConditions])
+    return { weapon, stats, enemyConditions, enemyResistances }
+  }, [inventory, stats, enemyConditions, enemyResistances])
   const weaponDamage = useWeaponDamage(weaponInput)
 
   const grouped = useMemo(() => {
@@ -1077,14 +1077,6 @@ function HeroStat({ k, v }: { k: string; v: string }) {
 
 function DamageBuildup({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
   const b = breakdown
-  const edRange =
-    b.enhancedDamageMinPct === b.enhancedDamageMaxPct
-      ? `${formatDecimal(b.enhancedDamageMinPct)}`
-      : `${formatDecimal(b.enhancedDamageMinPct)}-${formatDecimal(b.enhancedDamageMaxPct)}`
-  const atkDmgRange =
-    b.attackDamageMinPct === b.attackDamageMaxPct
-      ? `${formatDecimal(b.attackDamageMinPct)}`
-      : `${formatDecimal(b.attackDamageMinPct)}-${formatDecimal(b.attackDamageMaxPct)}`
   return (
     <div className="mt-2 border-t border-dashed border-border pt-2.5">
       <BDSection title="Build-up">
@@ -1099,7 +1091,11 @@ function DamageBuildup({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
         {b.enhancedDamageMaxPct > 0 && (
           <BDLine
             label="Enhanced damage"
-            value={<span className="text-accent-hot">+{edRange}%</span>}
+            value={
+              <span className="text-accent-hot">
+                +{formatRange(b.enhancedDamageMinPct, b.enhancedDamageMaxPct)}%
+              </span>
+            }
           />
         )}
         {b.additivePhysicalMax > 0 && (
@@ -1115,10 +1111,28 @@ function DamageBuildup({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
         {b.attackDamageMaxPct > 0 && (
           <BDLine
             label="Attack damage %"
-            value={<span className="text-accent-hot">+{atkDmgRange}%</span>}
+            value={
+              <span className="text-accent-hot">
+                +{formatRange(b.attackDamageMinPct, b.attackDamageMaxPct)}%
+              </span>
+            }
           />
         )}
       </BDSection>
+      {b.additiveElementalBreakdown.length > 0 && (
+        <BDSection title="Additive elemental">
+          {b.additiveElementalBreakdown.map((s, i) => (
+            <BDLine
+              key={i}
+              indent
+              label={s.label}
+              value={
+                <span className="text-sky-300">+{formatDecimal(s.pct)}</span>
+              }
+            />
+          ))}
+        </BDSection>
+      )}
       {b.extraDamageSources.length > 0 && (
         <BDSection title="Extra damage">
           {b.extraDamageSources.map((s, i) => (
@@ -1133,6 +1147,90 @@ function DamageBuildup({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
               }
             />
           ))}
+        </BDSection>
+      )}
+      {(b.crushingBlowModifier !== 1.5 ||
+        b.armorBreakPct > 0 ||
+        b.deadlyBlowChance > 0 ||
+        b.hitChance !== 100 ||
+        b.projectileCount > 1) && (
+        <BDSection title="Combat modifiers">
+          <BDLine
+            label="Crushing blow"
+            value={
+              <span className="text-text">
+                ×{b.crushingBlowModifier.toFixed(2)}
+              </span>
+            }
+          />
+          {b.armorBreakPct > 0 && (
+            <BDLine
+              label="Armor break"
+              value={
+                <span className="text-accent-hot">
+                  +{formatDecimal(b.armorBreakPct)}%
+                </span>
+              }
+            />
+          )}
+          {b.deadlyBlowChance > 0 && (
+            <BDLine
+              label="Deadly blow chance"
+              value={
+                <span className="text-accent-hot">
+                  {formatDecimal(b.deadlyBlowChance)}%
+                </span>
+              }
+            />
+          )}
+          {b.hitChance !== 100 && (
+            <BDLine
+              label="Hit chance"
+              value={
+                <span className="text-text">{formatDecimal(b.hitChance)}%</span>
+              }
+            />
+          )}
+          {b.projectileCount > 1 && (
+            <BDLine
+              label="Projectiles"
+              value={<span className="text-text">×{b.projectileCount}</span>}
+            />
+          )}
+        </BDSection>
+      )}
+      {b.openWoundsMax > 0 && (
+        <BDSection title="Open wounds">
+          <BDLine
+            label="Damage per hit"
+            value={
+              <span className="text-red-400">
+                {formatRangeInt(b.openWoundsMin, b.openWoundsMax)}
+              </span>
+            }
+          />
+        </BDSection>
+      )}
+      {(b.enemyPhysResPct > 0 || b.physResistanceIgnoredPct > 0) && (
+        <BDSection title="Enemy resistance">
+          <BDLine
+            label="Physical resistance"
+            value={
+              <span className="text-text">
+                {formatDecimal(b.enemyPhysResPct)}%
+              </span>
+            }
+          />
+          {b.physResistanceIgnoredPct > 0 && (
+            <BDLine
+              label="Ignored"
+              value={
+                <span className="text-accent-hot">
+                  {formatDecimal(b.physResistanceIgnoredPct)}%
+                </span>
+              }
+            />
+          )}
         </BDSection>
       )}
       <div className="mt-1.5 flex items-baseline justify-between gap-3 border-t border-border pt-1.5">

@@ -35,6 +35,8 @@ export interface NativeWeaponDamageInput {
   weapon?: NativeWeaponRef
   stats?: Record<string, RangedValue>
   enemyConditions?: Record<string, boolean>
+  enemyResistances?: Record<string, number>
+  projectileCount?: number
 }
 
 export function computeSkillDamageNative(

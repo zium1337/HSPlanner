@@ -224,21 +224,33 @@ export interface WeaponDamageBreakdown {
   enhancedDamageMaxPct: number
   additivePhysicalMin: number
   additivePhysicalMax: number
+  additiveElementalMin: number
+  additiveElementalMax: number
+  additiveElementalBreakdown: Array<{ label: string; pct: number }>
   attackDamageMinPct: number
   attackDamageMaxPct: number
   extraDamagePct: number
   extraDamageSources: Array<{ label: string; pct: number }>
+  crushingBlowModifier: number
+  armorBreakPct: number
+  deadlyBlowChance: number
+  hitChance: number
   critChance: number
   critDamagePct: number
   critMultiplierAvg: number
   attacksPerSecondMin: number
   attacksPerSecondMax: number
+  projectileCount: number
+  enemyPhysResPct: number
+  physResistanceIgnoredPct: number
   hitMin: number
   hitMax: number
   critMin: number
   critMax: number
   avgMin: number
   avgMax: number
+  openWoundsMin: number
+  openWoundsMax: number
   dpsMin: number
   dpsMax: number
 }
