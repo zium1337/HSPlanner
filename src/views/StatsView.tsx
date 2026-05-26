@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import SourceTooltip from '../components/SourceTooltip'
-import { classes, gameConfig, skills } from '../data'
+import { classes, gameConfig, getItem, skills } from '../data'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { useSkillDamage } from '../hooks/useSkillDamage'
+import { useWeaponDamage } from '../hooks/useWeaponDamage'
 import {
   computeBuildStatsAsync,
   computeStatBreakdownAsync,
@@ -11,8 +13,6 @@ import { useBuild } from '../store/build'
 import {
   aggregateItemSkillBonuses,
   combineAdditiveAndMore,
-  computeSkillDamage,
-  computeWeaponDamage,
   effectiveCap,
   effectiveRankRangeFor,
   formatValue,
@@ -29,6 +29,10 @@ import type {
   SourceContribution,
   WeaponDamageBreakdown,
 } from '../utils/stats'
+import type {
+  NativeSkillDamageInput,
+  NativeWeaponDamageInput,
+} from '../utils/nativeDamage'
 import type {
   AttributeKey,
   DamageType,
@@ -267,10 +271,20 @@ export default function StatsView() {
     () => aggregateItemSkillBonuses(inventory),
     [inventory],
   )
-  const weaponDamage = useMemo(
-    () => computeWeaponDamage(inventory, stats, enemyConditions),
-    [inventory, stats, enemyConditions],
-  )
+  const weaponInput = useMemo<NativeWeaponDamageInput>(() => {
+    const equipped = inventory.weapon
+    const base = equipped ? getItem(equipped.baseId) : undefined
+    const weapon =
+      base && base.damageMin !== undefined && base.damageMax !== undefined
+        ? {
+            name: base.name,
+            damageMin: base.damageMin,
+            damageMax: base.damageMax,
+          }
+        : undefined
+    return { weapon, stats, enemyConditions }
+  }, [inventory, stats, enemyConditions])
+  const weaponDamage = useWeaponDamage(weaponInput)
 
   const grouped = useMemo(() => {
     const out: Record<string, string[]> = {
@@ -695,27 +709,41 @@ function MainSkillSection({
   skillProjectiles: Record<string, number>
   fcrRange: RangedValue
   mcrRange: RangedValue
-  weaponDamage: WeaponDamageBreakdown
+  weaponDamage: WeaponDamageBreakdown | null
 }) {
   const hasSkillDamage =
     !!mainSkill &&
     mainSkillRank > 0 &&
     (!!mainSkill.damageFormula ||
       (!!mainSkill.damagePerRank && mainSkill.damagePerRank.length > 0))
-  const skillBreakdown = hasSkillDamage
-    ? computeSkillDamage(
-        mainSkill!,
-        mainSkillRank,
-        attributes,
-        stats,
-        skillRanksByName,
-        itemSkillBonuses,
-        enemyConditions,
-        enemyResistances,
-        skillsByNormalizedName,
-        skillProjectiles[mainSkill!.id],
-      )
-    : null
+  const skillInput = useMemo<NativeSkillDamageInput | null>(() => {
+    if (!hasSkillDamage || !mainSkill) return null
+    return {
+      skill: mainSkill,
+      allocatedRank: mainSkillRank,
+      attributes,
+      stats,
+      skillRanksByName,
+      itemSkillBonuses,
+      enemyConditions,
+      enemyResistances,
+      skillsByName: skillsByNormalizedName,
+      projectileCount: skillProjectiles[mainSkill.id],
+    }
+  }, [
+    hasSkillDamage,
+    mainSkill,
+    mainSkillRank,
+    attributes,
+    stats,
+    skillRanksByName,
+    itemSkillBonuses,
+    enemyConditions,
+    enemyResistances,
+    skillsByNormalizedName,
+    skillProjectiles,
+  ])
+  const skillBreakdown = useSkillDamage(skillInput)
 
   if (mainSkill && skillBreakdown) {
     return (
@@ -743,7 +771,7 @@ function MainSkillSection({
     )
   }
 
-  if (weaponDamage.hasWeapon) {
+  if (weaponDamage && weaponDamage.hasWeapon) {
     return (
       <Panel
         title="Main Skill"
@@ -1174,21 +1202,34 @@ function SkillCard({
   const hasDamage =
     !!skill.damageFormula ||
     (!!skill.damagePerRank && skill.damagePerRank.length > 0)
-  const damageBreakdown =
-    currentRank > 0 && hasDamage
-      ? computeSkillDamage(
-          skill,
-          currentRank,
-          attributes,
-          stats,
-          skillRanksByName,
-          itemSkillBonuses,
-          enemyConditions,
-          enemyResistances,
-          skillsByNormalizedName,
-          skillProjectiles[skill.id],
-        )
-      : null
+  const skillInput = useMemo<NativeSkillDamageInput | null>(() => {
+    if (currentRank <= 0 || !hasDamage) return null
+    return {
+      skill,
+      allocatedRank: currentRank,
+      attributes,
+      stats,
+      skillRanksByName,
+      itemSkillBonuses,
+      enemyConditions,
+      enemyResistances,
+      skillsByName: skillsByNormalizedName,
+      projectileCount: skillProjectiles[skill.id],
+    }
+  }, [
+    currentRank,
+    hasDamage,
+    skill,
+    attributes,
+    stats,
+    skillRanksByName,
+    itemSkillBonuses,
+    enemyConditions,
+    enemyResistances,
+    skillsByNormalizedName,
+    skillProjectiles,
+  ])
+  const damageBreakdown = useSkillDamage(skillInput)
   const typeLabel = skill.damageType
     ? skill.damageType.charAt(0).toUpperCase() + skill.damageType.slice(1)
     : ''
