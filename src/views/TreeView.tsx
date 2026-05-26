@@ -235,19 +235,41 @@ export default function TreeView() {
     fitView()
   }, [fitView])
 
-  function onWheel(e: React.WheelEvent) {
-    e.preventDefault()
-    const rect = containerRef.current!.getBoundingClientRect()
-    const mx = e.clientX - rect.left
-    const my = e.clientY - rect.top
-    const factor = e.deltaY > 0 ? 0.9 : 1.1
-    const newScale = Math.max(0.1, Math.min(5, scale * factor))
-    const worldX = (mx - tx) / scale
-    const worldY = (my - ty) / scale
-    setScale(newScale)
-    setTx(mx - worldX * newScale)
-    setTy(my - worldY * newScale)
-  }
+  // React attaches onWheel as passive in v17+, so e.preventDefault() is a NO-OP
+  // and the page scrolls under the tree. Attach a native non-passive listener
+  // and read scale/tx/ty from refs to avoid stale closures on rapid wheels.
+  const scaleRef = useRef(scale)
+  const txRef = useRef(tx)
+  const tyRef = useRef(ty)
+  useEffect(() => {
+    scaleRef.current = scale
+  }, [scale])
+  useEffect(() => {
+    txRef.current = tx
+  }, [tx])
+  useEffect(() => {
+    tyRef.current = ty
+  }, [ty])
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const handler = (e: WheelEvent) => {
+      e.preventDefault()
+      const rect = el.getBoundingClientRect()
+      const mx = e.clientX - rect.left
+      const my = e.clientY - rect.top
+      const factor = e.deltaY > 0 ? 0.9 : 1.1
+      const cur = scaleRef.current
+      const newScale = Math.max(0.1, Math.min(5, cur * factor))
+      const worldX = (mx - txRef.current) / cur
+      const worldY = (my - tyRef.current) / cur
+      setScale(newScale)
+      setTx(mx - worldX * newScale)
+      setTy(my - worldY * newScale)
+    }
+    el.addEventListener('wheel', handler, { passive: false })
+    return () => el.removeEventListener('wheel', handler)
+  }, [])
 
   function onMouseDown(e: React.MouseEvent) {
     if (e.button !== 0) return
@@ -336,9 +358,14 @@ export default function TreeView() {
   // "This node alone" preview for evaluating standalone value. Clicking never produces this exact allocation.
   const singleNodeAllocation = useMemo<Set<number> | null>(() => {
     if (hoverId == null) return null
+    if (allocated.has(hoverId)) {
+      // Removing a bridge node strands its descendants — mirror toggleTreeNode's cleanup.
+      const without = new Set(allocated)
+      without.delete(hoverId)
+      return reachableFromAny(START_SET, without)
+    }
     const next = new Set(allocated)
-    if (allocated.has(hoverId)) next.delete(hoverId)
-    else next.add(hoverId)
+    next.add(hoverId)
     return next
   }, [hoverId, allocated])
 
@@ -582,7 +609,6 @@ export default function TreeView() {
         style={{
           cursor: dragging ? 'grabbing' : 'grab',
         }}
-        onWheel={onWheel}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}

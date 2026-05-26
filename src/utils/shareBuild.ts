@@ -44,10 +44,19 @@ const MAX_CUSTOM_STATS = 200
 const MAX_SHARE_INPUT_LENGTH = 200_000
 
 const FINITE_NUMBER = z.number().finite()
+const NON_NEGATIVE_NUMBER = z.number().finite().min(0)
 const SAFE_STRING = z.string().max(MAX_KEY_LENGTH)
 
 const recordOfNumbers = z
   .record(SAFE_STRING, FINITE_NUMBER)
+  .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
+    message: 'too many entries',
+  })
+
+// Used for rank/projectile records where a negative number is meaningless
+// and would propagate as wrong-sign damage / multipliers in calc.
+const recordOfNonNegativeNumbers = z
+  .record(SAFE_STRING, NON_NEGATIVE_NUMBER)
   .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
     message: 'too many entries',
   })
@@ -110,21 +119,21 @@ const inventorySchema = z
 const shareableBuildSchema = z.object({
   v: z.number(),
   c: z.string().max(MAX_KEY_LENGTH).nullable(),
-  l: FINITE_NUMBER,
-  a: recordOfNumbers,
+  l: NON_NEGATIVE_NUMBER,
+  a: recordOfNonNegativeNumbers,
   i: inventorySchema,
-  s: recordOfNumbers,
-  ss: recordOfNumbers,
+  s: recordOfNonNegativeNumbers,
+  ss: recordOfNonNegativeNumbers,
   t: z.array(FINITE_NUMBER).max(MAX_TREE_NODES),
   m: z.string().max(MAX_KEY_LENGTH).nullable(),
   u: z.string().max(MAX_KEY_LENGTH).nullable(),
   buf: recordOfBooleans,
   ec: recordOfBooleans,
   pc: recordOfBooleans.optional(),
-  sp: recordOfNumbers.optional(),
+  sp: recordOfNonNegativeNumbers.optional(),
   er: recordOfNumbers.optional(),
   pt: recordOfBooleans,
-  kps: FINITE_NUMBER,
+  kps: NON_NEGATIVE_NUMBER,
   n: z.string().max(MAX_NOTES_LENGTH).optional(),
   cs: z
     .array(

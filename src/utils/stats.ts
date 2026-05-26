@@ -503,8 +503,12 @@ export function computeSkillDamage(
     )
   } else {
     const table = skill.damagePerRank!
-    const idxMin = Math.min(Math.max(effectiveRankMin, 1), table.length) - 1
-    const idxMax = Math.min(Math.max(effectiveRankMax, 1), table.length) - 1
+    // Floor before indexing so fractional all_skills bonuses don't produce
+    // table[1.7] === undefined → silent zero. Matches Rust `as i64` truncation.
+    const idxMin =
+      Math.min(Math.max(Math.floor(effectiveRankMin), 1), table.length) - 1
+    const idxMax =
+      Math.min(Math.max(Math.floor(effectiveRankMax), 1), table.length) - 1
     baseMin = Math.max(0, table[idxMin]?.min ?? 0)
     baseMax = Math.max(0, table[idxMax]?.max ?? 0)
   }

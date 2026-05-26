@@ -461,6 +461,10 @@ function SkillIcon({
       {canInc && (
         <button
           onClick={onInc}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
           className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-xs border border-accent-deep font-mono text-[12px] font-bold text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
           style={{
             background: 'linear-gradient(180deg, #3a2f1a, #2a2418)',
@@ -476,6 +480,10 @@ function SkillIcon({
           onClick={(e) => {
             e.stopPropagation()
             onOpenSubtree()
+          }}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
           }}
           className="absolute -bottom-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-xs border border-border-2 bg-panel text-[10px] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
           style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}

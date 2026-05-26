@@ -334,7 +334,7 @@ impl From<calc::WeaponDamageBreakdown> for WeaponDamageOutput {
 pub fn compute_skill_damage(input: SkillDamageInput) -> Option<SkillDamageOutput> {
     let skill: calc::Skill = input.skill.into();
     let attributes = ranged_map(normalized_keys(input.attributes));
-    let stats = ranged_map(input.stats);
+    let stats = ranged_map(normalized_keys(input.stats));
     let skill_ranks = normalized_keys(input.skill_ranks_by_name);
     let item_bonuses = normalized_keys(input.item_skill_bonuses);
     let skills_by_name: HashMap<String, calc::Skill> = input
