@@ -15,6 +15,26 @@ import type {
 } from '../../utils/stats'
 import type { ForgeKind } from '../../data'
 
+// Single subscriber so the build store can surface Rust rejections via storageError.
+type BridgeErrorListener = (err: Error) => void
+let bridgeErrorListener: BridgeErrorListener | null = null
+
+export function setBridgeErrorListener(fn: BridgeErrorListener | null): void {
+  bridgeErrorListener = fn
+}
+
+function notifyBridgeError(err: unknown): Error {
+  const wrapped = err instanceof Error ? err : new Error(String(err))
+  if (bridgeErrorListener) {
+    try {
+      bridgeErrorListener(wrapped)
+    } catch {
+      /* swallow listener faults */
+    }
+  }
+  return wrapped
+}
+
 // ---------- compute_build_performance ----------
 
 export interface BuildPerformanceInput {
@@ -59,10 +79,14 @@ export interface BuildPerformanceOutput {
   activeSkillName: string | null
 }
 
-export function computeBuildPerformanceNative(
+export async function computeBuildPerformanceNative(
   input: BuildPerformanceInput,
 ): Promise<BuildPerformanceOutput> {
-  return invoke<BuildPerformanceOutput>('calc_build_performance', { input })
+  try {
+    return await invoke<BuildPerformanceOutput>('calc_build_performance', { input })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
 }
 
 // Collapse [n, n] to n so legacy TS callers see the same shape.
@@ -198,10 +222,14 @@ function toLegacyBuildStats(raw: BuildStatsRustOutput): ComputedStats {
 export async function computeBuildStatsAsync(
   deps: BuildPerformanceDeps,
 ): Promise<ComputedStats> {
-  const raw = await invoke<BuildStatsRustOutput>('calc_build_stats', {
-    input: depsToInput(deps),
-  })
-  return toLegacyBuildStats(raw)
+  try {
+    const raw = await invoke<BuildStatsRustOutput>('calc_build_stats', {
+      input: depsToInput(deps),
+    })
+    return toLegacyBuildStats(raw)
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
 }
 
 // ---------- calc_stat_breakdown (per-key explainability) ----------
@@ -290,14 +318,18 @@ export async function computeStatBreakdownAsync(
   statKey: string,
   kind: StatBreakdownKind = 'stat',
 ): Promise<StatBreakdown> {
-  const raw = await invoke<RustStatBreakdown>('calc_stat_breakdown', {
-    input: {
-      ...depsToInput(deps),
-      statKey,
-      kind,
-    },
-  })
-  return toLegacyStatBreakdown(raw)
+  try {
+    const raw = await invoke<RustStatBreakdown>('calc_stat_breakdown', {
+      input: {
+        ...depsToInput(deps),
+        statKey,
+        kind,
+      },
+    })
+    return toLegacyStatBreakdown(raw)
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
 }
 
 // Escape hatch for unwrapped commands.

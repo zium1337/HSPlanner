@@ -34,6 +34,7 @@ import {
   type SavedBuild,
 } from '../utils/savedBuilds'
 import { guardStorage } from './storageError'
+import { setBridgeErrorListener } from '../lib/calc/bridge'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import {
   defaultEnemyResistances,
@@ -239,6 +240,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   setClass: (id) =>
     set((s) => {
       if (s.classId === id) return s
+      // Drop state that references the old class's tree/skill IDs.
       return {
         classId: id,
         allocated: emptyAllocation(),
@@ -248,6 +250,8 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
         procToggles: {},
         activeBuffs: {},
         subskillRanks: {},
+        treeSocketed: {},
+        skillProjectiles: {},
         activeBuildId: null,
         activeProfileId: null,
         notes: '',
@@ -1113,3 +1117,10 @@ export function finalAttributes(
   }
   return out
 }
+
+// Route Rust-side rejections through the existing storageError banner.
+setBridgeErrorListener((err) => {
+  useBuild.setState({
+    storageError: `Calculation failed: ${err.message}`,
+  })
+})

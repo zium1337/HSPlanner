@@ -582,7 +582,7 @@ const RULES: ParseRule[] = [
   {
     test: /^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Defense$/i,
     build: (m) => ({
-      key: m[2] ? 'enhanced_defense' : 'enhanced_defense',
+      key: m[2] ? 'enhanced_defense_more' : 'enhanced_defense',
       value: num(m[1]!),
     }),
   },

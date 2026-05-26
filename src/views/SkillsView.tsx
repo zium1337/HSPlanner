@@ -67,6 +67,13 @@ export default function SkillsView() {
   const [pinned, setPinned] = useState<string | null>(null)
   const [openSubtree, setOpenSubtree] = useState<string | null>(null)
 
+  // Clear stale skill selection when class changes.
+  useEffect(() => {
+    setHovered(null)
+    setPinned(null)
+    setOpenSubtree(null)
+  }, [classId])
+
   const handleHover = (id: string | null) => {
     setHovered(id)
     if (id !== null) setPinned(id)

@@ -147,9 +147,8 @@ export function sanitizeHtml(html: string): string {
     return html.replace(/<[^>]*>/g, '')
   }
   const parser = new DOMParser()
-  const doc = parser.parseFromString(`<div>${html}</div>`, 'text/html')
-  const root = doc.body.firstElementChild
-  if (!root) return ''
-  walk(root)
-  return root.innerHTML
+  // Walk doc.body directly; a wrapper div would let "</div>" smuggle the tail out.
+  const doc = parser.parseFromString(html, 'text/html')
+  walk(doc.body)
+  return doc.body.innerHTML
 }

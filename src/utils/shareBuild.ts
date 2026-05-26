@@ -268,11 +268,16 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
             value: s.v,
           }))
       : [],
+    // Filter non-numeric keys so Number("abc") = NaN can't reach the store.
     treeSocketed: encoded.ts
       ? Object.fromEntries(
           Object.entries(encoded.ts)
             .filter(([, v]) => v != null)
-            .map(([id, content]) => [Number(id), content as TreeSocketContent]),
+            .map(([id, content]) => {
+              const n = Number(id)
+              return [n, content as TreeSocketContent] as const
+            })
+            .filter(([n]) => Number.isInteger(n) && n >= 0),
         )
       : {},
   }
@@ -311,6 +316,12 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
             level: Math.max(1, Math.min(AUGMENT_MAX_LEVEL, Math.floor(item.augment.level))),
           }
         : undefined
+    const implicitOverrides =
+      item.implicitOverrides &&
+      typeof item.implicitOverrides === 'object' &&
+      !Array.isArray(item.implicitOverrides)
+        ? item.implicitOverrides
+        : undefined
     out[slot as SlotKey] = {
       baseId: item.baseId,
       affixes: Array.isArray(item.affixes) ? item.affixes : [],
@@ -321,6 +332,7 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       stars: rawStars,
       forgedMods: Array.isArray(item.forgedMods) ? item.forgedMods : [],
       ...(aug ? { augment: aug } : {}),
+      ...(implicitOverrides ? { implicitOverrides } : {}),
     }
   }
   return out
