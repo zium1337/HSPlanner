@@ -8,9 +8,13 @@
     "grade": "SS",
     "requiresLevel": 99,
     "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
       "all_attributes": [
         15,
-        20
+        30
       ],
       "gold_find": [
         30,
@@ -91,14 +95,16 @@
         3,
         5
       ],
-      "all_attributes": [
-        20,
+      "to_energy": [
+        10,
         40
       ],
-      "all_resistances": [
-        20,
-        35
-      ]
+      "increased_energy": [
+        10,
+        15
+      ],
+      "all_attributes": 15,
+      "all_resistances": 30
     }
   },
   {
@@ -111,12 +117,241 @@
     "requiresLevel": 100,
     "implicit": {
       "crit_damage": [
-        35,
-        50
+        30,
+        40
+      ]
+    },
+    "skillBonuses": {
+      "Magnum Opus": [
+        1,
+        3
       ]
     },
     "uniqueEffects": [
       "Grant Spell: Magnum Opus"
+    ]
+  },
+  {
+    "id": "amulet_heroic_amulet_of_colosseum",
+    "name": "Amulet of Colosseum",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        2,
+        4
+      ],
+      "attacks_per_second": [
+        5,
+        10
+      ],
+      "to_strength": [
+        25,
+        35
+      ],
+      "increased_strength": [
+        8,
+        15
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "amulet_heroic_dragon_s_eye",
+    "name": "Dragon's Eye",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "fire_skills": [
+        3,
+        5
+      ],
+      "increased_burning_damage": [
+        35,
+        45
+      ],
+      "extra_damage_burning": [
+        25,
+        35
+      ]
+    },
+    "uniqueEffects": [
+      "Intelligence To Fire Skill Damage"
+    ]
+  },
+  {
+    "id": "amulet_heroic_fractal_of_existence",
+    "name": "Fractal of Existence",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        2,
+        4
+      ],
+      "faster_cast_rate": [
+        20,
+        40
+      ],
+      "increased_attack_speed": [
+        20,
+        40
+      ],
+      "faster_hit_recovery": 66,
+      "light_radius": [
+        2,
+        4
+      ]
+    },
+    "skillBonuses": {
+      "Trampling Force": [
+        1,
+        3
+      ]
+    },
+    "uniqueEffects": [
+      "Movement Phasing"
+    ]
+  },
+  {
+    "id": "amulet_heroic_eagle_s_claw",
+    "name": "Eagle's Claw",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "enhanced_damage": [
+        50,
+        75
+      ],
+      "increased_attack_speed": [
+        15,
+        20
+      ],
+      "reduced_movement_diminish": [
+        30,
+        50
+      ],
+      "deadly_blow": [
+        12,
+        20
+      ],
+      "life_steal": 8,
+      "defense_ignored": [
+        12,
+        20
+      ]
+    },
+    "skillBonuses": {
+      "Enraged Mania": [
+        15,
+        25
+      ]
+    },
+    "sockets": 0,
+    "maxSockets": 1,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 7,
+        "description": "cast Live by the Sword Level 13"
+      }
+    ]
+  },
+  {
+    "id": "amulet_heroic_shadow_beacon",
+    "name": "Shadow Beacon",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "movement_speed": [
+        15,
+        40
+      ],
+      "reduced_movement_diminish": 50,
+      "sentry_attack_speed": [
+        10,
+        30
+      ],
+      "sentry_damage": [
+        15,
+        30
+      ]
+    },
+    "uniqueEffects": [
+      "Movement Phasing",
+      "Sentry Amount"
+    ],
+    "maxAffixes": 1,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "amulet_heroic_tarethiel_s_fall",
+    "name": "Tarethiel's Fall",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        1,
+        3
+      ],
+      "all_attributes": [
+        20,
+        40
+      ],
+      "increased_all_attributes": 5
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "amulet_heroic_thoth_s_agony",
+    "name": "Thoth's Agony",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        2,
+        3
+      ],
+      "ailment_damage_all": [
+        15,
+        22
+      ],
+      "to_intelligence": [
+        35,
+        50
+      ],
+      "increased_intelligence": [
+        8,
+        15
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1,
+    "uniqueEffects": [
+      "Intelligence To Magic Skill Damage"
     ]
   }
 ]
