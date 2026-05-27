@@ -38,6 +38,8 @@
       "Unholy None"
     ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 3,
+    "maxAffixes": 1,
+    "randomAffixGroupId": "random_unholy"
   }
 ]
