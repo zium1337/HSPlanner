@@ -1,8 +1,8 @@
-import { gameConfig, getItem, isGearSlot } from '../data'
-import type { ForgeKind } from '../data'
+import { gameConfig, getItem, isGearSlot } from '../../data'
+import type { ForgeKind } from '../../data'
 import {
-  itemGrantedSkillRankFlatBonus,
   isStatStarImmune,
+  itemGrantedSkillRankFlatBonus,
   statStarFlatBonus,
   statStarPercentMultiplier,
 } from './starScaling'
@@ -13,7 +13,7 @@ import type {
   RangedValue,
   Skill,
   StatDef,
-} from '../types'
+} from '../../types'
 
 export type SourceType =
   | 'class'
@@ -26,8 +26,6 @@ export type SourceType =
   | 'subskill'
   | 'custom'
   | 'tree'
-
-export const CUSTOM_SOURCE_LABEL = 'Custom Config'
 
 export function normalizeSkillName(name: string): string {
   return name.trim().toLowerCase()
@@ -273,6 +271,13 @@ export function rolledAffixValue(
   return affix.sign === '-' ? -rounded : rounded
 }
 
+function affixStarMultiplier(
+  statKey: string | null,
+  stars: number | undefined,
+): number {
+  return statStarPercentMultiplier(statKey, stars)
+}
+
 export function rolledAffixRange(affix: {
   sign: '+' | '-'
   format: 'flat' | 'percent'
@@ -291,13 +296,6 @@ export function rolledAffixRange(affix: {
 
 export function isAffixStarImmune(statKey: string | null): boolean {
   return isStatStarImmune(statKey)
-}
-
-export function affixStarMultiplier(
-  statKey: string | null,
-  stars: number | undefined,
-): number {
-  return statStarPercentMultiplier(statKey, stars)
 }
 
 export function rolledAffixValueWithStars(

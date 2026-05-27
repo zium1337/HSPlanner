@@ -53,7 +53,7 @@ const ALLOWED_STYLE_PROPS = new Set([
   'text-decoration',
 ])
 
-export const SAFE_URL_RE = /^(https?:|mailto:|#|\/)/i
+const SAFE_URL_RE = /^(https?:|mailto:|#|\/)/i
 
 export function isSafeUrl(url: string): boolean {
   return SAFE_URL_RE.test(url.trim())

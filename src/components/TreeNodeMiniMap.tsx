@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import treeBackground from '../assets/atlas/Incarnation_Background.png'
 import { useBuild } from '../store/build'
-import { ADJ } from '../utils/treeGraph'
+import { ADJ } from '../utils/tree/treeGraph'
 import {
   ALL_TREE_EDGES,
   ALL_TREE_NODES,

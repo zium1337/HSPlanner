@@ -3,7 +3,7 @@ import {
   computeWeaponDamageNative,
   type NativeWeaponDamageInput,
 } from '../utils/nativeDamage'
-import type { WeaponDamageBreakdown } from '../utils/stats'
+import type { WeaponDamageBreakdown } from '../utils/item/stats'
 
 export function useWeaponDamage(
   input: NativeWeaponDamageInput,

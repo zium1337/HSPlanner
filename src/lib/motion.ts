@@ -6,10 +6,9 @@ import { useReducedMotion } from "motion/react";
 export { useReducedMotion };
 
 export const EASE_OUT = [0.22, 0.61, 0.36, 1] as const;
-export const EASE_IN_OUT = [0.4, 0, 0.2, 1] as const;
 
 // `motion` uses seconds, not milliseconds.
-export const DURATION = {
+const DURATION = {
   fast: 0.12,
   base: 0.16,
   view: 0.2,
@@ -48,6 +47,11 @@ export const listContainerVariants: Variants = {
 export const skillIconVariants: Variants = {
   initial: { opacity: 0 },
   animate: { opacity: 1, transition: T_FAST },
+};
+
+export const listItemVariants: Variants = {
+  initial: { opacity: 0, y: 3 },
+  animate: { opacity: 1, y: 0, transition: T_FAST },
 };
 
 export const hoverTap = {

@@ -23,27 +23,34 @@ import {
   commitProfileSnapshot as storeCommitProfile,
   createBuild as storeCreateBuild,
   deleteBuild as storeDeleteBuild,
+  duplicateBuild as storeDuplicateBuild,
   duplicateProfile as storeDuplicateProfile,
   getSavedBuild,
   loadProfileSnapshot,
+  moveBuildToFolder as storeMoveBuildToFolder,
   removeProfile as storeRemoveProfile,
   renameProfile as storeRenameProfile,
   renameBuild as storeRenameBuild,
   setActiveProfile as storeSetActiveProfile,
+  setBuildFavorite as storeSetBuildFavorite,
   setBuildNotes as storeSetBuildNotes,
+  setBuildTags as storeSetBuildTags,
+  type Folder,
   type SavedBuild,
-} from '../utils/savedBuilds'
+} from '../utils/build/savedBuilds'
+import {
+  createFolder as storeCreateFolder,
+  deleteFolder as storeDeleteFolder,
+  renameFolder as storeRenameFolder,
+} from '../utils/build/savedFolders'
 import { guardStorage } from './storageError'
 import { setBridgeErrorListener } from '../lib/calc/bridge'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import {
   defaultEnemyResistances,
-  DEFAULT_ENEMY_RESISTANCE_PCT,
   type BuildSnapshot,
-} from '../utils/shareBuild'
-
-export { defaultEnemyResistances, DEFAULT_ENEMY_RESISTANCE_PCT }
-import { ADJ, findPath, reachableFromAny, START_IDS } from '../utils/treeGraph'
+} from '../utils/build/shareBuild'
+import { ADJ, findPath, reachableFromAny, START_IDS } from '../utils/tree/treeGraph'
 
 type AttrMap = Record<AttributeKey, number>
 
@@ -144,15 +151,39 @@ interface BuildActions {
   renameActiveProfile: (profileId: string, name: string) => boolean
   removeActiveProfile: (profileId: string) => boolean
   detachFromBuild: () => void
+  resetBuild: () => void
   bindToBuild: (buildId: string, profileId: string) => void
   deleteSavedBuild: (buildId: string) => void
   renameSavedBuild: (buildId: string, name: string) => boolean
-  saveCurrentAsNewBuild: (name: string, notes?: string) => SavedBuild | null
+  saveCurrentAsNewBuild: (
+    name: string,
+    notes?: string,
+    folderId?: string | null,
+  ) => SavedBuild | null
+  duplicateSavedBuild: (buildId: string) => SavedBuild | null
+  setSavedBuildFavorite: (buildId: string, favorite: boolean) => boolean
+  setSavedBuildTags: (buildId: string, tags: string[]) => boolean
+  moveSavedBuildToFolder: (
+    buildId: string,
+    folderId: string | null,
+  ) => boolean
+  switchSavedBuildProfile: (buildId: string, profileId: string) => boolean
+  addSavedBuildProfile: (buildId: string, name: string) => string | null
+  renameSavedBuildProfile: (
+    buildId: string,
+    profileId: string,
+    name: string,
+  ) => boolean
+  duplicateSavedBuildProfile: (
+    buildId: string,
+    profileId: string,
+  ) => string | null
+  removeSavedBuildProfile: (buildId: string, profileId: string) => boolean
+  createSavedFolder: (name: string, parentId: string | null) => Folder | null
+  renameSavedFolder: (folderId: string, name: string) => boolean
+  deleteSavedFolder: (folderId: string, cascade: boolean) => boolean
   dismissStorageError: () => void
 }
-
-export { START_IDS as TREE_START_IDS, START_SET as TREE_START_SET } from '../utils/treeGraph'
-export { findPath as findTreePath } from '../utils/treeGraph'
 
 function emptyAllocation(): AttrMap {
   return gameConfig.attributes.reduce<AttrMap>((acc, a) => {
@@ -195,7 +226,7 @@ function snapshotPatch(snap: BuildSnapshot) {
 const HARD_SOCKET_CAP = 6
 export const BONUS_SOCKET_MOD_ID = 'crystal_add_socket'
 
-export function hasBonusSocketMod(
+function hasBonusSocketMod(
   forgedMods?: { affixId: string }[] | null,
 ): boolean {
   return !!forgedMods?.some((m) => m.affixId === BONUS_SOCKET_MOD_ID)
@@ -631,6 +662,34 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   detachFromBuild: () =>
     set(() => ({ activeBuildId: null, activeProfileId: null })),
+
+  resetBuild: () =>
+    set(() => ({
+      // Resets the live state to a brand-new blank build (default class, level 1,
+      // nothing allocated) and detaches from any saved build. Used by the Build
+      // Select "New" action so the planner opens on a clean slate.
+      classId: classes[0]?.id ?? null,
+      level: 1,
+      allocated: emptyAllocation(),
+      inventory: {},
+      skillRanks: {},
+      allocatedTreeNodes: new Set<number>(),
+      treeSocketed: {},
+      mainSkillId: null,
+      activeAuraId: null,
+      procToggles: {},
+      killsPerSec: 1,
+      activeBuffs: {},
+      enemyConditions: {},
+      playerConditions: {},
+      skillProjectiles: {},
+      enemyResistances: defaultEnemyResistances(),
+      subskillRanks: {},
+      activeBuildId: null,
+      activeProfileId: null,
+      notes: '',
+      customStats: [],
+    })),
 
   deleteSavedBuild: (buildId) =>
     guardStorage<void>(
@@ -1069,19 +1128,187 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   dismissStorageError: () => set({ storageError: null }),
 
-  saveCurrentAsNewBuild: (name, notes = '') =>
+  saveCurrentAsNewBuild: (name, notes = '', folderId = null) =>
     guardStorage<SavedBuild | null>(
       (m) => set({ storageError: m }),
       null,
       () => {
         const snapshot = get().exportBuildSnapshot()
-        const record = storeCreateBuild(name, snapshot, undefined, notes)
+        const record = storeCreateBuild(
+          name,
+          snapshot,
+          undefined,
+          notes,
+          folderId,
+        )
         set((cur) => ({
           activeBuildId: record.id,
           activeProfileId: record.activeProfileId,
           savedBuildsVersion: cur.savedBuildsVersion + 1,
         }))
         return record
+      },
+    ),
+
+  duplicateSavedBuild: (buildId) =>
+    guardStorage<SavedBuild | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Deep-clones a SavedBuild on disk (new ids, "(copy)" name) and bumps the savedBuilds version. Returns the new record, or null when the source build is missing. Used by the build library's "Copy" action.
+        const record = storeDuplicateBuild(buildId)
+        if (record) bumpSavedBuilds(set)
+        return record
+      },
+    ),
+
+  setSavedBuildFavorite: (buildId, favorite) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Toggles the `favorite` flag on a SavedBuild and bumps the savedBuilds version. Used by the build library's star toggle.
+        const ok = storeSetBuildFavorite(buildId, favorite) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  setSavedBuildTags: (buildId, tags) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Replaces a SavedBuild's tag list on disk and bumps the savedBuilds version. Used by the build library's tag editor.
+        const ok = storeSetBuildTags(buildId, tags) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  moveSavedBuildToFolder: (buildId, folderId) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Moves a SavedBuild into a folder (or unfiles it) on disk and bumps the savedBuilds version. Used by the build library's "Move to folder" action.
+        const ok = storeMoveBuildToFolder(buildId, folderId) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  switchSavedBuildProfile: (buildId, profileId) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Switches a SavedBuild's active profile from the Build Select library. When the build is the one currently loaded in the planner this delegates to switchActiveProfile so the live editor re-hydrates and stays in sync; otherwise it just updates the stored activeProfileId.
+        const s = get()
+        if (buildId === s.activeBuildId) return s.switchActiveProfile(profileId)
+        const ok = storeSetActiveProfile(buildId, profileId) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  addSavedBuildProfile: (buildId, name) =>
+    guardStorage<string | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Appends a new profile to a SavedBuild from the Build Select library, seeded from the build's current active profile. When the build is loaded in the planner its live profile is committed first so the seed is fresh. The new profile is NOT activated — the build keeps its current active profile. Returns the new profile id, or null when the build is missing or its code cannot be decoded.
+        const s = get()
+        if (buildId === s.activeBuildId && s.activeProfileId) {
+          storeCommitProfile(buildId, s.activeProfileId, s.exportBuildSnapshot())
+        }
+        const build = getSavedBuild(buildId)
+        if (!build) return null
+        const seed = loadProfileSnapshot(buildId, build.activeProfileId)
+        if (!seed) return null
+        const result = storeAddProfile(buildId, name, seed, {
+          activate: false,
+        })
+        if (!result) return null
+        bumpSavedBuilds(set)
+        return result.profile.id
+      },
+    ),
+
+  renameSavedBuildProfile: (buildId, profileId, name) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Renames a profile inside any SavedBuild from the Build Select library. Rename never touches live editor state, so no planner-sync delegation is needed.
+        const ok = storeRenameProfile(buildId, profileId, name) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  duplicateSavedBuildProfile: (buildId, profileId) =>
+    guardStorage<string | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Duplicates a profile inside any SavedBuild from the Build Select library without changing the build's active profile. Returns the new profile id, or null when the source is missing.
+        const result = storeDuplicateProfile(buildId, profileId, {
+          activate: false,
+        })
+        if (!result) return null
+        bumpSavedBuilds(set)
+        return result.profile.id
+      },
+    ),
+
+  removeSavedBuildProfile: (buildId, profileId) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Removes a profile from a SavedBuild via the Build Select library. When the build is loaded in the planner this delegates to removeActiveProfile so the live editor re-hydrates from the surviving active profile; otherwise it removes the profile directly. Refuses to remove the last surviving profile.
+        const s = get()
+        if (buildId === s.activeBuildId) return s.removeActiveProfile(profileId)
+        const ok = storeRemoveProfile(buildId, profileId) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  createSavedFolder: (name, parentId) =>
+    guardStorage<Folder | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Creates a new folder on disk and bumps the savedBuilds version. Used by the build library's "New folder" action.
+        const folder = storeCreateFolder(name, parentId)
+        bumpSavedBuilds(set)
+        return folder
+      },
+    ),
+
+  renameSavedFolder: (folderId, name) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Renames a folder on disk and bumps the savedBuilds version. Used by the build library's folder rename action.
+        const ok = storeRenameFolder(folderId, name) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  deleteSavedFolder: (folderId, cascade) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Deletes a folder on disk (cascade removes its subtree + builds, otherwise reparents children and unfiles builds) and bumps the savedBuilds version. Used by the build library's folder delete action.
+        storeDeleteFolder(folderId, { cascade })
+        bumpSavedBuilds(set)
+        return true
       },
     ),
 }))

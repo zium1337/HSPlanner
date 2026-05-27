@@ -1,13 +1,13 @@
-import { gameConfig } from '../data'
-import { rangedMax, rangedMin, statDef, statName } from './stats'
-import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from './stats'
+import { gameConfig } from '../../data'
+import { rangedMax, rangedMin, statDef, statName } from '../item/stats'
+import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from '../item/stats'
 import type {
   AttributeKey,
   CustomStat,
   Inventory,
   RangedValue,
   TreeSocketContent,
-} from '../types'
+} from '../../types'
 
 export interface BuildPerformance {
   attributes: Record<AttributeKey, RangedValue>
@@ -66,7 +66,7 @@ export function rangedBounds(v: RangedValue | undefined): {
   return { min: rangedMin(v), max: rangedMax(v) }
 }
 
-export function diffRangePair(
+function diffRangePair(
   key: string,
   label: string,
   beforeMin: number,

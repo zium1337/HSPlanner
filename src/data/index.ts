@@ -105,8 +105,8 @@ export const runes: Rune[] = collectFlat(runeModules)
 export const affixes: Affix[] = affixesJson as Affix[]
 export const crystalMods: Affix[] = crystalsJson as Affix[]
 export const runewords: Runeword[] = runewordsJson as unknown as Runeword[]
-export const itemSets: ItemSet[] = setsJson as ItemSet[]
-export const itemGrantedSkills: ItemGrantedSkill[] =
+const itemSets: ItemSet[] = setsJson as ItemSet[]
+const itemGrantedSkills: ItemGrantedSkill[] =
   itemGrantedSkillsJson as ItemGrantedSkill[]
 
 const itemGrantedSkillByName = new Map<string, ItemGrantedSkill>(
@@ -120,7 +120,7 @@ export function getItemGrantedSkillByName(
 }
 export const relics: Relic[] = []
 export const augments: AngelicAugment[] = augmentsJson as AngelicAugment[]
-export const GEAR_SLOTS = new Set<string>([
+const GEAR_SLOTS = new Set<string>([
   'weapon',
   'offhand',
   'helmet',
@@ -194,7 +194,7 @@ export function getItemImage(id: string): string | undefined {
   return itemImageIndex.get(id)
 }
 
-export function getSkillImage(
+function getSkillImage(
   classId: string,
   skillId: string,
 ): string | undefined {
@@ -220,16 +220,6 @@ export function getGem(id: string): Gem | undefined {
 
 export function getRune(id: string): Rune | undefined {
   return runeIndex.get(id)
-}
-
-export function getSocketableById(
-  id: string,
-): { kind: 'gem'; data: Gem } | { kind: 'rune'; data: Rune } | undefined {
-  const gem = getGem(id)
-  if (gem) return { kind: 'gem', data: gem }
-  const rune = getRune(id)
-  if (rune) return { kind: 'rune', data: rune }
-  return undefined
 }
 
 export function getRuneword(id: string): Runeword | undefined {

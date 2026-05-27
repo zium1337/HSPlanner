@@ -10,13 +10,13 @@ import type {
   SlotKey,
   SocketType,
   TreeSocketContent,
-} from '../types'
-import { AUGMENT_MAX_LEVEL } from '../types'
-import { sanitizeHtml } from './sanitizeHtml'
+} from '../../types'
+import { AUGMENT_MAX_LEVEL } from '../../types'
+import { sanitizeHtml } from '../sanitizeHtml'
 
 const SCHEMA_VERSION = 1
 
-export const DEFAULT_ENEMY_RESISTANCE_PCT = 85
+const DEFAULT_ENEMY_RESISTANCE_PCT = 85
 
 export function defaultEnemyResistances(): Record<string, number> {
   return {
@@ -30,8 +30,6 @@ export function defaultEnemyResistances(): Record<string, number> {
 const URL_PARAM = 'b'
 
 const BUILD_CODE_RE_INPUT = new RegExp(`[#&?]${URL_PARAM}=([^&\\s]+)`)
-const BUILD_CODE_RE_HASH = new RegExp(`[#&]${URL_PARAM}=([^&]+)`)
-const BUILD_CODE_RE_QUERY = new RegExp(`[?&]${URL_PARAM}=([^&]+)`)
 
 const MAX_LEVEL = 10_000
 const MAX_KEY_LENGTH = 200
@@ -373,48 +371,9 @@ export function decodeShareToBuild(code: string): DecodedShare | null {
   }
 }
 
-export function buildShareUrl(
-  snapshot: BuildSnapshot,
-  base?: string,
-  notes?: string,
-): string {
-  const code = encodeBuildToShare(snapshot, notes)
-  const origin =
-    base ??
-    (typeof window !== 'undefined'
-      ? `${window.location.origin}${window.location.pathname}`
-      : '')
-  return `${origin}#${URL_PARAM}=${code}`
-}
-
-// Accepts either a bare code or a full share URL with #b=/?b=/&b= parameter.
 export function parseBuildCodeFromInput(input: string): string {
   const trimmed = input.trim()
   const m = trimmed.match(BUILD_CODE_RE_INPUT)
   return m && m[1] ? decodeURIComponent(m[1]) : trimmed
 }
 
-// Prefers the hash form over the query string.
-export function readBuildCodeFromUrl(): string | null {
-  if (typeof window === 'undefined') return null
-  const hash = window.location.hash || ''
-  const m = hash.match(BUILD_CODE_RE_HASH)
-  if (m && m[1]) return decodeURIComponent(m[1])
-  const search = window.location.search || ''
-  const sm = search.match(BUILD_CODE_RE_QUERY)
-  if (sm && sm[1]) return decodeURIComponent(sm[1])
-  return null
-}
-
-// Uses history.replaceState to avoid triggering navigation when stripping the consumed code.
-export function clearBuildCodeFromUrl(): void {
-  if (typeof window === 'undefined') return
-  if (window.location.hash.includes(`${URL_PARAM}=`)) {
-    const cleaned = window.location.hash.replace(BUILD_CODE_RE_HASH, '')
-    window.history.replaceState(
-      null,
-      '',
-      `${window.location.pathname}${window.location.search}${cleaned}`,
-    )
-  }
-}

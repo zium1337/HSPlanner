@@ -46,8 +46,6 @@ const SPRITE_URLS: string[] = [
   ),
 ]
 
-export const TOTAL_SPRITE_COUNT = SPRITE_URLS.length
-
 // onerror counts as "done" so a broken sprite cannot block the app.
 export function preloadSprites(
   onProgress?: (loaded: number, total: number) => void,

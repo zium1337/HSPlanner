@@ -17,7 +17,7 @@ import {
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
 import { BONUS_SOCKET_MOD_ID, RAINBOW_MULTIPLIER, useBuild } from '../store/build'
-import type { BuildPerformanceDeps } from '../utils/buildPerformance'
+import type { BuildPerformanceDeps } from '../utils/build/buildPerformance'
 import type {
   EquippedItem,
   ItemBase,
@@ -38,7 +38,7 @@ import {
   rolledAffixValueWithStars,
   shouldScaleImplicit,
   statName,
-} from '../utils/stats'
+} from '../utils/item/stats'
 import Tooltip, {
   TooltipFooter,
   TooltipHeader,
@@ -975,4 +975,4 @@ function collectSocketStats(
   return Object.entries(stats).filter(([, v]) => v !== 0)
 }
 
-export { RARITY_TONE, RARITY_LABEL }
+export { RARITY_TONE }

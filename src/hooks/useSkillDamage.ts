@@ -3,7 +3,7 @@ import {
   computeSkillDamageNative,
   type NativeSkillDamageInput,
 } from '../utils/nativeDamage'
-import type { SkillDamageBreakdown } from '../utils/stats'
+import type { SkillDamageBreakdown } from '../utils/item/stats'
 
 export function useSkillDamage(
   input: NativeSkillDamageInput | null,

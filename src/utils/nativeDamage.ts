@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/core'
 import type { RangedValue } from '../types/game'
 import type { BonusSource, DamageFormula, DamageRange, DamageType } from '../types/skill'
-import type { SkillDamageBreakdown, WeaponDamageBreakdown } from './stats'
+import type { SkillDamageBreakdown, WeaponDamageBreakdown } from './item/stats'
 
 export interface NativeSkillRef {
   name: string
