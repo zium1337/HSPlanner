@@ -7,11 +7,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 250,
+    "defenseMax": 300,
     "implicit": {
-      "defense": [
-        250,
-        300
-      ],
       "enhanced_defense": [
         250,
         325
@@ -35,12 +33,12 @@
       ],
       "all_resistances": 35
     },
+    "sockets": 3,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Chance When Casting: Arcane Wrath",
       "Intelligence Converted To Arcane Skill Dmg"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "body_armor_heroic_executioner_s_cocoon",
@@ -50,11 +48,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 92,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         375,
         430
@@ -75,6 +71,8 @@
       ],
       "to_strength": 50
     },
+    "sockets": 2,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "on_hit",
@@ -85,9 +83,7 @@
     "uniqueEffects": [
       "Melee Skills",
       "Enhanced Dmgd On Level"
-    ],
-    "sockets": 2,
-    "maxSockets": 4
+    ]
   },
   {
     "id": "body_armor_heroic_gem_king_s_garb",
@@ -97,11 +93,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 74,
+    "defenseMin": 280,
+    "defenseMax": 320,
     "implicit": {
-      "defense": [
-        280,
-        320
-      ],
       "enhanced_defense": [
         350,
         450
@@ -118,11 +112,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 94,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         150,
         225
@@ -153,12 +145,8 @@
         50
       ]
     },
-    "skillBonuses": {
-      "Thorn of Vitality": [
-        2,
-        5
-      ]
-    },
+    "sockets": 4,
+    "maxSockets": 6,
     "procs": [
       {
         "trigger": "when_struck",
@@ -166,8 +154,12 @@
         "description": "cast Combat Orders Level 33"
       }
     ],
-    "sockets": 4,
-    "maxSockets": 6
+    "skillBonuses": {
+      "Thorn of Vitality": [
+        2,
+        5
+      ]
+    }
   },
   {
     "id": "body_armor_heroic_muspelheim_guardian_s_scorched_plate",
@@ -177,11 +169,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 94,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         150,
         225
@@ -212,15 +202,15 @@
         50
       ]
     },
+    "sockets": 3,
+    "maxSockets": 6,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 15,
         "description": "cast Volcano Level 53"
       }
-    ],
-    "sockets": 3,
-    "maxSockets": 6
+    ]
   },
   {
     "id": "body_armor_heroic_sharpshooters_cloak",
@@ -230,11 +220,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 92,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         375,
         430
@@ -254,14 +242,14 @@
       ],
       "to_strength": 50
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Chance When Striking: Warrior's Path",
       "Ranged Skills",
       "Projectile Speed",
       "Enhanced Dmgd On Level"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_heroic_thunder_guardian_s_plate",
@@ -271,11 +259,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 250,
+    "defenseMax": 300,
     "implicit": {
-      "defense": [
-        250,
-        300
-      ],
       "enhanced_defense": [
         250,
         325
@@ -306,15 +292,15 @@
         75
       ]
     },
+    "sockets": 3,
+    "maxSockets": 6,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 15,
         "description": "cast Symphony of Thunder Level 26"
       }
-    ],
-    "sockets": 3,
-    "maxSockets": 6
+    ]
   },
   {
     "id": "body_armor_heroic_tundra_hunter_s_long_coat",
@@ -324,11 +310,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 94,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         450,
         525
@@ -359,15 +343,15 @@
         50
       ]
     },
+    "sockets": 3,
+    "maxSockets": 6,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 35,
         "description": "cast Set Sail Level 24"
       }
-    ],
-    "sockets": 3,
-    "maxSockets": 6
+    ]
   },
   {
     "id": "body_armor_heroic_venomsteel_carapace",
@@ -377,11 +361,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 94,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         150,
         225
@@ -412,15 +394,15 @@
       ],
       "poison_length_reduced": 20
     },
+    "sockets": 3,
+    "maxSockets": 5,
     "procs": [
       {
         "trigger": "on_cast",
         "chance": 20,
         "description": "cast Poison Nova Level 66"
       }
-    ],
-    "sockets": 3,
-    "maxSockets": 5
+    ]
   },
   {
     "id": "armors_heroic_gabriels_broken_wings",
@@ -437,16 +419,37 @@
     "source": "Uber Gabriel",
     "skillBonuses": {
       "Wings of Hatred": 1,
-      "Fallen God's Bloodlust": [1, 10]
+      "Fallen God's Bloodlust": [
+        1,
+        10
+      ]
     },
     "implicit": {
-      "enhanced_damage": [50, 100],
-      "enhanced_defense": [450, 550],
-      "all_skills": [2, 6],
-      "increased_attack_speed": [40, 50],
-      "attack_rating": [800, 1000],
+      "enhanced_damage": [
+        50,
+        100
+      ],
+      "enhanced_defense": [
+        450,
+        550
+      ],
+      "all_skills": [
+        2,
+        6
+      ],
+      "increased_attack_speed": [
+        40,
+        50
+      ],
+      "attack_rating": [
+        800,
+        1000
+      ],
       "all_attributes": 80,
-      "magic_skill_damage": [35, 75],
+      "magic_skill_damage": [
+        35,
+        75
+      ],
       "all_damage_taken_reduced_pct": 12
     }
   },
@@ -458,11 +461,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 410,
+    "defenseMax": 540,
     "implicit": {
-      "defense": [
-        410,
-        540
-      ],
       "enhanced_defense": [
         880,
         1000
@@ -480,6 +481,8 @@
         1500
       ]
     },
+    "sockets": 6,
+    "maxSockets": 6,
     "skillBonuses": {
       "Dragon's Presence": [
         1,
@@ -488,9 +491,7 @@
     },
     "uniqueEffects": [
       "Vitality To Magic Skill Damage"
-    ],
-    "sockets": 6,
-    "maxSockets": 6
+    ]
   },
   {
     "id": "body_armor_heroic_grimbone_s_ribcage",
@@ -500,11 +501,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 330,
+    "defenseMax": 440,
     "implicit": {
-      "defense": [
-        330,
-        440
-      ],
       "enhanced_defense": [
         450,
         525
@@ -534,11 +533,11 @@
         40
       ]
     },
+    "sockets": 4,
+    "maxSockets": 6,
     "uniqueEffects": [
       "Life On Level 475"
-    ],
-    "sockets": 4,
-    "maxSockets": 6
+    ]
   },
   {
     "id": "body_armor_heroic_noxious_hunter_s_reward",
@@ -548,11 +547,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 220,
+    "defenseMax": 250,
     "implicit": {
-      "defense": [
-        220,
-        250
-      ],
       "enhanced_defense": [
         270,
         330
@@ -590,11 +587,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 280,
+    "defenseMax": 320,
     "implicit": {
-      "defense": [
-        280,
-        320
-      ],
       "enhanced_defense": [
         350,
         450
@@ -625,11 +620,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 110,
+    "defenseMax": 140,
     "implicit": {
-      "defense": [
-        110,
-        140
-      ],
       "enhanced_defense": [
         270,
         400
@@ -665,11 +658,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 110,
+    "defenseMax": 140,
     "implicit": {
-      "defense": [
-        110,
-        140
-      ],
       "enhanced_defense": [
         270,
         400
@@ -705,11 +696,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 110,
+    "defenseMax": 140,
     "implicit": {
-      "defense": [
-        110,
-        140
-      ],
       "enhanced_defense": [
         270,
         400
@@ -745,11 +734,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 110,
+    "defenseMax": 140,
     "implicit": {
-      "defense": [
-        110,
-        140
-      ],
       "enhanced_defense": [
         270,
         400
@@ -785,11 +772,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 110,
+    "defenseMax": 140,
     "implicit": {
-      "defense": [
-        110,
-        140
-      ],
       "enhanced_defense": [
         270,
         400

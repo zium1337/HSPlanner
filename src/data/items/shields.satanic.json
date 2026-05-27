@@ -7,11 +7,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 20,
+    "defenseMin": 14,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        14,
-        18
-      ],
       "block_chance": [
         25,
         35
@@ -39,6 +37,8 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 52,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
       "block_chance": 40,
       "enhanced_defense": [
@@ -69,15 +69,11 @@
       "life": [
         440,
         550
-      ],
-      "defense": [
-        52,
-        70
       ]
     },
-    "setId": "aztec_s_mystery",
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "setId": "aztec_s_mystery"
   },
   {
     "id": "shield_satanic_battle_mage_s_shield",
@@ -87,11 +83,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 58,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         90,
@@ -126,11 +120,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 16,
+    "defenseMin": 6,
+    "defenseMax": 10,
     "implicit": {
-      "defense": [
-        6,
-        10
-      ],
       "block_chance": [
         20,
         35
@@ -156,11 +148,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 28,
+    "defenseMin": 14,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        14,
-        18
-      ],
       "block_chance": [
         20,
         30
@@ -191,11 +181,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 25,
+    "defenseMin": 14,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        14,
-        18
-      ],
       "block_chance": [
         30,
         50
@@ -229,11 +217,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 52,
+    "defenseMin": 22,
+    "defenseMax": 40,
     "implicit": {
-      "defense": [
-        22,
-        40
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         60,
@@ -263,11 +249,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 23,
+    "defenseMin": 14,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        14,
-        18
-      ],
       "block_chance": [
         20,
         30
@@ -297,11 +281,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": [
         40,
         50
@@ -321,11 +303,11 @@
         35
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Defense Vs Missiles"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "shield_satanic_flame_diviner_s_ward",
@@ -335,11 +317,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 60,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": 40,
       "enhanced_defense": [
         90,
@@ -368,11 +348,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 93,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 70,
       "enhanced_defense": [
         220,
@@ -408,11 +386,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 48,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": 55,
       "enhanced_defense": [
         90,
@@ -433,12 +409,12 @@
         35
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
+    "setId": "gladiator_s_glory",
     "uniqueEffects": [
       "Enhanced Dmgd On Level"
-    ],
-    "setId": "gladiator_s_glory",
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "shield_satanic_heaven_s_champion",
@@ -448,11 +424,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 82,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         190,
@@ -484,11 +458,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 90,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 75,
       "enhanced_defense": [
         220,
@@ -503,11 +475,11 @@
       "damage_reduced": 30,
       "faster_hit_recovery": 75
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Chance After Blocking: Last Stand"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "shield_satanic_justiciar_s_thunder_wall",
@@ -517,11 +489,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 59,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         90,
@@ -540,9 +510,9 @@
       "magic_damage_reduction": 10,
       "lightning_resistance": 50
     },
-    "setId": "justiciar_s_thunder_raiment",
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "setId": "justiciar_s_thunder_raiment"
   },
   {
     "id": "shield_satanic_king_s_tower_shield",
@@ -552,11 +522,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 83,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": [
         70,
         85
@@ -588,11 +556,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 55,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": [
         20,
         30
@@ -614,11 +580,11 @@
         15
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Defense Vs Missiles"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "shield_satanic_leprechauns_greed",
@@ -628,11 +594,9 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 87,
+    "defenseMin": 85,
+    "defenseMax": 110,
     "implicit": {
-      "defense": [
-        85,
-        110
-      ],
       "block_chance": 35,
       "enhanced_defense": [
         180,
@@ -647,11 +611,11 @@
         40
       ]
     },
+    "sockets": 3,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Magic Findd On Level"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "shield_satanic_lost_wizard_s_barrier",
@@ -661,11 +625,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 30,
+    "defenseMin": 14,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        14,
-        18
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         70,
@@ -692,11 +654,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 88,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 75,
       "enhanced_defense": [
         140,
@@ -710,11 +670,11 @@
       "faster_hit_recovery": 30,
       "physical_damage_reduction": 10
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Chance After Blocking: Meat Bomb"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "shield_satanic_novice_s_tower",
@@ -724,11 +684,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 92,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 65,
       "enhanced_defense": [
         140,
@@ -742,11 +700,11 @@
         20
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Magic Findd On Level"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "shield_satanic_pandemic_shield",
@@ -756,11 +714,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 50,
+    "defenseMin": 22,
+    "defenseMax": 40,
     "implicit": {
-      "defense": [
-        22,
-        40
-      ],
       "block_chance": 15,
       "enhanced_defense": [
         160,
@@ -793,11 +749,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 87,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 52,
       "enhanced_defense": [
         90,
@@ -833,11 +787,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 22,
+    "defenseMax": 40,
     "implicit": {
-      "defense": [
-        22,
-        40
-      ],
       "block_chance": [
         25,
         35
@@ -873,11 +825,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 64,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": 35,
       "enhanced_defense": [
         90,
@@ -921,11 +871,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 26,
+    "defenseMin": 14,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        14,
-        18
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         40,
@@ -953,11 +901,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 53,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         90,
@@ -982,12 +928,12 @@
         1
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
+    "setId": "wall_of_god",
     "uniqueEffects": [
       "Lifed On Level"
-    ],
-    "setId": "wall_of_god",
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "shield_satanic_shadow_buckler",
@@ -997,11 +943,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 88,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 35,
       "enhanced_defense": [
         150,
@@ -1036,11 +980,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 65,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": 65,
       "enhanced_defense": [
         90,
@@ -1071,12 +1013,12 @@
         30
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
+    "setId": "shield_bearer_s_sanctuary",
     "uniqueEffects": [
       "All Skills Class"
-    ],
-    "setId": "shield_bearer_s_sanctuary",
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "shield_satanic_shield_of_shattered_elements",
@@ -1086,11 +1028,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 14,
+    "defenseMin": 6,
+    "defenseMax": 10,
     "implicit": {
-      "defense": [
-        6,
-        10
-      ],
       "block_chance": [
         25,
         35
@@ -1119,11 +1059,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 35,
+    "defenseMin": 22,
+    "defenseMax": 40,
     "implicit": {
-      "defense": [
-        22,
-        40
-      ],
       "block_chance": [
         25,
         35
@@ -1159,11 +1097,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 54,
+    "defenseMin": 22,
+    "defenseMax": 40,
     "implicit": {
-      "defense": [
-        22,
-        40
-      ],
       "block_chance": 40,
       "enhanced_defense": [
         140,
@@ -1196,11 +1132,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 92,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 50,
       "enhanced_defense": [
         150,
@@ -1229,11 +1163,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 61,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": 50,
       "enhanced_defense": [
         3,
@@ -1265,11 +1197,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 88,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 56,
       "enhanced_defense": [
         90,
@@ -1302,11 +1232,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 12,
+    "defenseMin": 6,
+    "defenseMax": 10,
     "implicit": {
-      "defense": [
-        6,
-        10
-      ],
       "block_chance": 40,
       "enhanced_defense": [
         50,
@@ -1332,11 +1260,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 45,
+    "defenseMin": 22,
+    "defenseMax": 40,
     "implicit": {
-      "defense": [
-        22,
-        40
-      ],
       "block_chance": [
         25,
         35
@@ -1375,11 +1301,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 51,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": 48,
       "enhanced_defense": [
         90,
@@ -1392,9 +1316,9 @@
       "life": 25,
       "all_resistances": 20
     },
-    "setId": "vagabond_s_rags",
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "setId": "vagabond_s_rags"
   },
   {
     "id": "shield_satanic_valkyrie_s_battle_shield",
@@ -1404,11 +1328,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 56,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        52,
-        70
-      ],
       "block_chance": [
         25,
         40
@@ -1431,10 +1353,10 @@
         65
       ]
     },
+    "setId": "valkyrie_s_battle_gear",
     "uniqueEffects": [
       "All Skills Class"
-    ],
-    "setId": "valkyrie_s_battle_gear"
+    ]
   },
   {
     "id": "shield_satanic_visage_of_relentless_rage",
@@ -1444,11 +1366,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 86,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 56,
       "enhanced_defense": [
         90,
@@ -1479,11 +1399,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 93,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 70,
       "enhanced_defense": [
         250,
@@ -1495,11 +1413,11 @@
       "faster_hit_recovery": 75,
       "all_resistances": 40
     },
+    "sockets": 6,
+    "maxSockets": 6,
     "uniqueEffects": [
       "Defense Vs Missiles"
-    ],
-    "sockets": 6,
-    "maxSockets": 6
+    ]
   },
   {
     "id": "shield_satanic_ward_of_blood",
@@ -1509,11 +1427,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 86,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        80,
-        100
-      ],
       "block_chance": 65,
       "enhanced_defense": [
         140,
@@ -1537,11 +1453,11 @@
         15
       ]
     },
+    "sockets": 3,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Grant Spell: Devout Doctor"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "shield_satanic_ward_of_toxicity",
@@ -1551,11 +1467,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 48,
+    "defenseMin": 22,
+    "defenseMax": 40,
     "implicit": {
-      "defense": [
-        22,
-        40
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         140,

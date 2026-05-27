@@ -7,8 +7,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
+    "defenseMin": 37,
+    "defenseMax": 37,
     "implicit": {
-      "defense": 37,
       "damage_return": 275
     }
   },

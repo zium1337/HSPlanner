@@ -7,8 +7,9 @@
     "rarity": "unholy",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 1,
+    "defenseMax": 1,
     "implicit": {
-      "defense": 1,
       "enhanced_damage": [
         35,
         50
@@ -32,13 +33,13 @@
       ],
       "mana_replenish_pct": 50
     },
+    "sockets": 1,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Projectile Skills",
       "Grant Spell: Accelerated Flames",
       "Unholy None"
     ],
-    "sockets": 1,
-    "maxSockets": 3,
     "maxAffixes": 1,
     "randomAffixGroupId": "random_unholy"
   }

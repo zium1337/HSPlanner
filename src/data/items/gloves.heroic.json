@@ -7,11 +7,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "all_skills": 1,
       "movement_speed": 30,
       "increased_attack_speed": [
@@ -35,11 +33,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "arcane_skills": [
         2,
         4
@@ -71,11 +67,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 46,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        46,
-        68
-      ],
       "enhanced_defense": [
         75,
         100
@@ -111,11 +105,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 46,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        46,
-        68
-      ],
       "enhanced_defense": [
         120,
         160
@@ -146,11 +138,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "all_skills": 2,
       "cold_skills": [
         2,
@@ -182,11 +172,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 46,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        46,
-        68
-      ],
       "enhanced_defense": [
         75,
         100
@@ -226,11 +214,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "to_energy": [
         15,
         25
@@ -257,11 +243,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 96,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_defense": [
         80,
         110
@@ -289,11 +273,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "summon_skills": [
         2,
         6
@@ -321,11 +303,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "all_skills": 2,
       "poison_skills": [
         2,
@@ -361,11 +341,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 46,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        46,
-        68
-      ],
       "enhanced_damage": 15,
       "enhanced_defense": [
         175,
@@ -402,11 +380,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "faster_cast_rate": [
         20,
         35
@@ -441,11 +417,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "all_skills": 2,
       "lightning_skills": [
         2,
@@ -487,11 +461,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_damage": [
         15,
         25
@@ -521,8 +493,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 1,
+    "defenseMax": 1,
     "implicit": {
-      "defense": 1,
       "enhanced_damage": [
         35,
         50
@@ -565,11 +538,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 30,
+    "defenseMax": 40,
     "implicit": {
-      "defense": [
-        30,
-        40
-      ],
       "enhanced_defense": [
         100,
         120
@@ -604,11 +575,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "all_skills": [
         2,
         3

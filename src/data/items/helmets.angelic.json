@@ -41,10 +41,6 @@
     "defenseMin": 565,
     "defenseMax": 625,
     "implicit": {
-      "defense": [
-        565,
-        625
-      ],
       "enhanced_defense": [
         450,
         500

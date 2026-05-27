@@ -250,8 +250,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 90,
+    "defenseMin": 100,
+    "defenseMax": 100,
     "implicit": {
-      "defense": 100,
       "movement_speed": [
         20,
         30
@@ -532,8 +533,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 42,
+    "defenseMin": 50,
+    "defenseMax": 50,
     "implicit": {
-      "defense": 50,
       "enhanced_defense": [
         30,
         45
@@ -835,11 +837,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 85,
+    "defenseMin": 400,
+    "defenseMax": 450,
     "implicit": {
-      "defense": [
-        400,
-        450
-      ],
       "attack_rating": [
         400,
         450

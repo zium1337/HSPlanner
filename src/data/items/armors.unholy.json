@@ -7,11 +7,9 @@
     "rarity": "unholy",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 250,
+    "defenseMax": 350,
     "implicit": {
-      "defense": [
-        250,
-        350
-      ],
       "enhanced_defense": [
         600,
         1000
@@ -36,6 +34,8 @@
       ],
       "max_all_resistances": -10
     },
+    "sockets": 6,
+    "maxSockets": 6,
     "skillBonuses": {
       "Radiant Power": [
         5,
@@ -46,8 +46,6 @@
       "Grant Spell: Radiant Power",
       "Manad On Level",
       "Energyd On Level"
-    ],
-    "sockets": 6,
-    "maxSockets": 6
+    ]
   }
 ]

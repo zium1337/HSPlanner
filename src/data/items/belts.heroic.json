@@ -7,11 +7,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 52,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        52,
-        68
-      ],
       "enhanced_defense": [
         45,
         60
@@ -42,11 +40,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 52,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        52,
-        68
-      ],
       "enhanced_defense": [
         45,
         75
@@ -89,11 +85,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 75,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        75,
-        100
-      ],
       "enhanced_defense": [
         120,
         140
@@ -141,11 +135,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 440,
+    "defenseMax": 500,
     "implicit": {
-      "defense": [
-        440,
-        500
-      ],
       "enhanced_defense": [
         300,
         350
@@ -186,11 +178,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 75,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        75,
-        100
-      ],
       "enhanced_defense": [
         120,
         140
@@ -230,11 +220,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 75,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        75,
-        100
-      ],
       "enhanced_defense": [
         120,
         140
@@ -281,11 +269,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 75,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        75,
-        100
-      ],
       "enhanced_defense": [
         120,
         140
@@ -324,11 +310,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 52,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        52,
-        68
-      ],
       "enhanced_defense": [
         65,
         100
@@ -357,11 +341,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 52,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        52,
-        68
-      ],
       "enhanced_defense": [
         40,
         60
@@ -400,11 +382,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 52,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        52,
-        68
-      ],
       "enhanced_defense": [
         45,
         75
@@ -426,11 +406,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 52,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        52,
-        68
-      ],
       "enhanced_defense": [
         50,
         80

@@ -7,11 +7,9 @@
     "rarity": "unholy",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        72,
-        90
-      ],
       "enhanced_defense": [
         180,
         225

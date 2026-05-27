@@ -7,11 +7,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 30,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "implicit": {
-      "defense": [
-        22,
-        48
-      ],
       "enhanced_defense": [
         30,
         55
@@ -35,11 +33,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         160,
         180
@@ -56,9 +52,9 @@
         10
       ]
     },
-    "setId": "anubi_s_eternal_life",
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "setId": "anubi_s_eternal_life"
   },
   {
     "id": "body_armor_satanic_arcane_gladiator_s_armor",
@@ -97,11 +93,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         110,
         160
@@ -133,11 +127,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 12,
+    "defenseMin": 10,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        10,
-        18
-      ],
       "enhanced_defense": 30,
       "attack_rating": 50,
       "life_replenish": 2,
@@ -171,11 +163,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": 5,
       "all_attributes": 10,
       "damage_return": [
@@ -188,11 +178,11 @@
         35
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Cannot Be Frozen None"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "body_armor_satanic_black_knight_s_carapace",
@@ -202,11 +192,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 26,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "implicit": {
-      "defense": [
-        22,
-        48
-      ],
       "enhanced_defense": [
         80,
         100
@@ -222,12 +210,12 @@
         10
       ]
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Chance When Struck: Impale",
       "Defensed On Level"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_blood_letter_s_plate_body",
@@ -237,11 +225,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -268,11 +254,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_damage": [
         25,
         40
@@ -299,10 +283,10 @@
         10
       ]
     },
+    "setId": "blood_bond",
     "uniqueEffects": [
       "Dexterityd On Level"
-    ],
-    "setId": "blood_bond"
+    ]
   },
   {
     "id": "body_armor_satanic_chestplate_of_fire",
@@ -312,11 +296,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -335,10 +317,10 @@
         20
       ]
     },
+    "setId": "flames_of_the_apocalypse",
     "uniqueEffects": [
       "Manad On Level"
-    ],
-    "setId": "flames_of_the_apocalypse"
+    ]
   },
   {
     "id": "body_armor_satanic_clan_leader_s_pride",
@@ -348,11 +330,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 14,
+    "defenseMin": 10,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        10,
-        18
-      ],
       "enhanced_damage": [
         12,
         20
@@ -386,11 +366,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         175,
         230
@@ -425,11 +403,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         150,
         225
@@ -463,11 +439,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -494,11 +468,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -517,10 +489,10 @@
       ],
       "arcane_resistance": 50
     },
+    "setId": "death_lord_s_legacy",
     "uniqueEffects": [
       "Manad On Level"
-    ],
-    "setId": "death_lord_s_legacy"
+    ]
   },
   {
     "id": "body_armor_satanic_demon_s_ribcage",
@@ -530,11 +502,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_damage": [
         130,
         160
@@ -558,11 +528,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         150,
         225
@@ -580,12 +548,12 @@
         75
       ]
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Vitalityd On Level",
       "Max Fire Resist"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_earth_shaper_s_body",
@@ -595,11 +563,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -634,11 +600,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         160,
         200
@@ -651,12 +615,12 @@
       "faster_hit_recovery": 50,
       "cold_resistance": 45
     },
+    "sockets": 2,
+    "maxSockets": 2,
+    "setId": "einar_s_rage",
     "uniqueEffects": [
       "Defensed On Level"
-    ],
-    "setId": "einar_s_rage",
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_elementalist_s_silk_shroud",
@@ -666,11 +630,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 10,
+    "defenseMin": 10,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        10,
-        18
-      ],
       "enhanced_defense": [
         80,
         100
@@ -693,11 +655,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         275,
         325
@@ -724,11 +684,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -744,10 +702,10 @@
         15
       ]
     },
+    "setId": "engineer_s_combat_gear",
     "uniqueEffects": [
       "Vitalityd On Level"
-    ],
-    "setId": "engineer_s_combat_gear"
+    ]
   },
   {
     "id": "body_armor_satanic_exiled_pagan_s_mantle",
@@ -757,11 +715,9 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 85,
+    "defenseMin": 310,
+    "defenseMax": 380,
     "implicit": {
-      "defense": [
-        310,
-        380
-      ],
       "enhanced_defense": [
         210,
         260
@@ -790,11 +746,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -818,11 +772,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -852,11 +804,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         160,
         180
@@ -865,13 +815,13 @@
       "to_dexterity": 20,
       "to_armor": 20
     },
+    "sockets": 2,
+    "maxSockets": 2,
+    "setId": "genji_s_battle_gear",
     "uniqueEffects": [
       "Lifed On Level",
       "Attack Ratingd On Level"
-    ],
-    "setId": "genji_s_battle_gear",
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_giant_thorned_lizard_skin",
@@ -881,11 +831,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         250,
         325
@@ -925,11 +873,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 12,
+    "defenseMin": 10,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        10,
-        18
-      ],
       "enhanced_defense": [
         70,
         82
@@ -944,12 +890,12 @@
       ],
       "cold_resistance": 40
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Chance When Struck: Avalanche",
       "Cannot Be Frozen None"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_gladiator_s_demise",
@@ -959,11 +905,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_damage": [
         15,
         25
@@ -990,11 +934,11 @@
         8
       ]
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Strengthd On Level"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_grandwizard_s_robe",
@@ -1004,11 +948,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         100,
         120
@@ -1036,11 +978,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": [
         90,
         115
@@ -1061,12 +1001,12 @@
       "all_resistances": 10,
       "poison_resistance": 50
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Max Poison Resist",
       "Poison Length Reduced"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "body_armor_satanic_heaven_s_might",
@@ -1076,11 +1016,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 310,
+    "defenseMax": 440,
     "implicit": {
-      "defense": [
-        310,
-        440
-      ],
       "enhanced_defense": [
         420,
         500
@@ -1098,11 +1036,11 @@
         15
       ]
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Vitalityd On Level"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_hellfire_cuirass",
@@ -1112,11 +1050,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": [
         110,
         150
@@ -1150,11 +1086,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 27,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "implicit": {
-      "defense": [
-        22,
-        48
-      ],
       "enhanced_defense": [
         90,
         115
@@ -1168,14 +1102,14 @@
       ],
       "cold_resistance": 50
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Extra Dmg To Deep Frozen",
       "Defensed On Level",
       "Max Cold Resist",
       "Cannot Be Frozen None"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_ironclad_protector",
@@ -1185,11 +1119,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 11,
+    "defenseMin": 10,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        10,
-        18
-      ],
       "enhanced_defense": [
         140,
         180
@@ -1218,11 +1150,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         160,
         220
@@ -1230,11 +1160,11 @@
       "mana_steal": 5,
       "slow_target": 10
     },
+    "setId": "juggernaut_s_rampart",
     "uniqueEffects": [
       "Strengthd On Level",
       "Vitalityd On Level"
-    ],
-    "setId": "juggernaut_s_rampart"
+    ]
   },
   {
     "id": "body_armor_satanic_justiciar_s_thunder_armor",
@@ -1244,11 +1174,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -1276,11 +1204,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         110,
         220
@@ -1301,11 +1227,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         150,
         225
@@ -1320,13 +1244,13 @@
         20
       ]
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Chance When Struck: Holy Hammer",
       "Defense Vs Missiles",
       "Vitalityd On Level"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_leviathan_s_carcass",
@@ -1336,11 +1260,9 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         500,
         650
@@ -1367,11 +1289,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": [
         160,
         180
@@ -1400,11 +1320,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -1430,11 +1348,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 27,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "implicit": {
-      "defense": [
-        22,
-        48
-      ],
       "cold_skills": [
         1,
         3
@@ -1442,12 +1358,12 @@
       "physical_damage_reduction": 15,
       "cold_resistance": 75
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Max Cold Resist",
       "Cannot Be Frozen None"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "body_armor_satanic_magister_s_robe",
@@ -1457,11 +1373,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 30,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "implicit": {
-      "defense": [
-        22,
-        48
-      ],
       "enhanced_defense": [
         80,
         90
@@ -1488,11 +1402,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 14,
+    "defenseMin": 10,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        10,
-        18
-      ],
       "enhanced_damage": 8,
       "enhanced_defense": [
         30,
@@ -1517,11 +1429,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 13,
+    "defenseMin": 10,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        10,
-        18
-      ],
       "enhanced_defense": [
         70,
         82
@@ -1536,11 +1446,11 @@
       ],
       "fire_resistance": 40
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Chance When Struck: Solar Flare"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_marksman_s_hunting_shroud",
@@ -1550,11 +1460,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -1564,13 +1472,13 @@
       "life": 125,
       "mana_per_kill": 8
     },
+    "sockets": 2,
+    "maxSockets": 2,
+    "setId": "marksman_s_hunting_gear",
     "uniqueEffects": [
       "Attack Range",
       "Defense Vs Missiles"
-    ],
-    "setId": "marksman_s_hunting_gear",
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_marsh_shroud",
@@ -1580,11 +1488,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": [
         110,
         150
@@ -1599,11 +1505,11 @@
         10
       ]
     },
+    "sockets": 3,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Cannot Be Frozen None"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "body_armor_satanic_mevius_mighty_plate",
@@ -1613,11 +1519,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 57,
+    "defenseMin": 150,
+    "defenseMax": 180,
     "implicit": {
-      "defense": [
-        150,
-        180
-      ],
       "enhanced_defense": [
         260,
         280
@@ -1627,12 +1531,12 @@
       "faster_hit_recovery": 125,
       "damage_mitigation": -3
     },
+    "sockets": 2,
+    "maxSockets": 2,
+    "setId": "mevius_eye_of_chaos",
     "uniqueEffects": [
       "Explosion Area Of Effect"
-    ],
-    "setId": "mevius_eye_of_chaos",
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_molten_steel_cataphract",
@@ -1642,11 +1546,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 90,
+    "defenseMax": 125,
     "implicit": {
-      "defense": [
-        90,
-        125
-      ],
       "enhanced_defense": [
         150,
         225
@@ -1660,11 +1562,11 @@
       "damage_mitigation": 8,
       "fire_resistance": 75
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Max Fire Resist"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "body_armor_satanic_mystique_allure",
@@ -1674,11 +1576,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 60,
+    "defenseMin": 135,
+    "defenseMax": 165,
     "implicit": {
-      "defense": [
-        135,
-        165
-      ],
       "enhanced_defense": [
         260,
         300
@@ -1699,11 +1599,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -1719,10 +1617,10 @@
         25
       ]
     },
+    "setId": "nobunaga_s_empire",
     "uniqueEffects": [
       "Defensed On Level"
-    ],
-    "setId": "nobunaga_s_empire"
+    ]
   },
   {
     "id": "body_armor_satanic_nomad_s_battlerobe",
@@ -1732,11 +1630,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -1750,10 +1646,10 @@
       "all_resistances": 10,
       "magic_find": 15
     },
+    "setId": "elder_of_mos_arathim",
     "uniqueEffects": [
       "Defense Vs Missiles"
-    ],
-    "setId": "elder_of_mos_arathim"
+    ]
   },
   {
     "id": "body_armor_satanic_noxious_hunter_s_reward",
@@ -1763,11 +1659,9 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 84,
+    "defenseMin": 220,
+    "defenseMax": 250,
     "implicit": {
-      "defense": [
-        220,
-        250
-      ],
       "enhanced_defense": [
         270,
         330
@@ -1802,11 +1696,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -1839,11 +1731,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -1872,11 +1762,9 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 84,
+    "defenseMin": 410,
+    "defenseMax": 540,
     "implicit": {
-      "defense": [
-        410,
-        540
-      ],
       "enhanced_defense": [
         750,
         925
@@ -1895,11 +1783,11 @@
         5
       ]
     },
+    "sockets": 3,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Cannot Be Frozen None"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "body_armor_satanic_plunderer_s_jacket",
@@ -1909,11 +1797,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         1,
         3
@@ -1932,10 +1818,10 @@
       ],
       "cold_resistance": 40
     },
+    "setId": "plunderer_s_ensemble",
     "uniqueEffects": [
       "Max Cold Resist"
-    ],
-    "setId": "plunderer_s_ensemble"
+    ]
   },
   {
     "id": "body_armor_satanic_prophets_shroud",
@@ -1945,11 +1831,9 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 78,
+    "defenseMin": 125,
+    "defenseMax": 150,
     "implicit": {
-      "defense": [
-        125,
-        150
-      ],
       "enhanced_defense": [
         250,
         350
@@ -1967,13 +1851,13 @@
         15
       ]
     },
+    "sockets": 3,
+    "maxSockets": 3,
+    "setId": "mystic_of_the_forest",
     "uniqueEffects": [
       "Grant Spell: Random Prophet Skill (Forest Mystic Tree)",
       "Lifed On Level"
-    ],
-    "setId": "mystic_of_the_forest",
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "body_armor_satanic_redneck_s_shirt",
@@ -1983,11 +1867,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -2017,11 +1899,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 1,
+    "defenseMin": 20,
+    "defenseMax": 30,
     "implicit": {
-      "defense": [
-        20,
-        30
-      ],
       "enhanced_defense": [
         40,
         70
@@ -2042,11 +1922,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -2079,11 +1957,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": [
         160,
         180
@@ -2102,11 +1978,11 @@
       ],
       "all_resistances": 15
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Lifed On Level"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "body_armor_satanic_sand_manipulator_s_kalasiris",
@@ -2116,11 +1992,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         160,
         200
@@ -2147,11 +2021,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         160,
         180
@@ -2164,12 +2036,12 @@
       "all_attributes": 20,
       "fire_resistance": 75
     },
+    "sockets": 3,
+    "maxSockets": 3,
+    "setId": "satan_s_curse",
     "uniqueEffects": [
       "Max Fire Resist"
-    ],
-    "setId": "satan_s_curse",
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "body_armor_satanic_scourge_gladiator_s_armor",
@@ -2208,11 +2080,9 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         220,
         250
@@ -2224,14 +2094,14 @@
         30
       ]
     },
+    "sockets": 4,
+    "maxSockets": 4,
+    "setId": "sheep_king_s_kingdom",
     "uniqueEffects": [
       "Lifed On Level",
       "Enhanced Dmgd On Level",
       "Max Arcane Resist"
-    ],
-    "setId": "sheep_king_s_kingdom",
-    "sockets": 4,
-    "maxSockets": 4
+    ]
   },
   {
     "id": "body_armor_satanic_shield_bearer_s_plated_armor",
@@ -2241,11 +2111,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -2269,11 +2137,9 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 78,
+    "defenseMin": 70,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        70,
-        90
-      ],
       "enhanced_damage": [
         50,
         75
@@ -2293,12 +2159,12 @@
         15
       ]
     },
+    "sockets": 4,
+    "maxSockets": 4,
+    "setId": "skinwalker_s_bloodlust",
     "uniqueEffects": [
       "Deadly Blow Effect"
-    ],
-    "setId": "skinwalker_s_bloodlust",
-    "sockets": 4,
-    "maxSockets": 4
+    ]
   },
   {
     "id": "body_armor_satanic_solar_prophet_s_robes",
@@ -2308,11 +2174,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 58,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         120,
         150
@@ -2335,10 +2199,10 @@
         60
       ]
     },
+    "setId": "guardian_of_the_sun_temple",
     "uniqueEffects": [
       "Intelligenced On Level"
-    ],
-    "setId": "guardian_of_the_sun_temple"
+    ]
   },
   {
     "id": "body_armor_satanic_tactical_flak_jacket",
@@ -2348,11 +2212,9 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 310,
+    "defenseMax": 340,
     "implicit": {
-      "defense": [
-        310,
-        340
-      ],
       "enhanced_defense": [
         250,
         325
@@ -2372,13 +2234,13 @@
         30
       ]
     },
+    "sockets": 4,
+    "maxSockets": 4,
+    "setId": "grenadier_s_explosive",
     "uniqueEffects": [
       "Grant Spell: Demolition Expert",
       "Grant Spell: Frag Grenade"
-    ],
-    "setId": "grenadier_s_explosive",
-    "sockets": 4,
-    "maxSockets": 4
+    ]
   },
   {
     "id": "body_armor_satanic_thor_s_chest_armor",
@@ -2388,11 +2250,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -2421,11 +2281,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         130,
         160
@@ -2451,12 +2309,12 @@
         40
       ]
     },
+    "sockets": 2,
+    "maxSockets": 2,
+    "setId": "thunder_caller_s_wrath",
     "uniqueEffects": [
       "Manad On Level"
-    ],
-    "setId": "thunder_caller_s_wrath",
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_thunder_gladiator_s_armor",
@@ -2466,11 +2324,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 13,
+    "defenseMin": 10,
+    "defenseMax": 18,
     "implicit": {
-      "defense": [
-        10,
-        18
-      ],
       "enhanced_defense": [
         70,
         82
@@ -2485,11 +2341,11 @@
       ],
       "lightning_resistance": 40
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Chance When Struck: Charged Bolts"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_traveler_s_leather_jacket",
@@ -2499,11 +2355,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": [
         160,
         180
@@ -2517,10 +2371,10 @@
       "all_attributes": 5,
       "faster_hit_recovery": 25
     },
+    "setId": "traveler",
     "uniqueEffects": [
       "Dexterityd On Level"
-    ],
-    "setId": "traveler"
+    ]
   },
   {
     "id": "body_armor_satanic_tropical_storm",
@@ -2530,11 +2384,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": [
         120,
         140
@@ -2553,11 +2405,11 @@
         75
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Chance When Struck: Astrope's Battle Maiden"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "body_armor_satanic_uabel_s_chest",
@@ -2567,11 +2419,9 @@
     "rarity": "satanic_set",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": [
         80,
         90
@@ -2601,11 +2451,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 28,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "implicit": {
-      "defense": [
-        22,
-        48
-      ],
       "enhanced_defense": [
         110,
         140
@@ -2632,11 +2480,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 60,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        60,
-        90
-      ],
       "enhanced_defense": [
         160,
         180
@@ -2653,11 +2499,11 @@
         30
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Vitalityd On Level"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "body_armor_satanic_vagabond_s_wraps",
@@ -2667,11 +2513,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -2695,11 +2539,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 210,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        210,
-        240
-      ],
       "enhanced_defense": [
         160,
         200
@@ -2729,11 +2571,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160
@@ -2749,10 +2589,10 @@
         20
       ]
     },
+    "setId": "venom_s_frame",
     "uniqueEffects": [
       "Max Arcane Resist"
-    ],
-    "setId": "venom_s_frame"
+    ]
   },
   {
     "id": "body_armor_satanic_wardbreaker_armor",
@@ -2762,11 +2602,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 27,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "implicit": {
-      "defense": [
-        22,
-        48
-      ],
       "enhanced_defense": [
         70,
         110
@@ -2781,11 +2619,11 @@
         15
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
     "uniqueEffects": [
       "Chance When Struck: Volatile Shot"
-    ],
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "body_armor_satanic_ymir_s_frozen_vestment",
@@ -2795,11 +2633,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         160,
         200
@@ -2815,13 +2651,13 @@
       ],
       "cold_resistance": 45
     },
+    "sockets": 2,
+    "maxSockets": 2,
+    "setId": "ymir_s_wisdom",
     "uniqueEffects": [
       "Grant Spell: Random Skill",
       "Cannot Be Frozen None"
-    ],
-    "setId": "ymir_s_wisdom",
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "body_armor_satanic_zephy_s_gown",
@@ -2831,11 +2667,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         100,
         150
@@ -2867,11 +2701,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 130,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        130,
-        160
-      ],
       "enhanced_defense": [
         130,
         160

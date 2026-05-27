@@ -7,11 +7,9 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 46,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        46,
-        68
-      ],
       "enhanced_damage": [
         75,
         100
@@ -38,12 +36,12 @@
       ],
       "arcane_resistance": 35
     },
+    "sockets": 1,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Grant Spell: Jagged Gauntlet",
       "Phys Dmg Taken As Arcane",
       "Max Arcane Resist"
-    ],
-    "sockets": 1,
-    "maxSockets": 3
+    ]
   }
 ]

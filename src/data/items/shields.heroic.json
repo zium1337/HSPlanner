@@ -7,12 +7,10 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 95,
+    "defenseMin": 120,
+    "defenseMax": 140,
     "implicit": {
       "block_chance": 40,
-      "defense": [
-        120,
-        140
-      ],
       "enhanced_defense": [
         260,
         345
@@ -49,11 +47,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 95,
+    "defenseMin": 130,
+    "defenseMax": 150,
     "implicit": {
-      "defense": [
-        130,
-        150
-      ],
       "block_chance": 50,
       "enhanced_defense": [
         250,
@@ -74,12 +70,12 @@
       ],
       "arcane_resistance": 75
     },
+    "sockets": 4,
+    "maxSockets": 4,
     "uniqueEffects": [
       "Grant Spell: Celestial Might",
       "Max Arcane Resist"
-    ],
-    "sockets": 4,
-    "maxSockets": 4
+    ]
   },
   {
     "id": "shield_heroic_defender_s_justice",
@@ -89,11 +85,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 120,
+    "defenseMax": 160,
     "implicit": {
-      "defense": [
-        120,
-        160
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         240,
@@ -115,13 +109,13 @@
         75
       ]
     },
+    "sockets": 3,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Chance After Blocking: Counter",
       "Manad On Level",
       "Lifed On Level"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "shield_heroic_demon_s_mirror",
@@ -131,11 +125,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 92,
+    "defenseMin": 380,
+    "defenseMax": 400,
     "implicit": {
-      "defense": [
-        380,
-        400
-      ],
       "block_chance": 75,
       "enhanced_defense": [
         250,
@@ -176,11 +168,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 96,
+    "defenseMin": 120,
+    "defenseMax": 140,
     "implicit": {
-      "defense": [
-        120,
-        140
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         240,
@@ -218,11 +208,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 92,
+    "defenseMin": 380,
+    "defenseMax": 400,
     "implicit": {
-      "defense": [
-        380,
-        400
-      ],
       "block_chance": 60,
       "enhanced_defense": [
         250,
@@ -261,11 +249,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 150,
+    "defenseMax": 180,
     "implicit": {
-      "defense": [
-        150,
-        180
-      ],
       "block_chance": 80,
       "enhanced_defense": [
         540,
@@ -293,12 +279,12 @@
         40
       ]
     },
+    "sockets": 5,
+    "maxSockets": 5,
     "uniqueEffects": [
       "Armor Increase",
       "Grant Spell: Vector Shroud"
-    ],
-    "sockets": 5,
-    "maxSockets": 5
+    ]
   },
   {
     "id": "shield_heroic_tombstone",
@@ -308,11 +294,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 380,
+    "defenseMax": 450,
     "implicit": {
-      "defense": [
-        380,
-        450
-      ],
       "block_chance": 80,
       "enhanced_defense": [
         350,

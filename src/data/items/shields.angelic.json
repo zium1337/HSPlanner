@@ -7,11 +7,9 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 220,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        220,
-        240
-      ],
       "block_chance": 75,
       "enhanced_defense": [
         280,
@@ -42,11 +40,11 @@
       ],
       "all_resistances": 50
     },
+    "sockets": 3,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Chance After Blocking: Holy Shield"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "shield_angelic_st_tomi_s_vibrant_aura",
@@ -56,11 +54,9 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 220,
+    "defenseMax": 240,
     "implicit": {
-      "defense": [
-        220,
-        240
-      ],
       "block_chance": 50,
       "enhanced_defense": [
         280,
@@ -76,10 +72,10 @@
       "damage_return": 750,
       "all_resistances": 75
     },
+    "sockets": 4,
+    "maxSockets": 4,
     "uniqueEffects": [
       "Grant Aura: Angels Vibrance"
-    ],
-    "sockets": 4,
-    "maxSockets": 4
+    ]
   }
 ]

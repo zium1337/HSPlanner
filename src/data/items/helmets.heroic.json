@@ -7,18 +7,24 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 92,
+    "defenseMin": 180,
+    "defenseMax": 225,
     "implicit": {
-      "defense": [
-        180,
-        225
-      ],
       "all_skills": [
         3,
         5
       ],
+      "faster_cast_rate": [
+        20,
+        30
+      ],
       "all_attributes": [
-        18,
-        25
+        25,
+        35
+      ],
+      "mana_replenish": [
+        50,
+        75
       ],
       "faster_hit_recovery": [
         40,
@@ -26,26 +32,26 @@
       ],
       "physical_damage_reduction": [
         8,
-        13
+        12
       ],
       "magic_damage_reduction": [
         8,
         13
       ],
       "all_resistances": [
-        15,
-        30
+        12,
+        25
       ],
       "magic_find": [
         28,
-        60
+        50
       ]
     },
+    "sockets": 2,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Manad On Level"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "helmet_heroic_lava_king_s_lost_mask",
@@ -55,11 +61,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 96,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         100,
         135
@@ -69,8 +73,8 @@
         2
       ],
       "fire_skills": [
-        2,
-        4
+        3,
+        6
       ],
       "increased_burning_damage": [
         25,
@@ -84,11 +88,16 @@
         20,
         35
       ],
-      "ignore_lightning_res": [
-        10,
-        20
+      "ignore_fire_res": 20,
+      "mana_replenish": [
+        75,
+        125
       ],
       "fire_absorption": 10,
+      "all_resistances": [
+        20,
+        30
+      ],
       "magic_find": [
         15,
         25
@@ -106,11 +115,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 94,
+    "defenseMin": 70,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        70,
-        90
-      ],
       "enhanced_defense": [
         150,
         165
@@ -125,19 +132,22 @@
         30
       ],
       "deadly_blow": 40,
+      "crushing_blow_chance": [
+        15,
+        25
+      ],
       "life_steal": [
-        6,
-        10
+        5,
+        8
       ],
       "defense_ignored": [
         30,
         40
-      ],
-      "attack_damage": [
-        25,
-        50
       ]
-    }
+    },
+    "uniqueEffects": [
+      "Physical Damage On Level 100"
+    ]
   },
   {
     "id": "helmet_heroic_sight_of_the_gods",
@@ -147,11 +157,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         80,
         140
@@ -178,6 +186,371 @@
       "Grant Spell: Teleport",
       "Ailment Damage",
       "Half Freeze Duration None"
+    ]
+  },
+  {
+    "id": "helmet_heroic_crown_of_doom",
+    "name": "Crown of Doom",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 900,
+    "defenseMax": 1000,
+    "implicit": {
+      "enhanced_defense": [
+        400,
+        500
+      ],
+      "all_skills": 2,
+      "all_resistances": -30,
+      "max_all_resistances": -3
+    },
+    "sockets": 3,
+    "maxSockets": 3,
+    "skillBonuses": {
+      "Stoneskin Aura": [
+        5,
+        15
+      ],
+      "Hasteful Aura": [
+        5,
+        15
+      ],
+      "Baleful Aura": [
+        5,
+        15
+      ],
+      "Fortunate Aura": [
+        5,
+        15
+      ]
+    }
+  },
+  {
+    "id": "helmet_heroic_dragon_knight_s_helmet",
+    "name": "Dragon Knight's Helmet",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 580,
+    "defenseMax": 625,
+    "implicit": {
+      "enhanced_defense": [
+        450,
+        600
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "extra_damage_burning": [
+        15,
+        25
+      ],
+      "flat_fire_skill_damage": [
+        44,
+        66
+      ],
+      "fire_skill_damage": [
+        40,
+        60
+      ],
+      "ignore_fire_res": [
+        20,
+        30
+      ]
+    },
+    "sockets": 2,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 40,
+        "description": "cast Breath of Fire Level 125"
+      }
+    ]
+  },
+  {
+    "id": "helmet_heroic_eternal_death",
+    "name": "Eternal Death",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 580,
+    "defenseMax": 625,
+    "implicit": {
+      "enhanced_defense": [
+        450,
+        600
+      ],
+      "all_skills": [
+        4,
+        5
+      ],
+      "to_vitality": [
+        50,
+        75
+      ],
+      "to_armor": [
+        50,
+        75
+      ],
+      "life_replenish": [
+        75,
+        100
+      ],
+      "faster_hit_recovery": 100,
+      "increased_life": [
+        22,
+        30
+      ],
+      "damage_return": [
+        750,
+        1000
+      ]
+    },
+    "sockets": 4,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 20,
+        "description": "cast Wall of Eternity Level 1"
+      }
+    ],
+    "skillBonuses": {
+      "Eternal Armour": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "helmet_heroic_face_of_existence",
+    "name": "Face of Existence",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 90,
+    "defenseMax": 140,
+    "implicit": {
+      "enhanced_defense": [
+        140,
+        240
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "skill_haste": [
+        15,
+        30
+      ],
+      "life": 666,
+      "physical_damage_reduction": 6,
+      "fire_absorption": 6,
+      "cold_absorption": 6,
+      "lightning_absorption": 6,
+      "poison_absorption": 6,
+      "arcane_absorption": 6,
+      "all_resistances": [
+        25,
+        35
+      ]
+    },
+    "sockets": 2,
+    "maxSockets": 3,
+    "skillBonuses": {
+      "Space Equilibrium": 1,
+      "Last Stand": [
+        15,
+        20
+      ]
+    }
+  },
+  {
+    "id": "helmet_heroic_gaze_of_the_oblivion",
+    "name": "Gaze of the Oblivion",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 150,
+    "defenseMax": 200,
+    "implicit": {
+      "enhanced_defense": [
+        300,
+        500
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "arcane_skills": [
+        4,
+        8
+      ],
+      "skill_haste": [
+        10,
+        30
+      ],
+      "increased_shadow_burning_damage": [
+        20,
+        35
+      ],
+      "to_intelligence": [
+        25,
+        40
+      ],
+      "to_vitality": [
+        25,
+        40
+      ],
+      "flat_arcane_skill_damage": [
+        30,
+        50
+      ],
+      "mana_replenish": [
+        50,
+        100
+      ]
+    },
+    "sockets": 2,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 25,
+        "description": "cast Restless Spirits Level 74"
+      }
+    ]
+  },
+  {
+    "id": "helmet_heroic_grimbone_s_visage",
+    "name": "Grimbone's Visage",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 60,
+    "defenseMax": 80,
+    "implicit": {
+      "enhanced_defense": [
+        110,
+        140
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "ailment_damage_all": [
+        15,
+        20
+      ],
+      "to_intelligence": [
+        15,
+        25
+      ],
+      "magic_skill_damage": [
+        20,
+        50
+      ],
+      "all_resistances": 50
+    },
+    "sockets": 1,
+    "maxSockets": 4,
+    "maxAffixes": 1,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "helmet_heroic_high_roller_s_deathcrown",
+    "name": "High Roller's Deathcrown",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 1,
+    "defenseMax": 100,
+    "implicit": {
+      "movement_speed": [
+        1,
+        40
+      ],
+      "all_attributes": [
+        1,
+        80
+      ],
+      "attack_damage": [
+        1,
+        100
+      ],
+      "magic_skill_damage": [
+        1,
+        100
+      ],
+      "life": [
+        1,
+        400
+      ],
+      "all_resistances": [
+        1,
+        70
+      ]
+    },
+    "skillBonuses": {
+      "Roll the Dice": 1
+    }
+  },
+  {
+    "id": "helmet_heroic_the_colossal_avenger",
+    "name": "The Colossal Avenger",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 180,
+    "defenseMax": 210,
+    "implicit": {
+      "enhanced_defense": [
+        380,
+        430
+      ],
+      "enhanced_damage": [
+        100,
+        150
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "attack_rating_pct": 30,
+      "life_steal": [
+        15,
+        25
+      ],
+      "to_strength": [
+        60,
+        80
+      ],
+      "all_resistances": [
+        25,
+        35
+      ]
+    },
+    "uniqueEffects": [
+      "Physical Damage On Level 150"
     ]
   }
 ]

@@ -7,11 +7,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 99,
+    "defenseMin": 52,
+    "defenseMax": 64,
     "implicit": {
-      "defense": [
-        52,
-        64
-      ],
       "enhanced_defense": [
         130,
         160
@@ -41,12 +39,12 @@
         75
       ]
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "All Skills Class",
       "Movement Phasing"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "boots_heroic_fumacinha_s_favela_flipflop",
@@ -56,11 +54,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 97,
+    "defenseMin": 52,
+    "defenseMax": 64,
     "implicit": {
-      "defense": [
-        52,
-        64
-      ],
       "enhanced_defense": [
         110,
         150
@@ -99,11 +95,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 97,
+    "defenseMin": 82,
+    "defenseMax": 114,
     "implicit": {
-      "defense": [
-        82,
-        114
-      ],
       "enhanced_defense": [
         310,
         350
@@ -146,11 +140,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 92,
+    "defenseMin": 82,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        82,
-        100
-      ],
       "enhanced_defense": [
         220,
         250
@@ -202,11 +194,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 99,
+    "defenseMin": 52,
+    "defenseMax": 64,
     "implicit": {
-      "defense": [
-        52,
-        64
-      ],
       "enhanced_defense": [
         130,
         160
@@ -276,11 +266,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 180,
+    "defenseMax": 260,
     "implicit": {
-      "defense": [
-        180,
-        260
-      ],
       "enhanced_defense": [
         200,
         250
@@ -316,11 +304,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        72,
-        90
-      ],
       "enhanced_defense": [
         180,
         225
@@ -359,11 +345,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        72,
-        90
-      ],
       "enhanced_defense": [
         180,
         225
@@ -402,11 +386,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        72,
-        90
-      ],
       "enhanced_defense": [
         180,
         225
@@ -445,11 +427,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 82,
+    "defenseMax": 100,
     "implicit": {
-      "defense": [
-        82,
-        100
-      ],
       "enhanced_defense": [
         220,
         250
@@ -476,13 +456,13 @@
       ],
       "faster_hit_recovery": 100
     },
+    "sockets": 2,
+    "maxSockets": 3,
     "uniqueEffects": [
       "Sentry Skills [2-3]",
       "Sentry Amount +1",
       "Cannot Be Frozen"
-    ],
-    "sockets": 2,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "boots_heroic_rift_vectors",
@@ -492,11 +472,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        72,
-        90
-      ],
       "enhanced_defense": [
         180,
         225
@@ -522,14 +500,14 @@
         30
       ]
     },
+    "sockets": 3,
+    "maxSockets": 3,
     "skillBonuses": {
       "Teleport": 1
     },
     "uniqueEffects": [
       "Movement Phasing"
-    ],
-    "sockets": 3,
-    "maxSockets": 3
+    ]
   },
   {
     "id": "boots_heroic_scorching_roamers",
@@ -539,11 +517,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        72,
-        90
-      ],
       "enhanced_defense": [
         180,
         225
@@ -582,11 +558,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 52,
+    "defenseMax": 64,
     "implicit": {
-      "defense": [
-        52,
-        64
-      ],
       "enhanced_defense": [
         120,
         150
@@ -608,11 +582,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 100,
+    "defenseMax": 110,
     "implicit": {
-      "defense": [
-        100,
-        110
-      ],
       "enhanced_defense": [
         200,
         240
@@ -636,10 +608,6 @@
       "faster_hit_recovery": 75,
       "all_resistances": 18
     },
-    "skillBonuses": {
-      "Lost at Sea": 1,
-      "Walson's Aid": 1
-    },
     "procs": [
       {
         "trigger": "on_kill",
@@ -652,6 +620,10 @@
         "description": "cast Anchor Swing"
       }
     ],
+    "skillBonuses": {
+      "Lost at Sea": 1,
+      "Walson's Aid": 1
+    },
     "uniqueEffects": [
       "Cannot Be Frozen"
     ]
@@ -664,11 +636,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        72,
-        90
-      ],
       "enhanced_defense": [
         180,
         225
@@ -707,11 +677,9 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
     "implicit": {
-      "defense": [
-        72,
-        90
-      ],
       "enhanced_defense": [
         180,
         225

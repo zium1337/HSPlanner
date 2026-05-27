@@ -7,11 +7,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 13,
+    "defenseMin": 4,
+    "defenseMax": 8,
     "implicit": {
-      "defense": [
-        4,
-        8
-      ],
       "enhanced_defense": [
         5,
         10
@@ -35,11 +33,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 61,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -60,11 +56,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         80,
         120
@@ -103,11 +97,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 60,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -134,11 +126,9 @@
     "rarity": "satanic_set",
     "grade": "B",
     "requiresLevel": 38,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_defense": [
         55,
         85
@@ -147,10 +137,10 @@
       "to_strength": 10,
       "life_per_kill": 15
     },
+    "setId": "battle_worn",
     "uniqueEffects": [
       "Enhanced Dmgd On Level"
-    ],
-    "setId": "battle_worn"
+    ]
   },
   {
     "id": "helmet_satanic_blood_letter_s_crown",
@@ -160,11 +150,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 56,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -184,11 +172,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 25,
+    "defenseMin": 12,
+    "defenseMax": 20,
     "implicit": {
-      "defense": [
-        12,
-        20
-      ],
       "enhanced_defense": [
         30,
         60
@@ -210,11 +196,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 87,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "fire_skills": [
         2,
         4
@@ -241,11 +225,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 78,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         120,
         180
@@ -264,12 +246,12 @@
         20
       ]
     },
+    "setId": "blood_bond",
     "uniqueEffects": [
       "Ailment Damage",
       "Max All Resist",
       "Attacks Hit Multiple Enemies None"
-    ],
-    "setId": "blood_bond"
+    ]
   },
   {
     "id": "helmet_satanic_chronomancer_s_observance",
@@ -279,11 +261,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -293,10 +273,10 @@
       "all_resistances": 10,
       "magic_find": 15
     },
+    "setId": "temporal_mastery",
     "uniqueEffects": [
       "Defense Vs Missiles"
-    ],
-    "setId": "temporal_mastery"
+    ]
   },
   {
     "id": "helmet_satanic_crown_of_midnight",
@@ -306,11 +286,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 78,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         100,
         135
@@ -334,11 +312,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 76,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         125,
         175
@@ -378,11 +354,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 12,
+    "defenseMin": 4,
+    "defenseMax": 8,
     "implicit": {
-      "defense": [
-        4,
-        8
-      ],
       "enhanced_damage": [
         10,
         15
@@ -404,11 +378,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -420,9 +392,9 @@
       "to_energy": 15,
       "to_intelligence": 15
     },
-    "setId": "death_lord_s_legacy",
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "setId": "death_lord_s_legacy"
   },
   {
     "id": "helmet_satanic_demon_warlord_s_helm",
@@ -432,11 +404,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "open_wounds": [
         10,
         15
@@ -457,11 +427,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         80,
         120
@@ -489,11 +457,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -511,9 +477,9 @@
         25
       ]
     },
-    "setId": "einar_s_rage",
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "setId": "einar_s_rage"
   },
   {
     "id": "helmet_satanic_executioner_s_headplate",
@@ -523,11 +489,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 28,
+    "defenseMin": 12,
+    "defenseMax": 20,
     "implicit": {
-      "defense": [
-        12,
-        20
-      ],
       "enhanced_defense": [
         30,
         40
@@ -551,11 +515,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 52,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -576,11 +538,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 42,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_defense": [
         65,
         100
@@ -612,11 +572,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 81,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         80,
         130
@@ -642,11 +600,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 56,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -675,11 +631,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 78,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         120,
         160
@@ -707,11 +661,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         120,
         160
@@ -751,11 +703,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 92,
+    "defenseMin": 80,
+    "defenseMax": 145,
     "implicit": {
-      "defense": [
-        80,
-        145
-      ],
       "all_skills": 2,
       "all_attributes": [
         4,
@@ -780,11 +730,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 43,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_defense": [
         115,
         155
@@ -815,11 +763,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 40,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_defense": [
         65,
         100
@@ -851,11 +797,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 37,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_defense": [
         30,
         40
@@ -883,11 +827,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 32,
+    "defenseMin": 12,
+    "defenseMax": 20,
     "implicit": {
-      "defense": [
-        12,
-        20
-      ],
       "enhanced_defense": [
         50,
         75
@@ -911,11 +853,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 54,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         120,
         160
@@ -924,10 +864,10 @@
       "life": 40,
       "life_per_kill": 15
     },
+    "setId": "juggernaut_s_rampart",
     "uniqueEffects": [
       "Grant Spell: Flail Mastery"
-    ],
-    "setId": "juggernaut_s_rampart"
+    ]
   },
   {
     "id": "helmet_satanic_knight_captain_s_helmet",
@@ -937,11 +877,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 76,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         80,
         120
@@ -976,11 +914,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         120,
         160
@@ -1003,11 +939,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 54,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1029,11 +963,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 62,
+    "defenseMin": 52,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        52,
-        68
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1066,11 +998,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 30,
+    "defenseMin": 12,
+    "defenseMax": 20,
     "implicit": {
-      "defense": [
-        12,
-        20
-      ],
       "enhanced_defense": [
         20,
         40
@@ -1091,11 +1021,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 95,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         100,
         135
@@ -1137,11 +1065,9 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 81,
+    "defenseMin": 580,
+    "defenseMax": 625,
     "implicit": {
-      "defense": [
-        580,
-        625
-      ],
       "enhanced_defense": [
         450,
         600
@@ -1156,11 +1082,11 @@
         35
       ]
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "All Skills Class"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "helmet_satanic_mevius_mighty_helmet",
@@ -1170,11 +1096,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 65,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1201,11 +1125,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 74,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         85,
         145
@@ -1221,9 +1143,9 @@
         38
       ]
     },
-    "setId": "nobunaga_s_empire",
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "setId": "nobunaga_s_empire"
   },
   {
     "id": "helmet_satanic_nomad_s_sand_bandana",
@@ -1233,11 +1155,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 55,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1265,11 +1185,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1295,11 +1213,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1321,11 +1237,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 90,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         100,
         135
@@ -1363,11 +1277,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 54,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1389,10 +1301,10 @@
         10
       ]
     },
+    "setId": "death_s_toll",
     "uniqueEffects": [
       "Cannot Be Frozen None"
-    ],
-    "setId": "death_s_toll"
+    ]
   },
   {
     "id": "helmet_satanic_reaver_s_headplate",
@@ -1402,11 +1314,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 35,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_defense": [
         30,
         40
@@ -1432,11 +1342,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 61,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1458,11 +1366,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 79,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1490,11 +1396,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 58,
+    "defenseMin": 62,
+    "defenseMax": 74,
     "implicit": {
-      "defense": [
-        62,
-        74
-      ],
       "enhanced_defense": [
         130,
         170
@@ -1520,11 +1424,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 12,
+    "defenseMin": 4,
+    "defenseMax": 8,
     "implicit": {
-      "defense": [
-        4,
-        8
-      ],
       "enhanced_defense": [
         20,
         30
@@ -1548,11 +1450,9 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 90,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "all_skills": [
         4,
         5
@@ -1568,13 +1468,13 @@
         40
       ]
     },
+    "sockets": 1,
+    "maxSockets": 1,
+    "setId": "sheep_king_s_kingdom",
     "uniqueEffects": [
       "Ailment Damage",
       "Cannot Be Frozen None"
-    ],
-    "setId": "sheep_king_s_kingdom",
-    "sockets": 1,
-    "maxSockets": 1
+    ]
   },
   {
     "id": "helmet_satanic_shield_bearer_s_crown",
@@ -1584,11 +1484,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 52,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1598,10 +1496,10 @@
       "life_replenish_pct": 10,
       "increased_life": 2
     },
+    "setId": "shield_bearer_s_sanctuary",
     "uniqueEffects": [
       "Grant Spell: Combat Orders"
-    ],
-    "setId": "shield_bearer_s_sanctuary"
+    ]
   },
   {
     "id": "helmet_satanic_sky_crusader_helm",
@@ -1611,11 +1509,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 29,
+    "defenseMin": 12,
+    "defenseMax": 20,
     "implicit": {
-      "defense": [
-        12,
-        20
-      ],
       "enhanced_defense": [
         50,
         75
@@ -1641,11 +1537,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 60,
+    "defenseMin": 52,
+    "defenseMax": 68,
     "implicit": {
-      "defense": [
-        52,
-        68
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1678,11 +1572,9 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 12,
+    "defenseMin": 4,
+    "defenseMax": 8,
     "implicit": {
-      "defense": [
-        4,
-        8
-      ],
       "enhanced_defense": [
         20,
         35
@@ -1706,11 +1598,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 88,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         100,
         135
@@ -1748,11 +1638,9 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 85,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         175,
         250
@@ -1766,11 +1654,11 @@
         30
       ]
     },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
       "Magic Findd On Level"
-    ],
-    "sockets": 2,
-    "maxSockets": 2
+    ]
   },
   {
     "id": "helmet_satanic_the_colossal_avenger",
@@ -1780,11 +1668,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 88,
+    "defenseMin": 80,
+    "defenseMax": 110,
     "implicit": {
-      "defense": [
-        80,
-        110
-      ],
       "all_skills": [
         2,
         3
@@ -1810,11 +1696,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 91,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         100,
         135
@@ -1842,11 +1726,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 87,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         100,
         135
@@ -1877,11 +1759,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 84,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         100,
         135
@@ -1909,11 +1789,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 58,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1942,11 +1820,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 78,
+    "defenseMin": 55,
+    "defenseMax": 70,
     "implicit": {
-      "defense": [
-        55,
-        70
-      ],
       "enhanced_defense": [
         80,
         130
@@ -1977,11 +1853,9 @@
     "rarity": "satanic_set",
     "grade": "B",
     "requiresLevel": 34,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_defense": [
         65,
         100
@@ -2003,11 +1877,9 @@
     "rarity": "satanic",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         120,
         160
@@ -2038,11 +1910,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         120,
         160
@@ -2065,11 +1935,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 76,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         125,
         175
@@ -2100,11 +1968,9 @@
     "rarity": "satanic",
     "grade": "C",
     "requiresLevel": 26,
+    "defenseMin": 12,
+    "defenseMax": 20,
     "implicit": {
-      "defense": [
-        12,
-        20
-      ],
       "enhanced_defense": [
         75,
         125
@@ -2123,11 +1989,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 59,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -2149,11 +2013,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 54,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -2175,11 +2037,9 @@
     "rarity": "satanic",
     "grade": "B",
     "requiresLevel": 37,
+    "defenseMin": 26,
+    "defenseMax": 38,
     "implicit": {
-      "defense": [
-        26,
-        38
-      ],
       "enhanced_defense": [
         60,
         90
@@ -2206,11 +2066,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 83,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         80,
         130
@@ -2228,10 +2086,10 @@
         30
       ]
     },
+    "setId": "god_of_the_elements",
     "uniqueEffects": [
       "All Skills Class"
-    ],
-    "setId": "god_of_the_elements"
+    ]
   },
   {
     "id": "helmet_satanic_witches_brimmed_hat",
@@ -2241,11 +2099,9 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 86,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         80,
         120
@@ -2273,11 +2129,9 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 75,
+    "defenseMin": 60,
+    "defenseMax": 80,
     "implicit": {
-      "defense": [
-        60,
-        80
-      ],
       "enhanced_defense": [
         80,
         130
@@ -2309,11 +2163,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 62,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
@@ -2334,11 +2186,9 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 64,
+    "defenseMin": 42,
+    "defenseMax": 54,
     "implicit": {
-      "defense": [
-        42,
-        54
-      ],
       "enhanced_defense": [
         80,
         130
