@@ -311,8 +311,11 @@ export function BuildTable({
                 <div className="truncate font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
                   {m?.className ?? '—'}
                 </div>
-                <div className="font-mono text-[12px] text-text">
-                  {m?.level ?? '—'}
+                <div className="font-mono text-[12px]">
+                  <span className={selected ? 'text-accent-hot' : 'text-text'}>
+                    {m?.level ?? '—'}
+                  </span>
+                  <span className="text-faint">/{m?.nodes ?? 0}</span>
                 </div>
                 <div
                   className={`font-mono text-[11px] tracking-[0.02em] ${

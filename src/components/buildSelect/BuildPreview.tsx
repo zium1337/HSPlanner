@@ -212,8 +212,8 @@ export function BuildPreview({
               {build.name}
             </div>
             <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-              <span style={{ color }}>{className}</span> · Lv {level} ·{' '}
-              {build.profiles.length}P
+              <span style={{ color }}>{className}</span> · Lv {level} · Hero Lv{' '}
+              {nodes} · {build.profiles.length}P
             </div>
             {build.tags.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">

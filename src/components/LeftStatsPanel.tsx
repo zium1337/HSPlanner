@@ -129,6 +129,7 @@ export default function LeftStatsPanel() {
   const attrTotal = attrPointsFor(level);
   const skillSpent = Object.values(skillRanks).reduce((s, v) => s + v, 0);
   const skillTotal = skillPointsFor(level);
+  const heroLevel = buildDeps.allocatedTreeNodes.size;
 
   const allClassSkills = useMemo(() => getSkillsByClass(classId), [classId]);
   const classSkills = useMemo(
@@ -238,14 +239,17 @@ export default function LeftStatsPanel() {
             "linear-gradient(180deg, rgba(201,165,90,0.05), transparent)",
         }}
       >
-        <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+        <div className="mb-1 flex items-start gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
           <span
             aria-hidden
-            className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
+            className="mt-1 inline-block h-1.5 w-1.5 shrink-0 rotate-45 bg-accent-hot"
             style={{ boxShadow: "0 0 8px rgba(224,184,100,0.6)" }}
           />
-          Character
-          <span className="ml-auto text-accent-hot">Lv {level}</span>
+          <span className="mt-0.5">Character</span>
+          <span className="ml-auto flex flex-col items-end leading-tight text-accent-hot">
+            <span>Lv {level}</span>
+            <span>Hero Lv {heroLevel}</span>
+          </span>
         </div>
         <div
           className="text-[15px] font-semibold tracking-[0.02em] text-accent-hot"
