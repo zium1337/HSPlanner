@@ -9,6 +9,7 @@ import { classes, getClass, resolveSkillIcon, skills } from '../data'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import { computeBuildStatsAsync } from '../lib/calc/bridge'
 import { skillPointsFor, subskillKey, useBuild } from '../store/build'
+import { DAMAGE_COLORS } from '../utils/damageColors'
 import {
   aggregateItemSkillBonuses,
   formatValue,
@@ -28,28 +29,6 @@ import type {
   Skill,
   SubskillNode,
 } from '../types'
-
-const DAMAGE_BORDER: Record<DamageType, string> = {
-  physical: 'border-white/60',
-  lightning: 'border-yellow-400',
-  cold: 'border-sky-400',
-  fire: 'border-red-400',
-  poison: 'border-green-400',
-  arcane: 'border-purple-400',
-  explosion: 'border-orange-400',
-  magic: 'border-pink-400',
-}
-
-const DAMAGE_GLOW: Record<DamageType, string> = {
-  physical: 'shadow-[0_0_12px_rgba(255,255,255,0.3)]',
-  lightning: 'shadow-[0_0_12px_rgba(250,204,21,0.45)]',
-  cold: 'shadow-[0_0_12px_rgba(56,189,248,0.45)]',
-  fire: 'shadow-[0_0_12px_rgba(248,113,113,0.45)]',
-  poison: 'shadow-[0_0_12px_rgba(74,222,128,0.45)]',
-  arcane: 'shadow-[0_0_12px_rgba(192,132,252,0.45)]',
-  explosion: 'shadow-[0_0_12px_rgba(251,146,60,0.45)]',
-  magic: 'shadow-[0_0_12px_rgba(244,114,182,0.45)]',
-}
 
 const CELL = 84
 const GAP = 18
@@ -406,9 +385,12 @@ function SkillIcon({
 }) {
   const allocated = rank > 0
   const border = skill.damageType
-    ? DAMAGE_BORDER[skill.damageType]
+    ? DAMAGE_COLORS[skill.damageType].border
     : 'border-accent'
-  const glow = allocated && skill.damageType ? DAMAGE_GLOW[skill.damageType] : ''
+  const glow =
+    allocated && skill.damageType
+      ? DAMAGE_COLORS[skill.damageType].glow
+      : ''
   const canInc = canIncrement && rank < skill.maxRank && !locked
 
   return (
@@ -860,7 +842,7 @@ function DamageLegend({ type }: { type: DamageType }) {
     <li className="flex items-center gap-1.5">
       <span
         aria-hidden
-        className={`inline-block h-1.5 w-1.5 shrink-0 rotate-45 border ${DAMAGE_BORDER[type]}`}
+        className={`inline-block h-1.5 w-1.5 shrink-0 rotate-45 border ${DAMAGE_COLORS[type].border}`}
       />
       {type}
     </li>
