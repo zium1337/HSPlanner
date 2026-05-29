@@ -337,7 +337,7 @@ function SkillTree({
                 y1={a.y}
                 x2={b.x}
                 y2={b.y}
-                stroke={satisfied ? '#c48a3a' : '#7c2d2d'}
+                style={{ stroke: satisfied ? 'var(--color-accent)' : 'var(--color-stat-red)' }}
                 strokeWidth={2.5}
               />
             )

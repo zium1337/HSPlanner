@@ -278,7 +278,7 @@ export function ItemTooltipBody({
   const equippedAffixes = equipped?.affixes ?? []
   const equippedForgedMods = equipped?.forgedMods ?? []
   const forgeKind = isGearSlot(base.slot) ? forgeKindFor(base.rarity) : null
-  const forgeAccent = 'text-red-300'
+  const forgeAccent = 'text-stat-red'
 
   return (
     <>
