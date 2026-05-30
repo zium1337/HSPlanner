@@ -2,7 +2,6 @@ import { useState, type ReactNode } from 'react'
 import PickerModal, { type PickerPanelState, type PickerRow } from '../../../components/PickerModal'
 import { TooltipPanel } from '../../../components/Tooltip'
 import { augments, gameConfig, getAugment } from '../../../data'
-import { useBuild } from '../../../store/build'
 import { AUGMENT_MAX_LEVEL } from '../../../types'
 import type { EquippedItem } from '../../../types'
 import { buildAugmentTooltip, NetChangeBlock } from '../tooltips'
@@ -21,10 +20,15 @@ const AUGMENT_PICKER_ROWS: PickerRow[] = augments
     tooltipTone: 'angelic' as const,
   }))
 
-export function AugmentSection({ equipped }: { equipped: EquippedItem }) {
-  // Renders the Angelic Augment editor on the body-armour slot: a "Choose augment…" trigger that opens the augment PickerModal, a level slider (1..AUGMENT_MAX_LEVEL), trigger / proc duration / cost metadata, and the per-level stat list. Used inside EditPanel only when the armour slot is active.
-  const setAugment = useBuild((s) => s.setAugment)
-  const setAugmentLevel = useBuild((s) => s.setAugmentLevel)
+export function AugmentSection({
+  equipped,
+  onSetAugment,
+  onSetAugmentLevel,
+}: {
+  equipped: EquippedItem
+  onSetAugment: (id: string | null) => void
+  onSetAugmentLevel: (level: number) => void
+}) {
   const [pickerOpen, setPickerOpen] = useState(false)
   const aug = equipped.augment ? getAugment(equipped.augment.id) : undefined
   const level = equipped.augment?.level ?? 1
@@ -62,7 +66,7 @@ export function AugmentSection({ equipped }: { equipped: EquippedItem }) {
       rightSlot={
         aug ? (
           <button
-            onClick={() => setAugment(null)}
+            onClick={() => onSetAugment(null)}
             className="rounded-xs border border-border-2 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint transition-colors hover:border-stat-red hover:text-stat-red"
             aria-label="Remove augment"
           >
@@ -103,8 +107,8 @@ export function AugmentSection({ equipped }: { equipped: EquippedItem }) {
           emptyMessage="No augments match"
           width={680}
           allowClear={!!equipped.augment}
-          onClear={() => setAugment(null)}
-          onSelect={(id) => setAugment(id)}
+          onClear={() => onSetAugment(null)}
+          onSelect={(id) => onSetAugment(id)}
           onClose={() => setPickerOpen(false)}
           selectedPanel={renderSelectedPanel}
         />
@@ -123,7 +127,7 @@ export function AugmentSection({ equipped }: { equipped: EquippedItem }) {
               min={1}
               max={AUGMENT_MAX_LEVEL}
               value={level}
-              onChange={(e) => setAugmentLevel(Number(e.target.value))}
+              onChange={(e) => onSetAugmentLevel(Number(e.target.value))}
               className="flex-1"
               style={{
                 ['--sl-pct' as never]:

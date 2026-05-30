@@ -5,7 +5,6 @@ import { backdropVariants, panelVariants } from '../lib/motion'
 import type { ItemRarity } from '../types'
 import Tooltip from './Tooltip'
 import type { TooltipTone } from './tooltip-tones'
-import { CornerMarks } from './CornerMarks'
 
 const RARITY_TEXT: Record<ItemRarity, string> = {
   common: 'text-white',
@@ -168,30 +167,21 @@ export default function PickerModal({
           variants={panelVariants}
           initial="initial"
           animate="animate"
-          className="relative flex h-[88vh] flex-col overflow-hidden rounded-md border border-border"
+          className="relative flex h-[88vh] flex-col overflow-hidden rounded-xl border border-border"
           style={{
             width,
             background:
-              'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
-            boxShadow:
-              'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
+              'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 86%, transparent))',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.55)',
           }}
         >
-          <CornerMarks />
-
-          <header
-            className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
-            style={{
-              background:
-                'linear-gradient(180deg, rgba(201,165,90,0.05), transparent)',
-            }}
-          >
+          <header className="flex items-start justify-between gap-3 border-b border-border px-6 py-4">
             <div>
               {sectionLabel && (
-                <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+                <div className="mb-1.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
                   <span
-                    className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-                    style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
+                    aria-hidden
+                    className="inline-block h-1 w-1 rounded-full bg-accent"
                   />
                   {sectionLabel}
                   {sectionAccent !== undefined && (
@@ -199,18 +189,14 @@ export default function PickerModal({
                   )}
                 </div>
               )}
-              <h2
-                className="m-0 text-[18px] font-semibold tracking-[0.02em] text-accent-hot"
-                style={{
-                  textShadow: '0 0 16px rgba(224,184,100,0.15)',
-                }}
-              >
+              <h2 className="m-0 text-[17px] font-semibold tracking-[-0.01em] text-text">
                 {title}
               </h2>
             </div>
             <button
+              type="button"
               onClick={onClose}
-              className="rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+              className="rounded-md border border-border px-3 py-1.5 text-[12px] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
             >
               Close
             </button>
@@ -233,12 +219,7 @@ export default function PickerModal({
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="w-full rounded-[3px] border border-border-2 px-3 py-2 pl-9 text-text placeholder:text-faint focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
-                style={{
-                  background:
-                    'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
-                  boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
-                }}
+                className="w-full rounded-md border border-border bg-bg/60 px-3 py-2 pl-9 text-[13px] text-text placeholder:text-faint focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
               />
             </div>
           </div>
@@ -300,31 +281,19 @@ export default function PickerModal({
                           !r.disabled && setHoveredId(r.id)
                         }
                         title={r.disabledNote}
-                        className={`group relative grid w-full items-center gap-3.5 border-b border-dashed border-border px-4 py-2 text-left transition-colors last:border-b-0 ${
+                        className={`group relative grid w-full items-center gap-3.5 border-b border-border px-4 py-2.5 text-left transition-colors last:border-b-0 ${
                           r.disabled
                             ? 'cursor-not-allowed opacity-30'
                             : 'cursor-pointer hover:bg-accent-hot/5'
-                        } ${
-                          selected
-                            ? 'bg-linear-to-r from-accent-hot/10 to-transparent'
-                            : ''
-                        }`}
+                        } ${selected ? 'bg-accent-hot/5' : ''}`}
                         style={{ gridTemplateColumns: cols }}
                       >
                         <span
-                          className={`pointer-events-none absolute left-0 top-0 bottom-0 w-0.5 bg-accent-hot transition-opacity ${
+                          className={`pointer-events-none absolute left-0 top-0 bottom-0 w-0.5 bg-accent transition-opacity ${
                             selected
                               ? 'opacity-100'
-                              : 'opacity-0 group-hover:opacity-60'
+                              : 'opacity-0 group-hover:opacity-50'
                           }`}
-                          style={
-                            selected
-                              ? {
-                                  boxShadow:
-                                    '0 0 12px rgba(224,184,100,0.4)',
-                                }
-                              : undefined
-                          }
                         />
                         <span className="flex items-center justify-center">
                           {r.iconUrl ? (
@@ -395,21 +364,18 @@ export default function PickerModal({
             )}
           </div>
 
-          <footer className="flex items-center justify-between gap-3 border-t border-border bg-black/30 px-4 py-3">
+          <footer className="flex items-center justify-between gap-3 border-t border-border bg-black/20 px-5 py-3">
             <div
-              className={`flex min-w-0 flex-1 items-center gap-2 font-mono text-[11px] tracking-[0.06em] ${
-                selectedId ? 'text-accent-hot' : 'text-faint'
+              className={`flex min-w-0 flex-1 items-center gap-2 text-[12px] ${
+                selectedId ? 'text-text' : 'text-faint'
               }`}
             >
               <span
                 className="h-1.5 w-1.5 shrink-0 rounded-full"
                 style={{
                   background: selectedId
-                    ? 'var(--color-accent-hot)'
+                    ? 'var(--color-accent)'
                     : 'var(--color-faint)',
-                  boxShadow: selectedId
-                    ? '0 0 8px rgba(224,184,100,0.6)'
-                    : '0 0 6px var(--color-faint)',
                 }}
               />
               <span className="truncate">
@@ -429,14 +395,14 @@ export default function PickerModal({
                     onClear?.()
                     onClose()
                   }}
-                  className="rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-stat-red hover:text-stat-red"
+                  className="rounded-md border border-border bg-transparent px-3 py-1.5 text-[12px] text-muted transition-colors hover:border-stat-red hover:text-stat-red"
                 >
                   Clear
                 </button>
               )}
               <button
                 onClick={onClose}
-                className="rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+                className="rounded-md border border-border bg-transparent px-3 py-1.5 text-[12px] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
               >
                 Cancel
               </button>

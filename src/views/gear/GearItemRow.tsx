@@ -28,18 +28,15 @@ export function GearItemRow({
       type="button"
       onClick={onSelect}
       onMouseEnter={onHover}
-      className={`group relative grid w-full cursor-pointer items-center gap-3 border-b border-dashed border-border px-4 py-2 text-left transition-colors last:border-b-0 hover:bg-accent-hot/5 ${
-        selected ? 'bg-linear-to-r from-accent-hot/10 to-transparent' : ''
+      className={`group relative grid w-full cursor-pointer items-center gap-3 border-b border-border px-4 py-2.5 text-left transition-colors last:border-b-0 hover:bg-accent-hot/5 ${
+        selected ? 'bg-accent-hot/5' : ''
       }`}
       style={{ gridTemplateColumns: '40px 1fr auto' }}
     >
       <span
-        className={`pointer-events-none absolute left-0 top-0 bottom-0 w-0.5 bg-accent-hot transition-opacity ${
-          selected ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
+        className={`pointer-events-none absolute left-0 top-0 bottom-0 w-0.5 bg-accent transition-opacity ${
+          selected ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
         }`}
-        style={
-          selected ? { boxShadow: '0 0 12px rgba(224,184,100,0.4)' } : undefined
-        }
       />
       <span className="flex h-9 w-9 items-center justify-center">
         {row.iconUrl ? (

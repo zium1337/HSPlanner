@@ -2,7 +2,6 @@ import type { CSSProperties, ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'motion/react'
 import { backdropVariants, panelVariants } from '../lib/motion'
-import { CornerMarks } from './CornerMarks'
 
 interface ModalProps {
   /** Called on backdrop click and the header Close button. */
@@ -72,44 +71,31 @@ export function Modal({
         variants={panelVariants}
         initial="initial"
         animate="animate"
-        className={`relative flex flex-col overflow-hidden rounded-[6px] border border-border ${panelClassName}`}
+        className={`relative flex flex-col overflow-hidden rounded-xl border border-border ${panelClassName}`}
         style={{
           background:
-            'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
-          boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
+            'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 86%, transparent))',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.55)',
           ...panelStyle,
         }}
       >
-        <CornerMarks />
-
-        <header
-          className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(201,165,90,0.05), transparent)',
-          }}
-        >
+        <header className="flex items-start justify-between gap-3 border-b border-border px-6 py-4">
           <div className="min-w-0">
-            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+            <div className="mb-1.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
               <span
                 aria-hidden
-                className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-                style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
+                className="inline-block h-1 w-1 rounded-full bg-accent"
               />
               {eyebrow}
             </div>
             <h2
               id={titleId}
-              className={`m-0 text-[18px] font-semibold tracking-[0.02em] text-accent-hot ${titleClassName ?? ''}`}
-              style={{ textShadow: '0 0 16px rgba(224,184,100,0.15)' }}
+              className={`m-0 text-[17px] font-semibold tracking-[-0.01em] text-text ${titleClassName ?? ''}`}
             >
               {title}
             </h2>
             {subtitle != null && (
-              <div className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                {subtitle}
-              </div>
+              <div className="mt-1 text-[12px] text-muted">{subtitle}</div>
             )}
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -119,7 +105,7 @@ export function Modal({
               onClick={onClose}
               disabled={closeDisabled}
               aria-label="Close"
-              className="rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-md border border-border px-3 py-1.5 text-[12px] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-40"
             >
               Close
             </button>
