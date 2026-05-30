@@ -2,13 +2,10 @@ import { create } from 'zustand'
 import {
   classes,
   gameConfig,
-  getAugment,
   getClass,
   getItem,
-  getRuneword,
   skills as ALL_SKILLS,
 } from '../data'
-import { AUGMENT_MAX_LEVEL } from '../types'
 import type {
   AttributeKey,
   CustomStat,
@@ -51,12 +48,17 @@ import {
   type BuildSnapshot,
 } from '../utils/build/shareBuild'
 import { ADJ, findPath, reachableFromAny, START_IDS } from '../utils/tree/treeGraph'
+import * as itemEdits from '../views/gear/lib/itemEdits'
+
+export {
+  MAX_STARS,
+  maxSocketsFor,
+  BONUS_SOCKET_MOD_ID,
+} from './itemRules'
 
 type AttrMap = Record<AttributeKey, number>
 
 export const RAINBOW_MULTIPLIER = 1.5
-
-export const MAX_STARS = 5
 
 interface BuildState {
   classId: string | null
@@ -93,6 +95,7 @@ interface BuildActions {
   equipItem: (slot: SlotKey, baseId: string) => void
   unequipItem: (slot: SlotKey) => void
   replaceEquippedItem: (slot: SlotKey, equipped: EquippedItem) => void
+  commitEquippedItem: (slot: SlotKey, item: EquippedItem | null) => void
   setSocketCount: (slot: SlotKey, count: number) => void
   setSocketed: (slot: SlotKey, idx: number, socketableId: string | null) => void
   setSocketType: (slot: SlotKey, idx: number, type: SocketType) => void
@@ -221,26 +224,6 @@ function snapshotPatch(snap: BuildSnapshot) {
     killsPerSec: snap.killsPerSec,
     customStats: snap.customStats ?? [],
   }
-}
-
-const HARD_SOCKET_CAP = 6
-export const BONUS_SOCKET_MOD_ID = 'crystal_add_socket'
-
-function hasBonusSocketMod(
-  forgedMods?: { affixId: string }[] | null,
-): boolean {
-  return !!forgedMods?.some((m) => m.affixId === BONUS_SOCKET_MOD_ID)
-}
-
-export function maxSocketsFor(
-  baseId: string,
-  forgedMods?: { affixId: string }[] | null,
-): number {
-  const base = getItem(baseId)
-  if (!base) return 0
-  let cap = base.maxSockets ?? base.sockets ?? 0
-  if (hasBonusSocketMod(forgedMods)) cap += 1
-  return Math.min(cap, HARD_SOCKET_CAP)
 }
 
 export const useBuild = create<BuildState & BuildActions>((set, get) => ({
@@ -517,32 +500,10 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
 
   resetAttrs: () => set({ allocated: emptyAllocation() }),
 
-  // Enforces two-handed rule: offhand cannot coexist with a 2H weapon.
   equipItem: (slot, baseId) => {
-    const base = getItem(baseId)
-    if (!base) return
-    set((s) => {
-      if (slot === 'offhand') {
-        const cur = s.inventory.weapon
-        const w = cur ? getItem(cur.baseId) : undefined
-        if (w?.twoHanded) return s
-      }
-      const initial = Math.min(base.sockets ?? 0, maxSocketsFor(baseId))
-      const item: EquippedItem = {
-        baseId,
-        affixes: [],
-        socketCount: initial,
-        socketed: Array(initial).fill(null),
-        socketTypes: Array(initial).fill('normal'),
-        stars: 0,
-        forgedMods: [],
-      }
-      const next = { ...s.inventory, [slot]: item }
-      if (slot === 'weapon' && base.twoHanded) {
-        delete next.offhand
-      }
-      return { inventory: next }
-    })
+    const item = itemEdits.makeEquippedItem(baseId)
+    if (!item) return
+    get().commitEquippedItem(slot, item)
   },
 
   unequipItem: (slot) => {
@@ -560,50 +521,44 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     })
   },
 
+  commitEquippedItem: (slot, item) => {
+    set((s) => {
+      if (item === null) {
+        const next = { ...s.inventory }
+        delete next[slot]
+        return { inventory: next }
+      }
+      const base = getItem(item.baseId)
+      if (!base) return s
+      const next = { ...s.inventory, [slot]: item }
+      if (slot === 'weapon' && base.twoHanded) {
+        delete next.offhand
+      }
+      return { inventory: next }
+    })
+  },
+
   setSocketCount: (slot, count) => {
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
-      const max = maxSocketsFor(cur.baseId, cur.forgedMods)
-      const clamped = Math.max(0, Math.min(max, count))
-      const socketed = [...cur.socketed]
-      const socketTypes = [...cur.socketTypes]
-      while (socketed.length < clamped) {
-        socketed.push(null)
-        socketTypes.push('normal')
-      }
-      socketed.length = clamped
-      socketTypes.length = clamped
-      return {
-        inventory: {
-          ...s.inventory,
-          [slot]: { ...cur, socketCount: clamped, socketed, socketTypes },
-        },
-      }
+      return { inventory: { ...s.inventory, [slot]: itemEdits.withSocketCount(cur, count) } }
     })
   },
 
   setSocketed: (slot, idx, socketableId) => {
     set((s) => {
       const cur = s.inventory[slot]
-      if (!cur || idx < 0 || idx >= cur.socketCount) return s
-      const socketed = [...cur.socketed]
-      socketed[idx] = socketableId
-      return {
-        inventory: { ...s.inventory, [slot]: { ...cur, socketed } },
-      }
+      if (!cur) return s
+      return { inventory: { ...s.inventory, [slot]: itemEdits.withSocketed(cur, idx, socketableId) } }
     })
   },
 
   setSocketType: (slot, idx, type) => {
     set((s) => {
       const cur = s.inventory[slot]
-      if (!cur || idx < 0 || idx >= cur.socketCount) return s
-      const socketTypes = [...cur.socketTypes]
-      socketTypes[idx] = type
-      return {
-        inventory: { ...s.inventory, [slot]: { ...cur, socketTypes } },
-      }
+      if (!cur) return s
+      return { inventory: { ...s.inventory, [slot]: itemEdits.withSocketType(cur, idx, type) } }
     })
   },
 
@@ -611,11 +566,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
-      const clamped = Math.max(0, Math.min(MAX_STARS, Math.floor(count)))
-      if ((cur.stars ?? 0) === clamped) return s
-      return {
-        inventory: { ...s.inventory, [slot]: { ...cur, stars: clamped } },
-      }
+      return { inventory: { ...s.inventory, [slot]: itemEdits.withStars(cur, count) } }
     })
   },
 
@@ -906,65 +857,23 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
-      const base = getItem(cur.baseId)
-      const rw = getRuneword(runewordId)
-      if (!base || !rw) return s
-      if (base.rarity !== 'common') return s
-      if (!rw.allowedBaseTypes.includes(base.baseType)) return s
-      const cap = maxSocketsFor(cur.baseId)
-      if (rw.runes.length > cap) return s
-      const socketed: (string | null)[] = [...rw.runes]
-      const socketTypes = cur.socketTypes.slice(0, rw.runes.length)
-      while (socketTypes.length < rw.runes.length) socketTypes.push('normal')
-      return {
-        inventory: {
-          ...s.inventory,
-          [slot]: {
-            ...cur,
-            socketCount: rw.runes.length,
-            socketed,
-            socketTypes,
-          },
-        },
-      }
+      return { inventory: { ...s.inventory, [slot]: itemEdits.withRuneword(cur, runewordId) } }
     })
   },
 
-  // Preserves the level when reapplying the same augment; new augments default to level 1.
   setAugment: (augmentId) => {
     set((s) => {
-      const slot: SlotKey = 'armor'
-      const cur = s.inventory[slot]
+      const cur = s.inventory.armor
       if (!cur) return s
-      if (augmentId === null) {
-        const { augment: _drop, ...rest } = cur
-        void _drop
-        return { inventory: { ...s.inventory, [slot]: rest } }
-      }
-      if (!getAugment(augmentId)) return s
-      const level = cur.augment?.id === augmentId ? cur.augment.level : 1
-      return {
-        inventory: {
-          ...s.inventory,
-          [slot]: { ...cur, augment: { id: augmentId, level } },
-        },
-      }
+      return { inventory: { ...s.inventory, armor: itemEdits.withAugment(cur, augmentId) } }
     })
   },
 
   setAugmentLevel: (level) => {
     set((s) => {
-      const slot: SlotKey = 'armor'
-      const cur = s.inventory[slot]
-      if (!cur || !cur.augment) return s
-      const clamped = Math.max(1, Math.min(AUGMENT_MAX_LEVEL, Math.round(level)))
-      if (clamped === cur.augment.level) return s
-      return {
-        inventory: {
-          ...s.inventory,
-          [slot]: { ...cur, augment: { ...cur.augment, level: clamped } },
-        },
-      }
+      const cur = s.inventory.armor
+      if (!cur) return s
+      return { inventory: { ...s.inventory, armor: itemEdits.withAugmentLevel(cur, level) } }
     })
   },
 
@@ -972,23 +881,15 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
-      const base = getItem(cur.baseId)
-      if (base?.maxAffixes !== undefined && cur.affixes.length >= base.maxAffixes)
-        return s
-      const next: EquippedItem = {
-        ...cur,
-        affixes: [...cur.affixes, { affixId, tier, roll: 1 }],
-      }
-      return { inventory: { ...s.inventory, [slot]: next } }
+      return { inventory: { ...s.inventory, [slot]: itemEdits.withAffixAdded(cur, affixId, tier) } }
     })
   },
 
   removeAffix: (slot, index) => {
     set((s) => {
       const cur = s.inventory[slot]
-      if (!cur || index < 0 || index >= cur.affixes.length) return s
-      const affixes = cur.affixes.filter((_, i) => i !== index)
-      return { inventory: { ...s.inventory, [slot]: { ...cur, affixes } } }
+      if (!cur) return s
+      return { inventory: { ...s.inventory, [slot]: itemEdits.withAffixRemoved(cur, index) } }
     })
   },
 
@@ -1004,41 +905,19 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     })
   },
 
-  // Resyncs the socket arrays against the (possibly new) max socket count.
   addForgedMod: (slot, modId, tier) => {
     set((s) => {
       const cur = s.inventory[slot]
       if (!cur) return s
-      const forgedMods = [{ affixId: modId, tier, roll: 1 }]
-      const newMax = maxSocketsFor(cur.baseId, forgedMods)
-      const socketCount = Math.min(cur.socketCount, newMax)
-      const socketed = cur.socketed.slice(0, socketCount)
-      const socketTypes = cur.socketTypes.slice(0, socketCount)
-      return {
-        inventory: {
-          ...s.inventory,
-          [slot]: { ...cur, forgedMods, socketCount, socketed, socketTypes },
-        },
-      }
+      return { inventory: { ...s.inventory, [slot]: itemEdits.withForgedModAdded(cur, modId, tier) } }
     })
   },
 
   removeForgedMod: (slot, index) => {
     set((s) => {
       const cur = s.inventory[slot]
-      const list = cur?.forgedMods ?? []
-      if (!cur || index < 0 || index >= list.length) return s
-      const forgedMods = list.filter((_, i) => i !== index)
-      const newMax = maxSocketsFor(cur.baseId, forgedMods)
-      const socketCount = Math.min(cur.socketCount, newMax)
-      const socketed = cur.socketed.slice(0, socketCount)
-      const socketTypes = cur.socketTypes.slice(0, socketCount)
-      return {
-        inventory: {
-          ...s.inventory,
-          [slot]: { ...cur, forgedMods, socketCount, socketed, socketTypes },
-        },
-      }
+      if (!cur) return s
+      return { inventory: { ...s.inventory, [slot]: itemEdits.withForgedModRemoved(cur, index) } }
     })
   },
 

@@ -263,7 +263,11 @@ export function SocketsSection({
           </button>
         </>
       }
-      bodyClassName={equipped.socketCount > 0 ? 'p-2 space-y-1.5' : 'px-3 py-2'}
+      bodyClassName={
+        equipped.socketCount > 0
+          ? 'grid grid-cols-2 gap-1.5 p-2'
+          : 'px-3 py-2'
+      }
     >
       {equipped.socketCount > 0 ? (
         <>
@@ -296,7 +300,7 @@ export function SocketsSection({
           })}
           {base.sockets !== undefined &&
             base.sockets !== equipped.socketCount && (
-              <div className="pt-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint">
+              <div className="col-span-2 pt-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint">
                 base · {base.sockets}
               </div>
             )}

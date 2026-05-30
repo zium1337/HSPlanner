@@ -4,40 +4,40 @@ const SECTION_TONE: Record<
   SectionTone,
   {
     border: string
-    accentDot: string
+    dot: string
     label: string
     bg: string
   }
 > = {
   default: {
-    border: 'border-accent-deep/25',
-    accentDot: 'bg-accent-deep',
-    label: 'text-accent-hot/75',
-    bg: 'linear-gradient(180deg, rgba(28,29,36,0.55), rgba(13,14,18,0.35))',
+    border: 'border-border',
+    dot: 'bg-accent',
+    label: 'text-text',
+    bg: 'var(--color-panel-2)',
   },
   satanic: {
-    border: 'border-red-500/30',
-    accentDot: 'bg-red-500',
-    label: 'text-red-300/85',
-    bg: 'linear-gradient(180deg, rgba(120,30,30,0.18), rgba(60,15,15,0.12))',
+    border: 'border-stat-red/25',
+    dot: 'bg-stat-red',
+    label: 'text-stat-red/90',
+    bg: 'color-mix(in srgb, var(--color-stat-red) 6%, var(--color-panel-2))',
   },
   angelic: {
-    border: 'border-yellow-200/30',
-    accentDot: 'bg-yellow-200',
-    label: 'text-yellow-200/85',
-    bg: 'linear-gradient(180deg, rgba(120,100,40,0.18), rgba(50,40,15,0.12))',
+    border: 'border-yellow-200/25',
+    dot: 'bg-yellow-200',
+    label: 'text-yellow-200/90',
+    bg: 'color-mix(in srgb, #ece59a 6%, var(--color-panel-2))',
   },
   set: {
-    border: 'border-green-500/30',
-    accentDot: 'bg-green-400',
-    label: 'text-green-300/85',
-    bg: 'linear-gradient(180deg, rgba(40,90,55,0.18), rgba(15,40,25,0.12))',
+    border: 'border-stat-green/25',
+    dot: 'bg-stat-green',
+    label: 'text-stat-green/90',
+    bg: 'color-mix(in srgb, var(--color-stat-green) 6%, var(--color-panel-2))',
   },
   warning: {
-    border: 'border-amber-500/30',
-    accentDot: 'bg-amber-400',
-    label: 'text-amber-200/85',
-    bg: 'linear-gradient(180deg, rgba(120,90,30,0.16), rgba(50,40,15,0.1))',
+    border: 'border-amber-500/25',
+    dot: 'bg-amber-400',
+    label: 'text-amber-200/90',
+    bg: 'color-mix(in srgb, #f5b450 6%, var(--color-panel-2))',
   },
 }
 
@@ -54,30 +54,29 @@ export function SectionCard({
   bodyClassName?: string
   children?: React.ReactNode
 }) {
-  // Shared "section card" wrapper used by every editor block in the GearSlotModal right column. Renders a panel-2 gradient frame with a mono-uppercase header (rotated diamond accent dot + label + optional right-slot for counts/buttons) and a configurable body, so SocketsSection/StarsSection/AffixesSection/etc. all share the same dossier-card visual language as the modal shell.
+  // Shared editor-block frame for the GearSlotModal config column: a flat,
+  // hairline-bordered panel with a sentence-case title (small tone dot + label
+  // + optional right-slot) and a configurable body. Quiet-modern styling —
+  // gold/tone colour is reserved for the dot and semantic tones, not the frame.
   const t = SECTION_TONE[tone]
   return (
     <div
-      className={`relative overflow-hidden rounded-sm border ${t.border}`}
+      className={`relative overflow-hidden rounded-lg border ${t.border}`}
       style={{ background: t.bg }}
     >
       <header
-        className={`flex items-center justify-between gap-2 border-b ${t.border} px-3.5 py-2`}
+        className={`flex items-center justify-between gap-2 border-b ${t.border} px-4 py-2.5`}
       >
         <div className="flex items-center gap-2">
           <span
-            className={`inline-block h-1 w-1 rotate-45 ${t.accentDot}`}
+            className={`inline-block h-1.5 w-1.5 rounded-full ${t.dot}`}
             aria-hidden="true"
           />
-          <span
-            className={`font-mono text-[10px] uppercase tracking-[0.18em] ${t.label}`}
-          >
+          <span className={`text-[12px] font-medium tracking-[0.01em] ${t.label}`}>
             {label}
           </span>
         </div>
-        {rightSlot && (
-          <div className="flex items-center gap-2">{rightSlot}</div>
-        )}
+        {rightSlot && <div className="flex items-center gap-2">{rightSlot}</div>}
       </header>
       {children !== undefined && (
         <div className={bodyClassName}>{children}</div>
@@ -93,26 +92,21 @@ export function ConfigSectionHeader({
   label: string
   accent?: string
 }) {
-  // Sticky header that sits at the top of the GearSlotModal right column, mirroring the small-caps "GEAR SLOT · X" treatment used by the modal's main header but scoped to whatever the right pane is currently showing (item configuration / compare view).
+  // Sticky header at the top of the GearSlotModal config column.
   return (
     <div
-      className="sticky top-0 z-1 flex items-center gap-2 border-b border-accent-deep/30 px-4 py-2"
+      className="sticky top-0 z-1 flex items-center gap-2 border-b border-border px-4 py-2.5"
       style={{ background: 'var(--color-panel-2)' }}
     >
       <span
-        className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-        style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
+        className="inline-block h-1.5 w-1.5 rounded-full bg-accent"
         aria-hidden="true"
       />
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-        {label}
-      </span>
+      <span className="text-[12px] font-medium text-text">{label}</span>
       {accent && (
         <>
           <span className="text-faint">·</span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot truncate">
-            {accent}
-          </span>
+          <span className="truncate text-[12px] text-accent-hot">{accent}</span>
         </>
       )}
     </div>
@@ -128,33 +122,27 @@ export function ConfigEmptyState({
   hint: string
   tone?: 'default' | 'warning'
 }) {
-  // Centered empty/locked state for the GearSlotModal right column: rotated-diamond glyph in a subtle accent ring, a strong title, and a mono-uppercase hint. Visually echoes the modal's corner-bracket framing so the empty pane never looks blank or unfinished.
+  // Centered empty/locked state for the GearSlotModal config column.
   const isWarning = tone === 'warning'
-  const ring = isWarning ? 'border-amber-400/40' : 'border-accent-deep/40'
-  const glow = isWarning ? 'rgba(245,180,80,0.16)' : 'rgba(201,165,90,0.14)'
-  const iconColor = isWarning ? 'bg-amber-400' : 'bg-accent-deep'
-  const titleColor = isWarning ? 'text-amber-200' : 'text-muted'
+  const ring = isWarning ? 'border-amber-400/40' : 'border-border-2'
+  const iconColor = isWarning ? 'bg-amber-400' : 'bg-accent'
+  const titleColor = isWarning ? 'text-amber-200' : 'text-text'
 
   return (
-    <div className="flex flex-1 items-center justify-center p-8 text-center text-faint">
+    <div className="flex flex-1 items-center justify-center p-8 text-center">
       <div className="flex flex-col items-center">
         <div
-          className={`mb-4 flex h-14.5 w-14.5 items-center justify-center rounded-full border border-dashed ${ring}`}
-          style={{
-            background: `radial-gradient(circle, ${glow}, transparent 70%)`,
-          }}
+          className={`mb-4 flex h-12 w-12 items-center justify-center rounded-full border ${ring}`}
         >
           <span
-            className={`block h-3 w-3 rotate-45 ${iconColor}`}
+            className={`block h-2 w-2 rounded-full ${iconColor}`}
             aria-hidden="true"
           />
         </div>
-        <div
-          className={`mb-1.5 text-[14px] font-semibold tracking-[0.08em] ${titleColor}`}
-        >
+        <div className={`mb-1.5 text-[14px] font-semibold tracking-[0.01em] ${titleColor}`}>
           {title}
         </div>
-        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+        <div className="max-w-[28ch] text-[12px] leading-relaxed text-muted">
           {hint}
         </div>
       </div>

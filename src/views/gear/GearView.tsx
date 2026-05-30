@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import type { PickerRow } from '../../components/PickerModal'
 import { gameConfig, gems, getItem, items, runes } from '../../data'
 import { useBuild } from '../../store/build'
@@ -12,32 +12,13 @@ import { GearPanel, SlotRow } from './SlotRail'
 import { GearSlotModal } from './GearSlotModal'
 
 export default function GearView() {
-  // Gear management view: shows every equipment slot, the relic/charm grid (with backtracking-based packing) and the per-slot edit panel for picking items, applying runewords, choosing sockets/gems/runes, setting stars, editing affix rolls, applying forge mods, and equipping angelic augments. The main inventory editor.
   const inventory = useBuild((s) => s.inventory)
-  const equipItem = useBuild((s) => s.equipItem)
-  const unequipItem = useBuild((s) => s.unequipItem)
-  const setSocketCount = useBuild((s) => s.setSocketCount)
-  const setSocketed = useBuild((s) => s.setSocketed)
-  const setSocketType = useBuild((s) => s.setSocketType)
-  const setStars = useBuild((s) => s.setStars)
-  const addAffix = useBuild((s) => s.addAffix)
-  const removeAffix = useBuild((s) => s.removeAffix)
-  const addForgedMod = useBuild((s) => s.addForgedMod)
-  const removeForgedMod = useBuild((s) => s.removeForgedMod)
-  const applyRuneword = useBuild((s) => s.applyRuneword)
+  const commitEquippedItem = useBuild((s) => s.commitEquippedItem)
 
   const [activeSlot, setActiveSlot] = useState<SlotKey | null>(null)
-  const [charmFitError, setCharmFitError] = useState<string | null>(null)
-  const charmErrorTimer = useRef<number | null>(null)
-  useEffect(
-    () => () => {
-      if (charmErrorTimer.current !== null)
-        window.clearTimeout(charmErrorTimer.current)
-    },
-    [],
-  )
+  const handleModalClose = useCallback(() => setActiveSlot(null), [])
 
-  const tryEquipCharm = (slot: SlotKey, baseId: string): boolean => {
+  const charmFits = (slot: SlotKey, baseId: string): boolean => {
     const base = getItem(baseId)
     if (!base) return false
     const newW = base.width ?? 1
@@ -48,32 +29,14 @@ export default function GearView() {
       const eq = inventory[cs.key]
       if (!eq) continue
       const b = getItem(eq.baseId)
-      others.push({
-        slotKey: cs.key,
-        w: b?.width ?? 1,
-        h: b?.height ?? 1,
-      })
+      others.push({ slotKey: cs.key, w: b?.width ?? 1, h: b?.height ?? 1 })
     }
     const candidate = { slotKey: slot, w: newW, h: newH }
     const before = packCharms(others)
     const after = packCharms([...others, candidate])
     const candidateOverflowed = after.overflow.includes(slot)
     const overflowGrew = after.overflow.length > before.overflow.length
-    if (candidateOverflowed || overflowGrew) {
-      const name = base.name ?? baseId
-      setCharmFitError(
-        `${name} (${newW}×${newH}) won't fit — free up space first.`,
-      )
-      if (charmErrorTimer.current !== null)
-        window.clearTimeout(charmErrorTimer.current)
-      charmErrorTimer.current = window.setTimeout(
-        () => setCharmFitError(null),
-        4000,
-      )
-      return false
-    }
-    setCharmFitError(null)
-    return true
+    return !(candidateOverflowed || overflowGrew)
   }
 
   const socketPickerRows: PickerRow[] = useMemo(() => {
@@ -184,7 +147,7 @@ export default function GearView() {
           charmSlots={charmSlots}
           activeSlot={activeSlot}
           onSelect={(s) => setActiveSlot(s)}
-          fitError={charmFitError}
+          fitError={null}
         />
       </div>
 
@@ -197,28 +160,21 @@ export default function GearView() {
           equipped={inventory[activeSlot]}
           offhandLocked={offhandLocked}
           socketPickerRows={socketPickerRows}
-          onEquip={(id) => {
-            if (activeSlot.startsWith('charm_')) {
-              if (!tryEquipCharm(activeSlot, id)) return
+          onCommit={(item) => {
+            if (
+              item &&
+              activeSlot.startsWith('charm_') &&
+              !charmFits(activeSlot, item.baseId)
+            ) {
+              const base = getItem(item.baseId)
+              const w = base?.width ?? 1
+              const h = base?.height ?? 1
+              return `${base?.name ?? 'Item'} (${w}×${h}) won't fit — free up space first.`
             }
-            equipItem(activeSlot, id)
+            commitEquippedItem(activeSlot, item)
+            return null
           }}
-          onUnequip={() => {
-            unequipItem(activeSlot)
-            setActiveSlot(null)
-          }}
-          onSocketCount={(n) => setSocketCount(activeSlot, n)}
-          onSocketed={(idx, id) => setSocketed(activeSlot, idx, id)}
-          onSocketType={(idx, t) => setSocketType(activeSlot, idx, t)}
-          onSetStars={(n) => setStars(activeSlot, n)}
-          onAddAffix={(affixId, tier) => addAffix(activeSlot, affixId, tier)}
-          onRemoveAffix={(idx) => removeAffix(activeSlot, idx)}
-          onAddForgedMod={(modId, tier) =>
-            addForgedMod(activeSlot, modId, tier)
-          }
-          onRemoveForgedMod={(idx) => removeForgedMod(activeSlot, idx)}
-          onApplyRuneword={(rwId) => applyRuneword(activeSlot, rwId)}
-          onClose={() => setActiveSlot(null)}
+          onClose={handleModalClose}
         />
       )}
     </div>
