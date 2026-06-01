@@ -1,16 +1,3 @@
-// Regenerates the parity snapshot. Reads tests/fixtures/parity.json, recomputes
-// each non-skipped scenario's `output` through the same entry point the parity
-// test asserts against (calc_build_performance), and prints the fresh fixture
-// JSON to stdout. Skipped/output-less entries pass through verbatim.
-//
-//   cd src-tauri
-//   cargo run --example dump_parity > tests/fixtures/parity.json.new
-//   mv tests/fixtures/parity.json.new tests/fixtures/parity.json
-//
-// (or `npm run parity:regen` from the repo root). After regenerating, inspect
-// `git diff` before committing. See docs/PARITY-HARNESS.md. Mirrors the fixture
-// shape and entry point in tests/parity.rs.
-
 use serde_json::Value;
 
 const FIXTURE_PATH: &str = "tests/fixtures/parity.json";

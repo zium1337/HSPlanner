@@ -1,8 +1,6 @@
 import starScalingData from '../../data/star-scaling.json'
 
 // Per-star = % multiplier on base, or flat staircase for skill-rank affixes.
-// Single source of truth shared with Rust calc/star_scaling.rs via
-// src/data/star-scaling.json. Source: listamodow-2.txt.
 
 export type StarScaleConfig =
   | { kind: 'percent'; perStar: number }
@@ -23,11 +21,9 @@ const DATA = starScalingData as unknown as StarScalingData
 
 const DEFAULT_PERCENT_PER_STAR = 0
 
-// listamodow-2.txt: "ITEM SPECIFIC 2* = +1 | 4* = +2 | 5* = +3".
 export const ITEM_SPECIFIC_STAIRCASE: Record<number, number> =
   DATA.itemSpecificStaircase
 
-// listamodow-2.txt for fire_skills/cold_skills/etc: "na trzech * +1 na pieciu * +2".
 export const FLAT_SKILL_STAIRCASE: Record<number, number> =
   DATA.flatSkillStaircase
 
@@ -70,7 +66,6 @@ export function statStarFlatBonus(
   return 0
 }
 
-// Synthetic key used by skillBonuses; follows item-specific staircase (2*=+1, 4*=+2, 5*=+3).
 export function itemGrantedSkillRankFlatBonus(stars: number | undefined): number {
   if (!stars || stars <= 0) return 0
   return ITEM_SPECIFIC_STAIRCASE[stars] ?? 0

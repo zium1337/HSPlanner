@@ -12,8 +12,7 @@ pub enum StarScaleConfig {
     Glitch,
 }
 
-// Single source of truth shared with the TS calc layer (src/data/star-scaling.json),
-// baked in at compile time so there is no runtime filesystem access.
+// Single source of truth shared with the TS calc layer (src/data/star-scaling.json).
 const STAR_SCALING_JSON: &str = include_str!("../../../src/data/star-scaling.json");
 
 #[derive(Deserialize, Clone, Copy)]

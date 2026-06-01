@@ -123,7 +123,7 @@ impl From<SkillDto> for calc::Skill {
 
 // ---------- passive_stats_at_rank / mana_cost_at_rank ----------
 // Thin commands over calc/passive.rs so the UI reads passive-rank stats and
-// mana cost from the same source the engine uses, not a TS mirror.
+// mana cost from the same source the engine uses.
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
