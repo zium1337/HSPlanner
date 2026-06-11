@@ -139,21 +139,6 @@ pub struct SkillRef {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ClassInfo {
-    pub id: String,
-    pub name: String,
-    #[serde(default)]
-    pub base_attributes: HashMap<String, f64>,
-    #[serde(default)]
-    pub base_stats: HashMap<String, f64>,
-    #[serde(default)]
-    pub stats_per_level: HashMap<String, f64>,
-    #[serde(default)]
-    pub start_ids: Vec<u32>,
-}
-
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct GameConfig {
     #[serde(default)]
     pub attribute_keys: Vec<String>,
@@ -170,10 +155,6 @@ pub struct GameConfig {
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PrecomputedInput {
-    pub class: Option<ClassInfo>,
-    pub level: u32,
-    #[serde(default)]
-    pub allocated_attributes: HashMap<String, f64>,
     // Unaggregated per-key (min,max) contributions; engine must aggregate once
     // to match TS `computeBuildStatsCore`.
     #[serde(default)]
