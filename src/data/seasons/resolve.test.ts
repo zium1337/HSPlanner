@@ -5,7 +5,9 @@ import {
   applyListPatch,
   applyRecordMergePatch,
   applyRecordReplacePatch,
+  applyTreePatch,
 } from './resolve'
+import type { HeroSiegeTree } from './patchTypes'
 
 describe('applyListPatch', () => {
   const base = [
@@ -145,6 +147,91 @@ describe('applyGameConfigPatch', () => {
     )
     expect(r.errors).toEqual([])
     expect((r.data as { stats: unknown[] }).stats).toHaveLength(1)
+  })
+})
+
+describe('applyTreePatch', () => {
+  const base: HeroSiegeTree = {
+    viewBox: '0 0 100 100',
+    nodes: [
+      [0, 10, 10, 7],
+      [2, 20, 20, 6],
+      [4, 30, 30, 6],
+    ],
+    edges: [
+      [10, 10, 20, 20],
+      [10, 10, 20, 20],
+      [20, 20, 30, 30],
+    ],
+  }
+
+  it('returns base when patch is undefined', () => {
+    expect(applyTreePatch(base, undefined, 'tree').data).toBe(base)
+  })
+
+  it('removes a node together with its edges', () => {
+    const r = applyTreePatch(base, { removeNodes: [4] }, 'tree')
+    expect(r.errors).toEqual([])
+    expect(r.data.nodes.map((n) => n[0])).toEqual([0, 2])
+    expect(r.data.edges).toEqual([[10, 10, 20, 20]])
+  })
+
+  it('moving a node keeps its edges attached at new coords', () => {
+    const r = applyTreePatch(base, { changeNodes: { '2': [25, 25, 6] } }, 'tree')
+    expect(r.errors).toEqual([])
+    expect(r.data.edges).toEqual([
+      [10, 10, 25, 25],
+      [25, 25, 30, 30],
+    ])
+  })
+
+  it('adds node and edge by id pair', () => {
+    const r = applyTreePatch(
+      base,
+      { addNodes: [[6, 40, 40, 6]], addEdges: [[4, 6]] },
+      'tree',
+    )
+    expect(r.errors).toEqual([])
+    expect(r.data.nodes.map((n) => n[0])).toEqual([0, 2, 4, 6])
+    expect(r.data.edges).toContainEqual([30, 30, 40, 40])
+  })
+
+  it('removes an edge by id pair regardless of direction', () => {
+    const r = applyTreePatch(base, { removeEdges: [[2, 0]] }, 'tree')
+    expect(r.errors).toEqual([])
+    expect(r.data.edges).toEqual([[20, 20, 30, 30]])
+  })
+
+  it('reports invalid operations', () => {
+    const r = applyTreePatch(
+      base,
+      {
+        removeNodes: [999],
+        changeNodes: { '888': [1, 1, 1] },
+        addNodes: [[0, 1, 1, 1]],
+        addEdges: [[0, 777]],
+        removeEdges: [[0, 4]],
+      },
+      'tree',
+    )
+    expect(r.errors).toEqual([
+      'tree: removeNodes unknown id 999',
+      'tree: changeNodes unknown id 888',
+      'tree: addNodes duplicates id 0',
+      'tree: removeEdges unknown edge (0, 4)',
+      'tree: addEdges endpoint unknown (0, 777)',
+    ])
+  })
+
+  it('reports base edges that do not resolve to nodes', () => {
+    const broken: HeroSiegeTree = { ...base, edges: [[1, 1, 2, 2]] }
+    const r = applyTreePatch(broken, { removeNodes: [4] }, 'tree')
+    expect(r.errors).toEqual(['tree: base edge does not resolve (1, 1)-(2, 2)'])
+  })
+
+  it('reports node position collisions introduced by a patch', () => {
+    const r = applyTreePatch(base, { changeNodes: { '2': [10.01, 10.01, 6] } }, 'tree')
+    expect(r.errors).toEqual(['tree: nodes 0 and 2 collide at position 100_100'])
   })
 })
 
