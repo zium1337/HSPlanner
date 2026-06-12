@@ -8,9 +8,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import treeBackground from '../assets/atlas/Incarnation_Background.png'
-import nodeIconsMap from '../data/node-icons.json'
-import treeData from '../data/hero-siege-tree.json'
-import { getAffix, getGem, getRune } from '../data'
+import { getAffix, getGem, getRune, heroSiegeTree, nodeIcons } from '../data'
 import { useBuild } from '../store/build'
 import {
   ADJ,
@@ -87,15 +85,15 @@ function classifyTier(r: number): TreeNode['tier'] {
   return 'minor'
 }
 
-const VIEW_BOX = treeData.viewBox
-const NODES: TreeNode[] = (treeData.nodes as RawNode[]).map(([id, x, y, r]) => ({
+const VIEW_BOX = heroSiegeTree.viewBox
+const NODES: TreeNode[] = (heroSiegeTree.nodes as RawNode[]).map(([id, x, y, r]) => ({
   id,
   x,
   y,
   r,
   tier: classifyTier(r),
 }))
-const EDGES: RawEdge[] = treeData.edges as RawEdge[]
+const EDGES: RawEdge[] = heroSiegeTree.edges as RawEdge[]
 
 const [vbX = 0, vbY = 0, vbW = 1000, vbH = 800] = VIEW_BOX.split(' ').map(Number)
 
@@ -125,7 +123,7 @@ for (const [p, url] of Object.entries(NODE_ICON_FILES)) {
   NODE_ICON_URL_BY_KEY[key] = url
 }
 
-const NODE_ICON_KEY_BY_ID = nodeIconsMap as Record<string, string>
+const NODE_ICON_KEY_BY_ID: Record<string, string> = nodeIcons
 const NODE_ICONS: { id: number; x: number; y: number; r: number; href: string }[] =
   NODES.flatMap((n) => {
     const key = NODE_ICON_KEY_BY_ID[String(n.id)]
