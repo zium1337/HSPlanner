@@ -15,6 +15,8 @@ mod includes {
     include!(concat!(env!("OUT_DIR"), "/data_includes.rs"));
 }
 
+pub(crate) use includes::SEASON_PATCHES;
+
 const GEAR_SLOTS: &[&str] = &[
     "weapon",
     "offhand",
