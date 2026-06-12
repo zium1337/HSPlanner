@@ -1,6 +1,7 @@
 use once_cell::sync::Lazy;
 use serde::Deserialize;
 use std::collections::HashMap;
+use std::sync::Mutex;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum StarScaleConfig {
@@ -57,22 +58,71 @@ struct StarScalingData {
     map: HashMap<String, StarScaleConfigDto>,
 }
 
-static DATA: Lazy<StarScalingData> = Lazy::new(|| {
-    serde_json::from_str(STAR_SCALING_JSON).expect("src/data/star-scaling.json must be valid")
-});
+struct StarScaling {
+    flat_skill_staircase: Vec<f64>,
+    item_specific_staircase: Vec<f64>,
+    map: HashMap<String, StarScaleConfig>,
+}
 
-static STAR_SCALE_MAP: Lazy<HashMap<String, StarScaleConfig>> = Lazy::new(|| {
-    DATA.map
-        .iter()
-        .map(|(k, v)| (k.clone(), (*v).into()))
-        .collect()
-});
+static STAR_SCALING_BY_SEASON: Lazy<Mutex<HashMap<String, &'static StarScaling>>> =
+    Lazy::new(|| Mutex::new(HashMap::new()));
+
+// Per-season star scaling resolved from the thread-local season scope. On
+// patch errors the base JSON is used and the errors are logged (never silent).
+fn configs() -> &'static StarScaling {
+    let mut season = crate::calc::season::current_season_id();
+    if !crate::calc::season::known_season_id(&season) {
+        season = crate::calc::season::DEFAULT_SEASON_ID.to_string();
+    }
+    {
+        let cache = STAR_SCALING_BY_SEASON
+            .lock()
+            .expect("star scaling cache poisoned");
+        if let Some(c) = cache.get(&season) {
+            return c;
+        }
+    }
+    let patches = crate::calc::season::patches_for(&season);
+    let base: serde_json::Value =
+        serde_json::from_str(STAR_SCALING_JSON).expect("src/data/star-scaling.json must be valid");
+    let value = match patches.get("star-scaling") {
+        Some(p) => {
+            match crate::calc::season::apply_record_patch(&base, p, "star-scaling", true) {
+                Ok(v) => v,
+                Err(errs) => {
+                    for e in errs {
+                        log::error!("season patch error: {e}");
+                    }
+                    base
+                }
+            }
+        }
+        None => base,
+    };
+    let dto: StarScalingData =
+        serde_json::from_value(value).expect("invalid star-scaling shape after patch");
+    let converted = StarScaling {
+        flat_skill_staircase: dto.flat_skill_staircase,
+        item_specific_staircase: dto.item_specific_staircase,
+        map: dto.map.into_iter().map(|(k, v)| (k, v.into())).collect(),
+    };
+    let mut cache = STAR_SCALING_BY_SEASON
+        .lock()
+        .expect("star scaling cache poisoned");
+    if let Some(c) = cache.get(&season) {
+        return c;
+    }
+    let leaked: &'static StarScaling = Box::leak(Box::new(converted));
+    cache.insert(season, leaked);
+    leaked
+}
 
 pub fn get_star_scale_config(stat_key: Option<&str>) -> StarScaleConfig {
     let Some(key) = stat_key else {
         return StarScaleConfig::None;
     };
-    STAR_SCALE_MAP
+    configs()
+        .map
         .get(key)
         .copied()
         .unwrap_or(StarScaleConfig::None)
@@ -101,17 +151,14 @@ pub fn stat_star_flat_bonus(stat_key: Option<&str>, stars: Option<u32>) -> f64 {
     if s == 0 {
         return 0.0;
     }
+    let c = configs();
     match get_star_scale_config(stat_key) {
-        StarScaleConfig::FlatSkillStaircase => DATA
-            .flat_skill_staircase
-            .get(s as usize)
-            .copied()
-            .unwrap_or(0.0),
-        StarScaleConfig::ItemSpecificStaircase => DATA
-            .item_specific_staircase
-            .get(s as usize)
-            .copied()
-            .unwrap_or(0.0),
+        StarScaleConfig::FlatSkillStaircase => {
+            c.flat_skill_staircase.get(s as usize).copied().unwrap_or(0.0)
+        }
+        StarScaleConfig::ItemSpecificStaircase => {
+            c.item_specific_staircase.get(s as usize).copied().unwrap_or(0.0)
+        }
         _ => 0.0,
     }
 }
@@ -121,7 +168,8 @@ pub fn item_granted_skill_rank_flat_bonus(stars: Option<u32>) -> f64 {
     if s == 0 {
         return 0.0;
     }
-    DATA.item_specific_staircase
+    configs()
+        .item_specific_staircase
         .get(s as usize)
         .copied()
         .unwrap_or(0.0)
