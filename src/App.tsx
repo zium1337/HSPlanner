@@ -11,7 +11,7 @@ import { HoverProvider } from "./contexts/HoverProvider";
 import Logo from "./components/Logo";
 import ShareButton from "./components/ShareButton";
 import StorageErrorBanner from "./components/StorageErrorBanner";
-import { classes, getClass } from "./data";
+import { activeSeasonId, classes, getClass } from "./data";
 import { useBuild } from "./store/build";
 import { listSavedBuilds } from "./utils/build/savedBuilds";
 import {
@@ -116,7 +116,7 @@ function App() {
           },
         );
         try {
-          await invoke<boolean>("calc_warmup");
+          await invoke<boolean>("calc_warmup", { season: activeSeasonId });
         } finally {
           unlisten();
         }

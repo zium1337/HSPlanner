@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
-import { gameConfig, getSkillsByClass } from '../../data'
+import { activeSeasonId, gameConfig, getSkillsByClass } from '../../data'
 import type { Skill } from '../../types'
 import { normalizeSkillName, rangedMax, rangedMin } from '../item/stats'
 import { computeBuildStatsAsync } from '../../lib/calc/bridge'
@@ -171,6 +171,7 @@ export async function suggestNodesNative(
     skillRanksById: deps.skillRanks ?? {},
     skillProjectiles: deps.skillProjectiles ?? {},
     killsPerSec: deps.killsPerSec ?? 0,
+    season: activeSeasonId,
   }
 
   let unlisten: UnlistenFn | null = null

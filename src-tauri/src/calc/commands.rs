@@ -281,8 +281,10 @@ pub fn display_values_impl(input: &DisplayValuesInput) -> DisplayValuesOutput {
     }
 }
 
+// Star scaling reads per-season config, so the season rides as a command param.
 #[tauri::command]
-pub fn display_values(input: DisplayValuesInput) -> DisplayValuesOutput {
+pub fn display_values(input: DisplayValuesInput, season: Option<String>) -> DisplayValuesOutput {
+    let _scope = crate::calc::season::SeasonScope::enter(season);
     display_values_impl(&input)
 }
 
@@ -318,7 +320,8 @@ pub fn classify_tree_nodes_impl() -> HashMap<String, NodeLineClassification> {
 }
 
 #[tauri::command]
-pub fn classify_tree_nodes() -> HashMap<String, NodeLineClassification> {
+pub fn classify_tree_nodes(season: Option<String>) -> HashMap<String, NodeLineClassification> {
+    let _scope = crate::calc::season::SeasonScope::enter(season);
     classify_tree_nodes_impl()
 }
 
@@ -335,6 +338,8 @@ pub struct SubskillAggregationInput {
     pub subskill_ranks: HashMap<String, u32>,
     #[serde(default)]
     pub enemy_conditions: HashMap<String, bool>,
+    #[serde(default)]
+    pub season: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -385,6 +390,7 @@ fn subskill_aggregation_impl(input: &SubskillAggregationInput) -> SubskillAggreg
 
 #[tauri::command]
 pub fn subskill_aggregation(input: SubskillAggregationInput) -> SubskillAggregationOutput {
+    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     subskill_aggregation_impl(&input)
 }
 
@@ -710,10 +716,13 @@ pub struct BuildPerformanceInput {
     pub proc_toggles: HashMap<String, bool>,
     #[serde(default)]
     pub kills_per_sec: f64,
+    #[serde(default)]
+    pub season: Option<String>,
 }
 
 #[tauri::command]
 pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance {
+    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     let deps = BuildPerformanceDeps {
         class_id: input.class_id.as_deref(),
         level: input.level,
@@ -775,8 +784,10 @@ pub fn run_warmup<F: FnMut(u32, u32)>(mut on_progress: F) -> bool {
 /// Tauri command: runs the warm-up off the event loop so the webview stays
 /// responsive, emitting "warmup-progress" for the boot splash.
 #[tauri::command]
-pub async fn calc_warmup(app: tauri::AppHandle) -> bool {
+pub async fn calc_warmup(app: tauri::AppHandle, season: Option<String>) -> bool {
+    // Scope lives inside the blocking closure so it never crosses an .await.
     tauri::async_runtime::spawn_blocking(move || {
+        let _scope = crate::calc::season::SeasonScope::enter(season);
         run_warmup(|current, total| {
             let _ = app.emit("warmup-progress", WarmupProgress { current, total });
         })
@@ -789,6 +800,7 @@ pub async fn calc_warmup(app: tauri::AppHandle) -> bool {
 /// the tooltips. Reuses `BuildPerformanceInput`; damage/proc fields are unused here.
 #[tauri::command]
 pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
+    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     let stats_input = BuildStatsInput {
         class_id: input.class_id.as_deref(),
         level: input.level,
@@ -830,6 +842,7 @@ pub enum StatBreakdownKind {
 
 #[tauri::command]
 pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
+    let _scope = crate::calc::season::SeasonScope::enter(input.deps.season.clone());
     let stats_input = BuildStatsInput {
         class_id: input.deps.class_id.as_deref(),
         level: input.deps.level,
@@ -925,6 +938,7 @@ mod tests {
             skill_id: "no_such_skill".to_string(),
             subskill_ranks: HashMap::from([("no_such_skill:sub".to_string(), 3)]),
             enemy_conditions: HashMap::new(),
+            season: None,
         };
         let out = subskill_aggregation_impl(&input);
         assert!(out.stats.is_empty());
