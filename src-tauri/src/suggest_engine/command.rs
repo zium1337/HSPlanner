@@ -20,7 +20,10 @@ pub async fn suggest_tree_nodes(
 ) -> SuggestResult {
     // Run the CPU-heavy greedy/DPS loop on a blocking thread so the Tauri event
     // loop (and therefore the webview) stays responsive while it iterates.
+    // SeasonScope installed inside the closure so it never crosses an .await.
+    let season = input.season.clone();
     join_or_default(tauri::async_runtime::spawn_blocking(move || {
+        let _scope = crate::calc::season::SeasonScope::enter(season);
         suggest(&input, Some(&app))
     }))
     .await

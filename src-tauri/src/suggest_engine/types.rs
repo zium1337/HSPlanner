@@ -192,6 +192,8 @@ pub struct PrecomputedInput {
     pub skill_projectiles: HashMap<String, u32>,
     #[serde(default)]
     pub kills_per_sec: f64,
+    #[serde(default)]
+    pub season: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
