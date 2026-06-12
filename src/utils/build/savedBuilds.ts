@@ -4,6 +4,7 @@ import {
   encodeBuildToShare,
 } from './shareBuild'
 import { readStorage, readStorageWithLegacy, writeStorage } from '../storage'
+import { activeSeasonId } from '../../data'
 
 const STORAGE_KEY_V1 = 'hsplanner.savedBuilds.v1'
 const STORAGE_KEY_V2 = 'hsplanner.savedBuilds.v2'
@@ -34,6 +35,8 @@ export class StorageCapacityError extends StorageWriteError {
     this.name = 'StorageCapacityError'
   }
 }
+
+const LEGACY_BUILD_SEASON = 's9'
 
 const MAX_BUILDS = 1_000
 const MAX_PROFILES_PER_BUILD = 100
@@ -71,6 +74,7 @@ export interface SavedBuild {
   folderId: string | null
   favorite: boolean
   tags: string[]
+  season: string
 }
 
 /** v3 storage shape: builds and folders co-located in one object. */
@@ -193,6 +197,10 @@ function cleanBuild(
     folderId,
     favorite: b.favorite === true,
     tags: sanitizeTags(b.tags),
+    season:
+      typeof (b as { season?: unknown }).season === 'string'
+        ? (b as { season: string }).season
+        : LEGACY_BUILD_SEASON,
   }
 }
 
@@ -309,6 +317,7 @@ function migrateV1(list: SavedBuildV1[]): SavedBuild[] {
       folderId: null,
       favorite: false,
       tags: [],
+      season: LEGACY_BUILD_SEASON,
     }
   })
 }
@@ -441,6 +450,7 @@ export function createBuild(
     folderId: validFolderId,
     favorite: false,
     tags: [],
+    season: activeSeasonId,
   }
   library.builds.push(record)
   writeLibrary(library)
@@ -477,6 +487,7 @@ export function duplicateBuild(buildId: string): SavedBuild | null {
     folderId: src.folderId,
     favorite: false,
     tags: [...src.tags],
+    season: src.season,
   }
   library.builds.push(record)
   writeLibrary(library)
@@ -509,6 +520,17 @@ export function setBuildTags(
   build.updatedAt = new Date().toISOString()
   writeLibrary(library)
   return build
+}
+
+export function setBuildSeason(buildId: string, season: string): boolean {
+  const lib = readLibrary()
+  const idx = lib.builds.findIndex((b) => b.id === buildId)
+  if (idx === -1) return false
+  const builds = lib.builds.map((b, i) =>
+    i === idx ? { ...b, season, updatedAt: new Date().toISOString() } : b,
+  )
+  writeLibrary({ ...lib, builds })
+  return true
 }
 
 export function moveBuildToFolder(
