@@ -134,7 +134,7 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
     enemyResistances: deps.enemyResistances,
     procToggles: deps.procToggles,
     killsPerSec: deps.killsPerSec,
-    season: activeSeasonId,
+    season: deps.season ?? activeSeasonId,
   }
 }
 
@@ -526,3 +526,6 @@ export async function subskillAggregationNative(
     throw notifyBridgeError(err)
   }
 }
+
+// Test seam: depsToInput is module-private; expose it for unit tests only.
+export const __depsToInputForTest = depsToInput
