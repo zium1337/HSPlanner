@@ -28,6 +28,7 @@ const FILE_TO_KEY: Record<string, { key: keyof SeasonPatchSet; schema: ZodType }
   'node-icons': { key: 'nodeIcons', schema: scalarRecordPatchSchema },
   'hero-siege-tree': { key: 'heroSiegeTree', schema: treePatchSchema },
   'game-config': { key: 'gameConfig', schema: gameConfigPatchSchema },
+  // Validated here; applied only by the Rust engine.
   'star-scaling': { key: 'starScaling', schema: recordPatchSchema },
 }
 
