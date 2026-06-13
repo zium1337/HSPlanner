@@ -1,6 +1,5 @@
 // JSON blobs from src/data/ are inlined at compile time via build.rs into
-// `$OUT_DIR/data_includes.rs`, then lazily parsed into a per-season GameData
-// (season patches applied) on first access.
+// `$OUT_DIR/data_includes.rs`, then lazily parsed into per-season GameData (patches applied) on first access.
 
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
@@ -36,6 +35,18 @@ const GEAR_SLOTS: &[&str] = &[
 
 pub fn is_gear_slot(slot: &str) -> bool {
     GEAR_SLOTS.contains(&slot)
+}
+
+pub fn is_charm_slot(slot: &str) -> bool {
+    slot.starts_with("charm_")
+}
+
+pub fn charms_allow_stars_forge(season: &str) -> bool {
+    season != "s9"
+}
+
+pub fn can_star_forge(slot: &str, season: &str) -> bool {
+    is_gear_slot(slot) || (is_charm_slot(slot) && charms_allow_stars_forge(season))
 }
 
 const SATANIC_CRYSTAL_RARITIES: &[&str] = &[
@@ -96,8 +107,7 @@ pub(crate) enum PatchKind {
     GameConfig,
 }
 
-// All-or-nothing per collection, mirroring the TS hub: on patch error the base
-// JSON is used and the error is logged (spec §6 — loud, never silent).
+// All-or-nothing per collection: on patch error, log loudly and fall back to base.
 pub(crate) fn patched_value(
     base: serde_json::Value,
     patches: &HashMap<String, serde_json::Value>,
@@ -140,8 +150,7 @@ fn load_patched<T: serde::de::DeserializeOwned>(
     from_value(value, name)
 }
 
-// Mirrors the TS hub's collectFlat/collectScalar: array files contribute their
-// elements, scalar files (e.g. classes/*.json) contribute themselves.
+// Array files contribute their elements; scalar files contribute themselves.
 fn concat_values(blobs: &[&str], ctx: &str) -> serde_json::Value {
     let mut all = Vec::new();
     for blob in blobs {
@@ -276,8 +285,6 @@ fn load_for(season_id: &str) -> GameData {
     }
 }
 
-// Patchless ids (unknown or registry-listed) all collapse to one base-data
-// cache entry, matching the TS hub and bounding the cache against garbage ids.
 pub fn data_for(season_id: &str) -> &'static GameData {
     season::cached_per_season(&GAME_DATA_BY_SEASON, season_id, load_for)
 }
@@ -286,7 +293,7 @@ thread_local! {
     static LAST_DATA: RefCell<Option<(String, &'static GameData)>> = const { RefCell::new(None) };
 }
 
-/// Season-sensitive: reads the thread-local installed by SeasonScope::enter at each #[tauri::command] entry; without a scope it serves DEFAULT_SEASON_ID data.
+/// Reads the SeasonScope thread-local; without a scope, serves DEFAULT_SEASON_ID data.
 pub fn data() -> &'static GameData {
     season::memoized_current_season(&LAST_DATA, data_for)
 }
@@ -408,8 +415,7 @@ pub fn detect_runeword(
     None
 }
 
-// Linear scan keeps the lookup season-correct: a process-wide index would be
-// built from whichever season loads first and silently serve it to all others.
+// Linear scan stays season-correct; a process-wide index would pin one season's data.
 pub fn get_item_granted_skill_by_name(name: &str) -> Option<&'static ItemGrantedSkill> {
     let needle = name.trim().to_lowercase();
     data()
@@ -462,16 +468,12 @@ mod tests {
         let a = super::data_for("definitely-unknown") as *const GameData;
         let b = super::data_for("also-unknown") as *const GameData;
         assert_eq!(a, b, "patchless ids must share one base cache entry");
-        // Today base == s9 (no s9 patches), so contents must match even if
-        // the cache entries differ.
         let base = super::data_for("definitely-unknown");
         let s9 = super::data_for("s9");
         assert_eq!(base.affixes.len(), s9.affixes.len());
     }
 
-    // Sweep: every embedded season patch dir must deserialize into GameData
-    // without panicking. No-op while no patch files exist; the moment a bad
-    // patch lands under src/data/seasons/<id>/, cargo test fails.
+    // Every embedded season patch dir must deserialize into GameData without panicking.
     #[test]
     fn sweep_embedded_season_patch_dirs_load() {
         let mut dirs: HashSet<&str> = HashSet::new();
@@ -595,5 +597,19 @@ mod tests {
             );
         }
         assert!(get_item_granted_skill_by_name("nonexistent skill xyz").is_none());
+    }
+
+    #[test]
+    fn can_star_forge_gates_charms_by_season() {
+        assert!(super::can_star_forge("weapon", "s9"));
+        assert!(super::can_star_forge("weapon", "s10"));
+        assert!(!super::can_star_forge("charm_1", "s9"));
+        assert!(super::can_star_forge("charm_1", "s10"));
+        assert!(super::can_star_forge("charm_30", "s11"));
+        assert!(!super::can_star_forge("relic", "s10"));
+        assert!(super::is_charm_slot("charm_1"));
+        assert!(!super::is_charm_slot("weapon"));
+        assert!(!super::charms_allow_stars_forge("s9"));
+        assert!(super::charms_allow_stars_forge("s10"));
     }
 }
