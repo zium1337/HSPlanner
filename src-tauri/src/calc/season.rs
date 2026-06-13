@@ -105,6 +105,28 @@ pub fn cached_per_season<T>(
     leaked
 }
 
+// Per-thread memo over a per-season cache: one mutex hit per season change per
+// thread instead of per call. The thread_local cell stays in the caller's
+// module (it is typed to the cached value); only the borrow/compare/insert
+// dance lives here, so game data and star scaling cannot drift apart.
+pub fn memoized_current_season<T: 'static>(
+    cell: &'static std::thread::LocalKey<RefCell<Option<(String, &'static T)>>>,
+    lookup: impl Fn(&str) -> &'static T,
+) -> &'static T {
+    with_current_season(|id| {
+        cell.with(|c| {
+            if let Some((k, ptr)) = c.borrow().as_ref() {
+                if k == id {
+                    return *ptr;
+                }
+            }
+            let ptr = lookup(id);
+            *c.borrow_mut() = Some((id.to_string(), ptr));
+            ptr
+        })
+    })
+}
+
 // rel path "s10/affixes.patch.json" -> key "affixes"
 pub fn patches_for(season_id: &str) -> HashMap<String, Value> {
     let mut out = HashMap::new();

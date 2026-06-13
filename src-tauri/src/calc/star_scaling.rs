@@ -98,20 +98,8 @@ thread_local! {
 }
 
 // Per-season star scaling resolved from the thread-local season scope.
-// Per-thread memo: one mutex hit per season change per thread instead of per call.
 fn configs() -> &'static StarScaling {
-    season::with_current_season(|id| {
-        LAST_SCALING.with(|cell| {
-            if let Some((k, ptr)) = cell.borrow().as_ref() {
-                if k == id {
-                    return *ptr;
-                }
-            }
-            let ptr = configs_for(id);
-            *cell.borrow_mut() = Some((id.to_string(), ptr));
-            ptr
-        })
-    })
+    season::memoized_current_season(&LAST_SCALING, configs_for)
 }
 
 pub fn get_star_scale_config(stat_key: Option<&str>) -> StarScaleConfig {
