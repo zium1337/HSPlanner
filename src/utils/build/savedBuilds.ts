@@ -409,6 +409,18 @@ export function getSavedBuild(id: string): SavedBuild | null {
   return readLibrary().builds.find((b) => b.id === id) ?? null
 }
 
+// Re-stamps a saved build's season; returns false when the build is missing.
+export function setBuildSeason(buildId: string, season: string): boolean {
+  const lib = readLibrary()
+  const idx = lib.builds.findIndex((b) => b.id === buildId)
+  if (idx === -1) return false
+  const builds = lib.builds.map((b, i) =>
+    i === idx ? { ...b, season, updatedAt: new Date().toISOString() } : b,
+  )
+  writeLibrary({ ...lib, builds })
+  return true
+}
+
 export function getActiveProfile(b: SavedBuild): SavedProfile | null {
   // Returns the profile referenced by `activeProfileId`, falling back to the first profile or null when the build has none. Used by the UI to know which profile's snapshot to load when the user opens a build.
   return (

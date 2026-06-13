@@ -4,6 +4,7 @@ import {
   createBuild,
   getSavedBuild,
   readLibrary,
+  setBuildSeason,
   writeLibrary,
 } from './savedBuilds'
 
@@ -27,5 +28,12 @@ describe('saved build season field', () => {
     })
     writeLibrary({ ...lib, builds: raw as typeof lib.builds })
     expect(getSavedBuild(build.id)?.season).toBe('s9')
+  })
+
+  it('setBuildSeason re-stamps a saved build and returns false for missing ids', () => {
+    const build = createBuild('Conv', makeSnapshot())
+    expect(setBuildSeason(build.id, 's10')).toBe(true)
+    expect(getSavedBuild(build.id)?.season).toBe('s10')
+    expect(setBuildSeason('no-such-id', 's10')).toBe(false)
   })
 })

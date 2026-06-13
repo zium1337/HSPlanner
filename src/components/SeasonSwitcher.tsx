@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { hoverTap } from "../lib/motion";
-import { getSeason, SEASONS, setStoredSeasonId } from "../data/seasons/registry";
+import { getSeason, SEASONS } from "../data/seasons/registry";
 import { activeSeasonId } from "../data";
+import { useBuild } from "../store/build";
 import {
   MODAL_BTN_CLASS,
   MODAL_BTN_PRIMARY_CLASS,
@@ -13,14 +14,13 @@ import {
 export default function SeasonSwitcher() {
   const [pending, setPending] = useState<string | null>(null);
   const pendingSeason = pending ? getSeason(pending) : undefined;
+  const activeBuildId = useBuild((s) => s.activeBuildId);
+  const changeActiveSeason = useBuild((s) => s.changeActiveSeason);
 
   const confirm = () => {
     if (!pending) return;
-    if (setStoredSeasonId(pending)) {
-      window.location.reload();
-      return;
-    }
-    setPending(null);
+    // Moves the current build to the chosen season and reloads into it.
+    changeActiveSeason(pending);
   };
 
   return (
@@ -61,9 +61,9 @@ export default function SeasonSwitcher() {
         >
           <section className="px-6 py-4">
             <p className="m-0 font-mono text-[12px] leading-relaxed tracking-[0.04em] text-muted">
-              The app will reload to start new builds in{" "}
-              <span className="text-accent-hot">{pendingSeason.name}</span>.
-              Saved builds keep their own season and load in it.
+              {activeBuildId ? "This build will switch to " : "A new build will start in "}
+              <span className="text-accent-hot">{pendingSeason.name}</span>{" "}
+              and the app will reload.
             </p>
           </section>
           <footer
