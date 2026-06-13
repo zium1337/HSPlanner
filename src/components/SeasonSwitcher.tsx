@@ -61,10 +61,9 @@ export default function SeasonSwitcher() {
         >
           <section className="px-6 py-4">
             <p className="m-0 font-mono text-[12px] leading-relaxed tracking-[0.04em] text-muted">
-              The app will reload with{" "}
-              <span className="text-accent-hot">{pendingSeason.name}</span>{" "}
-              data. Builds from another season are converted in place when
-              opened — removed parts will be reported.
+              The app will reload to start new builds in{" "}
+              <span className="text-accent-hot">{pendingSeason.name}</span>.
+              Saved builds keep their own season and load in it.
             </p>
           </section>
           <footer
