@@ -34,3 +34,21 @@ export function resolveActiveSeasonId(): string {
 export function setStoredSeasonId(id: string): boolean {
   return isKnownSeasonId(id) && writeStorage(SEASON_STORAGE_KEY, id)
 }
+
+export const PENDING_BUILD_KEY = 'hsplanner.pendingBuild.v1'
+export const PENDING_IMPORT_KEY = 'hsplanner.pendingImport.v1'
+
+// Persists the season + a pending boot action then reloads; returns true when the caller must stop its flow.
+export function reloadIntoSeason(
+  season: string,
+  pendingKey: string,
+  pendingValue: string,
+  activeSeason: string,
+  reload: () => void = () => window.location.reload(),
+): boolean {
+  if (!isKnownSeasonId(season) || season === activeSeason) return false
+  setStoredSeasonId(season)
+  writeStorage(pendingKey, pendingValue)
+  reload()
+  return true
+}
