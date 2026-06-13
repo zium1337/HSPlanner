@@ -14,6 +14,7 @@ import type {
   SourceType,
 } from '../../utils/item/stats'
 import type { ForgeKind } from '../../data'
+import { activeSeasonId } from '../../data'
 
 // Single subscriber so the build store can surface Rust rejections via storageError.
 type BridgeErrorListener = (err: Error) => void
@@ -60,6 +61,7 @@ export interface BuildPerformanceInput {
   enemyResistances?: Record<string, number>
   procToggles?: Record<string, boolean>
   killsPerSec?: number
+  season?: string
 }
 
 // Rust returns [min, max]; TS expects `number | [number, number]` — see asRangedValue.
@@ -132,6 +134,7 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
     enemyResistances: deps.enemyResistances,
     procToggles: deps.procToggles,
     killsPerSec: deps.killsPerSec,
+    season: activeSeasonId,
   }
 }
 
@@ -429,7 +432,10 @@ export async function displayValuesNative(input: {
   scaled?: ScaledValueRequest[]
 }): Promise<DisplayValuesOutput> {
   try {
-    return await invoke<DisplayValuesOutput>('display_values', { input })
+    return await invoke<DisplayValuesOutput>('display_values', {
+      input,
+      season: activeSeasonId,
+    })
   } catch (err) {
     throw notifyBridgeError(err)
   }
@@ -450,6 +456,7 @@ export async function classifyTreeNodesNative(): Promise<
   try {
     return await invoke<Record<string, NodeLineClassification>>(
       'classify_tree_nodes',
+      { season: activeSeasonId },
     )
   } catch (err) {
     throw notifyBridgeError(err)
@@ -495,7 +502,15 @@ export async function subskillAggregationNative(
   try {
     const raw = await invoke<SubskillAggregationRustOutput>(
       'subskill_aggregation',
-      { input: { classId, skillId, subskillRanks, enemyConditions } },
+      {
+        input: {
+          classId,
+          skillId,
+          subskillRanks,
+          enemyConditions,
+          season: activeSeasonId,
+        },
+      },
     )
     return {
       stats: raw.stats,

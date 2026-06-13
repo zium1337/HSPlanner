@@ -281,7 +281,7 @@ export default function BuildSelect({
     if (!code) return "Couldn't read a build code from input"
     const decoded = decodeShareToBuild(code)
     if (!decoded) return 'Invalid or corrupted build code'
-    importBuildSnapshot(decoded.snapshot, decoded.notes)
+    importBuildSnapshot(decoded.snapshot, decoded.notes, decoded.season)
     setOverlay(null)
     onClose()
     return null

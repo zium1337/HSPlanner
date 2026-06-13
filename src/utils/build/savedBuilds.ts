@@ -3,7 +3,13 @@ import {
   decodeShareToBuild,
   encodeBuildToShare,
 } from './shareBuild'
+import {
+  convertSnapshotToActiveSeason,
+  type SeasonConversionReport,
+} from './seasonConvert'
 import { readStorage, readStorageWithLegacy, writeStorage } from '../storage'
+import { activeSeasonId } from '../../data'
+import { LEGACY_SEASON_ID } from '../../data/seasons/registry'
 
 const STORAGE_KEY_V1 = 'hsplanner.savedBuilds.v1'
 const STORAGE_KEY_V2 = 'hsplanner.savedBuilds.v2'
@@ -71,6 +77,7 @@ export interface SavedBuild {
   folderId: string | null
   favorite: boolean
   tags: string[]
+  season: string
 }
 
 /** v3 storage shape: builds and folders co-located in one object. */
@@ -193,6 +200,10 @@ function cleanBuild(
     folderId,
     favorite: b.favorite === true,
     tags: sanitizeTags(b.tags),
+    season:
+      typeof (b as { season?: unknown }).season === 'string'
+        ? (b as { season: string }).season
+        : LEGACY_SEASON_ID,
   }
 }
 
@@ -309,6 +320,7 @@ function migrateV1(list: SavedBuildV1[]): SavedBuild[] {
       folderId: null,
       favorite: false,
       tags: [],
+      season: LEGACY_SEASON_ID,
     }
   })
 }
@@ -441,6 +453,7 @@ export function createBuild(
     folderId: validFolderId,
     favorite: false,
     tags: [],
+    season: activeSeasonId,
   }
   library.builds.push(record)
   writeLibrary(library)
@@ -477,6 +490,7 @@ export function duplicateBuild(buildId: string): SavedBuild | null {
     folderId: src.folderId,
     favorite: false,
     tags: [...src.tags],
+    season: src.season,
   }
   library.builds.push(record)
   writeLibrary(library)
@@ -509,6 +523,51 @@ export function setBuildTags(
   build.updatedAt = new Date().toISOString()
   writeLibrary(library)
   return build
+}
+
+export interface SavedBuildConversion {
+  build: SavedBuild
+  /** Null when the active profile's code could not be decoded. */
+  report: SeasonConversionReport | null
+}
+
+// Converts ALL profiles of the build in one pass (a build has one season, so a
+// half-converted profile set would corrupt it), then restamps the season.
+// Undecodable profile codes pass through untouched.
+export function convertSavedBuildToSeason(
+  buildId: string,
+): SavedBuildConversion | null {
+  const lib = readLibrary()
+  const idx = lib.builds.findIndex((b) => b.id === buildId)
+  if (idx === -1) return null
+  const build = lib.builds[idx]!
+  if (build.season === activeSeasonId) return null
+
+  let activeReport: SeasonConversionReport | null = null
+  const profiles: SavedProfile[] = []
+  for (const p of build.profiles) {
+    const decoded = decodeShareToBuild(p.code)
+    if (!decoded) {
+      profiles.push(p)
+      continue
+    }
+    const { snapshot, report } = convertSnapshotToActiveSeason(
+      decoded.snapshot,
+      build.season,
+    )
+    if (p.id === build.activeProfileId) activeReport = report
+    profiles.push({ ...p, code: encodeBuildToShare(snapshot, decoded.notes) })
+  }
+
+  const updated: SavedBuild = {
+    ...build,
+    profiles,
+    season: activeSeasonId,
+    updatedAt: new Date().toISOString(),
+  }
+  const builds = lib.builds.map((b, i) => (i === idx ? updated : b))
+  writeLibrary({ ...lib, builds })
+  return { build: updated, report: activeReport }
 }
 
 export function moveBuildToFolder(

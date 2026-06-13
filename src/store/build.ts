@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import {
+  activeSeasonId,
   classes,
   gameConfig,
   getClass,
@@ -18,6 +19,7 @@ import type {
 import {
   addProfile as storeAddProfile,
   commitProfileSnapshot as storeCommitProfile,
+  convertSavedBuildToSeason,
   createBuild as storeCreateBuild,
   deleteBuild as storeDeleteBuild,
   duplicateBuild as storeDuplicateBuild,
@@ -40,6 +42,10 @@ import {
   deleteFolder as storeDeleteFolder,
   renameFolder as storeRenameFolder,
 } from '../utils/build/savedFolders'
+import {
+  convertSnapshotToActiveSeason,
+  type SeasonConversionReport,
+} from '../utils/build/seasonConvert'
 import { guardStorage } from './storageError'
 import { setBridgeErrorListener } from '../lib/calc/bridge'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
@@ -84,6 +90,7 @@ interface BuildState {
   storageError: string | null
   notes: string
   customStats: CustomStat[]
+  seasonConversionReport: SeasonConversionReport | null
 }
 
 interface BuildActions {
@@ -101,7 +108,11 @@ interface BuildActions {
   setSocketType: (slot: SlotKey, idx: number, type: SocketType) => void
   setStars: (slot: SlotKey, count: number) => void
   exportBuildSnapshot: () => BuildSnapshot
-  importBuildSnapshot: (snapshot: BuildSnapshot, notes?: string) => void
+  importBuildSnapshot: (
+    snapshot: BuildSnapshot,
+    notes?: string,
+    fromSeason?: string,
+  ) => void
   applyRuneword: (slot: SlotKey, runewordId: string) => void
   setAugment: (augmentId: string | null) => void
   setAugmentLevel: (level: number) => void
@@ -186,6 +197,7 @@ interface BuildActions {
   renameSavedFolder: (folderId: string, name: string) => boolean
   deleteSavedFolder: (folderId: string, cascade: boolean) => boolean
   dismissStorageError: () => void
+  clearSeasonConversionReport: () => void
 }
 
 function emptyAllocation(): AttrMap {
@@ -250,6 +262,7 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   storageError: null,
   notes: '',
   customStats: [],
+  seasonConversionReport: null,
 
   setClass: (id) =>
     set((s) => {
@@ -595,12 +608,18 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   },
 
   // Detaches from any saved build/profile so the import behaves as unsaved freeform.
-  importBuildSnapshot: (snapshot, notes = '') => {
+  // Snapshots from another season are converted lossily; the report is surfaced in state.
+  importBuildSnapshot: (snapshot, notes = '', fromSeason = activeSeasonId) => {
+    const converted =
+      fromSeason !== activeSeasonId
+        ? convertSnapshotToActiveSeason(snapshot, fromSeason)
+        : null
     set(() => ({
-      ...snapshotPatch(snapshot),
+      ...snapshotPatch(converted ? converted.snapshot : snapshot),
       notes,
       activeBuildId: null,
       activeProfileId: null,
+      seasonConversionReport: converted?.report ?? null,
     }))
   },
 
@@ -705,19 +724,30 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
         }
         const build = getSavedBuild(buildId)
         if (!build) return false
+        // Convert BEFORE loadProfileSnapshot so the snapshot reads the post-conversion code.
+        let conversionReport: SeasonConversionReport | null = null
+        let currentBuild = build
+        if (build.season !== activeSeasonId) {
+          const converted = convertSavedBuildToSeason(buildId)
+          if (converted) {
+            currentBuild = converted.build
+            conversionReport = converted.report
+          }
+        }
         const targetProfileId =
-          profileId && build.profiles.some((p) => p.id === profileId)
+          profileId && currentBuild.profiles.some((p) => p.id === profileId)
             ? profileId
-            : build.activeProfileId
+            : currentBuild.activeProfileId
         const snap = loadProfileSnapshot(buildId, targetProfileId)
         if (!snap) return false
         storeSetActiveProfile(buildId, targetProfileId)
         set((s) => ({
           ...snapshotPatch(snap),
-          notes: sanitizeHtml(build.notes ?? ''),
+          notes: sanitizeHtml(currentBuild.notes ?? ''),
           activeBuildId: buildId,
           activeProfileId: targetProfileId,
           savedBuildsVersion: s.savedBuildsVersion + 1,
+          seasonConversionReport: conversionReport,
         }))
         return true
       },
@@ -1006,6 +1036,8 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   resetSkillRanks: () => set({ skillRanks: {} }),
 
   dismissStorageError: () => set({ storageError: null }),
+
+  clearSeasonConversionReport: () => set({ seasonConversionReport: null }),
 
   saveCurrentAsNewBuild: (name, notes = '', folderId = null) =>
     guardStorage<SavedBuild | null>(

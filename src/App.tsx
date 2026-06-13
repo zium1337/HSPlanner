@@ -9,9 +9,12 @@ import { AUTO_OPEN_KEY, BuildSelect } from "./components/buildSelect";
 import LeftStatsPanel from "./components/LeftStatsPanel";
 import { HoverProvider } from "./contexts/HoverProvider";
 import Logo from "./components/Logo";
+import SeasonConversionModal from "./components/SeasonConversionModal";
+import SeasonErrorBanner from "./components/SeasonErrorBanner";
+import SeasonSwitcher from "./components/SeasonSwitcher";
 import ShareButton from "./components/ShareButton";
 import StorageErrorBanner from "./components/StorageErrorBanner";
-import { classes, getClass } from "./data";
+import { activeSeasonId, classes, getClass } from "./data";
 import { useBuild } from "./store/build";
 import { listSavedBuilds } from "./utils/build/savedBuilds";
 import {
@@ -116,7 +119,7 @@ function App() {
           },
         );
         try {
-          await invoke<boolean>("calc_warmup");
+          await invoke<boolean>("calc_warmup", { season: activeSeasonId });
         } finally {
           unlisten();
         }
@@ -349,11 +352,14 @@ function App() {
                 {cls.primaryAttribute}
               </span>
             )}
+            <SeasonSwitcher />
             <span aria-hidden className="h-6 w-px bg-border" />
             <BuildsMenu onOpenLibrary={() => setScreen("library")} />
             <ShareButton />
           </div>
         </header>
+
+        <SeasonErrorBanner />
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <LeftStatsPanel />
@@ -380,6 +386,7 @@ function App() {
         <BottomBar />
       </div>
 
+      <SeasonConversionModal />
       <StorageErrorBanner />
     </HoverProvider>
   );

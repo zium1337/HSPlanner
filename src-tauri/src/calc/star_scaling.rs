@@ -1,6 +1,11 @@
 use once_cell::sync::Lazy;
 use serde::Deserialize;
+use std::cell::RefCell;
 use std::collections::HashMap;
+use std::sync::Mutex;
+
+use super::data::{patched_value, PatchKind};
+use super::season;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum StarScaleConfig {
@@ -57,22 +62,52 @@ struct StarScalingData {
     map: HashMap<String, StarScaleConfigDto>,
 }
 
-static DATA: Lazy<StarScalingData> = Lazy::new(|| {
-    serde_json::from_str(STAR_SCALING_JSON).expect("src/data/star-scaling.json must be valid")
-});
+struct StarScaling {
+    flat_skill_staircase: Vec<f64>,
+    item_specific_staircase: Vec<f64>,
+    map: HashMap<String, StarScaleConfig>,
+}
 
-static STAR_SCALE_MAP: Lazy<HashMap<String, StarScaleConfig>> = Lazy::new(|| {
-    DATA.map
-        .iter()
-        .map(|(k, v)| (k.clone(), (*v).into()))
-        .collect()
-});
+static STAR_SCALING_BY_SEASON: Lazy<Mutex<HashMap<String, &'static StarScaling>>> =
+    Lazy::new(|| Mutex::new(HashMap::new()));
+
+// On patch errors the base JSON is used and the errors are logged (never
+// silent). Season normalization matches data::data_for exactly via
+// season::cached_per_season.
+fn load_for(season_id: &str) -> StarScaling {
+    let patches = season::patches_for(season_id);
+    let base: serde_json::Value =
+        serde_json::from_str(STAR_SCALING_JSON).expect("src/data/star-scaling.json must be valid");
+    let value = patched_value(base, &patches, "star-scaling", PatchKind::RecordMerge);
+    let dto: StarScalingData =
+        serde_json::from_value(value).expect("invalid star-scaling shape after patch");
+    StarScaling {
+        flat_skill_staircase: dto.flat_skill_staircase,
+        item_specific_staircase: dto.item_specific_staircase,
+        map: dto.map.into_iter().map(|(k, v)| (k, v.into())).collect(),
+    }
+}
+
+fn configs_for(season_id: &str) -> &'static StarScaling {
+    season::cached_per_season(&STAR_SCALING_BY_SEASON, season_id, load_for)
+}
+
+thread_local! {
+    static LAST_SCALING: RefCell<Option<(String, &'static StarScaling)>> =
+        const { RefCell::new(None) };
+}
+
+// Per-season star scaling resolved from the thread-local season scope.
+fn configs() -> &'static StarScaling {
+    season::memoized_current_season(&LAST_SCALING, configs_for)
+}
 
 pub fn get_star_scale_config(stat_key: Option<&str>) -> StarScaleConfig {
     let Some(key) = stat_key else {
         return StarScaleConfig::None;
     };
-    STAR_SCALE_MAP
+    configs()
+        .map
         .get(key)
         .copied()
         .unwrap_or(StarScaleConfig::None)
@@ -101,17 +136,14 @@ pub fn stat_star_flat_bonus(stat_key: Option<&str>, stars: Option<u32>) -> f64 {
     if s == 0 {
         return 0.0;
     }
+    let c = configs();
     match get_star_scale_config(stat_key) {
-        StarScaleConfig::FlatSkillStaircase => DATA
-            .flat_skill_staircase
-            .get(s as usize)
-            .copied()
-            .unwrap_or(0.0),
-        StarScaleConfig::ItemSpecificStaircase => DATA
-            .item_specific_staircase
-            .get(s as usize)
-            .copied()
-            .unwrap_or(0.0),
+        StarScaleConfig::FlatSkillStaircase => {
+            c.flat_skill_staircase.get(s as usize).copied().unwrap_or(0.0)
+        }
+        StarScaleConfig::ItemSpecificStaircase => {
+            c.item_specific_staircase.get(s as usize).copied().unwrap_or(0.0)
+        }
         _ => 0.0,
     }
 }
@@ -121,7 +153,8 @@ pub fn item_granted_skill_rank_flat_bonus(stars: Option<u32>) -> f64 {
     if s == 0 {
         return 0.0;
     }
-    DATA.item_specific_staircase
+    configs()
+        .item_specific_staircase
         .get(s as usize)
         .copied()
         .unwrap_or(0.0)
