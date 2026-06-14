@@ -1,0 +1,36 @@
+{
+  "change": {
+    "weapons_heroic_ukkos_revenge": {
+      "implicit": {
+        "enhanced_damage": [420, 525],
+        "all_skills": [2, 3],
+        "lightning_skills": [3, 5],
+        "faster_cast_rate": [35, 55],
+        "extra_lightning_dmg_stasis": [20, 30],
+        "to_intelligence": 25,
+        "lightning_skill_damage": [25, 40],
+        "ignore_lightning_res": [15, 25],
+        "max_lightning_resistance": 5
+      }
+    },
+    "boots_heroic_chaoswalkers": {
+      "implicit": {
+        "enhanced_defense": [180, 225],
+        "all_skills": [4, 6],
+        "movement_speed": [65, 80],
+        "extra_damage_ailments": [8, 15],
+        "all_attributes": 40,
+        "magic_skill_damage": [30, 40],
+        "faster_hit_recovery": 75
+      }
+    },
+    "claw_heroic_glacier_talons": {
+      "uniqueEffects": [
+        "4% Chance after each Kill to cast Blizzard Level 80",
+        "Skill Movement Diminish decreased by 50%",
+        "+40 to Energy (Based on Level)",
+        "+75 to Intelligence (Based on Level)"
+      ]
+    }
+  }
+}
