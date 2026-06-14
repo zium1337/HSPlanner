@@ -10,6 +10,11 @@ const itemModules = import.meta.glob<{ default: Rec[] }>('../../items/*.json', {
 })
 const baseItems: Rec[] = Object.values(itemModules).flatMap((m) => m.default)
 
+const gemModules = import.meta.glob<{ default: Rec[] }>('../../gems/*.json', {
+  eager: true,
+})
+const gemsBase: Rec[] = Object.values(gemModules).flatMap((m) => m.default)
+
 const { patches, errors } = loadSeasonPatchSet('s10')
 
 function patchedItem(id: string): Rec {
@@ -52,5 +57,46 @@ describe('S10 item changes', () => {
     ) as Rec
     const perRank = (skill.passiveConverts as Rec).perRank as Rec[]
     expect(perRank[0].pct).toBe(7)
+  })
+})
+
+describe('S10 new items (scaffolding, no affixes yet)', () => {
+  const NEW_ITEM_IDS = [
+    's10_captains_anchor', 's10_ghastly_skull', 's10_grimtides_necklace',
+    's10_skeleton_crews_band', 's10_ethereal_musket', 's10_grimtides_scimitar',
+    's10_ghostplunderers_marchers', 's10_captains_attire', 's10_parasitic_heart',
+    's10_parasite_queens_tiara', 's10_blood_maggot_pendant', 's10_conjured_tentacle',
+    's10_overgrowth', 's10_infected_grasp', 's10_jar_of_parasites', 's10_parasite_loop',
+    's10_ghost_armada', 's10_phantom_scimitar', 's10_leviathans_crown', 's10_phantom_strike',
+    's10_leviathans_spine', 's10_leviathans_ribcage', 's10_phantoms_step', 's10_leviathans_blood',
+  ]
+
+  const resolvedItems = (): Rec[] =>
+    applyListPatch(baseItems, patches.items, 'items').data as Rec[]
+
+  it('adds every new item as a net-new id (no collision, all present)', () => {
+    const baseIds = new Set(baseItems.map((i) => i.id))
+    const patchedIds = new Set(resolvedItems().map((i) => i.id))
+    for (const id of NEW_ITEM_IDS) {
+      expect(baseIds.has(id)).toBe(false)
+      expect(patchedIds.has(id)).toBe(true)
+    }
+  })
+
+  it('routes new items to the right slots', () => {
+    const items = resolvedItems()
+    const byId = (id: string) => items.find((i) => i.id === id) as Rec
+    expect(byId('s10_captains_anchor').slot).toBe('charm_1')
+    expect(byId('s10_leviathans_blood').slot).toBe('potion_1')
+    expect(byId('s10_overgrowth').slot).toBe('offhand')
+    expect(byId('s10_phantom_scimitar').twoHanded).toBe(true)
+    expect(byId('s10_phantom_strike').twoHanded).toBe(true)
+  })
+
+  it("adds Cthulhu's Soul Gem to the gems collection", () => {
+    const gems = applyListPatch(gemsBase, patches.gems, 'gems').data as Rec[]
+    const gem = gems.find((g) => g.id === 's10_cthulhus_soul_gem') as Rec
+    expect(gem).toBeDefined()
+    expect(gem.name).toBe("Cthulhu's Soul Gem")
   })
 })
