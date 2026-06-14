@@ -20,7 +20,7 @@
     "@tauri-apps/api": "~2.11.0"
   },
   "optionalDependencies": {
-    "@emnapi/core": "1.10.0",
+    "@emnapi/core": "1.11.0",
     "@emnapi/runtime": "1.10.0"
   },
   "dependencies": {
@@ -45,8 +45,8 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^24.12.4",
-    "@types/react": "^19.2.16",
+    "@types/node": "^24.13.1",
+    "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
     "@vitest/coverage-v8": "^4.1.7",

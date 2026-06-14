@@ -19,14 +19,20 @@ import {
   START_IDS,
   START_SET,
 } from '../utils/tree/treeGraph'
-import { formatValue, rolledAffixValue, statName } from '../utils/item/stats'
+import { formatValue, statName } from '../utils/item/stats'
+import { useAffixDisplayRanges } from './gear/sections/AffixesSection'
 import {
   diffPerformanceDps,
   diffPerformanceStats,
   type BuildPerformance,
 } from '../utils/build/buildPerformance'
-import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
+import {
+  classifyTreeNodesNative,
+  computeBuildPerformanceAsync,
+} from '../lib/calc/bridge'
+import type { NodeLineClassification } from '../lib/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { useCalcResult } from '../hooks/useCalcResult'
 import NetChangeRow from '../components/NetChangeRow'
 import type { TreeSocketContent } from '../types'
 import JewelSocketModal from '../components/JewelSocketModal'
@@ -41,7 +47,6 @@ import {
 import { TONE_BORDER, TONE_GLOW } from '../components/tooltip-tones'
 import type { TooltipTone } from '../components/tooltip-tones'
 import {
-  classifyNodeLines,
   TREE_JEWELRY_IDS,
   TREE_NODE_INFO,
   TREE_WARP_IDS,
@@ -181,17 +186,16 @@ export default function TreeView() {
 
   const treeDeps = useBuildPerformanceDeps()
 
-  const [currentPerformance, setCurrentPerformance] =
-    useState<BuildPerformance | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    computeBuildPerformanceAsync(treeDeps).then((p) => {
-      if (!cancelled) setCurrentPerformance(p)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [treeDeps])
+  const currentPerformance = useCalcResult<BuildPerformance | null>(
+    () => computeBuildPerformanceAsync(treeDeps),
+    [treeDeps],
+    null,
+  )
+
+  const nodeClassifications = useCalcResult<Record<
+    string,
+    NodeLineClassification
+  > | null>(() => classifyTreeNodesNative(), [], null)
 
   const [scale, setScale] = useState(0.35)
   const [tx, setTx] = useState(0)
@@ -335,25 +339,17 @@ export default function TreeView() {
     return next
   }, [hoverId, allocated, previewPath])
 
-  const [previewPerformance, setPreviewPerformance] =
-    useState<BuildPerformance | null>(null)
-  useEffect(() => {
-    if (!previewAllocation) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPreviewPerformance(null)
-      return
-    }
-    let cancelled = false
-    computeBuildPerformanceAsync({
-      ...treeDeps,
-      allocatedTreeNodes: previewAllocation,
-    }).then((p) => {
-      if (!cancelled) setPreviewPerformance(p)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [previewAllocation, treeDeps])
+  const previewPerformance = useCalcResult<BuildPerformance | null>(
+    () =>
+      previewAllocation
+        ? computeBuildPerformanceAsync({
+            ...treeDeps,
+            allocatedTreeNodes: previewAllocation,
+          })
+        : null,
+    [previewAllocation, treeDeps],
+    null,
+  )
 
   // "This node alone" preview for evaluating standalone value. Clicking never produces this exact allocation.
   const singleNodeAllocation = useMemo<Set<number> | null>(() => {
@@ -369,25 +365,17 @@ export default function TreeView() {
     return next
   }, [hoverId, allocated])
 
-  const [singleNodePerformance, setSingleNodePerformance] =
-    useState<BuildPerformance | null>(null)
-  useEffect(() => {
-    if (!singleNodeAllocation) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSingleNodePerformance(null)
-      return
-    }
-    let cancelled = false
-    computeBuildPerformanceAsync({
-      ...treeDeps,
-      allocatedTreeNodes: singleNodeAllocation,
-    }).then((p) => {
-      if (!cancelled) setSingleNodePerformance(p)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [singleNodeAllocation, treeDeps])
+  const singleNodePerformance = useCalcResult<BuildPerformance | null>(
+    () =>
+      singleNodeAllocation
+        ? computeBuildPerformanceAsync({
+            ...treeDeps,
+            allocatedTreeNodes: singleNodeAllocation,
+          })
+        : null,
+    [singleNodeAllocation, treeDeps],
+    null,
+  )
 
   const previewAddedCount = useMemo(() => {
     if (!previewAllocation) return 0
@@ -812,6 +800,9 @@ export default function TreeView() {
             key={hoverNode.id}
             node={hoverNode}
             info={hoverInfo}
+            classification={
+              nodeClassifications?.[String(hoverNode.id)] ?? null
+            }
             cursor={hoverPos}
             socketContent={
               TREE_JEWELRY_IDS.has(hoverNode.id)
@@ -859,6 +850,7 @@ export default function TreeView() {
 function NodeTooltip({
   node,
   info,
+  classification,
   cursor,
   socketContent,
   isJewelry,
@@ -871,6 +863,7 @@ function NodeTooltip({
 }: {
   node: TreeNode
   info: TreeNodeInfo | null
+  classification: NodeLineClassification | null
   cursor: { x: number; y: number }
   socketContent: TreeSocketContent | null
   isJewelry: boolean
@@ -885,10 +878,7 @@ function NodeTooltip({
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
   const tone = tierTone(info?.n, node.tier)
   const tierName = tierLabel(info?.n, node.tier)
-  const lineGroups = useMemo(
-    () => (info ? classifyNodeLines(info.l) : null),
-    [info],
-  )
+  const lineGroups = info ? classification : null
 
   const singleDpsDiffs = useMemo(
     () =>
@@ -1007,8 +997,8 @@ function NodeTooltip({
           {lineGroups && lineGroups.parsed.length > 0 && (
             <TooltipSection>
               <div className="space-y-0.5">
-                {lineGroups.parsed.map((p, i) => (
-                  <TooltipText key={i}>{p.line}</TooltipText>
+                {lineGroups.parsed.map((line, i) => (
+                  <TooltipText key={i}>{line}</TooltipText>
                 ))}
               </div>
             </TooltipSection>
@@ -1164,6 +1154,20 @@ function JewelrySocketSection({
   content: TreeSocketContent | null
   isAllocated: boolean
 }) {
+  const craftedAffixes = useMemo(
+    () => (content && content.kind !== 'item' ? content.affixes : []),
+    [content],
+  )
+  const craftedItems = useMemo(
+    () =>
+      craftedAffixes.map((eq) => ({
+        def: getAffix(eq.affixId),
+        roll: eq.roll,
+      })),
+    [craftedAffixes],
+  )
+  const craftedValues = useAffixDisplayRanges(craftedItems)
+
   if (!content) {
     return (
       <TooltipSection>
@@ -1205,11 +1209,11 @@ function JewelrySocketSection({
     socketedSubtitle = `${content.affixes.length} affix${
       content.affixes.length === 1 ? '' : 'es'
     }`
-    statLines = content.affixes
-      .map((eq) => {
+    statLines = craftedAffixes
+      .map((eq, idx) => {
         const def = getAffix(eq.affixId)
         if (!def || !def.statKey) return null
-        const value = rolledAffixValue(def, eq.roll)
+        const value = craftedValues[idx]?.value ?? 0
         if (value === 0) return null
         return { key: def.statKey, value }
       })
