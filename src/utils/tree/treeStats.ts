@@ -1,14 +1,9 @@
-import treeNodeInfo from '../../data/tree-nodes.json'
+import { treeNodeInfo } from '../../data'
+import type { TreeNodeInfo } from '../../data/seasons/patchTypes'
 
-export interface TreeNodeInfo {
-  t: string
-  n: string
-  l: string[]
-  g?: string[]
-  note?: string
-}
+export type { TreeNodeInfo }
 
-export const TREE_NODE_INFO = treeNodeInfo as Record<string, TreeNodeInfo>
+export const TREE_NODE_INFO = treeNodeInfo
 
 export const TREE_WARP_IDS = new Set<number>(
   Object.entries(TREE_NODE_INFO)

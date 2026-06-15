@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import Logo from '../Logo'
 import { useBuild } from '../../store/build'
+import { activeSeasonId } from '../../data'
+import { PENDING_IMPORT_KEY, reloadIntoSeason } from '../../data/seasons/registry'
 import { getActiveProfile, type Folder } from '../../utils/build/savedBuilds'
 import { decodeShareToBuild, parseBuildCodeFromInput } from '../../utils/build/shareBuild'
 import { readStorage, writeStorage } from '../../utils/storage'
@@ -281,6 +283,10 @@ export default function BuildSelect({
     if (!code) return "Couldn't read a build code from input"
     const decoded = decodeShareToBuild(code)
     if (!decoded) return 'Invalid or corrupted build code'
+    // A code from another season reloads into that season; boot replays the import.
+    if (reloadIntoSeason(decoded.season, PENDING_IMPORT_KEY, code, activeSeasonId)) {
+      return null
+    }
     importBuildSnapshot(decoded.snapshot, decoded.notes)
     setOverlay(null)
     onClose()

@@ -47,6 +47,8 @@ export interface BuildPerformanceDeps {
   enemyResistances: Record<string, number>
   procToggles: Record<string, boolean>
   killsPerSec: number
+  // When set, drives the calc; left undefined, the bridge falls back to the loaded season.
+  season?: string
 }
 
 export interface BuildStatDiff {

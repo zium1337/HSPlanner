@@ -4,6 +4,8 @@ import {
   encodeBuildToShare,
 } from './shareBuild'
 import { readStorage, readStorageWithLegacy, writeStorage } from '../storage'
+import { activeSeasonId } from '../../data'
+import { LEGACY_SEASON_ID } from '../../data/seasons/registry'
 
 const STORAGE_KEY_V1 = 'hsplanner.savedBuilds.v1'
 const STORAGE_KEY_V2 = 'hsplanner.savedBuilds.v2'
@@ -71,6 +73,7 @@ export interface SavedBuild {
   folderId: string | null
   favorite: boolean
   tags: string[]
+  season: string
 }
 
 /** v3 storage shape: builds and folders co-located in one object. */
@@ -193,6 +196,10 @@ function cleanBuild(
     folderId,
     favorite: b.favorite === true,
     tags: sanitizeTags(b.tags),
+    season:
+      typeof (b as { season?: unknown }).season === 'string'
+        ? (b as { season: string }).season
+        : LEGACY_SEASON_ID,
   }
 }
 
@@ -309,6 +316,7 @@ function migrateV1(list: SavedBuildV1[]): SavedBuild[] {
       folderId: null,
       favorite: false,
       tags: [],
+      season: LEGACY_SEASON_ID,
     }
   })
 }
@@ -401,6 +409,18 @@ export function getSavedBuild(id: string): SavedBuild | null {
   return readLibrary().builds.find((b) => b.id === id) ?? null
 }
 
+// Re-stamps a saved build's season; returns false when the build is missing.
+export function setBuildSeason(buildId: string, season: string): boolean {
+  const lib = readLibrary()
+  const idx = lib.builds.findIndex((b) => b.id === buildId)
+  if (idx === -1) return false
+  const builds = lib.builds.map((b, i) =>
+    i === idx ? { ...b, season, updatedAt: new Date().toISOString() } : b,
+  )
+  writeLibrary({ ...lib, builds })
+  return true
+}
+
 export function getActiveProfile(b: SavedBuild): SavedProfile | null {
   // Returns the profile referenced by `activeProfileId`, falling back to the first profile or null when the build has none. Used by the UI to know which profile's snapshot to load when the user opens a build.
   return (
@@ -441,6 +461,7 @@ export function createBuild(
     folderId: validFolderId,
     favorite: false,
     tags: [],
+    season: activeSeasonId,
   }
   library.builds.push(record)
   writeLibrary(library)
@@ -477,6 +498,7 @@ export function duplicateBuild(buildId: string): SavedBuild | null {
     folderId: src.folderId,
     favorite: false,
     tags: [...src.tags],
+    season: src.season,
   }
   library.builds.push(record)
   writeLibrary(library)

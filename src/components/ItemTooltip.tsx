@@ -2,7 +2,10 @@ import type { ReactNode } from 'react'
 import { useCalcResult } from '../hooks/useCalcResult'
 import { RARITY_LABEL } from '../views/gear/lib/rarity'
 import {
+  activeSeasonId,
+  canStarForge,
   detectRuneword,
+  effectiveStars,
   FORGE_KIND_LABEL,
   forgeKindFor,
   getAffix,
@@ -13,7 +16,6 @@ import {
   getItemImage,
   getItemSet,
   getRune,
-  isGearSlot,
 } from '../data'
 import { BONUS_SOCKET_MOD_ID, RAINBOW_MULTIPLIER, useBuild } from '../store/build'
 import type {
@@ -125,7 +127,7 @@ function useItemDisplayValues(
 ): TooltipDisplayValues | null {
   return useCalcResult<TooltipDisplayValues | null>(
     () => {
-      const stars = equipped?.stars ?? null
+      const stars = effectiveStars(base.slot, activeSeasonId, equipped?.stars)
       const toPair = (v: RangedValue): [number, number] => [
         rangedMin(v),
         rangedMax(v),
@@ -204,7 +206,7 @@ export function ItemTooltipBody({
       }, 0)
     : 0
 
-  const stars = equipped?.stars ?? 0
+  const stars = effectiveStars(base.slot, activeSeasonId, equipped?.stars) ?? 0
   const starSuffix = stars > 0 ? ` · ${'★'.repeat(stars)}` : ''
   const handSuffix =
     base.slot === 'weapon'
@@ -334,7 +336,7 @@ export function ItemTooltipBody({
 
   const equippedAffixes = equipped?.affixes ?? []
   const equippedForgedMods = equipped?.forgedMods ?? []
-  const forgeKind = isGearSlot(base.slot) ? forgeKindFor(base.rarity) : null
+  const forgeKind = canStarForge(base.slot, activeSeasonId) ? forgeKindFor(base.rarity) : null
   const forgeAccent = 'text-stat-red'
 
   return (

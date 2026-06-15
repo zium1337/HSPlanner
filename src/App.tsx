@@ -9,18 +9,23 @@ import { AUTO_OPEN_KEY, BuildSelect } from "./components/buildSelect";
 import LeftStatsPanel from "./components/LeftStatsPanel";
 import { HoverProvider } from "./contexts/HoverProvider";
 import Logo from "./components/Logo";
+import SeasonErrorBanner from "./components/SeasonErrorBanner";
+import SeasonSwitcher from "./components/SeasonSwitcher";
+import SeasonToast from "./components/SeasonToast";
 import ShareButton from "./components/ShareButton";
 import StorageErrorBanner from "./components/StorageErrorBanner";
-import { classes, getClass } from "./data";
+import { activeSeasonId, classes, getClass } from "./data";
+import { PENDING_BUILD_KEY, PENDING_IMPORT_KEY } from "./data/seasons/registry";
 import { useBuild } from "./store/build";
 import { listSavedBuilds } from "./utils/build/savedBuilds";
+import { decodeShareToBuild } from "./utils/build/shareBuild";
 import {
   spriteBootProgress,
   warmupBootProgress,
   WARMUP_WEIGHT,
 } from "./utils/bootProgress";
 import { preloadSprites } from "./utils/preloadAssets";
-import { readStorage, readStorageWithLegacy, writeStorage } from "./utils/storage";
+import { readStorage, readStorageWithLegacy, removeStorage, writeStorage } from "./utils/storage";
 const CharacterView = lazy(() => import("./views/CharacterView"));
 const ConfigView = lazy(() => import("./views/ConfigView"));
 const GearView = lazy(() => import("./views/gear/GearView"));
@@ -116,7 +121,7 @@ function App() {
           },
         );
         try {
-          await invoke<boolean>("calc_warmup");
+          await invoke<boolean>("calc_warmup", { season: activeSeasonId });
         } finally {
           unlisten();
         }
@@ -143,9 +148,20 @@ function App() {
       report(100, "Ready");
       window.__bootFinish?.();
 
-      // "Auto-open last build": skip the library and jump straight into the
-      // most recently updated build when the user opted in.
-      if (readStorage(AUTO_OPEN_KEY) === "1") {
+      // Boot replay: the hub already re-resolved the season, so run any pending action.
+      const pendingBuild = readStorage(PENDING_BUILD_KEY);
+      const pendingImport = readStorage(PENDING_IMPORT_KEY);
+      if (pendingBuild) {
+        removeStorage(PENDING_BUILD_KEY);
+        if (useBuild.getState().loadSavedBuild(pendingBuild)) setScreen("planner");
+      } else if (pendingImport) {
+        removeStorage(PENDING_IMPORT_KEY);
+        const decoded = decodeShareToBuild(pendingImport);
+        if (decoded) {
+          useBuild.getState().importBuildSnapshot(decoded.snapshot, decoded.notes);
+          setScreen("planner");
+        }
+      } else if (readStorage(AUTO_OPEN_KEY) === "1") {
         const recent = listSavedBuilds()[0];
         if (recent && useBuild.getState().loadSavedBuild(recent.id)) {
           setScreen("planner");
@@ -349,11 +365,15 @@ function App() {
                 {cls.primaryAttribute}
               </span>
             )}
+            <SeasonSwitcher />
             <span aria-hidden className="h-6 w-px bg-border" />
             <BuildsMenu onOpenLibrary={() => setScreen("library")} />
             <ShareButton />
           </div>
         </header>
+
+        <SeasonErrorBanner />
+        <SeasonToast />
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <LeftStatsPanel />
