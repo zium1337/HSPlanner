@@ -16,6 +16,9 @@ export const DEFAULT_SEASON_ID = 's9' as const
 // Stamp for pre-season data (v1 share codes, unstamped builds); never flips.
 export const LEGACY_SEASON_ID = 's9'
 
+// The one season where charms cannot gain stars/forge; mirrored in src-tauri/src/calc/data.rs.
+export const SEASON_BEFORE_CHARM_STARS = 's9'
+
 export const SEASON_STORAGE_KEY = 'hsplanner.season.v1'
 
 export function isKnownSeasonId(id: string): boolean {
@@ -47,8 +50,9 @@ export function reloadIntoSeason(
   reload: () => void = () => window.location.reload(),
 ): boolean {
   if (!isKnownSeasonId(season) || season === activeSeason) return false
-  setStoredSeasonId(season)
-  writeStorage(pendingKey, pendingValue)
+  // Only reload once BOTH writes land — a failed localStorage write (private mode,
+  // quota) would otherwise reload into the default season and lose the pending build.
+  if (!writeStorage(pendingKey, pendingValue) || !setStoredSeasonId(season)) return false
   reload()
   return true
 }

@@ -1845,9 +1845,8 @@ pub fn compute_stat_breakdown(
         .cloned()
         .unwrap_or_default();
 
-    let (inc_key_opt, more_key_owned) = match multiplier_keys_for(stat_key) {
-        (inc, more) => (inc, more.map(|s| s.to_string())),
-    };
+    let (inc_key_opt, more) = multiplier_keys_for(stat_key);
+    let more_key_owned = more.map(|s| s.to_string());
     let more_key = more_key_owned.unwrap_or_else(|| format!("{stat_key}_more"));
 
     let increased_sources: Vec<SourceContribution> = inc_key_opt

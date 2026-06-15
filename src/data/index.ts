@@ -23,7 +23,7 @@ import setsJson from './sets.json'
 import treeNodesJson from './tree-nodes.json'
 import heroSiegeTreeJson from './hero-siege-tree.json'
 import nodeIconsJson from './node-icons.json'
-import { resolveActiveSeasonId } from './seasons/registry'
+import { resolveActiveSeasonId, SEASON_BEFORE_CHARM_STARS } from './seasons/registry'
 import { loadSeasonPatchSet } from './seasons/load'
 import {
   applyGameConfigPatch,
@@ -46,8 +46,8 @@ const seasonLoad = loadSeasonPatchSet(activeSeasonId)
 seasonErrors.push(...seasonLoad.errors)
 const seasonPatches = seasonLoad.patches
 
-// All-or-nothing per collection: any patch error keeps the base data.
-function patched<T>(base: T, result: PatchResult<T>): T {
+// All-or-nothing per collection: any patch error keeps the base data (matches the Rust twin).
+export function patched<T>(base: T, result: PatchResult<T>): T {
   if (result.errors.length > 0) {
     seasonErrors.push(...result.errors)
     return base
@@ -217,7 +217,7 @@ export function isCharmSlot(slot: string): boolean {
 
 // Charm stars + forge arrived in S10, so every season except the S9 baseline allows them.
 export function charmsAllowStarsForge(season: string): boolean {
-  return season !== 's9'
+  return season !== SEASON_BEFORE_CHARM_STARS
 }
 
 export function canStarForge(slot: string, season: string): boolean {

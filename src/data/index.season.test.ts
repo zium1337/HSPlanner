@@ -8,6 +8,7 @@ import {
   heroSiegeTree,
   isCharmSlot,
   nodeIcons,
+  patched,
   seasonDataErrors,
   treeNodeInfo,
 } from './index'
@@ -62,5 +63,18 @@ describe('charm stars/forge eligibility', () => {
     expect(effectiveStars('relic_1', 's10', 3)).toBe(null)
     expect(effectiveStars('charm_1', 's9', null)).toBe(null)
     expect(effectiveStars('weapon', 's9', null)).toBe(null)
+  })
+})
+
+describe('patched() all-or-nothing fallback', () => {
+  it('keeps the base collection when the patch result carries errors', () => {
+    const base = [{ id: 'a' }]
+    expect(patched(base, { data: [{ id: 'b' }], errors: ['boom'] })).toBe(base)
+  })
+
+  it('returns the patched data when there are no errors', () => {
+    const base = [{ id: 'a' }]
+    const next = [{ id: 'b' }]
+    expect(patched(base, { data: next, errors: [] })).toBe(next)
   })
 })

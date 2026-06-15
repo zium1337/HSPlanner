@@ -322,6 +322,14 @@ mod tests {
     }
 
     #[test]
+    fn game_config_patch_matches_ts_parity_fixture() {
+        let fx: Value = serde_json::from_str(PARITY).unwrap();
+        let case = &fx["gameConfig"];
+        let out = apply_game_config_patch(&case["base"], &case["patch"], "gameConfig").unwrap();
+        assert_eq!(out, case["expected"]);
+    }
+
+    #[test]
     fn list_patch_reports_all_error_kinds() {
         let base: Value = serde_json::json!([{ "id": "a", "v": 1 }]);
         let patch: Value = serde_json::json!({

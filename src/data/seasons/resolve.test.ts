@@ -249,4 +249,11 @@ describe('parity fixture (contract shared with Rust)', () => {
     expect(r.errors).toEqual([])
     expect(r.data).toEqual(expected)
   })
+
+  it('game config case matches expected', () => {
+    const { base, patch, expected } = fixture.gameConfig
+    const r = applyGameConfigPatch(base, patch, 'gameConfig')
+    expect(r.errors).toEqual([])
+    expect(r.data).toEqual(expected)
+  })
 })

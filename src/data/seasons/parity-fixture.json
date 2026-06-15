@@ -30,5 +30,29 @@
       "10": { "t": "Strength", "n": "normal", "l": ["+8 to Strength"] },
       "14": { "t": "Corruption", "n": "normal", "l": ["+1% Corruption"] }
     }
+  },
+  "gameConfig": {
+    "base": {
+      "experience_gain": 4,
+      "stats": [
+        { "key": "alpha", "name": "Alpha", "format": "flat" },
+        { "key": "beta", "name": "Beta", "format": "percent" }
+      ]
+    },
+    "patch": {
+      "change": { "experience_gain": 7 },
+      "stats": {
+        "remove": ["beta"],
+        "change": { "alpha": { "name": "Alpha Prime" } },
+        "add": [{ "key": "gamma", "name": "Gamma", "format": "flat" }]
+      }
+    },
+    "expected": {
+      "experience_gain": 7,
+      "stats": [
+        { "key": "alpha", "name": "Alpha Prime", "format": "flat" },
+        { "key": "gamma", "name": "Gamma", "format": "flat" }
+      ]
+    }
   }
 }

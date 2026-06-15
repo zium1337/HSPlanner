@@ -1,5 +1,5 @@
 {
   "add": [
-    { "id": "s10_cthulhus_soul_gem", "name": "Cthulhu's Soul Gem" }
+    { "id": "s10_cthulhus_soul_gem", "name": "Cthulhu's Soul Gem", "tier": 0, "stats": {} }
   ]
 }
