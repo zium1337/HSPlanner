@@ -34,6 +34,26 @@ import type {
 
 const CELL = 84
 const GAP = 18
+const ACCENT_HOT_RGB = '224,184,100'
+const SYNERGY_RGB = '167,139,250'
+
+// Tree accent = dominant damage type among its skills (falls back to gold).
+function treeColorRgb(list: Skill[]): string {
+  const counts = new Map<DamageType, number>()
+  for (const s of list) {
+    if (!s.damageType) continue
+    counts.set(s.damageType, (counts.get(s.damageType) ?? 0) + 1)
+  }
+  let best: DamageType | null = null
+  let bestN = 0
+  for (const [t, n] of counts) {
+    if (n > bestN) {
+      best = t
+      bestN = n
+    }
+  }
+  return best ? DAMAGE_COLORS[best].rgb : ACCENT_HOT_RGB
+}
 
 export default function SkillsView() {
   const classId = useBuild((s) => s.classId)
@@ -47,6 +67,7 @@ export default function SkillsView() {
   const [hovered, setHovered] = useState<string | null>(null)
   const [pinned, setPinned] = useState<string | null>(null)
   const [openSubtree, setOpenSubtree] = useState<string | null>(null)
+  const [synergyNode, setSynergyNode] = useState<string | null>(null)
 
   // Clear stale skill selection when class changes (reset-state-on-prop-change pattern).
   const [prevClassId, setPrevClassId] = useState(classId)
@@ -55,11 +76,11 @@ export default function SkillsView() {
     setHovered(null)
     setPinned(null)
     setOpenSubtree(null)
+    setSynergyNode(null)
   }
 
   const handleHover = (id: string | null) => {
     setHovered(id)
-    if (id !== null) setPinned(id)
   }
 
   const selected = pinned
@@ -180,8 +201,11 @@ export default function SkillsView() {
                 list={tree.list}
                 skillRanks={skillRanks}
                 canIncrement={remaining > 0}
-                selected={hovered}
+                hoveredId={hovered}
+                selectedId={pinned}
+                highlightId={synergyNode}
                 onHover={handleHover}
+                onSelect={setPinned}
                 onInc={incSkillRank}
                 onDec={decSkillRank}
                 onOpenSubtree={setOpenSubtree}
@@ -217,6 +241,7 @@ export default function SkillsView() {
           subskillRanks={subskillRanks}
           enemyConditions={enemyConditions}
           rankBonuses={rankBonuses}
+          onSynergyHover={setSynergyNode}
         />
       </div>
       {openSubtreeSkill && (
@@ -234,8 +259,11 @@ function SkillTree({
   list,
   skillRanks,
   canIncrement,
-  selected,
+  hoveredId,
+  selectedId,
+  highlightId,
   onHover,
+  onSelect,
   onInc,
   onDec,
   onOpenSubtree,
@@ -244,12 +272,17 @@ function SkillTree({
   list: Skill[]
   skillRanks: Record<string, number>
   canIncrement: boolean
-  selected: string | null
+  hoveredId: string | null
+  selectedId: string | null
+  highlightId: string | null
   onHover: (id: string | null) => void
+  onSelect: (id: string | null) => void
   onInc: (id: string, maxRank: number) => void
   onDec: (id: string) => void
   onOpenSubtree: (id: string | null) => void
 }) {
+  const rgb = treeColorRgb(list)
+  const pts = list.reduce((a, s) => a + (skillRanks[s.id] ?? 0), 0)
   const maxRow = list.reduce((m, s) => Math.max(m, s.position?.row ?? 0), 0)
   const maxCol = list.reduce((m, s) => Math.max(m, s.position?.col ?? 0), 0)
   const cols = Math.max(maxCol + 1, 3)
@@ -265,25 +298,41 @@ function SkillTree({
 
   return (
     <section
-      className="relative overflow-hidden rounded-md border border-border p-4"
+      className="relative overflow-hidden rounded-md border p-4"
       style={{
         width: width + 32,
-        background:
-          'linear-gradient(180deg, var(--color-panel), color-mix(in srgb, var(--color-bg) 70%, transparent))',
-        boxShadow:
-          'inset 0 1px 0 rgba(255,255,255,0.02), 0 8px 24px rgba(0,0,0,0.35)',
+        borderColor: `rgba(${rgb},0.22)`,
+        background: `linear-gradient(180deg, rgba(${rgb},0.06), var(--color-panel) 22%, color-mix(in srgb, var(--color-bg) 70%, transparent))`,
+        boxShadow: `inset 0 1px 0 rgba(${rgb},0.18), 0 8px 24px rgba(0,0,0,0.35)`,
       }}
     >
       <CornerMarks size={8} opacity={0.45} />
-      <div className="mb-3 flex items-center justify-center gap-2 border-b border-accent-deep/20 pb-2">
-        <span
-          aria-hidden
-          className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-          style={{ boxShadow: '0 0 6px rgba(224,184,100,0.5)' }}
-        />
-        <h3 className="m-0 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-hot/80">
-          {name}
-        </h3>
+      <div
+        className="mb-3 flex items-center justify-between gap-2 border-b pb-2"
+        style={{ borderColor: `rgba(${rgb},0.18)` }}
+      >
+        <div className="flex items-center gap-2">
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 rotate-45"
+            style={{
+              background: `rgb(${rgb})`,
+              boxShadow: `0 0 6px rgba(${rgb},0.6)`,
+            }}
+          />
+          <h3
+            className="m-0 font-mono text-[12px] font-semibold uppercase tracking-[0.18em]"
+            style={{
+              color: `rgb(${rgb})`,
+              textShadow: `0 0 12px rgba(${rgb},0.3)`,
+            }}
+          >
+            {name}
+          </h3>
+        </div>
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint tabular-nums">
+          {pts} pts
+        </span>
       </div>
       <motion.div
         className="relative"
@@ -312,8 +361,14 @@ function SkillTree({
                 y1={a.y}
                 x2={b.x}
                 y2={b.y}
-                style={{ stroke: satisfied ? 'var(--color-accent)' : 'var(--color-stat-red)' }}
-                strokeWidth={2.5}
+                style={{
+                  stroke: satisfied
+                    ? `rgba(${rgb},0.55)`
+                    : 'rgba(120,110,95,0.35)',
+                }}
+                strokeWidth={2}
+                strokeDasharray="4 5"
+                strokeLinecap="round"
               />
             )
           })}
@@ -332,7 +387,9 @@ function SkillTree({
               rank={skillRanks[skill.id] ?? 0}
               locked={locked}
               canIncrement={canIncrement}
-              hovered={selected === skill.id}
+              hovered={hoveredId === skill.id}
+              isSelected={selectedId === skill.id}
+              synergyHighlight={highlightId === skill.id}
               hasSubtree={hasSubtree}
               style={{
                 position: 'absolute',
@@ -341,6 +398,7 @@ function SkillTree({
               }}
               onMouseEnter={() => onHover(skill.id)}
               onMouseLeave={() => onHover(null)}
+              onSelect={() => onSelect(skill.id)}
               onInc={() => onInc(skill.id, skill.maxRank)}
               onDec={() => onDec(skill.id)}
               onOpenSubtree={() => onOpenSubtree(skill.id)}
@@ -358,10 +416,13 @@ function SkillIcon({
   locked,
   canIncrement,
   hovered,
+  isSelected,
+  synergyHighlight,
   hasSubtree,
   style,
   onMouseEnter,
   onMouseLeave,
+  onSelect,
   onInc,
   onDec,
   onOpenSubtree,
@@ -371,27 +432,44 @@ function SkillIcon({
   locked: boolean
   canIncrement: boolean
   hovered: boolean
+  isSelected: boolean
+  synergyHighlight: boolean
   hasSubtree: boolean
   style: React.CSSProperties
   onMouseEnter: () => void
   onMouseLeave: () => void
+  onSelect: () => void
   onInc: () => void
   onDec: () => void
   onOpenSubtree: () => void
 }) {
   const allocated = rank > 0
-  const border = skill.damageType
-    ? DAMAGE_COLORS[skill.damageType].border
-    : 'border-accent'
-  const glow =
-    allocated && skill.damageType
-      ? DAMAGE_COLORS[skill.damageType].glow
-      : ''
   const canInc = canIncrement && rank < skill.maxRank && !locked
+  // Sprites carry their own frame; convey state with rings/glow only (no border).
+  const dmgRgb = skill.damageType
+    ? DAMAGE_COLORS[skill.damageType].rgb
+    : ACCENT_HOT_RGB
+  const shadows: string[] = []
+  if (synergyHighlight) {
+    shadows.push(
+      `0 0 0 2px rgba(${SYNERGY_RGB},0.9)`,
+      `0 0 16px rgba(${SYNERGY_RGB},0.55)`,
+    )
+  } else if (isSelected) {
+    shadows.push(
+      `0 0 0 2px rgba(${ACCENT_HOT_RGB},0.9)`,
+      `0 0 14px rgba(${ACCENT_HOT_RGB},0.45)`,
+    )
+  } else if (hovered) {
+    shadows.push(`0 0 0 1.5px rgba(${dmgRgb},0.55)`)
+  }
+  if (allocated && !isSelected && !synergyHighlight) {
+    shadows.push(`0 0 12px rgba(${dmgRgb},0.4)`)
+  }
+  const ringShadow = shadows.length ? shadows.join(', ') : undefined
 
   return (
     <motion.div
-      style={style}
       variants={skillIconVariants}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -399,23 +477,15 @@ function SkillIcon({
         e.preventDefault()
         if (rank > 0) onDec()
       }}
-      className={`group relative flex items-center justify-center rounded-[3px] border-2 transition-all ${
-        locked
-          ? 'border-stat-red/40 bg-panel-2/30'
-          : allocated
-            ? `${border} bg-panel-2 ${glow}`
-            : hovered
-              ? 'border-accent-deep bg-panel-2'
-              : 'border-border-2 bg-panel-2/50'
-      }`}
+      className="group relative flex items-center justify-center rounded-[3px] transition-all"
+      style={{ ...style, boxShadow: ringShadow }}
       title={locked ? `Requires ${skill.requiresSkill}` : undefined}
     >
       <button
-        onClick={canInc ? onInc : undefined}
-        disabled={!canInc}
-        className={`flex items-center justify-center transition-transform ${
-          canInc ? 'cursor-pointer hover:scale-110' : ''
-        } ${locked ? 'opacity-30 grayscale' : allocated ? '' : 'opacity-50'}`}
+        onClick={onSelect}
+        className={`flex cursor-pointer items-center justify-center transition-transform hover:scale-105 ${
+          locked ? 'opacity-30 grayscale' : allocated ? '' : 'opacity-60'
+        }`}
         style={{ width: CELL, height: CELL }}
       >
         <SkillIconImage icon={resolveSkillIcon(skill)} size={CELL} />
@@ -490,6 +560,7 @@ function SkillDetailsPanel({
   subskillRanks,
   enemyConditions,
   rankBonuses,
+  onSynergyHover,
 }: {
   skill: Skill | null
   currentRank: number
@@ -502,6 +573,7 @@ function SkillDetailsPanel({
   subskillRanks: Record<string, number>
   enemyConditions: Record<string, boolean>
   rankBonuses: Record<string, [number, number]>
+  onSynergyHover: (id: string | null) => void
 }) {
   if (!skill) {
     return (
@@ -514,7 +586,7 @@ function SkillDetailsPanel({
         }}
       >
         <div>
-          <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+          <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-accent-hot/80">
             <span
               aria-hidden
               className="inline-block h-1 w-1 rotate-45 bg-accent-hot"
@@ -523,36 +595,36 @@ function SkillDetailsPanel({
             Details
           </div>
           <p className="font-mono text-[11px] leading-relaxed tracking-[0.04em] text-muted">
-            Hover a skill to inspect its damage, mana cost, synergies, and
+            Click a skill to inspect its damage, mana cost, synergies, and
             subtree bonuses.
           </p>
         </div>
 
         <div>
-          <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+          <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-accent-hot/80">
             <span
               aria-hidden
               className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
             />
             Controls
           </div>
-          <ul className="space-y-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
-            <ControlsRow keys="L-CLICK" label="Add a point" />
+          <ul className="space-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+            <ControlsRow keys="L-CLICK" label="Select skill" />
+            <ControlsRow keys="+" label="Add a point" />
             <ControlsRow keys="R-CLICK" label="Remove a point" />
-            <ControlsRow keys="HOVER" label="Pin details panel" />
             <ControlsRow keys={<GearIcon className="h-3 w-3" />} label="Open subtree" />
           </ul>
         </div>
 
         <div>
-          <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+          <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-accent-hot/80">
             <span
               aria-hidden
               className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
             />
             Damage Types
           </div>
-          <ul className="grid grid-cols-2 gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
+          <ul className="grid grid-cols-2 gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
             <DamageLegend type="physical" />
             <DamageLegend type="lightning" />
             <DamageLegend type="cold" />
@@ -605,19 +677,19 @@ function SkillDetailsPanel({
           >
             {skill.name}
           </div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
             {skill.damageType ?? '—'} · {skill.kind}
           </div>
         </div>
       </div>
-      <div className="mb-3 flex items-center gap-2 font-mono text-[11px] tabular-nums">
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+      <div className="mb-3 flex items-center gap-2 font-mono text-[12px] tabular-nums">
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
           Rank
         </span>
         <span className="text-accent-hot">
           {hasBonus ? effLabel : currentRank}
         </span>
-        <span className="text-faint">/ {skill.maxRank}</span>
+        <span className="text-muted">/ {skill.maxRank}</span>
         {hasBonus && (
           <span className="text-muted">
             ({currentRank}
@@ -632,7 +704,7 @@ function SkillDetailsPanel({
       </div>
       {hasBonus && (
         <DetailBlock title="Skill bonuses">
-          <div className="space-y-0.5 text-xs tabular-nums">
+          <div className="space-y-1 text-[12px] tabular-nums">
             {(allSkillsBonus[0] !== 0 || allSkillsBonus[1] !== 0) && (
               <div className="flex justify-between">
                 <span className="text-muted">+ to All Skills</span>
@@ -671,6 +743,7 @@ function SkillDetailsPanel({
         skillRanks={skillRanks}
         attributes={attributes}
         rankBonuses={rankBonuses}
+        onSynergyHover={onSynergyHover}
       />
       <SubtreeBonusBlock
         skill={skill}
@@ -678,7 +751,7 @@ function SkillDetailsPanel({
         enemyConditions={enemyConditions}
       />
       {skill.description && (
-        <p className="mb-3 text-[13px] leading-relaxed text-muted">
+        <p className="mb-3 text-[12px] leading-relaxed text-muted">
           {skill.description}
         </p>
       )}
@@ -732,9 +805,9 @@ function SkillDetailsPanel({
             />
           )}
           {skill.requiresSkill && (
-            <div className="flex items-baseline justify-between gap-2 py-0.75 text-xs">
+            <div className="flex items-baseline justify-between gap-2 py-1 text-[12px]">
               <span className="text-muted">Requires skill</span>
-              <span className="font-mono text-faint">
+              <span className="font-mono text-muted">
                 «{skill.requiresSkill}»
               </span>
             </div>
@@ -773,11 +846,15 @@ function PropertyRow({
   valueClass?: string
 }) {
   return (
-    <div className="flex items-baseline justify-between gap-2 py-0.75 text-xs">
+    <div className="flex items-baseline gap-2 py-1 text-[12px]">
       <span className="text-muted">{label}</span>
+      <span
+        aria-hidden
+        className="mb-[3px] min-w-2 flex-1 self-end border-b border-dotted border-faint/40"
+      />
       <span className="font-mono tabular-nums">
         <span className={valueClass ?? 'text-text'}>{value}</span>
-        {suffix && <span className="text-faint">{suffix}</span>}
+        {suffix && <span className="text-muted">{suffix}</span>}
       </span>
     </div>
   )
@@ -786,28 +863,48 @@ function PropertyRow({
 function DetailBlock({
   title,
   trailing,
+  accentRgb,
+  onMouseLeave,
   children,
 }: {
   title: string
   trailing?: ReactNode
+  accentRgb?: string
+  onMouseLeave?: () => void
   children: ReactNode
 }) {
   return (
     <div
       className="mb-3 rounded-[3px] border border-border-2 p-2.5"
+      onMouseLeave={onMouseLeave}
       style={{
         background:
           'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 70%, transparent))',
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)',
       }}
     >
-      <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-accent-deep/20 pb-1">
-        <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
+      <div
+        className="mb-2 flex items-center justify-between gap-2 border-b pb-1.5"
+        style={{
+          borderColor: accentRgb
+            ? `rgba(${accentRgb},0.25)`
+            : 'rgba(138,111,58,0.2)',
+        }}
+      >
+        <div
+          className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.16em]"
+          style={{ color: accentRgb ? `rgb(${accentRgb})` : undefined }}
+        >
           <span
             aria-hidden
-            className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+            className="inline-block h-1 w-1 rotate-45"
+            style={{
+              background: accentRgb
+                ? `rgb(${accentRgb})`
+                : 'var(--color-accent-deep)',
+            }}
           />
-          {title}
+          <span className={accentRgb ? '' : 'text-accent-hot/80'}>{title}</span>
         </div>
         {trailing}
       </div>
@@ -901,7 +998,7 @@ function SubtreeBonusBlock({
   return (
     <DetailBlock title="Subtree bonuses">
       {statEntries.length > 0 && (
-        <div className="space-y-0.5 text-xs tabular-nums">
+        <div className="space-y-1 text-[12px] tabular-nums">
           {statEntries.map(([k, v]) => (
             <div key={k} className="flex justify-between">
               <span className="text-muted">{statName(k)}</span>
@@ -947,12 +1044,12 @@ function SubtreeBonusBlock({
               }
             }
             return (
-              <div key={sub.id} className="text-xs">
+              <div key={sub.id} className="text-[12px]">
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-text">{sub.name}</span>
                   <span className="tabular-nums">
                     <span className="text-accent-hot">{chance}%</span>{' '}
-                    <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
                       {proc.trigger.replace('_', ' ')}
                     </span>
                   </span>
@@ -979,6 +1076,7 @@ function SkillEffectsBlock({
   skillRanks,
   attributes,
   rankBonuses,
+  onSynergyHover,
 }: {
   skill: Skill
   currentRank: number
@@ -988,6 +1086,7 @@ function SkillEffectsBlock({
   skillRanks: Record<string, number>
   attributes: Record<AttributeKey, RangedValue>
   rankBonuses: Record<string, [number, number]>
+  onSynergyHover: (id: string | null) => void
 }) {
   const allocated = currentRank > 0
   const curMin = allocated ? effRankMin : 1
@@ -1019,11 +1118,21 @@ function SkillEffectsBlock({
       return [v, v]
     }
     if (skill.damagePerRank) {
-      const idx = Math.min(rank, skill.damagePerRank.length) - 1
-      if (idx >= 0) {
-        const d = skill.damagePerRank[idx]!
+      const t = skill.damagePerRank
+      const n = t.length
+      if (n === 0 || rank < 1) return null
+      if (rank <= n) {
+        const d = t[rank - 1]!
         return [Math.max(0, d.min), Math.max(0, d.max)]
       }
+      // Beyond the table, extrapolate at its final per-rank slope so +skills keep scaling base damage.
+      const last = t[n - 1]!
+      const prev = n >= 2 ? t[n - 2]! : last
+      const over = rank - n
+      return [
+        Math.max(0, last.min + (last.min - prev.min) * over),
+        Math.max(0, last.max + (last.max - prev.max) * over),
+      ]
     }
     return null
   }
@@ -1137,10 +1246,11 @@ function SkillEffectsBlock({
         : `${nextMin}-${nextMax}`
 
   return (
+    <>
     <DetailBlock
       title={allocated ? 'Effects' : 'Preview (not learned)'}
       trailing={
-        <span className="font-mono text-[10px] tabular-nums tracking-[0.06em] text-faint">
+        <span className="font-mono text-[11px] tabular-nums tracking-[0.06em] text-muted">
           rank {rankLabel}
           {nextRankLabel && (
             <>
@@ -1151,7 +1261,7 @@ function SkillEffectsBlock({
         </span>
       }
     >
-      <div className="space-y-0.5 text-xs tabular-nums">
+      <div className="space-y-1 text-[12px] tabular-nums">
         {baseDmgCurMin && baseDmgCurMax && (
           <EffRow
             label={
@@ -1257,46 +1367,69 @@ function SkillEffectsBlock({
           />
         ))}
       </div>
-      {(skill.bonusSources?.length ?? 0) > 0 && (
-        <div className="mt-2.5 border-t border-dashed border-accent-deep/30 pt-2">
-          <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-hot/70">
-            <span
-              aria-hidden
-              className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
-            />
-            Receives synergy from
-          </div>
-          <div className="space-y-0.5 text-xs">
-            {(skill.bonusSources ?? []).map((bs, i) => {
-              const matched = synergiesReceived.find(
-                (sr) => sr.source === bs.source && sr.stat === bs.stat,
-              )
-              return (
-                <div
-                  key={i}
-                  className="flex items-baseline justify-between gap-2 tabular-nums"
-                >
-                  <span className="truncate text-muted">
-                    {bs.source}{' '}
-                    <span className="text-faint text-[10px]">
-                      ({bs.value}% per{' '}
-                      {bs.per === 'skill_level' ? 'rank' : 'point'})
-                    </span>
+    </DetailBlock>
+    {(skill.bonusSources?.length ?? 0) > 0 && (
+      <DetailBlock
+        title="Receives synergy from"
+        accentRgb={SYNERGY_RGB}
+        onMouseLeave={() => onSynergyHover(null)}
+      >
+        <div className="space-y-0.5 text-[12px]">
+          {(skill.bonusSources ?? []).map((bs, i) => {
+            const matched = synergiesReceived.find(
+              (sr) => sr.source === bs.source && sr.stat === bs.stat,
+            )
+            const srcSkill =
+              bs.per === 'skill_level'
+                ? allClassSkills.find(
+                    (s) =>
+                      normalizeSkillName(s.name) ===
+                      normalizeSkillName(bs.source),
+                  )
+                : undefined
+            const nodeId = srcSkill?.id ?? null
+            return (
+              <div
+                key={i}
+                onMouseEnter={() => onSynergyHover(nodeId)}
+                className={`-mx-1.5 rounded-[2px] px-1.5 py-1 tabular-nums transition-colors ${
+                  nodeId ? 'hover:bg-[rgba(167,139,250,0.12)]' : ''
+                }`}
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="flex min-w-0 items-baseline gap-1.5">
+                    <span
+                      aria-hidden
+                      className="inline-block h-1.5 w-1.5 shrink-0 translate-y-[-1px] rotate-45"
+                      style={{
+                        background: nodeId
+                          ? `rgb(${SYNERGY_RGB})`
+                          : 'var(--color-faint)',
+                        boxShadow: nodeId
+                          ? `0 0 5px rgba(${SYNERGY_RGB},0.6)`
+                          : undefined,
+                      }}
+                    />
+                    <span className="truncate text-text/85">{bs.source}</span>
                   </span>
                   <span
-                    className={matched ? 'text-stat-orange' : 'text-faint'}
+                    className={`shrink-0 ${matched ? 'text-stat-orange' : 'text-faint'}`}
                   >
                     {matched
                       ? formatStatPair(bs.stat, matched.pctMin, matched.pctMax)
                       : '—'}
                   </span>
                 </div>
-              )
-            })}
-          </div>
+                <div className="pl-3 text-[10px] text-faint">
+                  {bs.value}% per {bs.per === 'skill_level' ? 'rank' : 'point'}
+                </div>
+              </div>
+            )
+          })}
         </div>
-      )}
-    </DetailBlock>
+      </DetailBlock>
+    )}
+    </>
   )
 }
 
@@ -1354,19 +1487,33 @@ function EffRow({
   next?: string
   color: string
 }) {
+  const hasNext = !!next && next !== cur
+  // Two-line when a next-rank preview exists; cur → next is too wide for one line.
+  if (hasNext) {
+    return (
+      <div className="min-w-0 leading-snug">
+        <div className="truncate text-text/80" title={label}>
+          {label}
+        </div>
+        <div className="whitespace-nowrap pl-4">
+          <span className={color}>{cur}</span>
+          <span className="px-1.5 text-muted">→</span>
+          <span className={`${color} opacity-65`}>{next}</span>
+        </div>
+      </div>
+    )
+  }
   return (
-    <div className="flex items-baseline justify-between gap-2 min-w-0">
+    <div className="flex items-baseline gap-2 min-w-0">
       <span className="text-text/80 truncate" title={label}>
         {label}
       </span>
+      <span
+        aria-hidden
+        className="mb-[3px] min-w-2 flex-1 self-end border-b border-dotted border-faint/40"
+      />
       <span className="whitespace-nowrap shrink-0">
         <span className={color}>{cur}</span>
-        {next && next !== cur && (
-          <>
-            <span className="text-muted"> → </span>
-            <span className={color}>{next}</span>
-          </>
-        )}
       </span>
     </div>
   )
