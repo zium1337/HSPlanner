@@ -1,6 +1,6 @@
 [
   {
-    "id": "prophet_fm_1",
+    "id": "summon_raven",
     "classId": "prophet",
     "name": "Summon Raven",
     "kind": "active",
@@ -64,7 +64,7 @@
     ]
   },
   {
-    "id": "prophet_fm_2",
+    "id": "thorned_roots",
     "classId": "prophet",
     "name": "Thorned Roots",
     "kind": "active",
@@ -127,7 +127,7 @@
     ]
   },
   {
-    "id": "prophet_fm_3",
+    "id": "carrion_worm",
     "classId": "prophet",
     "name": "Carrion Worm",
     "kind": "active",
@@ -192,7 +192,7 @@
     ]
   },
   {
-    "id": "prophet_fm_4",
+    "id": "blessed_nature",
     "classId": "prophet",
     "name": "Blessed Nature",
     "kind": "passive",
@@ -223,7 +223,7 @@
     }
   },
   {
-    "id": "prophet_fm_5",
+    "id": "thorned_branch",
     "classId": "prophet",
     "name": "Thorned Branch",
     "kind": "active",
@@ -287,7 +287,7 @@
     ]
   },
   {
-    "id": "prophet_fm_6",
+    "id": "summon_ent_colossus",
     "classId": "prophet",
     "name": "Summon Ent Colossus",
     "kind": "active",
@@ -351,7 +351,7 @@
     ]
   },
   {
-    "id": "prophet_fm_7",
+    "id": "deep_rooted",
     "classId": "prophet",
     "name": "Deep Rooted",
     "kind": "passive",
@@ -381,7 +381,7 @@
     }
   },
   {
-    "id": "prophet_fm_8",
+    "id": "summon_ent",
     "classId": "prophet",
     "name": "Summon Ent",
     "kind": "active",
@@ -445,7 +445,7 @@
     ]
   },
   {
-    "id": "prophet_fm_9",
+    "id": "summon_spirit_of_the_forest",
     "classId": "prophet",
     "name": "Summon Spirit of The Forest",
     "kind": "active",
@@ -519,7 +519,7 @@
     ]
   },
   {
-    "id": "prophet_sw_1",
+    "id": "skinwalker",
     "classId": "prophet",
     "name": "Skinwalker",
     "kind": "passive",
@@ -552,7 +552,7 @@
     }
   },
   {
-    "id": "prophet_sw_2",
+    "id": "wounding_paw",
     "classId": "prophet",
     "name": "Wounding Paw",
     "kind": "active",
@@ -623,7 +623,7 @@
     ]
   },
   {
-    "id": "prophet_sw_3",
+    "id": "leaping_charge",
     "classId": "prophet",
     "name": "Leaping Charge",
     "kind": "active",
@@ -683,7 +683,7 @@
     ]
   },
   {
-    "id": "prophet_sw_4",
+    "id": "storm_hawk",
     "classId": "prophet",
     "name": "Storm Hawk",
     "kind": "active",
@@ -729,7 +729,7 @@
     ]
   },
   {
-    "id": "prophet_sw_5",
+    "id": "spirit_of_the_ent",
     "classId": "prophet",
     "name": "Spirit of the Ent",
     "kind": "active",
@@ -781,7 +781,7 @@
     ]
   },
   {
-    "id": "prophet_sw_6",
+    "id": "maelstrom_of_frost",
     "classId": "prophet",
     "name": "Maelstrom of Frost",
     "kind": "active",
@@ -866,7 +866,7 @@
     ]
   },
   {
-    "id": "prophet_sw_7",
+    "id": "swamps_essence",
     "classId": "prophet",
     "name": "Swamp's Essence",
     "kind": "passive",
@@ -896,7 +896,7 @@
     }
   },
   {
-    "id": "prophet_sw_8",
+    "id": "manadwelling",
     "classId": "prophet",
     "name": "Manadwelling",
     "kind": "passive",
@@ -929,7 +929,7 @@
     }
   },
   {
-    "id": "prophet_sw_9",
+    "id": "spirit_of_the_wendigo",
     "classId": "prophet",
     "name": "Spirit of The Wendigo",
     "kind": "active",

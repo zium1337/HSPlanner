@@ -1,6 +1,6 @@
 [
   {
-    "id": "bard_mg_1",
+    "id": "slaying_riffs",
     "classId": "bard",
     "name": "Slaying Riffs",
     "kind": "active",
@@ -65,7 +65,7 @@
     ]
   },
   {
-    "id": "bard_mg_2",
+    "id": "insane_riff",
     "classId": "bard",
     "name": "Insane Riff",
     "kind": "passive",
@@ -95,7 +95,7 @@
     }
   },
   {
-    "id": "bard_mg_3",
+    "id": "visceral_growl",
     "classId": "bard",
     "name": "Visceral Growl",
     "kind": "active",
@@ -159,7 +159,7 @@
     ]
   },
   {
-    "id": "bard_mg_4",
+    "id": "amping_up",
     "classId": "bard",
     "name": "Amping Up",
     "kind": "passive",
@@ -190,7 +190,7 @@
     }
   },
   {
-    "id": "bard_mg_5",
+    "id": "sacrilegious_symphony",
     "classId": "bard",
     "name": "Sacrilegious Symphony",
     "kind": "active",
@@ -255,7 +255,7 @@
     ]
   },
   {
-    "id": "bard_mg_6",
+    "id": "satans_melody",
     "classId": "bard",
     "name": "Satan's Melody",
     "kind": "buff",
@@ -298,7 +298,7 @@
     }
   },
   {
-    "id": "bard_mg_7",
+    "id": "sounds_of_silence",
     "classId": "bard",
     "name": "Sounds of Silence",
     "kind": "passive",
@@ -328,7 +328,7 @@
     }
   },
   {
-    "id": "bard_mg_8",
+    "id": "high_db",
     "classId": "bard",
     "name": "High dB",
     "kind": "passive",
@@ -359,7 +359,7 @@
     }
   },
   {
-    "id": "bard_mg_9",
+    "id": "progenies_of_the_great_cataclysm",
     "classId": "bard",
     "name": "Progenies of the Great Cataclysm",
     "kind": "active",
@@ -425,7 +425,7 @@
     ]
   },
   {
-    "id": "bard_pf_1",
+    "id": "crowd_dive",
     "classId": "bard",
     "name": "Crowd Dive",
     "kind": "active",
@@ -495,7 +495,7 @@
     ]
   },
   {
-    "id": "bard_pf_2",
+    "id": "crowd_pummeler",
     "classId": "bard",
     "name": "Crowd Pummeler",
     "kind": "passive",
@@ -526,7 +526,7 @@
     }
   },
   {
-    "id": "bard_pf_3",
+    "id": "pyro_technician",
     "classId": "bard",
     "name": "Pyro Technician",
     "kind": "active",
@@ -610,7 +610,7 @@
     ]
   },
   {
-    "id": "bard_pf_4",
+    "id": "adrenaline_momentum",
     "classId": "bard",
     "name": "Adrenaline Momentum",
     "kind": "passive",
@@ -643,7 +643,7 @@
     }
   },
   {
-    "id": "bard_pf_5",
+    "id": "antisocial_pit_fighter",
     "classId": "bard",
     "name": "Antisocial Pit Fighter",
     "kind": "passive",
@@ -675,7 +675,7 @@
     }
   },
   {
-    "id": "bard_pf_6",
+    "id": "headbanger",
     "classId": "bard",
     "name": "Headbanger",
     "kind": "active",
@@ -747,7 +747,7 @@
     ]
   },
   {
-    "id": "bard_pf_7",
+    "id": "craving_for_another_killing",
     "classId": "bard",
     "name": "Craving For Another Killing",
     "kind": "buff",
@@ -792,7 +792,7 @@
     }
   },
   {
-    "id": "bard_pf_8",
+    "id": "craving_for_attention",
     "classId": "bard",
     "name": "Craving For Attention",
     "kind": "passive",
@@ -822,7 +822,7 @@
     }
   },
   {
-    "id": "bard_pf_9",
+    "id": "moshpit_massacre",
     "classId": "bard",
     "name": "Moshpit Massacre",
     "kind": "active",
