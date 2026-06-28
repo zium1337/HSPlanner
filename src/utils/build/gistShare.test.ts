@@ -3,6 +3,7 @@ import {
   extractGistId,
   isGistReference,
   isGistSharingConfigured,
+  uploadBuildToGist,
 } from './gistShare'
 
 afterEach(() => {
@@ -47,5 +48,54 @@ describe('extractGistId / isGistReference', () => {
 
   it('rejects an arbitrary build code', () => {
     expect(isGistReference('N4Ig1234-not-a-gist+code$$')).toBe(false)
+  })
+})
+
+function jsonResponse(status: number, body: unknown): Response {
+  return { status, json: async () => body } as unknown as Response
+}
+
+describe('uploadBuildToGist', () => {
+  it('throws no-token when the token is missing', async () => {
+    vi.stubEnv('VITE_GIST_TOKEN', '')
+    await expect(uploadBuildToGist('CODE')).rejects.toMatchObject({
+      kind: 'no-token',
+    })
+  })
+
+  it('posts a secret .hsp gist and returns the html_url', async () => {
+    vi.stubEnv('VITE_GIST_TOKEN', 'ghp_test')
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        jsonResponse(201, { id: 'abc123', html_url: 'https://gist.github.com/u/abc123' }),
+      )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = await uploadBuildToGist('CODE', { className: 'amazon', level: 50 })
+
+    expect(result).toEqual({ id: 'abc123', url: 'https://gist.github.com/u/abc123' })
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('https://api.github.com/gists')
+    expect(init.method).toBe('POST')
+    expect(init.headers.Authorization).toBe('Bearer ghp_test')
+    const body = JSON.parse(init.body)
+    expect(body.public).toBe(false)
+    expect(body.files['hsplanner-build.hsp'].content).toBe('CODE')
+  })
+
+  it('maps 401 to auth and 403 to rate-limit', async () => {
+    vi.stubEnv('VITE_GIST_TOKEN', 'ghp_test')
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(401, {})))
+    await expect(uploadBuildToGist('CODE')).rejects.toMatchObject({ kind: 'auth' })
+
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(403, {})))
+    await expect(uploadBuildToGist('CODE')).rejects.toMatchObject({ kind: 'rate-limit' })
+  })
+
+  it('maps a network failure to network', async () => {
+    vi.stubEnv('VITE_GIST_TOKEN', 'ghp_test')
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')))
+    await expect(uploadBuildToGist('CODE')).rejects.toMatchObject({ kind: 'network' })
   })
 })
