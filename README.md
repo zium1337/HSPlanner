@@ -10,9 +10,9 @@ A desktop build planner for **Hero Siege** - a calculator for the talent tree, g
 
 ## Features
 
-- [ ] **Talent tree** *(around 50% of passives works now)* — interactive pan/zoom graph view with auto-pathfinding, path preview on hover, and reset
-- [ ] **Skills and sub-skills** *(currently stormweaver was added)* — point allocation that respects skill prerequisites and per-level caps
-- [ ] **Gear** *(around 70% done)* — slots for weapons, armor, charms, jewelry with sockets (gems/runes) and runeword detection
+- [x] **Talent tree** — interactive pan/zoom graph view with auto-pathfinding, path preview on hover, and reset
+- [x] **Skills** — point allocation that respects skill prerequisites and per-level caps
+- [x] **Gear** — slots for weapons, armor, charms, jewelry with sockets (gems/runes) and runeword detection
 - [x] **Affixes** — add affixes with tier and adjustable roll
 - [x] **Stats** — aggregated bonuses from tree, gear, attributes, and runewords
 - [x] **Custom stats** — free-text user-entered stats for things outside the data model
