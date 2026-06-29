@@ -5,7 +5,6 @@ import { getSeason, SEASONS } from "../data/seasons/registry";
 import { activeSeasonId } from "../data";
 import { useBuild } from "../store/build";
 import {
-  MODAL_BTN_CLASS,
   MODAL_BTN_PRIMARY_CLASS,
   MODAL_FOOTER_CLASS,
   Modal,
@@ -58,14 +57,6 @@ export default function SeasonSwitcher() {
             className={MODAL_FOOTER_CLASS}
             style={{ background: "rgba(0,0,0,0.3)" }}
           >
-            <motion.button
-              {...hoverTap}
-              type="button"
-              onClick={() => setPending(null)}
-              className={MODAL_BTN_CLASS}
-            >
-              Cancel
-            </motion.button>
             <motion.button
               {...hoverTap}
               type="button"

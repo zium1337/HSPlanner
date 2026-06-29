@@ -10,9 +10,6 @@ import {
 
 type Status = "idle" | "copied" | "error";
 
-const FOOTER_BTN_CLASS =
-  "rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot";
-
 const FOOTER_BTN_PRIMARY_CLASS =
   "rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]";
 
@@ -280,9 +277,6 @@ export function ShareDialog({
               }}
             >
               {copyLabel}
-            </button>
-            <button onClick={onClose} className={FOOTER_BTN_CLASS}>
-              Close
             </button>
           </div>
         </footer>

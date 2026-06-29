@@ -5,8 +5,6 @@ import { Modal } from '../Modal'
 
 const GOLD_BTN = 'linear-gradient(180deg, #3a2f1a, #2a2418)'
 
-const BTN_GHOST =
-  'rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot'
 const BTN_GOLD =
   'rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4] disabled:cursor-not-allowed disabled:opacity-50'
 const BTN_DANGER =
@@ -30,7 +28,7 @@ function OverlayShell({
   title: string
   onClose: () => void
   children: ReactNode
-  footer: ReactNode
+  footer?: ReactNode
   width?: number
 }) {
   useEffect(() => {
@@ -50,9 +48,11 @@ function OverlayShell({
       panelStyle={{ width }}
     >
       <div className="flex flex-col gap-3 p-5">{children}</div>
-      <footer className="flex items-center justify-end gap-2 border-t border-border bg-black/30 px-5 py-3">
-        {footer}
-      </footer>
+      {footer && (
+        <footer className="flex items-center justify-end gap-2 border-t border-border bg-black/30 px-5 py-3">
+          {footer}
+        </footer>
+      )}
     </Modal>
   )
 }
@@ -99,9 +99,6 @@ export function TextPromptOverlay({
       onClose={onClose}
       footer={
         <>
-          <button type="button" onClick={onClose} className={BTN_GHOST}>
-            Cancel
-          </button>
           <button
             type="button"
             onClick={submit}
@@ -159,9 +156,6 @@ export function ConfirmOverlay({
       onClose={onClose}
       footer={
         <>
-          <button type="button" onClick={onClose} className={BTN_GHOST}>
-            Cancel
-          </button>
           <button
             type="button"
             onClick={onConfirm}
@@ -198,9 +192,6 @@ export function SaveOverlay({
       onClose={onClose}
       footer={
         <>
-          <button type="button" onClick={onClose} className={BTN_GHOST}>
-            Cancel
-          </button>
           <button
             type="button"
             onClick={submit}
@@ -279,9 +270,6 @@ export function ImportOverlay({
       width={520}
       footer={
         <>
-          <button type="button" onClick={onClose} className={BTN_GHOST}>
-            Cancel
-          </button>
           <button
             type="button"
             onClick={() => submit(text)}
@@ -362,11 +350,6 @@ export function MoveToFolderOverlay({
       section="Organise"
       title="Move to folder"
       onClose={onClose}
-      footer={
-        <button type="button" onClick={onClose} className={BTN_GHOST}>
-          Cancel
-        </button>
-      }
     >
       <FieldLabel>Destination</FieldLabel>
       <div className="flex max-h-72 flex-col gap-1 overflow-y-auto">
@@ -458,9 +441,6 @@ export function TagsOverlay({
       onClose={onClose}
       footer={
         <>
-          <button type="button" onClick={onClose} className={BTN_GHOST}>
-            Cancel
-          </button>
           <button
             type="button"
             onClick={save}

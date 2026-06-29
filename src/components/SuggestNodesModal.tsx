@@ -411,12 +411,6 @@ export default function SuggestNodesModal({
           </div>
           <div className="flex gap-2">
             <button
-              onClick={handleClose}
-              className="rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-            >
-              Cancel
-            </button>
-            <button
               disabled={!canApply}
               onClick={handleApply}
               className="rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-all enabled:hover:border-accent-hot enabled:hover:shadow-[0_0_14px_rgba(224,184,100,0.3)] disabled:cursor-not-allowed disabled:border-border-2 disabled:text-faint"

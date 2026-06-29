@@ -159,12 +159,6 @@ export default function JewelSocketModal({
               </button>
             )}
             <button
-              onClick={onClose}
-              className="rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-            >
-              Cancel
-            </button>
-            <button
               disabled={!dirty}
               onClick={() => {
                 onApply(pending)
