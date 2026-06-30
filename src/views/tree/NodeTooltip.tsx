@@ -146,9 +146,9 @@ export function NodeTooltip({
         columnFill: 'auto',
         columnRule:
           colCount > 1 ? '1px solid var(--color-border)' : undefined,
-        width: colCount > 1 ? `${colCount * 320}px` : undefined,
+        width: colCount > 1 ? `${colCount * 460}px` : undefined,
         minWidth: colCount === 1 ? 240 : undefined,
-        maxWidth: colCount === 1 ? 360 : 'calc(100vw - 24px)',
+        maxWidth: colCount === 1 ? 480 : 'calc(100vw - 24px)',
         maxHeight: 'calc(100vh - 24px)',
       }}
     >
