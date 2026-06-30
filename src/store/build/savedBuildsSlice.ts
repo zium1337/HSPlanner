@@ -159,6 +159,7 @@ export const createSavedBuildsSlice: StateCreator<
       skillProjectiles: s.skillProjectiles,
       enemyResistances: s.enemyResistances,
       procToggles: s.procToggles,
+      disabledPotions: s.disabledPotions,
       killsPerSec: s.killsPerSec,
       customStats: s.customStats,
     }
@@ -188,6 +189,7 @@ export const createSavedBuildsSlice: StateCreator<
       activeSkillIds: [],
       activeAuraId: null,
       procToggles: {},
+      disabledPotions: {},
       killsPerSec: 1,
       activeBuffs: {},
       enemyConditions: {},

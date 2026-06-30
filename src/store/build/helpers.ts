@@ -36,6 +36,7 @@ export function snapshotPatch(snap: BuildSnapshot) {
     skillProjectiles: snap.skillProjectiles ?? {},
     enemyResistances: snap.enemyResistances ?? defaultEnemyResistances(),
     procToggles: snap.procToggles,
+    disabledPotions: snap.disabledPotions ?? {},
     killsPerSec: snap.killsPerSec,
     customStats: snap.customStats ?? [],
   }

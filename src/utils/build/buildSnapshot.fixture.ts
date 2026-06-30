@@ -17,6 +17,7 @@ export function makeSnapshot(overrides: Partial<BuildSnapshot> = {}): BuildSnaps
     skillProjectiles: {},
     enemyResistances: defaultEnemyResistances(),
     procToggles: {},
+    disabledPotions: {},
     killsPerSec: 1,
     customStats: [],
     treeSocketed: {},

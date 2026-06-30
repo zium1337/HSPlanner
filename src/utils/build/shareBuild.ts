@@ -136,6 +136,7 @@ const shareableBuildSchema = z.object({
   sp: recordOfNonNegativeNumbers.optional(),
   er: recordOfNumbers.optional(),
   pt: recordOfBooleans,
+  dp: recordOfBooleans.optional(),
   kps: NON_NEGATIVE_NUMBER,
   n: z.string().max(MAX_NOTES_LENGTH).optional(),
   cs: z
@@ -168,6 +169,7 @@ export interface ShareableBuild {
   sp?: Record<string, number>
   er?: Record<string, number>
   pt: Record<string, boolean>
+  dp?: Record<string, boolean>
   kps: number
   n?: string
   cs?: { k: string; v: string }[]
@@ -191,6 +193,7 @@ export interface BuildSnapshot {
   skillProjectiles: Record<string, number>
   enemyResistances: Record<string, number>
   procToggles: Record<string, boolean>
+  disabledPotions: Record<string, boolean>
   killsPerSec: number
   customStats: CustomStat[]
   treeSocketed: Record<number, TreeSocketContent | null>
@@ -211,6 +214,9 @@ function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
     buf: snapshot.activeBuffs,
     ec: snapshot.enemyConditions,
     pt: snapshot.procToggles,
+    ...(Object.keys(snapshot.disabledPotions ?? {}).length > 0
+      ? { dp: snapshot.disabledPotions }
+      : {}),
     ...(Object.keys(snapshot.playerConditions ?? {}).length > 0
       ? { pc: snapshot.playerConditions }
       : {}),
@@ -284,6 +290,7 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
     skillProjectiles: encoded.sp ?? {},
     enemyResistances: encoded.er ?? defaultEnemyResistances(),
     procToggles: encoded.pt ?? {},
+    disabledPotions: encoded.dp ?? {},
     killsPerSec: Number.isFinite(encoded.kps) ? encoded.kps : 1,
     customStats: Array.isArray(encoded.cs)
       ? encoded.cs

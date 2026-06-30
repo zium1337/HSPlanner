@@ -34,6 +34,17 @@ describe('encode/decode round-trip', () => {
     expect(decoded!.snapshot.activeSkillIds).toEqual(['fireball'])
   })
 
+  it('round-trips disabledPotions through share', () => {
+    const snap = makeSnapshot({ disabledPotions: { potion_1: true } })
+    const decoded = decodeShareToBuild(encodeBuildToShare(snap))
+    expect(decoded!.snapshot.disabledPotions).toEqual({ potion_1: true })
+  })
+
+  it('defaults disabledPotions to empty when absent from the payload', () => {
+    const decoded = decodeShareToBuild(encodeBuildToShare(makeSnapshot()))
+    expect(decoded!.snapshot.disabledPotions).toEqual({})
+  })
+
   it('migrates a legacy single-skill `m` string to activeSkillIds', () => {
     const code = compressToEncodedURIComponent(
       JSON.stringify({

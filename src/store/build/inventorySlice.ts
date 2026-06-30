@@ -6,6 +6,8 @@ import type { BuildStore } from './types'
 type InventorySlice = Pick<
   BuildStore,
   | 'inventory'
+  | 'disabledPotions'
+  | 'setPotionDisabled'
   | 'equipItem'
   | 'unequipItem'
   | 'commitEquippedItem'
@@ -31,6 +33,16 @@ export const createInventorySlice: StateCreator<
   InventorySlice
 > = (set, get) => ({
   inventory: {},
+  disabledPotions: {},
+
+  setPotionDisabled: (slot, disabled) => {
+    set((s) => {
+      const next = { ...s.disabledPotions }
+      if (disabled) next[slot] = true
+      else delete next[slot]
+      return { disabledPotions: next }
+    })
+  },
 
   equipItem: (slot, baseId) => {
     const item = itemEdits.makeEquippedItem(baseId)

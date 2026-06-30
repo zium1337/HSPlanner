@@ -168,3 +168,36 @@ export function GearPanel({
   )
 }
 
+export function PotionEffectToggle({
+  enabled,
+  onChange,
+}: {
+  enabled: boolean
+  onChange: (enabled: boolean) => void
+}) {
+  return (
+    <label
+      className={`mt-1 flex cursor-pointer items-center gap-2 rounded-[3px] border px-2 py-1 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] transition-colors ${
+        enabled
+          ? 'border-accent-deep'
+          : 'border-border-2 hover:border-accent-deep'
+      }`}
+      style={{
+        background: enabled
+          ? 'linear-gradient(180deg, rgba(58,46,24,0.5), rgba(28,29,36,0.5))'
+          : 'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 70%, transparent))',
+        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4)',
+      }}
+    >
+      <input
+        type="checkbox"
+        checked={enabled}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span className={enabled ? 'text-accent-hot' : 'text-muted'}>
+        {enabled ? 'Effects applied' : 'Effects off'}
+      </span>
+    </label>
+  )
+}
+

@@ -23,6 +23,7 @@ export interface BuildState {
   activeSkillIds: string[]
   activeAuraId: string | null
   procToggles: Record<string, boolean>
+  disabledPotions: Record<string, boolean>
   killsPerSec: number
   activeBuffs: Record<string, boolean>
   enemyConditions: Record<string, boolean>
@@ -73,6 +74,7 @@ export interface BuildActions {
   toggleActiveSkill: (skillId: string) => void
   setActiveAura: (skillId: string | null) => void
   setProcToggle: (skillId: string, enabled: boolean) => void
+  setPotionDisabled: (slot: SlotKey, disabled: boolean) => void
   setKillsPerSec: (rate: number) => void
   setBuffActive: (skillId: string, enabled: boolean) => void
   setEnemyCondition: (key: string, enabled: boolean) => void

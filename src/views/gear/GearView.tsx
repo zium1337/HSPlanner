@@ -9,7 +9,7 @@ import { gemColorForName, socketableIconForName } from './lib/icons'
 import { groupGearSlots, type GearSlotGroups } from './lib/slotGroups'
 import { buildSocketableTooltip } from './tooltips'
 import { CharmSection } from './CharmSection'
-import { GearPanel, SlotRow } from './SlotRail'
+import { GearPanel, PotionEffectToggle, SlotRow } from './SlotRail'
 import { GearSlotModal } from './GearSlotModal'
 
 const SLOT_PANELS: { key: keyof GearSlotGroups; title: string }[] = [
@@ -21,6 +21,8 @@ const SLOT_PANELS: { key: keyof GearSlotGroups; title: string }[] = [
 export default function GearView() {
   const inventory = useBuild((s) => s.inventory)
   const commitEquippedItem = useBuild((s) => s.commitEquippedItem)
+  const disabledPotions = useBuild((s) => s.disabledPotions)
+  const setPotionDisabled = useBuild((s) => s.setPotionDisabled)
 
   const [activeSlot, setActiveSlot] = useState<SlotKey | null>(null)
   const handleModalClose = useCallback(() => setActiveSlot(null), [])
@@ -139,17 +141,26 @@ export default function GearView() {
                 }
               >
                 <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                  {slots.map((slot) => (
-                    <li key={slot.key}>
-                      <SlotRow
-                        slot={slot}
-                        equipped={inventory[slot.key]}
-                        active={activeSlot === slot.key}
-                        locked={slot.key === 'offhand' && offhandLocked}
-                        onSelect={() => setActiveSlot(slot.key)}
-                      />
-                    </li>
-                  ))}
+                  {slots.map((slot) => {
+                    const equipped = inventory[slot.key]
+                    return (
+                      <li key={slot.key}>
+                        <SlotRow
+                          slot={slot}
+                          equipped={equipped}
+                          active={activeSlot === slot.key}
+                          locked={slot.key === 'offhand' && offhandLocked}
+                          onSelect={() => setActiveSlot(slot.key)}
+                        />
+                        {key === 'potions' && equipped && (
+                          <PotionEffectToggle
+                            enabled={!disabledPotions[slot.key]}
+                            onChange={(en) => setPotionDisabled(slot.key, !en)}
+                          />
+                        )}
+                      </li>
+                    )
+                  })}
                 </ul>
               </GearPanel>
             )

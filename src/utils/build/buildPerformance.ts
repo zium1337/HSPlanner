@@ -70,6 +70,17 @@ export interface BuildStatDiff {
   kind: 'up' | 'down'
 }
 
+export function applyDisabledPotions(
+  inventory: Inventory,
+  disabledPotions: Record<string, boolean>,
+): Inventory {
+  const off = Object.keys(disabledPotions).filter((k) => disabledPotions[k])
+  if (off.length === 0) return inventory
+  const next = { ...inventory }
+  for (const slot of off) delete next[slot as keyof Inventory]
+  return next
+}
+
 export function rangedBounds(v: RangedValue | undefined): {
   min: number
   max: number

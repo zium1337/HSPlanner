@@ -1,12 +1,16 @@
 import { useMemo } from 'react'
 import { useBuild } from '../store/build'
-import type { BuildPerformanceDeps } from '../utils/build/buildPerformance'
+import {
+  applyDisabledPotions,
+  type BuildPerformanceDeps,
+} from '../utils/build/buildPerformance'
 
 export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const classId = useBuild((s) => s.classId)
   const level = useBuild((s) => s.level)
   const allocatedAttrs = useBuild((s) => s.allocated)
   const inventory = useBuild((s) => s.inventory)
+  const disabledPotions = useBuild((s) => s.disabledPotions)
   const skillRanks = useBuild((s) => s.skillRanks)
   const subskillRanks = useBuild((s) => s.subskillRanks)
   const activeAuraId = useBuild((s) => s.activeAuraId)
@@ -22,12 +26,17 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const procToggles = useBuild((s) => s.procToggles)
   const killsPerSec = useBuild((s) => s.killsPerSec)
 
+  const inventoryForCalc = useMemo(
+    () => applyDisabledPotions(inventory, disabledPotions),
+    [inventory, disabledPotions],
+  )
+
   return useMemo<BuildPerformanceDeps>(
     () => ({
       classId,
       level,
       allocatedAttrs,
-      inventory,
+      inventory: inventoryForCalc,
       skillRanks,
       subskillRanks,
       activeAuraId,
@@ -47,7 +56,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       classId,
       level,
       allocatedAttrs,
-      inventory,
+      inventoryForCalc,
       skillRanks,
       subskillRanks,
       activeAuraId,
