@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { backdropVariants, panelVariants } from '../lib/motion'
 import { resolveSkillIcon } from '../data'
@@ -20,6 +20,7 @@ import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import { useCalcResult } from '../hooks/useCalcResult'
 import NetChangeRow from './NetChangeRow'
 import { CornerMarks } from './CornerMarks'
+import { clampTooltipToViewport } from '../utils/tooltipPosition'
 
 const VIEWBOX = 600
 const NODE_R: Record<string, number> = {
@@ -556,12 +557,34 @@ function SubskillTooltip({
     }
   })
 
+  const ref = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    setPos(
+      clampTooltipToViewport(
+        { x, y },
+        { width: rect.width, height: rect.height },
+        { width: window.innerWidth, height: window.innerHeight },
+      ),
+    )
+  }, [x, y, netChangeVisible, sub.id, rank, previewPerformance])
+
   return (
     <div
-      className={`pointer-events-none fixed z-60 ${netChangeVisible ? 'w-96' : 'w-72'} overflow-hidden rounded-sm border border-border`}
+      ref={ref}
+      className="pointer-events-none fixed z-60 overflow-y-auto overflow-x-hidden rounded-sm border border-border"
       style={{
-        left: x + 18,
-        top: y + 18,
+        left: pos?.left ?? -9999,
+        top: pos?.top ?? -9999,
+        opacity: pos ? 1 : 0,
+        transition: 'opacity 80ms ease-out',
+        width: 'max-content',
+        minWidth: netChangeVisible ? 320 : 240,
+        maxWidth: 'min(600px, calc(100vw - 24px))',
+        maxHeight: 'calc(100vh - 24px)',
         background: 'linear-gradient(180deg, var(--color-panel-2), var(--color-bg))',
         boxShadow:
           'inset 0 1px 0 rgba(255,255,255,0.02), 0 12px 32px rgba(0,0,0,0.7)',
