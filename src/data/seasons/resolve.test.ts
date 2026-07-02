@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import fixture from './parity-fixture.json'
 import {
+  applyEtherTreePatch,
   applyGameConfigPatch,
   applyListPatch,
+  applyMercDataPatch,
   applyRecordMergePatch,
   applyRecordReplacePatch,
   applyTreePatch,
@@ -232,6 +234,147 @@ describe('applyTreePatch', () => {
   it('reports node position collisions introduced by a patch', () => {
     const r = applyTreePatch(base, { changeNodes: { '2': [10.01, 10.01, 6] } }, 'tree')
     expect(r.errors).toEqual(['tree: nodes 0 and 2 collide at position 100_100'])
+  })
+})
+
+describe('applyEtherTreePatch', () => {
+  const etherBase = {
+    viewBox: '0 0 100 100',
+    nodes: [
+      { id: 1, x: 10, y: 10, r: 8, t: 'root' as const, icon: 'A_spr_0', key: 'etherA' },
+      { id: 2, x: 20, y: 10, r: 8, t: 'small' as const, icon: 'B_spr_0', key: 'etherB' },
+      { id: 3, x: 30, y: 10, r: 10, t: 'big' as const, icon: 'C_spr_0', key: 'etherC' },
+    ],
+    edges: [[1, 2], [2, 3]] as [number, number][],
+    stats: {
+      etherA: { label: 'A', value: '1%', desc: 'a' },
+      etherB: { label: 'B', value: '1%', desc: 'b' },
+      etherC: { label: 'C', value: '10%', desc: 'c' },
+    },
+  }
+
+  it('returns base unchanged when patch is undefined', () => {
+    const r = applyEtherTreePatch(etherBase, undefined, 'ether')
+    expect(r.data).toBe(etherBase)
+    expect(r.errors).toEqual([])
+  })
+
+  it('changes stat values via stats patch', () => {
+    const r = applyEtherTreePatch(
+      etherBase,
+      { stats: { change: { etherB: { value: '2%' } } } },
+      'ether',
+    )
+    expect(r.errors).toEqual([])
+    expect(r.data.stats.etherB).toEqual({ label: 'B', value: '2%', desc: 'b' })
+  })
+
+  it('adds, changes and removes nodes and edges', () => {
+    const r = applyEtherTreePatch(
+      etherBase,
+      {
+        addNodes: [
+          { id: 4, x: 40, y: 10, r: 8, t: 'small', icon: 'B_spr_0', key: 'etherB' },
+        ],
+        changeNodes: { '2': { key: 'etherC', r: 10 } },
+        removeNodes: [3],
+        addEdges: [[2, 4]],
+        removeEdges: [[2, 3]],
+      },
+      'ether',
+    )
+    expect(r.errors).toEqual([])
+    expect(r.data.nodes.map((n) => n.id).sort()).toEqual([1, 2, 4])
+    expect(r.data.nodes.find((n) => n.id === 2)).toMatchObject({
+      key: 'etherC',
+      r: 10,
+      icon: 'B_spr_0',
+    })
+    expect(r.data.edges).toEqual([[1, 2], [2, 4]])
+  })
+
+  it('drops edges whose endpoint was removed', () => {
+    const r = applyEtherTreePatch(etherBase, { removeNodes: [3] }, 'ether')
+    expect(r.errors).toEqual([])
+    expect(r.data.edges).toEqual([[1, 2]])
+  })
+
+  it('reports unknown ids, duplicate adds and missing stat keys', () => {
+    const r = applyEtherTreePatch(
+      etherBase,
+      {
+        removeNodes: [99],
+        changeNodes: { '98': { r: 9 }, '2': { key: 'etherMissing' } },
+        addNodes: [
+          { id: 1, x: 5, y: 5, r: 8, t: 'small', icon: 'A_spr_0', key: 'etherA' },
+        ],
+        addEdges: [[1, 77]],
+        removeEdges: [[1, 3]],
+      },
+      'ether',
+    )
+    expect(r.errors).toContain('ether: removeNodes unknown id 99')
+    expect(r.errors).toContain('ether: changeNodes unknown id 98')
+    expect(r.errors).toContain('ether: addNodes duplicates id 1')
+    expect(r.errors).toContain('ether: addEdges endpoint unknown (1, 77)')
+    expect(r.errors).toContain('ether: removeEdges unknown edge (1, 3)')
+    expect(r.errors).toContain(
+      'ether: node 2 references missing stat key "etherMissing"',
+    )
+  })
+})
+
+describe('applyMercDataPatch', () => {
+  const mercBase = {
+    maxSkillRank: 20,
+    slots: ['helmet', 'weapon'],
+    classes: [
+      {
+        id: 'merc_knight',
+        name: 'Knight',
+        role: 'Melee',
+        location: 'Act 1',
+        skills: [
+          {
+            id: 'taunt',
+            name: 'Taunt',
+            kind: 'active' as const,
+            damageType: null,
+            shared: false,
+            description: 'old',
+          },
+        ],
+      },
+    ],
+  }
+
+  it('returns base unchanged when patch is undefined', () => {
+    const r = applyMercDataPatch(mercBase, undefined, 'mercenaries')
+    expect(r.data).toBe(mercBase)
+    expect(r.errors).toEqual([])
+  })
+
+  it('changes top-level fields and merges class fields', () => {
+    const r = applyMercDataPatch(
+      mercBase,
+      {
+        change: { maxSkillRank: 25 },
+        classes: { change: { merc_knight: { location: 'Act 2' } } },
+      },
+      'mercenaries',
+    )
+    expect(r.errors).toEqual([])
+    expect(r.data.maxSkillRank).toBe(25)
+    expect(r.data.classes[0]).toMatchObject({ location: 'Act 2', name: 'Knight' })
+  })
+
+  it('reports unknown class ids', () => {
+    const r = applyMercDataPatch(
+      mercBase,
+      { classes: { change: { merc_bard: { name: 'Bard' } } } },
+      'mercenaries',
+    )
+    expect(r.errors).toEqual(['mercenaries.classes: change unknown id "merc_bard"'])
   })
 })
 

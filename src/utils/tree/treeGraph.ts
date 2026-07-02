@@ -39,9 +39,12 @@ export const START_IDS: ReadonlyArray<number> = Object.entries(treeNodeInfo)
   .sort((a, b) => a - b)
 export const START_SET: ReadonlySet<number> = new Set(START_IDS)
 
+export type NodeAdjacency = ReadonlyMap<number, ReadonlySet<number>>
+
 export function findPath(
   sources: Iterable<number>,
   target: number,
+  adj: NodeAdjacency = ADJ,
 ): number[] | null {
   const srcSet = new Set(sources)
   if (srcSet.has(target)) return [target]
@@ -57,7 +60,7 @@ export function findPath(
 
   while (head < queue.length) {
     const cur = queue[head++]!
-    const nbrs = ADJ.get(cur)
+    const nbrs = adj.get(cur)
     if (!nbrs) continue
     for (const nb of nbrs) {
       if (parent.has(nb)) continue
@@ -82,6 +85,7 @@ export function findPath(
 export function reachableFromAny(
   starts: Iterable<number>,
   allowed: Set<number>,
+  adj: NodeAdjacency = ADJ,
 ): Set<number> {
   const seen = new Set<number>()
   const queue: number[] = []
@@ -94,7 +98,7 @@ export function reachableFromAny(
   }
   while (head < queue.length) {
     const cur = queue[head++]!
-    const nbrs = ADJ.get(cur)
+    const nbrs = adj.get(cur)
     if (!nbrs) continue
     for (const nb of nbrs) {
       if (seen.has(nb) || !allowed.has(nb)) continue

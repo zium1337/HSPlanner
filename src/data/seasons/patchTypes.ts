@@ -89,6 +89,62 @@ export const gameConfigPatchSchema = z
   })
   .strict()
 
+export interface EtherPatchNode {
+  id: number
+  x: number
+  y: number
+  r: number
+  t: 'root' | 'small' | 'big'
+  icon: string
+  key: string
+}
+
+export interface EtherTreePatch {
+  addNodes?: EtherPatchNode[]
+  changeNodes?: Record<string, Partial<Omit<EtherPatchNode, 'id'>>>
+  removeNodes?: number[]
+  addEdges?: [number, number][]
+  removeEdges?: [number, number][]
+  stats?: RecordPatch<Record<string, unknown>>
+}
+
+const etherNodeSchema = z
+  .object({
+    id: z.number(),
+    x: z.number(),
+    y: z.number(),
+    r: z.number(),
+    t: z.enum(['root', 'small', 'big']),
+    icon: z.string(),
+    key: z.string(),
+  })
+  .strict()
+
+export const etherTreePatchSchema = z
+  .object({
+    addNodes: z.array(etherNodeSchema).optional(),
+    changeNodes: z
+      .record(z.string(), etherNodeSchema.omit({ id: true }).partial())
+      .optional(),
+    removeNodes: z.array(z.number()).optional(),
+    addEdges: z.array(z.tuple([z.number(), z.number()])).optional(),
+    removeEdges: z.array(z.tuple([z.number(), z.number()])).optional(),
+    stats: recordPatchSchema.optional(),
+  })
+  .strict()
+
+export interface MercDataPatch {
+  change?: Record<string, unknown>
+  classes?: ListPatch<Record<string, unknown>>
+}
+
+export const mercDataPatchSchema = z
+  .object({
+    change: z.record(z.string(), z.unknown()).optional(),
+    classes: listPatchSchema.optional(),
+  })
+  .strict()
+
 export interface SeasonPatchSet {
   affixes?: ListPatch<Record<string, unknown>>
   crystals?: ListPatch<Record<string, unknown>>
@@ -106,4 +162,6 @@ export interface SeasonPatchSet {
   heroSiegeTree?: TreePatch
   gameConfig?: GameConfigPatch
   starScaling?: RecordPatch<Record<string, unknown>>
+  etherTree?: EtherTreePatch
+  mercenaries?: MercDataPatch
 }

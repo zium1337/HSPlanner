@@ -1,4 +1,7 @@
-import { compressToEncodedURIComponent } from 'lz-string'
+import {
+  compressToEncodedURIComponent,
+  decompressFromEncodedURIComponent,
+} from 'lz-string'
 import { describe, expect, it } from 'vitest'
 import { makeSnapshot as makeBaseSnapshot } from './buildSnapshot.fixture'
 import {
@@ -199,6 +202,55 @@ describe('decodeShareToBuild — invalid input', () => {
     })
     const badCode = compressToEncodedURIComponent(json)
     expect(decodeShareToBuild(badCode)).toBeNull()
+  })
+})
+
+describe('ether + merc fields', () => {
+  it('round-trips ether nodes and merc state', () => {
+    const snap = makeSnapshot({
+      allocatedEtherNodes: new Set([19, 38, 44]),
+      mercClassId: 'merc_knight',
+      mercSkillRanks: { taunt: 5, defenses: 3 },
+      mercInventory: {
+        helmet: {
+          baseId: 'helmet_common_cap',
+          affixes: [],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+          stars: 0,
+          forgedMods: [],
+        },
+      },
+    })
+    const decoded = decodeShareToBuild(encodeBuildToShare(snap))
+    expect(decoded).not.toBeNull()
+    expect([...decoded!.snapshot.allocatedEtherNodes].sort((a, b) => a - b)).toEqual([
+      19, 38, 44,
+    ])
+    expect(decoded!.snapshot.mercClassId).toBe('merc_knight')
+    expect(decoded!.snapshot.mercSkillRanks).toEqual({ taunt: 5, defenses: 3 })
+    expect(decoded!.snapshot.mercInventory.helmet?.baseId).toBe(
+      'helmet_common_cap',
+    )
+  })
+
+  it('defaults ether and merc state when absent from the payload', () => {
+    const decoded = decodeShareToBuild(encodeBuildToShare(makeSnapshot()))
+    expect(decoded!.snapshot.allocatedEtherNodes.size).toBe(0)
+    expect(decoded!.snapshot.mercClassId).toBeNull()
+    expect(decoded!.snapshot.mercSkillRanks).toEqual({})
+    expect(decoded!.snapshot.mercInventory).toEqual({})
+  })
+
+  it('omits empty ether/merc fields from the encoded payload', () => {
+    const code = encodeBuildToShare(makeSnapshot())
+    const json = decompressFromEncodedURIComponent(code)
+    const payload = JSON.parse(json!) as Record<string, unknown>
+    expect(payload).not.toHaveProperty('et')
+    expect(payload).not.toHaveProperty('mc')
+    expect(payload).not.toHaveProperty('ms')
+    expect(payload).not.toHaveProperty('mi')
   })
 })
 

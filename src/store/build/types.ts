@@ -31,6 +31,10 @@ export interface BuildState {
   skillProjectiles: Record<string, number>
   enemyResistances: Record<string, number>
   subskillRanks: Record<string, number>
+  allocatedEtherNodes: Set<number>
+  mercClassId: string | null
+  mercSkillRanks: Record<string, number>
+  mercInventory: Inventory
   activeBuildId: string | null
   activeProfileId: string | null
   savedBuildsVersion: number
@@ -70,6 +74,12 @@ export interface BuildActions {
   toggleTreeNode: (nodeId: number) => void
   applySuggestedNodes: (ids: Iterable<number>) => void
   resetTreeNodes: () => void
+  toggleEtherNode: (nodeId: number) => void
+  resetEtherNodes: () => void
+  setMercClass: (id: string | null) => void
+  setMercSkillRank: (skillId: string, rank: number, maxRank?: number) => void
+  commitMercItem: (slot: SlotKey, item: EquippedItem | null) => void
+  resetMerc: () => void
   setTreeSocketed: (nodeId: number, content: TreeSocketContent | null) => void
   toggleActiveSkill: (skillId: string) => void
   setActiveAura: (skillId: string | null) => void

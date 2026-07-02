@@ -162,6 +162,10 @@ export const createSavedBuildsSlice: StateCreator<
       disabledPotions: s.disabledPotions,
       killsPerSec: s.killsPerSec,
       customStats: s.customStats,
+      allocatedEtherNodes: s.allocatedEtherNodes,
+      mercClassId: s.mercClassId,
+      mercSkillRanks: s.mercSkillRanks,
+      mercInventory: s.mercInventory,
     }
   },
 
@@ -197,6 +201,10 @@ export const createSavedBuildsSlice: StateCreator<
       skillProjectiles: {},
       enemyResistances: defaultEnemyResistances(),
       subskillRanks: {},
+      allocatedEtherNodes: new Set<number>(),
+      mercClassId: null,
+      mercSkillRanks: {},
+      mercInventory: {},
       activeBuildId: null,
       activeProfileId: null,
       notes: '',

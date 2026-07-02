@@ -1,7 +1,9 @@
 import type { ZodIssue, ZodType } from 'zod'
 import {
+  etherTreePatchSchema,
   gameConfigPatchSchema,
   listPatchSchema,
+  mercDataPatchSchema,
   recordPatchSchema,
   scalarRecordPatchSchema,
   treePatchSchema,
@@ -29,6 +31,8 @@ const FILE_TO_KEY: Record<string, { key: keyof SeasonPatchSet; schema: ZodType }
   'hero-siege-tree': { key: 'heroSiegeTree', schema: treePatchSchema },
   'game-config': { key: 'gameConfig', schema: gameConfigPatchSchema },
   'star-scaling': { key: 'starScaling', schema: recordPatchSchema },
+  'ether-tree': { key: 'etherTree', schema: etherTreePatchSchema },
+  'mercenaries': { key: 'mercenaries', schema: mercDataPatchSchema },
 }
 
 export interface SeasonPatchLoad {

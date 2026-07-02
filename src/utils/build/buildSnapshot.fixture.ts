@@ -21,6 +21,10 @@ export function makeSnapshot(overrides: Partial<BuildSnapshot> = {}): BuildSnaps
     killsPerSec: 1,
     customStats: [],
     treeSocketed: {},
+    allocatedEtherNodes: new Set<number>(),
+    mercClassId: null,
+    mercSkillRanks: {},
+    mercInventory: {},
     ...overrides,
   }
 }

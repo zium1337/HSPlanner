@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { SEASONS } from './registry'
 import { loadSeasonPatchSet } from './load'
 import {
+  applyEtherTreePatch,
   applyGameConfigPatch,
   applyListPatch,
+  applyMercDataPatch,
   applyRecordMergePatch,
   applyRecordReplacePatch,
   applyTreePatch,
@@ -13,6 +15,9 @@ import type {
   RecordPatch,
   SeasonPatchSet,
 } from './patchTypes'
+import type { EtherTree, MercData } from '../../types'
+import etherTreeJson from '../ether-tree.json'
+import mercenariesJson from '../mercenaries.json'
 import affixesJson from '../affixes.json'
 import augmentsJson from '../augments.json'
 import crystalsJson from '../crystals.json'
@@ -146,6 +151,24 @@ const cases: ReadonlyArray<{
         starScalingJson as unknown as Record<string, Rec>,
         p.starScaling,
         'star-scaling',
+      ),
+  },
+  {
+    name: 'ether-tree',
+    apply: (p) =>
+      applyEtherTreePatch(
+        etherTreeJson as unknown as EtherTree,
+        p.etherTree,
+        'ether-tree',
+      ),
+  },
+  {
+    name: 'mercenaries',
+    apply: (p) =>
+      applyMercDataPatch(
+        mercenariesJson as unknown as MercData,
+        p.mercenaries,
+        'mercenaries',
       ),
   },
 ]

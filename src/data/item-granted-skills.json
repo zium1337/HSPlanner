@@ -17,5 +17,13 @@
     "id": "wings_of_hatred",
     "name": "Wings of Hatred",
     "description": "Reduces landing diminish (capped at rank 1)."
+  },
+  {
+    "id": "holy_aura",
+    "name": "Holy Aura",
+    "description": "Increases your and your party members attack damage and magic skill damage.",
+    "passiveStats": {
+      "perRank": { "attack_damage": 2, "magic_skill_damage": 2.5 }
+    }
   }
 ]

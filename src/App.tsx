@@ -29,7 +29,9 @@ import { preloadSprites } from "./utils/preloadAssets";
 import { readStorage, readStorageWithLegacy, removeStorage, writeStorage } from "./utils/storage";
 const CharacterView = lazy(() => import("./views/CharacterView"));
 const ConfigView = lazy(() => import("./views/ConfigView"));
+const EtherView = lazy(() => import("./views/EtherView"));
 const GearView = lazy(() => import("./views/gear/GearView"));
+const MercView = lazy(() => import("./views/MercView"));
 const NotesView = lazy(() => import("./views/NotesView"));
 const SkillsView = lazy(() => import("./views/SkillsView"));
 const StatsView = lazy(() => import("./views/StatsView"));
@@ -45,8 +47,10 @@ declare global {
 const SECTIONS = [
   { id: "character", label: "Character", view: CharacterView },
   { id: "tree", label: "Tree", view: TreeView },
+  { id: "ether", label: "Ether", view: EtherView },
   { id: "skills", label: "Skills", view: SkillsView },
   { id: "gear", label: "Gear", view: GearView },
+  { id: "merc", label: "Merc", view: MercView },
   { id: "stats", label: "Stats", view: StatsView },
   { id: "config", label: "Config", view: ConfigView },
   { id: "notes", label: "Notes", view: NotesView },
@@ -167,7 +171,7 @@ function App() {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "f") {
         e.preventDefault();
-        if (section === "tree" || section === "stats") {
+        if (section === "tree" || section === "ether" || section === "stats") {
           const input = document.querySelector<HTMLInputElement>(
             "[data-search-input]",
           );
@@ -188,7 +192,8 @@ function App() {
   const setClass = useBuild((s) => s.setClass);
   const cls = classId ? getClass(classId) : undefined;
 
-  const needsScroll = section !== "tree" && section !== "skills";
+  const needsScroll =
+    section !== "tree" && section !== "skills" && section !== "ether";
 
   const openBuild = (buildId: string) => {
     if (useBuild.getState().loadSavedBuild(buildId)) {

@@ -10,6 +10,9 @@ import type {
   Runeword,
   ItemSet,
   AngelicAugment,
+  EtherTree,
+  MercClass,
+  MercData,
 } from '../types'
 import affixesJson from './affixes.json'
 import augmentsJson from './augments.json'
@@ -21,11 +24,15 @@ import setsJson from './sets.json'
 import treeNodesJson from './tree-nodes.json'
 import heroSiegeTreeJson from './hero-siege-tree.json'
 import nodeIconsJson from './node-icons.json'
+import etherTreeJson from './ether-tree.json'
+import mercenariesJson from './mercenaries.json'
 import { resolveActiveSeasonId, SEASON_BEFORE_CHARM_STARS } from './seasons/registry'
 import { loadSeasonPatchSet } from './seasons/load'
 import {
+  applyEtherTreePatch,
   applyGameConfigPatch,
   applyListPatch,
+  applyMercDataPatch,
   applyRecordMergePatch,
   applyRecordReplacePatch,
   applyTreePatch,
@@ -185,6 +192,26 @@ export const nodeIcons: Record<string, string> = patched(
     'node-icons',
   ),
 )
+const etherTreeBase = etherTreeJson as unknown as EtherTree
+export const etherTree: EtherTree = patched(
+  etherTreeBase,
+  applyEtherTreePatch(etherTreeBase, seasonPatches.etherTree, 'ether-tree'),
+)
+
+const mercDataBase = mercenariesJson as unknown as MercData
+export const mercData: MercData = patched(
+  mercDataBase,
+  applyMercDataPatch(mercDataBase, seasonPatches.mercenaries, 'mercenaries'),
+)
+
+const mercClassIndex = new Map<string, MercClass>(
+  mercData.classes.map((c) => [c.id, c]),
+)
+
+export function getMercClass(id: string | null): MercClass | undefined {
+  return id ? mercClassIndex.get(id) : undefined
+}
+
 export const seasonDataErrors: ReadonlyArray<string> = seasonErrors
 const GEAR_SLOT_KEYS = [
   'weapon',

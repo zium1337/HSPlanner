@@ -150,6 +150,10 @@ const shareableBuildSchema = z.object({
     .optional(),
   ts: treeSocketedSchema.optional(),
   se: SAFE_STRING.optional(),
+  et: z.array(FINITE_NUMBER).max(MAX_TREE_NODES).optional(),
+  mc: z.string().max(MAX_KEY_LENGTH).nullable().optional(),
+  ms: recordOfNonNegativeNumbers.optional(),
+  mi: inventorySchema.optional(),
 })
 
 export interface ShareableBuild {
@@ -175,6 +179,10 @@ export interface ShareableBuild {
   cs?: { k: string; v: string }[]
   ts?: Record<string, TreeSocketContent | null>
   se?: string
+  et?: number[]
+  mc?: string | null
+  ms?: Record<string, number>
+  mi?: Inventory
 }
 
 export interface BuildSnapshot {
@@ -197,6 +205,10 @@ export interface BuildSnapshot {
   killsPerSec: number
   customStats: CustomStat[]
   treeSocketed: Record<number, TreeSocketContent | null>
+  allocatedEtherNodes: Set<number>
+  mercClassId: string | null
+  mercSkillRanks: Record<string, number>
+  mercInventory: Inventory
 }
 
 function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
@@ -228,6 +240,16 @@ function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
       : {}),
     kps: snapshot.killsPerSec,
     se: activeSeasonId,
+  }
+  if (snapshot.allocatedEtherNodes.size > 0) {
+    out.et = [...snapshot.allocatedEtherNodes].sort((x, y) => x - y)
+  }
+  if (snapshot.mercClassId) out.mc = snapshot.mercClassId
+  if (Object.keys(snapshot.mercSkillRanks ?? {}).length > 0) {
+    out.ms = snapshot.mercSkillRanks
+  }
+  if (Object.keys(snapshot.mercInventory ?? {}).length > 0) {
+    out.mi = snapshot.mercInventory
   }
   if (notes) out.n = notes
   if (snapshot.customStats.length > 0) {
@@ -311,6 +333,10 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
             .filter(([n]) => Number.isInteger(n) && n >= 0),
         )
       : {},
+    allocatedEtherNodes: new Set(encoded.et ?? []),
+    mercClassId: encoded.mc ?? null,
+    mercSkillRanks: encoded.ms ?? {},
+    mercInventory: normalizeInventory(encoded.mi),
   }
   return {
     snapshot,

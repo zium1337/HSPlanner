@@ -11,10 +11,16 @@ import type { StatBreakdown, StatBreakdownKind } from '../lib/calc/bridge'
 import { useBuild } from '../store/build'
 import {
   groupStatKeysByCategory,
+  isZero,
   normalizeSkillName,
+  rangedMax,
+  rangedMin,
   statName,
 } from '../utils/item/stats'
-import type { ComputedStats } from '../utils/item/stats'
+import type { ComputedStats, SourceContribution } from '../utils/item/stats'
+import type { RangedValue } from '../types'
+import { etherMagicFindTotal } from '../utils/build/etherSummary'
+import { hasMercGear, mercOnlyDeps } from '../utils/build/mercStats'
 import type { NativeWeaponDamageInput } from '../utils/nativeDamage'
 import type { Skill } from '../types'
 import {
@@ -39,6 +45,8 @@ export default function StatsView() {
   const skillProjectiles = useBuild((s) => s.skillProjectiles)
   const enemyResistances = useBuild((s) => s.enemyResistances)
   const activeSkillIds = useBuild((s) => s.activeSkillIds)
+  const allocatedEtherNodes = useBuild((s) => s.allocatedEtherNodes)
+  const mercInventory = useBuild((s) => s.mercInventory)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<FilterTab>('all')
   const normalizedQuery = query.trim().toLowerCase()
@@ -118,6 +126,58 @@ export default function StatsView() {
     [computed],
   )
   const statSources = useMemo(() => computed?.statSources ?? {}, [computed])
+
+  const mercDeps = useMemo(() => mercOnlyDeps(mercInventory), [mercInventory])
+  const mercGearOn = hasMercGear(mercInventory)
+  const mercComputed = useCalcResult<ComputedStats | null>(
+    () => (mercGearOn ? computeBuildStatsAsync(mercDeps) : null),
+    [mercDeps, mercGearOn],
+    null,
+  )
+  const mercMagicFind: RangedValue = mercComputed?.stats.magic_find ?? 0
+  const etherMagicFind = useMemo(
+    () => etherMagicFindTotal(allocatedEtherNodes),
+    [allocatedEtherNodes],
+  )
+
+  const displayStats = useMemo(() => {
+    if (etherMagicFind === 0 && isZero(mercMagicFind)) return stats
+    const add = (a: RangedValue | undefined, b: RangedValue): RangedValue => {
+      const base = a ?? 0
+      if (typeof base === 'number' && typeof b === 'number') return base + b
+      return [rangedMin(base) + rangedMin(b), rangedMax(base) + rangedMax(b)]
+    }
+    const next = { ...stats }
+    if (!isZero(mercMagicFind)) {
+      next.magic_find = add(next.magic_find, mercMagicFind)
+    }
+    if (etherMagicFind !== 0) {
+      next.magic_find_more = add(next.magic_find_more, etherMagicFind)
+    }
+    return next
+  }, [stats, etherMagicFind, mercMagicFind])
+
+  const displayStatSources = useMemo(() => {
+    if (etherMagicFind === 0 && isZero(mercMagicFind)) return statSources
+    const next = { ...statSources }
+    if (!isZero(mercMagicFind)) {
+      const contribution: SourceContribution = {
+        label: 'Mercenary',
+        sourceType: 'item',
+        value: mercMagicFind,
+      }
+      next.magic_find = [...(next.magic_find ?? []), contribution]
+    }
+    if (etherMagicFind !== 0) {
+      const contribution: SourceContribution = {
+        label: 'Ether Tree',
+        sourceType: 'tree',
+        value: etherMagicFind,
+      }
+      next.magic_find_more = [...(next.magic_find_more ?? []), contribution]
+    }
+    return next
+  }, [statSources, etherMagicFind, mercMagicFind])
   const fcrRange = stats.faster_cast_rate ?? 0
   const mcrRange = stats.mana_cost_reduction ?? 0
   const itemSkillBonuses = useMemo(
@@ -126,6 +186,22 @@ export default function StatsView() {
   )
   const rankBonuses = useMemo(() => computed?.rankBonuses ?? {}, [computed])
   const statsCombined = useMemo(() => computed?.statsCombined ?? {}, [computed])
+
+  const displayStatsCombined = useMemo(() => {
+    if (etherMagicFind === 0 && isZero(mercMagicFind)) return statsCombined
+    const base = displayStats.magic_find ?? 0
+    const more = displayStats.magic_find_more ?? 0
+    const combine = (b: number, m: number) => b * (1 + m / 100)
+    const combined: RangedValue =
+      typeof base === 'number' && typeof more === 'number'
+        ? combine(base, more)
+        : [
+            combine(rangedMin(base), rangedMin(more)),
+            combine(rangedMax(base), rangedMax(more)),
+          ]
+    return { ...statsCombined, magic_find: combined }
+  }, [statsCombined, displayStats, etherMagicFind, mercMagicFind])
+
   const weaponInput = useMemo<NativeWeaponDamageInput>(() => {
     const equipped = inventory.weapon
     const base = equipped ? getItem(equipped.baseId) : undefined
@@ -445,13 +521,13 @@ export default function StatsView() {
                 <StatRow
                   key={key}
                   statKey={key}
-                  value={stats[key] ?? 0}
-                  sources={statSources[key] ?? []}
-                  moreValue={stats[`${key}_more`]}
-                  moreSources={statSources[`${key}_more`]}
+                  value={displayStats[key] ?? 0}
+                  sources={displayStatSources[key] ?? []}
+                  moreValue={displayStats[`${key}_more`]}
+                  moreSources={displayStatSources[`${key}_more`]}
                   highlighted={matches(statName(key))}
-                  stats={stats}
-                  statsCombined={statsCombined}
+                  stats={displayStats}
+                  statsCombined={displayStatsCombined}
                   breakdown={getBreakdown(key, 'stat')}
                   onRequestBreakdown={() => requestBreakdown(key, 'stat')}
                 />

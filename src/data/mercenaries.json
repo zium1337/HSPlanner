@@ -1,0 +1,469 @@
+{
+  "maxSkillRank": 20,
+  "slots": [
+    "helmet",
+    "weapon",
+    "armor",
+    "offhand",
+    "gloves",
+    "boots"
+  ],
+  "classes": [
+    {
+      "id": "merc_knight",
+      "name": "Knight",
+      "role": "Melee",
+      "location": "Act 1 · Town of Inoya",
+      "skills": [
+        {
+          "id": "warriors_might",
+          "name": "Warrior's Might",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Strength"
+        },
+        {
+          "id": "defenses",
+          "name": "Defenses",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Armor"
+        },
+        {
+          "id": "charge_strike",
+          "name": "Charge Strike",
+          "kind": "active",
+          "damageType": "physical",
+          "shared": false,
+          "description": "The Mercenary charges into the closest enemy stunning and damaging all enemies around"
+        },
+        {
+          "id": "fatal_strike",
+          "name": "Fatal Strike",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's critical attack damage"
+        },
+        {
+          "id": "spiked_armor",
+          "name": "Spiked Armor",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases damage return from enemy attacks"
+        },
+        {
+          "id": "taunt",
+          "name": "Taunt",
+          "kind": "active",
+          "damageType": null,
+          "shared": false,
+          "description": "The Mercenary taunts nearby enemies"
+        },
+        {
+          "id": "stacked_rage",
+          "name": "Stacked Rage",
+          "kind": "passive",
+          "damageType": "physical",
+          "shared": false,
+          "description": "Each attack on an enemy generates a stack of rage. When fully stacked the Mercenary releases a powerful AOE attack that deals damage and breaks enemy armor"
+        },
+        {
+          "id": "sword_grip",
+          "name": "Sword Grip",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases damage done by melee attacks"
+        },
+        {
+          "id": "plated_armor",
+          "name": "Plated Armor",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases damage reduction from all sources"
+        },
+        {
+          "id": "stacked_pain",
+          "name": "Stacked Pain",
+          "kind": "passive",
+          "damageType": "physical",
+          "shared": false,
+          "description": "Incoming attacks generate stacks of pain. Once fully stacked, release a powerful AOE pulse that damages, knocks back and slows enemies"
+        },
+        {
+          "id": "hulking_rage",
+          "name": "Hulking Rage",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases life per hit from melee attacks"
+        },
+        {
+          "id": "aura_expert",
+          "name": "Aura Expert",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "Increases the value of the Mercenary's aura"
+        },
+        {
+          "id": "evasive_tactics",
+          "name": "Evasive Tactics",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Dodge chance"
+        },
+        {
+          "id": "commanders_heart",
+          "name": "Commander's Heart",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases health regeneration the less health the Mercenary has"
+        },
+        {
+          "id": "blessed_strike",
+          "name": "Blessed Strike",
+          "kind": "active",
+          "damageType": "physical",
+          "shared": false,
+          "description": "The Mercenary unleashes a powerful long ranged attack"
+        },
+        {
+          "id": "brutal_bash",
+          "name": "Brutal Bash",
+          "kind": "passive",
+          "damageType": "physical",
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to deal additional damage, knock back enemies and slow them"
+        },
+        {
+          "id": "backlash",
+          "name": "Backlash",
+          "kind": "passive",
+          "damageType": "physical",
+          "shared": false,
+          "description": "Enemies have a chance to get stunned when attacking the Mercenary"
+        },
+        {
+          "id": "protecting_charge",
+          "name": "Protecting Charge",
+          "kind": "active",
+          "damageType": "physical",
+          "shared": false,
+          "description": "The Mercenary detects enemies who attack the player, charging into them and taunting all enemies nearby"
+        }
+      ]
+    },
+    {
+      "id": "merc_archer",
+      "name": "Archer",
+      "role": "Ranged",
+      "location": "Act 3 · Village of Mos'Arathim",
+      "skills": [
+        {
+          "id": "trigger_power",
+          "name": "Trigger Power",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Strength"
+        },
+        {
+          "id": "rapidfire",
+          "name": "Rapidfire",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Attack Speed"
+        },
+        {
+          "id": "powershot",
+          "name": "Powershot",
+          "kind": "active",
+          "damageType": "physical",
+          "shared": false,
+          "description": "The Mercenary shoots a powerful piercing shot that stuns enemies on impact"
+        },
+        {
+          "id": "ravens_claw",
+          "name": "Raven's Claw",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Critical Attack Damage and Critical Rate"
+        },
+        {
+          "id": "spreadshot",
+          "name": "Spreadshot",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to shoot multiple projectiles with increased damage"
+        },
+        {
+          "id": "heatseeking_missile",
+          "name": "Heatseeking Missile",
+          "kind": "active",
+          "damageType": "physical",
+          "shared": false,
+          "description": "The Mercenary launches a barrage of Heat Seeking Missiles"
+        },
+        {
+          "id": "explosive_shot",
+          "name": "Explosive Shot",
+          "kind": "passive",
+          "damageType": "physical",
+          "shared": false,
+          "description": "Each attack on an enemy stacks up. When fully stacked the Mercenary shoots a projectile that explodes on collision"
+        },
+        {
+          "id": "hawk_eye",
+          "name": "Hawk Eye",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Attack Power"
+        },
+        {
+          "id": "piercingshot",
+          "name": "Piercingshot",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to shoot a piercing projectile with increased damage"
+        },
+        {
+          "id": "ability_expert",
+          "name": "Ability Expert",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Ability Power"
+        },
+        {
+          "id": "soul_funnel",
+          "name": "Soul Funnel",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "Increases the Mercenary's and Player's life per hit"
+        },
+        {
+          "id": "aura_expert",
+          "name": "Aura Expert",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "Increases the value of the Mercenary's aura"
+        },
+        {
+          "id": "shatter_armor",
+          "name": "Shatter Armor",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to break enemy resistances"
+        },
+        {
+          "id": "quickslugs",
+          "name": "Quickslugs",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to perform a burstshot"
+        },
+        {
+          "id": "artillery_command",
+          "name": "Artillery Command",
+          "kind": "active",
+          "damageType": "physical",
+          "shared": false,
+          "description": "The Mercenary drops a huge bomb onto the nearest enemy which scatters arrows around when hitting the ground"
+        },
+        {
+          "id": "brainfreeze",
+          "name": "Brainfreeze",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to deal AOE damage and confuse all enemies impacted"
+        },
+        {
+          "id": "burst_of_agility",
+          "name": "Burst of Agility",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "The Mercenary has a chance on attack to give the Player and Mercenary an Attack Speed boost"
+        },
+        {
+          "id": "hunters_trap",
+          "name": "Hunter's Trap",
+          "kind": "active",
+          "damageType": "physical",
+          "shared": false,
+          "description": "The Mercenary throws a trap that hooks nearby enemies in, damaging and stunning them"
+        }
+      ]
+    },
+    {
+      "id": "merc_magister",
+      "name": "Magister",
+      "role": "Mage",
+      "location": "Act 6 · Dawn's Chapel",
+      "skills": [
+        {
+          "id": "elemental_intellect",
+          "name": "Elemental Intellect",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Elemental Damage"
+        },
+        {
+          "id": "tome_of_power",
+          "name": "Tome of Power",
+          "kind": "passive",
+          "damageType": null,
+          "shared": false,
+          "description": "Increases the Mercenary's Ability Power"
+        },
+        {
+          "id": "arcane_blast",
+          "name": "Arcane Blast",
+          "kind": "active",
+          "damageType": "magic",
+          "shared": false,
+          "description": "The Mercenary blasts the nearest enemy with a powerful Arcane Blast"
+        },
+        {
+          "id": "arcane_fire",
+          "name": "Arcane Fire",
+          "kind": "passive",
+          "damageType": "magic",
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to scorch the ground beneath the target"
+        },
+        {
+          "id": "replenishing_touch",
+          "name": "Replenishing Touch",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "The Mercenary has a chance on attack to regenerate mana for the Player"
+        },
+        {
+          "id": "magic_claw",
+          "name": "Magic Claw",
+          "kind": "active",
+          "damageType": "magic",
+          "shared": false,
+          "description": "The Mercenary casts a chain of Arcane that bounces from enemy to enemy dealing damage and lowering their magic resistance"
+        },
+        {
+          "id": "arcanes_blessing",
+          "name": "Arcane's Blessing",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "The Mercenary has a chance on attack to buff Player and Mercenary Ability Power"
+        },
+        {
+          "id": "cosmic_bolt",
+          "name": "Cosmic Bolt",
+          "kind": "passive",
+          "damageType": "magic",
+          "shared": false,
+          "description": "Taking damage stacks up. Once fully stacked the Mercenary casts a Cosmic Bolt towards the nearest enemy"
+        },
+        {
+          "id": "arcane_meteor",
+          "name": "Arcane Meteor",
+          "kind": "passive",
+          "damageType": "magic",
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to cast an Arcane Meteor down from the sky damaging enemies it impacts"
+        },
+        {
+          "id": "manaflux",
+          "name": "Manaflux",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "Increases Player maximum mana"
+        },
+        {
+          "id": "spellburn",
+          "name": "Spellburn",
+          "kind": "passive",
+          "damageType": "magic",
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to burn and slow enemies"
+        },
+        {
+          "id": "aura_expert",
+          "name": "Aura Expert",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "Increases the value of the Mercenary's aura"
+        },
+        {
+          "id": "reptillian_brain",
+          "name": "Reptillian Brain",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "The Mercenary has a chance on attack to reset Mercenary and Player cooldowns and buff their Ability Power"
+        },
+        {
+          "id": "arcane_nova",
+          "name": "Arcane Nova",
+          "kind": "passive",
+          "damageType": "magic",
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to unleash an Arcane Nova dealing damage to enemies"
+        },
+        {
+          "id": "arcane_link",
+          "name": "Arcane Link",
+          "kind": "active",
+          "damageType": "magic",
+          "shared": false,
+          "description": "The Mercenary creates an Arcane Link between the Mercenary and the Player dealing damage to enemies it collides with"
+        },
+        {
+          "id": "arcane_barrage",
+          "name": "Arcane Barrage",
+          "kind": "passive",
+          "damageType": "magic",
+          "shared": false,
+          "description": "The Mercenary has a chance on attack to unleash a barrage of arcane bolts"
+        },
+        {
+          "id": "word_of_protection",
+          "name": "Word of Protection",
+          "kind": "passive",
+          "damageType": null,
+          "shared": true,
+          "description": "The Mercenary has a chance on attack to shield the player for a portion of maximum health"
+        },
+        {
+          "id": "arcane_apocalypse",
+          "name": "Arcane Apocalypse",
+          "kind": "active",
+          "damageType": "magic",
+          "shared": false,
+          "description": "The Mercenary blasts all nearby enemies with arcane explosions dealing damage and slowing them"
+        }
+      ]
+    }
+  ]
+}

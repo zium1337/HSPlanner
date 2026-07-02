@@ -1,12 +1,15 @@
 import type {
+  EtherTreePatch,
   GameConfigPatch,
   HeroSiegeTree,
   ListPatch,
+  MercDataPatch,
   RawTreeNode,
   RecordPatch,
   ScalarRecordPatch,
   TreePatch,
 } from './patchTypes'
+import type { EtherNode, EtherTree, MercData } from '../../types'
 
 export interface PatchResult<T> {
   data: T
@@ -216,4 +219,102 @@ export function applyTreePatch(
     data: { viewBox: base.viewBox, nodes: [...nodes.values()], edges: outEdges },
     errors,
   }
+}
+
+export function applyEtherTreePatch(
+  base: EtherTree,
+  patch: EtherTreePatch | undefined,
+  label: string,
+): PatchResult<EtherTree> {
+  if (!patch) return { data: base, errors: [] }
+  const errors: string[] = []
+
+  const nodes = new Map<number, EtherNode>(base.nodes.map((n) => [n.id, n]))
+  for (const id of patch.removeNodes ?? []) {
+    if (!nodes.delete(id)) errors.push(`${label}: removeNodes unknown id ${id}`)
+  }
+  for (const [idStr, fields] of Object.entries(patch.changeNodes ?? {})) {
+    const id = Number(idStr)
+    const cur = nodes.get(id)
+    if (!cur) {
+      errors.push(`${label}: changeNodes unknown id ${idStr}`)
+      continue
+    }
+    nodes.set(id, { ...cur, ...fields, id })
+  }
+  for (const n of patch.addNodes ?? []) {
+    if (nodes.has(n.id)) {
+      errors.push(`${label}: addNodes duplicates id ${n.id}`)
+      continue
+    }
+    nodes.set(n.id, n)
+  }
+
+  const edges = new Map<string, [number, number]>()
+  for (const [a, b] of base.edges) {
+    if (a === b) continue
+    edges.set(edgeKey(a, b), a < b ? [a, b] : [b, a])
+  }
+  for (const [a, b] of patch.removeEdges ?? []) {
+    if (!edges.delete(edgeKey(a, b))) {
+      errors.push(`${label}: removeEdges unknown edge (${a}, ${b})`)
+    }
+  }
+  for (const [a, b] of patch.addEdges ?? []) {
+    if (!nodes.has(a) || !nodes.has(b)) {
+      errors.push(`${label}: addEdges endpoint unknown (${a}, ${b})`)
+      continue
+    }
+    if (edges.has(edgeKey(a, b))) {
+      errors.push(`${label}: addEdges duplicates edge (${a}, ${b})`)
+      continue
+    }
+    edges.set(edgeKey(a, b), a < b ? [a, b] : [b, a])
+  }
+
+  const outEdges: [number, number][] = []
+  for (const [a, b] of edges.values()) {
+    if (!nodes.has(a) || !nodes.has(b)) continue
+    outEdges.push([a, b])
+  }
+
+  const statsResult = applyRecordMergePatch(
+    base.stats,
+    patch.stats,
+    `${label}.stats`,
+  )
+  errors.push(...statsResult.errors)
+  const stats = statsResult.data
+
+  for (const n of nodes.values()) {
+    if (!stats[n.key]) {
+      errors.push(`${label}: node ${n.id} references missing stat key "${n.key}"`)
+    }
+  }
+
+  return {
+    data: {
+      viewBox: base.viewBox,
+      nodes: [...nodes.values()],
+      edges: outEdges,
+      stats,
+    },
+    errors,
+  }
+}
+
+export function applyMercDataPatch(
+  base: MercData,
+  patch: MercDataPatch | undefined,
+  label: string,
+): PatchResult<MercData> {
+  if (!patch) return { data: base, errors: [] }
+  const errors: string[] = []
+  let out: MercData = { ...base, ...(patch.change ?? {}) } as MercData
+  if (patch.classes) {
+    const r = applyListPatch(base.classes, patch.classes, `${label}.classes`)
+    errors.push(...r.errors)
+    out = { ...out, classes: r.data }
+  }
+  return { data: out, errors }
 }

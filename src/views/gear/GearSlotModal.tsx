@@ -35,6 +35,8 @@ interface GearSlotModalProps {
   socketPickerRows: PickerRow[]
   onCommit: (item: EquippedItem | null) => string | null
   onClose: () => void
+  inventory?: Inventory
+  hideCompare?: boolean
 }
 
 export function GearSlotModal({
@@ -45,8 +47,11 @@ export function GearSlotModal({
   socketPickerRows,
   onCommit,
   onClose,
+  inventory,
+  hideCompare = false,
 }: GearSlotModalProps) {
-  const inv = useBuild((s) => s.inventory)
+  const storeInventory = useBuild((s) => s.inventory)
+  const inv = inventory ?? storeInventory
   const setHover = useSetHoverPreview()
   useEffect(() => () => setHover(null), [setHover])
 
@@ -266,14 +271,16 @@ export function GearSlotModal({
           )}
         </div>
 
-        <CompareColumn
-          baselineInventory={baselineInventory}
-          currentInventory={currentInventory}
-          baselineEquipped={baselineEquipped}
-          currentEquipped={draft ?? undefined}
-          slot={slot}
-          deps={compareDeps}
-        />
+        {!hideCompare && (
+          <CompareColumn
+            baselineInventory={baselineInventory}
+            currentInventory={currentInventory}
+            baselineEquipped={baselineEquipped}
+            currentEquipped={draft ?? undefined}
+            slot={slot}
+            deps={compareDeps}
+          />
+        )}
       </div>
     )
   }
@@ -285,7 +292,7 @@ export function GearSlotModal({
         eyebrow="Gear Slot"
         title={slotName}
         panelClassName={`h-[88vh] max-w-[96vw] transition-[width] duration-300 ${
-          configuring ? 'w-[1180px]' : 'w-[680px]'
+          configuring ? (hideCompare ? 'w-[900px]' : 'w-[1180px]') : 'w-[680px]'
         }`}
         headerActions={
           step === 'configure' && draft ? (

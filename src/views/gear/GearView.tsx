@@ -2,12 +2,10 @@ import { useCallback, useMemo, useState } from 'react'
 import type { PickerRow } from '../../components/PickerModal'
 import { gameConfig, gems, getItem, items, runes } from '../../data'
 import { useBuild } from '../../store/build'
-import { fmtStats } from '../../utils/item/stats'
 import type { SlotKey } from '../../types'
 import { packCharms } from './lib/charmPacking'
-import { gemColorForName, socketableIconForName } from './lib/icons'
 import { groupGearSlots, type GearSlotGroups } from './lib/slotGroups'
-import { buildSocketableTooltip } from './tooltips'
+import { getSocketPickerRows } from './lib/socketPickerRows'
 import { CharmSection } from './CharmSection'
 import { GearPanel, PotionEffectToggle, SlotRow } from './SlotRail'
 import { GearSlotModal } from './GearSlotModal'
@@ -48,38 +46,7 @@ export default function GearView() {
     return !(candidateOverflowed || overflowGrew)
   }
 
-  const socketPickerRows: PickerRow[] = useMemo(() => {
-    const out: PickerRow[] = []
-    for (const g of gems) {
-      const isJewel = g.name.toLowerCase().includes('jewel')
-      const kind = isJewel ? 'JEWEL' : 'GEM'
-      out.push({
-        id: g.id,
-        name: g.name,
-        tier: g.tier,
-        kindLabel: kind,
-        group: isJewel ? 'Jewels' : 'Gems',
-        meta: fmtStats(g.stats) || '—',
-        iconColor: gemColorForName(g.name),
-        iconUrl: socketableIconForName(g.name),
-        tooltip: buildSocketableTooltip(g, kind),
-      })
-    }
-    for (const r of runes) {
-      out.push({
-        id: r.id,
-        name: r.name,
-        tier: r.tier,
-        kindLabel: 'RUNE',
-        group: 'Runes',
-        meta: fmtStats(r.stats) || '—',
-        iconColor: 'var(--color-accent)',
-        iconUrl: socketableIconForName(r.name),
-        tooltip: buildSocketableTooltip(r, 'RUNE'),
-      })
-    }
-    return out
-  }, [])
+  const socketPickerRows: PickerRow[] = getSocketPickerRows()
 
   const slotGroups = useMemo(() => groupGearSlots(gameConfig.slots), [])
   const charmSlots = gameConfig.slots.filter((s) => s.key.startsWith('charm_'))
