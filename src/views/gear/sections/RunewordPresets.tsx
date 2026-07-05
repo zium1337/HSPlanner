@@ -2,20 +2,67 @@ import { useMemo, useState, type ReactNode } from 'react'
 import PickerModal, { type PickerPanelState, type PickerRow } from '../../../components/PickerModal'
 import { TooltipPanel } from '../../../components/Tooltip'
 import { runewords } from '../../../data'
-import type { ItemBase } from '../../../types'
+import type { EquippedItem, ItemBase } from '../../../types'
 import { buildRunewordTooltip, NetChangeBlock } from '../tooltips'
+import { withRuneword } from '../lib/itemEdits'
+import { useHoverDpsDiff } from '../lib/useHoverDpsDiff'
 import { SectionCard } from '../SectionCard'
 
+function RunewordSelectedPanel({
+  state,
+  slot,
+  equipped,
+  compatible,
+  dpsPreviewEnabled,
+}: {
+  state: PickerPanelState
+  slot: string
+  equipped: EquippedItem
+  compatible: typeof runewords
+  dpsPreviewEnabled: boolean
+}) {
+  const sel = compatible.find((rw) => rw.id === state.selectedId)
+  const hovered =
+    state.hoveredId && state.hoveredId !== state.selectedId
+      ? compatible.find((rw) => rw.id === state.hoveredId)
+      : undefined
+  const variant = useMemo(
+    () => (hovered ? withRuneword(equipped, hovered.id) : null),
+    [equipped, hovered],
+  )
+  const dps = useHoverDpsDiff(slot, equipped, variant, dpsPreviewEnabled)
+  if (!sel) return null
+  return (
+    <TooltipPanel className="w-full" tone="rare">
+      {buildRunewordTooltip(hovered ?? sel)}
+      {hovered && (
+        <NetChangeBlock
+          previous={sel.stats}
+          next={hovered.stats}
+          dpsDiffs={dps?.diffs}
+          activeSkillName={dps?.activeSkillName}
+        />
+      )}
+    </TooltipPanel>
+  )
+}
+
 export function RunewordPresets({
+  slot,
+  equipped,
   base,
   maxSockets,
   activeRunewordId,
   onApply,
+  dpsPreviewEnabled = true,
 }: {
+  slot: string
+  equipped: EquippedItem
   base: ItemBase
   maxSockets: number
   activeRunewordId?: string
   onApply: (runewordId: string) => void
+  dpsPreviewEnabled?: boolean
 }) {
   const compatible = useMemo(() => {
     if (base.rarity !== 'common') return []
@@ -66,23 +113,16 @@ export function RunewordPresets({
     ? activeRw.runes.map((r) => r.replace(/^rune_/, '')).join(' → ')
     : null
 
-  const renderSelectedPanel = (state: PickerPanelState): ReactNode => {
-    if (!state.selectedId) return null
-    const sel = compatible.find((rw) => rw.id === state.selectedId)
-    if (!sel) return null
-    const hovered =
-      state.hoveredId && state.hoveredId !== state.selectedId
-        ? compatible.find((rw) => rw.id === state.hoveredId)
-        : undefined
-    return (
-      <TooltipPanel className="w-full" tone="rare">
-        {buildRunewordTooltip(sel)}
-        {hovered && (
-          <NetChangeBlock previous={sel.stats} next={hovered.stats} />
-        )}
-      </TooltipPanel>
-    )
-  }
+  const renderSelectedPanel = (state: PickerPanelState): ReactNode =>
+    state.selectedId ? (
+      <RunewordSelectedPanel
+        state={state}
+        slot={slot}
+        equipped={equipped}
+        compatible={compatible}
+        dpsPreviewEnabled={dpsPreviewEnabled}
+      />
+    ) : null
 
   return (
     <SectionCard

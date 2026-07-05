@@ -1,10 +1,12 @@
-import { useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import PickerModal, { type PickerPanelState, type PickerRow } from '../../../components/PickerModal'
 import { TooltipPanel } from '../../../components/Tooltip'
 import { augments, gameConfig, getAugment } from '../../../data'
 import { AUGMENT_MAX_LEVEL } from '../../../types'
 import type { EquippedItem } from '../../../types'
 import { buildAugmentTooltip, NetChangeBlock } from '../tooltips'
+import { withAugment, withAugmentLevel } from '../lib/itemEdits'
+import { useHoverDpsDiff } from '../lib/useHoverDpsDiff'
 import { SectionCard } from '../SectionCard'
 
 const AUGMENT_PICKER_ROWS: PickerRow[] = augments
@@ -20,44 +22,72 @@ const AUGMENT_PICKER_ROWS: PickerRow[] = augments
     tooltipTone: 'angelic' as const,
   }))
 
+function AugmentSelectedPanel({
+  state,
+  equipped,
+  level,
+  dpsPreviewEnabled,
+}: {
+  state: PickerPanelState
+  equipped: EquippedItem
+  level: number
+  dpsPreviewEnabled: boolean
+}) {
+  const sel = state.selectedId ? getAugment(state.selectedId) : undefined
+  const hov =
+    state.hoveredId && state.hoveredId !== state.selectedId
+      ? getAugment(state.hoveredId)
+      : undefined
+  const variant = useMemo(
+    () => (hov ? withAugmentLevel(withAugment(equipped, hov.id), level) : null),
+    [equipped, hov, level],
+  )
+  const dps = useHoverDpsDiff('armor', equipped, variant, dpsPreviewEnabled)
+  if (!sel) return null
+  const tierAt = (a: NonNullable<typeof sel>) =>
+    a.levels[Math.max(0, Math.min(a.levels.length - 1, level - 1))]
+  const selTier = tierAt(sel)
+  const hovTier = hov ? tierAt(hov) : undefined
+  return (
+    <TooltipPanel className="w-full" tone="angelic">
+      {buildAugmentTooltip(hov ?? sel)}
+      {selTier && hovTier && (
+        <NetChangeBlock
+          previous={selTier.stats}
+          next={hovTier.stats}
+          dpsDiffs={dps?.diffs}
+          activeSkillName={dps?.activeSkillName}
+        />
+      )}
+    </TooltipPanel>
+  )
+}
+
 export function AugmentSection({
   equipped,
   onSetAugment,
   onSetAugmentLevel,
+  dpsPreviewEnabled = true,
 }: {
   equipped: EquippedItem
   onSetAugment: (id: string | null) => void
   onSetAugmentLevel: (level: number) => void
+  dpsPreviewEnabled?: boolean
 }) {
   const [pickerOpen, setPickerOpen] = useState(false)
   const aug = equipped.augment ? getAugment(equipped.augment.id) : undefined
   const level = equipped.augment?.level ?? 1
   const tier = aug?.levels[Math.max(0, Math.min(aug.levels.length - 1, level - 1))]
 
-  const renderSelectedPanel = (state: PickerPanelState): ReactNode => {
-    if (!state.selectedId) return null
-    const sel = getAugment(state.selectedId)
-    if (!sel) return null
-    const selTier =
-      sel.levels[Math.max(0, Math.min(sel.levels.length - 1, level - 1))]
-    let hoveredStats: Record<string, number> | undefined
-    if (state.hoveredId && state.hoveredId !== state.selectedId) {
-      const hov = getAugment(state.hoveredId)
-      if (hov) {
-        const hovTier =
-          hov.levels[Math.max(0, Math.min(hov.levels.length - 1, level - 1))]
-        hoveredStats = hovTier?.stats
-      }
-    }
-    return (
-      <TooltipPanel className="w-full" tone="angelic">
-        {buildAugmentTooltip(sel)}
-        {selTier && hoveredStats && (
-          <NetChangeBlock previous={selTier.stats} next={hoveredStats} />
-        )}
-      </TooltipPanel>
-    )
-  }
+  const renderSelectedPanel = (state: PickerPanelState): ReactNode =>
+    state.selectedId ? (
+      <AugmentSelectedPanel
+        state={state}
+        equipped={equipped}
+        level={level}
+        dpsPreviewEnabled={dpsPreviewEnabled}
+      />
+    ) : null
 
   return (
     <SectionCard

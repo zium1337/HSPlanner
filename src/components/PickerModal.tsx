@@ -34,6 +34,7 @@ export interface PickerRow {
   searchTerms?: string
   tooltip?: ReactNode
   tooltipTone?: TooltipTone
+  sortValues?: Record<string, number>
 }
 
 export interface PickerPanelState {
@@ -128,6 +129,10 @@ export default function PickerModal({
     if (closeOnSelect) onClose()
   }
 
+  const panelContent = selectedPanel
+    ? selectedPanel({ selectedId: selectedId ?? null, hoveredId })
+    : null
+
   return createPortal(
     <motion.div
       role="presentation"
@@ -146,12 +151,12 @@ export default function PickerModal({
         style={{ gap: panelOffsetX }}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        {selectedPanel && (
+        {panelContent != null && (
           <div
             className="shrink-0 self-start max-h-[88vh] overflow-y-auto"
             style={{ minWidth: 260, maxWidth: 320 }}
           >
-            {selectedPanel({ selectedId: selectedId ?? null, hoveredId })}
+            {panelContent}
           </div>
         )}
 
@@ -346,6 +351,7 @@ export default function PickerModal({
                           tone={r.tooltipTone ?? 'neutral'}
                           placement="right"
                           delay={120}
+                          disabled={panelContent != null}
                         >
                           {rowButton}
                         </Tooltip>

@@ -1,65 +1,89 @@
 /* eslint-disable react-refresh/only-export-components */
 import type { ReactNode } from 'react'
-import { TooltipFooter, TooltipHeader, TooltipSection, TooltipStat, TooltipText } from '../../components/Tooltip'
+import { TooltipFooter, TooltipHeader, TooltipSection, TooltipSectionHeader, TooltipStat, TooltipText } from '../../components/Tooltip'
+import NetChangeRow from '../../components/NetChangeRow'
 import { formatValue, statName } from '../../utils/item/stats'
+import { gameConfig } from '../../data'
+import type { BuildStatDiff } from '../../utils/build/buildPerformance'
 import type { Affix } from '../../types'
 import { socketableIconForName } from './lib/icons'
+
+const PERCENT_STAT_KEYS = new Set(
+  gameConfig.stats.filter((s) => s.format === 'percent').map((s) => s.key),
+)
 
 export function NetChangeBlock({
   previous,
   next,
+  dpsDiffs,
+  activeSkillName,
 }: {
   previous: Record<string, number>
   next: Record<string, number>
+  dpsDiffs?: BuildStatDiff[]
+  activeSkillName?: string | null
 }) {
   const allKeys = new Set([
     ...Object.keys(previous),
     ...Object.keys(next),
   ])
-  const diffs: Array<{ key: string; diff: number }> = []
+  const diffs: BuildStatDiff[] = []
   for (const key of allKeys) {
-    const d = (next[key] ?? 0) - (previous[key] ?? 0)
-    if (Math.abs(d) < 0.01) continue
-    diffs.push({ key, diff: d })
+    const before = previous[key] ?? 0
+    const after = next[key] ?? 0
+    const delta = after - before
+    if (Math.abs(delta) < 0.01) continue
+    diffs.push({
+      key,
+      label: statName(key),
+      beforeMin: before,
+      beforeMax: before,
+      afterMin: after,
+      afterMax: after,
+      delta,
+      isPercent: PERCENT_STAT_KEYS.has(key),
+      kind: delta > 0 ? 'up' : 'down',
+    })
   }
-  diffs.sort((a, b) => b.diff - a.diff)
-  if (diffs.length === 0) {
-    return (
-      <TooltipSection>
-        <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-          Net Change
-        </div>
-        <p className="text-[11px] text-faint italic">No stat changes</p>
-      </TooltipSection>
-    )
-  }
+  diffs.sort((a, b) => b.delta - a.delta)
+  const hasDps = !!dpsDiffs && dpsDiffs.length > 0
   return (
     <TooltipSection>
-      <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-        Net Change
+      <div className="mb-2 flex items-center gap-2.5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+        <span>Net Change</span>
+        <span className="h-px flex-1 bg-border" />
       </div>
-      <ul className="space-y-0.5 text-[12px]">
-        {diffs.map(({ key, diff }) => {
-          const up = diff > 0
-          return (
-            <li
-              key={key}
-              className="flex items-baseline justify-between gap-2"
-            >
-              <span className="min-w-0 wrap-break-words leading-tight text-muted">
-                {statName(key)}
-              </span>
-              <span
-                className={`shrink-0 whitespace-nowrap font-mono tabular-nums ${
-                  up ? 'text-stat-green' : 'text-stat-red'
-                }`}
-              >
-                {up ? '▲' : '▼'} {formatValue(diff, key)}
-              </span>
-            </li>
-          )
-        })}
-      </ul>
+      {hasDps && (
+        <div className={diffs.length > 0 ? 'mb-1.5' : undefined}>
+          <div className="mb-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted/70">
+            Active Skill
+            {activeSkillName ? (
+              <span className="ml-1 text-faint">· {activeSkillName}</span>
+            ) : null}
+          </div>
+          <div className="space-y-0.5">
+            {dpsDiffs.map((d) => (
+              <NetChangeRow key={d.key} diff={d} />
+            ))}
+          </div>
+        </div>
+      )}
+      {diffs.length === 0 ? (
+        !hasDps && <p className="text-[11px] text-faint italic">No stat changes</p>
+      ) : (
+        <div>
+          {hasDps && (
+            <div className="mb-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted/70">
+              Stats
+            </div>
+          )}
+          <div className="space-y-0.5">
+            {diffs.map((d) => (
+              <NetChangeRow key={d.key} diff={d} />
+            ))}
+          </div>
+        </div>
+      )}
     </TooltipSection>
   )
 }
@@ -254,9 +278,12 @@ export function buildAugmentTooltip(aug: {
       </TooltipSection>
       {lvl && lines.length > 0 && (
         <TooltipSection>
-          <div className="mb-1 font-mono text-[9px] uppercase tracking-[0.18em] text-yellow-200/70">
-            Max level · {lvl.level} · cost {lvl.cost} keys
-          </div>
+          <TooltipSectionHeader
+            tone="gold"
+            trailing={`lv ${lvl.level} · ${lvl.cost} keys`}
+          >
+            Max Level Stats
+          </TooltipSectionHeader>
           {lines}
         </TooltipSection>
       )}

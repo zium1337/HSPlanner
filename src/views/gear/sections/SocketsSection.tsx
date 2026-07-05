@@ -5,20 +5,89 @@ import { getGem, getRune } from '../../../data'
 import { RAINBOW_MULTIPLIER } from '../../../store/build'
 import type { EquippedItem, ItemBase, SocketType } from '../../../types'
 import { buildSocketableTooltip, NetChangeBlock } from '../tooltips'
+import { withSocketed } from '../lib/itemEdits'
+import { useHoverDpsDiff } from '../lib/useHoverDpsDiff'
 import { SectionCard } from '../SectionCard'
 
+function SocketSelectedPanel({
+  state,
+  slot,
+  equipped,
+  socketIndex,
+  multiplier,
+  triggerTooltip,
+  previousStats,
+  dpsPreviewEnabled,
+}: {
+  state: PickerPanelState
+  slot: string
+  equipped: EquippedItem
+  socketIndex: number
+  multiplier: number
+  triggerTooltip: ReactNode
+  previousStats: Record<string, number>
+  dpsPreviewEnabled: boolean
+}) {
+  const hoveredId =
+    state.hoveredId && state.hoveredId !== state.selectedId
+      ? state.hoveredId
+      : null
+  const variant = useMemo(
+    () => (hoveredId ? withSocketed(equipped, socketIndex, hoveredId) : null),
+    [equipped, socketIndex, hoveredId],
+  )
+  const dps = useHoverDpsDiff(slot, equipped, variant, dpsPreviewEnabled)
+  let hoveredTooltip: ReactNode = null
+  let hoveredScaled: Record<string, number> | undefined
+  if (hoveredId) {
+    const hg = getGem(hoveredId)
+    const hr = !hg ? getRune(hoveredId) : undefined
+    const hsrc = hg ?? hr
+    if (hsrc) {
+      const kind: 'GEM' | 'JEWEL' | 'RUNE' = hr
+        ? 'RUNE'
+        : hsrc.name.toLowerCase().includes('jewel')
+          ? 'JEWEL'
+          : 'GEM'
+      hoveredTooltip = buildSocketableTooltip(hsrc, kind, { multiplier })
+      const out: Record<string, number> = {}
+      for (const [k, v] of Object.entries(hsrc.stats)) out[k] = v * multiplier
+      hoveredScaled = out
+    }
+  }
+  return (
+    <TooltipPanel className="w-full">
+      {hoveredTooltip ?? triggerTooltip}
+      {hoveredScaled && (
+        <NetChangeBlock
+          previous={previousStats}
+          next={hoveredScaled}
+          dpsDiffs={dps?.diffs}
+          activeSkillName={dps?.activeSkillName}
+        />
+      )}
+    </TooltipPanel>
+  )
+}
+
 function SocketPickerTrigger({
+  slot,
+  equipped,
   socketIndex,
   socketed,
   socketType,
   rows,
   onChange,
+  dpsPreviewEnabled,
 }: {
+  slot: string
+  equipped: EquippedItem
   socketIndex: number
   socketed: string | null
   socketType: SocketType
   rows: PickerRow[]
   onChange: (id: string | null) => void
+  dpsPreviewEnabled: boolean
 }) {
   const [open, setOpen] = useState(false)
   const multiplier = socketType === 'rainbow' ? RAINBOW_MULTIPLIER : 1
@@ -68,30 +137,19 @@ function SocketPickerTrigger({
     return buildSocketableTooltip(src, kind, { multiplier })
   }, [socketed, multiplier])
 
-  const renderSelectedPanel = (state: PickerPanelState): ReactNode => {
-    if (!triggerTooltip || !state.selectedId) return null
-    let hoveredScaled: Record<string, number> | undefined
-    if (state.hoveredId && state.hoveredId !== state.selectedId) {
-      const hg = getGem(state.hoveredId)
-      const hr = !hg ? getRune(state.hoveredId) : undefined
-      const hsrc = hg ?? hr
-      if (hsrc) {
-        const out: Record<string, number> = {}
-        for (const [k, v] of Object.entries(hsrc.stats)) {
-          out[k] = v * multiplier
-        }
-        hoveredScaled = out
-      }
-    }
-    return (
-      <TooltipPanel className="w-full">
-        {triggerTooltip}
-        {hoveredScaled && (
-          <NetChangeBlock previous={previousStats} next={hoveredScaled} />
-        )}
-      </TooltipPanel>
-    )
-  }
+  const renderSelectedPanel = (state: PickerPanelState): ReactNode =>
+    triggerTooltip && state.selectedId ? (
+      <SocketSelectedPanel
+        state={state}
+        slot={slot}
+        equipped={equipped}
+        socketIndex={socketIndex}
+        multiplier={multiplier}
+        triggerTooltip={triggerTooltip}
+        previousStats={previousStats}
+        dpsPreviewEnabled={dpsPreviewEnabled}
+      />
+    ) : null
 
   const current = socketed ? rows.find((r) => r.id === socketed) : undefined
 
@@ -217,6 +275,7 @@ function SocketTypeToggle({
 }
 
 export function SocketsSection({
+  slot,
   equipped,
   maxSockets,
   base,
@@ -224,7 +283,9 @@ export function SocketsSection({
   onSocketCount,
   onSocketed,
   onSocketType,
+  dpsPreviewEnabled = true,
 }: {
+  slot: string
   equipped: EquippedItem
   maxSockets: number
   base: ItemBase
@@ -232,6 +293,7 @@ export function SocketsSection({
   onSocketCount: (n: number) => void
   onSocketed: (idx: number, id: string | null) => void
   onSocketType: (idx: number, type: SocketType) => void
+  dpsPreviewEnabled?: boolean
 }) {
   if (maxSockets === 0) return null
   return (
@@ -285,11 +347,14 @@ export function SocketsSection({
                 />
                 <div className="min-w-0 flex-1">
                   <SocketPickerTrigger
+                    slot={slot}
+                    equipped={equipped}
                     socketIndex={i}
                     socketed={socketed ?? null}
                     socketType={type}
                     rows={socketPickerRows}
                     onChange={(id) => onSocketed(i, id)}
+                    dpsPreviewEnabled={dpsPreviewEnabled}
                   />
                 </div>
               </div>

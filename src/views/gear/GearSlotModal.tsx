@@ -52,6 +52,7 @@ export function GearSlotModal({
 }: GearSlotModalProps) {
   const storeInventory = useBuild((s) => s.inventory)
   const inv = inventory ?? storeInventory
+  const dpsPreviewEnabled = inventory == null
   const setHover = useSetHoverPreview()
   useEffect(() => () => setHover(null), [setHover])
 
@@ -200,6 +201,7 @@ export function GearSlotModal({
                 )}
 
                 <SocketsSection
+                  slot={slot}
                   equipped={draft}
                   maxSockets={maxSockets}
                   base={base}
@@ -207,14 +209,18 @@ export function GearSlotModal({
                   onSocketCount={d.setSocketCount}
                   onSocketed={d.setSocketed}
                   onSocketType={d.setSocketType}
+                  dpsPreviewEnabled={dpsPreviewEnabled}
                 />
 
                 <div className="columns-2 gap-4 [&>*]:mb-4 [&>*]:break-inside-avoid">
                   <RunewordPresets
+                    slot={slot}
+                    equipped={draft}
                     base={base}
                     maxSockets={maxSockets}
                     activeRunewordId={detectRuneword(base, draft.socketed)?.id}
                     onApply={d.applyRuneword}
+                    dpsPreviewEnabled={dpsPreviewEnabled}
                   />
 
                   {canStarForge(slot, activeSeasonId) && (
@@ -246,6 +252,7 @@ export function GearSlotModal({
                     equipped={draft}
                     onSetAugment={d.setAugment}
                     onSetAugmentLevel={d.setAugmentLevel}
+                    dpsPreviewEnabled={dpsPreviewEnabled}
                   />
                 )}
               </div>
