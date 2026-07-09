@@ -124,6 +124,7 @@ export interface ItemSetBonus {
 export interface ItemSet {
   id: string
   name: string
+  class?: string
   items: ItemSetPiece[]
   bonuses: ItemSetBonus[]
 }

@@ -776,6 +776,7 @@ pub fn apply_base_attributes(
 
 pub fn apply_set_bonuses(
     inventory: &Inventory,
+    class_id: Option<&str>,
     attr_sources: &mut SourceMap,
     stat_sources: &mut SourceMap,
 ) {
@@ -791,6 +792,10 @@ pub fn apply_set_bonuses(
         let Some(set) = data::get_set(set_id) else {
             continue;
         };
+        let skills_gated = set
+            .class
+            .as_deref()
+            .is_some_and(|set_class| Some(set_class) != class_id);
         for bonus in set.bonuses.iter() {
             if *count < bonus.pieces {
                 continue;
@@ -798,6 +803,9 @@ pub fn apply_set_bonuses(
             let label = format!("{} ({}-set)", set.name, bonus.pieces);
             for (stat_key, &value) in bonus.stats.iter() {
                 if value == 0.0 {
+                    continue;
+                }
+                if skills_gated && stat_key == "all_skills" {
                     continue;
                 }
                 apply_contribution(
@@ -1715,7 +1723,12 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     );
 
     // 5. Set bonuses
-    apply_set_bonuses(input.inventory, &mut attr_sources, &mut stat_sources);
+    apply_set_bonuses(
+        input.inventory,
+        input.class_id,
+        &mut attr_sources,
+        &mut stat_sources,
+    );
 
     // 6. Default/class base stats + per-level
     apply_class_baseline(input.class_id, input.level, weapon_has_aps, &mut stat_sources);
@@ -2704,7 +2717,7 @@ mod tests {
         let inv: Inventory = HashMap::new();
         let mut attrs: SourceMap = HashMap::new();
         let mut stats: SourceMap = HashMap::new();
-        apply_set_bonuses(&inv, &mut attrs, &mut stats);
+        apply_set_bonuses(&inv, None, &mut attrs, &mut stats);
         assert!(attrs.is_empty());
         assert!(stats.is_empty());
     }
@@ -2752,7 +2765,7 @@ mod tests {
         }
         let mut attrs: SourceMap = HashMap::new();
         let mut stats: SourceMap = HashMap::new();
-        apply_set_bonuses(&inv, &mut attrs, &mut stats);
+        apply_set_bonuses(&inv, None, &mut attrs, &mut stats);
         let total = attrs.values().map(|v| v.len()).sum::<usize>()
             + stats.values().map(|v| v.len()).sum::<usize>();
         assert!(
@@ -2761,6 +2774,67 @@ mod tests {
             set_id,
             pieces
         );
+    }
+
+    #[test]
+    fn apply_set_bonuses_gates_all_skills_by_class() {
+        let mut by_set: HashMap<String, Vec<String>> = HashMap::new();
+        for item in data::data().items.values() {
+            if let Some(set_id) = item.set_id.as_deref() {
+                by_set
+                    .entry(set_id.to_string())
+                    .or_default()
+                    .push(item.id.clone());
+            }
+        }
+        let pick = by_set.iter().find_map(|(set_id, item_ids)| {
+            let set = data::get_set(set_id)?;
+            let set_class = set.class.as_deref()?; // class-specific only
+            let bonus = set.bonuses.iter().find(|b| {
+                (b.pieces as usize) <= item_ids.len() && b.stats.contains_key("all_skills")
+            })?;
+            Some((
+                set_id.clone(),
+                set_class.to_string(),
+                item_ids.clone(),
+                bonus.pieces,
+            ))
+        });
+        let Some((set_id, set_class, item_ids, pieces)) = pick else {
+            eprintln!("no class-specific set with a reachable all_skills bonus; skipping");
+            return;
+        };
+
+        let mut inv: Inventory = HashMap::new();
+        for (i, item_id) in item_ids.iter().take(pieces as usize).enumerate() {
+            inv.insert(
+                format!("set_slot_{i}"),
+                EquippedItem {
+                    base_id: item_id.clone(),
+                    ..Default::default()
+                },
+            );
+        }
+        let has = |a: &SourceMap, s: &SourceMap, k: &str| a.contains_key(k) || s.contains_key(k);
+
+        // Matching class → all_skills granted.
+        let (mut a1, mut s1): (SourceMap, SourceMap) = (HashMap::new(), HashMap::new());
+        apply_set_bonuses(&inv, Some(set_class.as_str()), &mut a1, &mut s1);
+        assert!(
+            has(&a1, &s1, "all_skills"),
+            "class '{set_class}' should receive all_skills from '{set_id}'"
+        );
+
+        // Mismatching class → all_skills gated out, flat stats still apply.
+        let (mut a2, mut s2): (SourceMap, SourceMap) = (HashMap::new(), HashMap::new());
+        apply_set_bonuses(&inv, Some("__not_a_real_class__"), &mut a2, &mut s2);
+        assert!(
+            !has(&a2, &s2, "all_skills"),
+            "mismatched class must NOT receive class-specific all_skills from '{set_id}'"
+        );
+        let flat = a2.values().map(|v| v.len()).sum::<usize>()
+            + s2.values().map(|v| v.len()).sum::<usize>();
+        assert!(flat > 0, "flat set stats should still apply on a mismatched class");
     }
 
     // ---- class baseline + per-level ----

@@ -235,6 +235,8 @@ pub struct ItemSet {
     #[serde(default)]
     pub name: String,
     #[serde(default)]
+    pub class: Option<String>,
+    #[serde(default)]
     pub items: Vec<ItemSetPiece>,
     #[serde(default)]
     pub bonuses: Vec<ItemSetBonus>,
