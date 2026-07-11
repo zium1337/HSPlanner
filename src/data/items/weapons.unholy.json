@@ -115,6 +115,7 @@
     "rarity": "unholy",
     "grade": "SS",
     "requiresLevel": 100,
+    "twoHanded": true,
     "damageMin": 102,
     "damageMax": 112,
     "attackSpeed": 1.75,
