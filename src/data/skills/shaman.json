@@ -162,8 +162,8 @@
     "tree": "Elementalist",
     "position": { "row": 3, "col": 0 },
     "passiveStats": {
-      "base": { "life": 3, "mana": 3 },
-      "perRank": { "life": 3, "mana": 3 }
+      "base": { "increased_life": 3, "increased_mana": 3 },
+      "perRank": { "increased_life": 3, "increased_mana": 3 }
     }
   },
   {
@@ -245,8 +245,8 @@
     "tree": "Chieftain",
     "position": { "row": 0, "col": 1 },
     "passiveStats": {
-      "base": { "mana": 1.5, "mana_replenish": 1.5 },
-      "perRank": { "mana": 1.5, "mana_replenish": 1.5 }
+      "base": { "increased_mana": 1.5, "mana_replenish_pct": 1.5 },
+      "perRank": { "increased_mana": 1.5, "mana_replenish_pct": 1.5 }
     }
   },
   {
